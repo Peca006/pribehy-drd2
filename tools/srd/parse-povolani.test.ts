@@ -29,6 +29,10 @@ describe('parseTitle', () => {
       attribute: 'Tělo',
       quickPickLevel: undefined,
     })
+    expect(parseTitle('Elixíry (podle prováděné akce)')).toMatchObject({
+      attribute: undefined,
+      attributeNote: 'podle prováděné akce',
+    })
     expect(parseTitle('Bez závorky')).toEqual({ name: 'Bez závorky' })
   })
 })

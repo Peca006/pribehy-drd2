@@ -12,7 +12,14 @@ export function parseTitle(text) {
   const parts = m[2].split(',').map((s) => s.trim())
   const attribute = parts.find((p) => ATTRS.includes(p))
   const quick = parts.map((p) => p.match(/rychlá volba:\s*Úroveň\s*(\d+)/i)).find(Boolean)
-  return { name: m[1].trim(), attribute, quickPickLevel: quick ? Number(quick[1]) : undefined }
+  const rest = parts.filter((p) => p !== attribute && !/rychlá volba/i.test(p))
+  const note = attribute || !rest.length ? undefined : rest.join(', ')
+  return {
+    name: m[1].trim(),
+    attribute,
+    attributeNote: note,
+    quickPickLevel: quick ? Number(quick[1]) : undefined,
+  }
 }
 
 const isFlavor = (el) => {
@@ -54,12 +61,14 @@ export function parseProfessions(html, kind) {
               id: `dovednost:${slug(prof.name)}/${key}`,
               name: t.name,
               attribute: t.attribute,
+              attributeNote: t.attributeNote,
               items: [],
             }
           : {
               id: `schopnost:${slug(prof.name)}/${key}`,
               name: t.name,
               attribute: t.attribute,
+              attributeNote: t.attributeNote,
               quickPickLevel: t.quickPickLevel,
               text: '',
             }

@@ -24,7 +24,9 @@ export interface PackManifest {
 export interface Skill {
   id: ContentId
   name: string
-  attribute: Attribute
+  /** chybí-li, vlastnost určuje `attributeNote` (např. „podle prováděné akce“) */
+  attribute?: Attribute
+  attributeNote?: string
   /** popis oblastí použití (odrážky) */
   items: Markdown[]
 }
@@ -33,6 +35,7 @@ export interface Ability {
   id: ContentId
   name: string
   attribute?: Attribute
+  attributeNote?: string
   /** od jaké úrovně je „rychlá volba“ při tvorbě postavy */
   quickPickLevel?: number
   flavor?: Markdown

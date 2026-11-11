@@ -20,7 +20,8 @@ export function validatePack(pack: ContentPack): string[] {
     if (!p.abilities.length) errors.push(`${p.id}: žádné zvláštní schopnosti`)
     for (const s of p.skills) {
       unique(s.id)
-      if (!ATTRS.includes(s.attribute)) errors.push(`${s.id}: neplatná vlastnost „${s.attribute}“`)
+      if (s.attribute ? !ATTRS.includes(s.attribute) : !s.attributeNote)
+        errors.push(`${s.id}: neplatná nebo chybějící vlastnost „${s.attribute}“`)
     }
     for (const a of p.abilities) {
       unique(a.id)
