@@ -49,5 +49,9 @@ export function validatePack(pack: ContentPack): string[] {
   for (const t of pack.traits ?? []) unique(t.id)
   for (const k of pack.startingKits ?? []) unique(k.id)
   for (const t of pack.terms ?? []) unique(t.id)
+  for (const c of pack.creatures ?? []) {
+    unique(c.id)
+    if (!c.name) errors.push(`${c.id}: chybí název`)
+  }
   return errors
 }

@@ -47,5 +47,7 @@ modul sám, seznam modulů je v `src/modules/index.ts`. Moduly se nevolají nap�
   směrovač, odkazy mezi pojmy a kapitolami.
 - `src/modules/` – funkce: `characters` (deníky postav), `creator` (průvodce tvorbou postavy,
   kroky v `steps/` se řadí v `steps.ts`), `reader` (příručka), `library` (balíčky).
+- `bestiar` – bestiář pro vypravěče: bytosti z balíčku (jen ke čtení) a vlastní bytosti (editor,
+  import/export JSON). Vlastní bytosti jsou v oddělené části úložiště; knižní bytosti se nesdílejí.
 - `src/ui/` – sdílené komponenty (zobrazení textů v mini-markdownu, bloky kapitol).
 - Odkazy `chapter:ID#kotva` a `term:ID` v textech se otevírají z kteréhokoli modulu.

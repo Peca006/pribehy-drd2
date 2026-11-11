@@ -40,7 +40,8 @@
       <strong>{p.manifest.name}</strong>
       <div class="muted">
         {p.manifest.version} · {p.chapters?.length ?? 0} kapitol · {p.professions.length} povolání{#if p.races?.length}
-          · {p.races.length} ras{/if}
+          · {p.races.length} ras{/if}{#if p.creatures?.length}
+          · {p.creatures.length} bytostí{/if}
       </div>
     </div>
     <button onclick={() => remove(p.manifest.id)}>Odebrat</button>

@@ -11,7 +11,11 @@ export function inlineMd(node) {
       if (tag === 'em') out += wrap(inner, '*')
       else if (tag === 'strong') out += wrap(inner, '**')
       else if (tag === 'br') out += '\n'
-      else out += inner
+      else if (tag === 'a') {
+        const href = c.getAttribute('href')
+        const anchorOnly = (c.getAttribute('class') ?? '').includes('header-anchor')
+        out += href && !anchorOnly && inner.trim() ? link(href, inner) : inner
+      } else out += inner
     }
   }
   // zdvojené značky z vnořených em/strong (`<strong><em>x</em></strong>` => `***x***`) necháme být
@@ -33,6 +37,9 @@ export function blockMd(el) {
   }
   return inlineMd(el).trim()
 }
+
+/** Odstraní z mini-markdownu odkazy (nechá jen text odkazu) a zvýrazňovací značky. */
+export const stripMd = (s) => s.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\*/g, '')
 
 export function slug(s) {
   return s

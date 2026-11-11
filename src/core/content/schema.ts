@@ -171,6 +171,49 @@ export interface Term {
   summary?: Markdown
 }
 
+/** Řádek „karty“ bytosti (Charakteristika, Sudba, Hranice, Talenty, …) v původním znění. */
+export interface CreatureStat {
+  label: string
+  value: Markdown
+}
+
+export interface CreatureSection {
+  id: string
+  title: string
+  text: Markdown
+}
+
+/** Bytost z Bestiáře – i vlastní bytost vypravěče (ta má `source: 'user'`). */
+export interface Creature {
+  id: ContentId
+  name: string
+  /** druh bytosti, viz `ContentPack.creatureKinds` */
+  kind: string
+  /** znaky z ikonového písma (označení bytosti v knize) */
+  glyphs?: string
+  /** ID bytosti, jejíž je tato bytost variantou */
+  variantOf?: ContentId
+  characteristic?: { min: number; max: number; note?: Markdown }
+  /** Sudba */
+  fate?: number
+  /** Hranice vlastností */
+  limits?: Partial<Record<Attribute, number>>
+  /** všechny řádky karty bytosti v původním pořadí */
+  stats: CreatureStat[]
+  description: Markdown
+  /** Jak jedná, Jak bojuje, Jakou roli má v příběhu, Snový svět, … */
+  sections: CreatureSection[]
+  /** `user` = vlastní bytost vypravěče; jinak ID balíčku */
+  source?: string
+  /** ID bytosti z balíčku, ze které vlastní bytost vznikla (kvůli licenci při sdílení) */
+  copiedFrom?: string
+}
+
+export interface CreatureKind {
+  id: string
+  name: string
+}
+
 export interface ContentPack {
   manifest: PackManifest
   chapters?: Chapter[]
@@ -183,6 +226,8 @@ export interface ContentPack {
   startingKits?: StartingKit[]
   creation?: CreationRules
   terms?: Term[]
+  creatures?: Creature[]
+  creatureKinds?: CreatureKind[]
 }
 
 /** Překryv (oprava/alternativní znění) nad jedním nebo více balíčky. Adresuje se přes ContentId. */

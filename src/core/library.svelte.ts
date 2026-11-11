@@ -3,6 +3,8 @@ import { listPacks } from './content/store'
 import type {
   Ability,
   Chapter,
+  Creature,
+  CreatureKind,
   ContentId,
   ContentPack,
   Profession,
@@ -27,6 +29,8 @@ export const chapters = (): Chapter[] =>
   all((p) => p.chapters).sort((a, b) => a.id.localeCompare(b.id))
 export const professions = (): Profession[] => all((p) => p.professions)
 export const races = (): Race[] => all((p) => p.races)
+export const packCreatures = (): Creature[] => all((p) => p.creatures)
+export const creatureKinds = (): CreatureKind[] => all((p) => p.creatureKinds)
 export const terms = (): Term[] => all((p) => p.terms)
 
 /** Najde schopnost podle ID v povolání i v rasách. */

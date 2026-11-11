@@ -1,7 +1,7 @@
 import { parse } from 'node-html-parser'
-import { inlineMd, slug, srdFix } from './html-md.mjs'
+import { inlineMd, slug, srdFix, stripMd } from './html-md.mjs'
 
-const plain = (el) => srdFix(inlineMd(el).replace(/\*/g, '').replace(/\s+/g, ' ').trim())
+const plain = (el) => srdFix(stripMd(inlineMd(el)).replace(/\s+/g, ' ').trim())
 
 function listItem(li) {
   const parts = []
@@ -41,11 +41,11 @@ export function parseBlocks(container) {
   for (const el of container.childNodes) {
     const tag = el.rawTagName?.toLowerCase()
     if (!tag) continue
-    if (/^h[2-4]$/.test(tag)) {
+    if (/^h[2-5]$/.test(tag)) {
       const text = plain(el)
       blocks.push({
         type: 'heading',
-        level: Number(tag[1]),
+        level: Math.min(Number(tag[1]), 4),
         id: el.getAttribute('id') ?? slug(text),
         text,
       })
