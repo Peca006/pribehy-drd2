@@ -31,8 +31,23 @@ const pack = {
   professions,
 }
 
+// Opravy SRD podle tištěné knihy (drd2-pravidla.pdf); viz `npm run compare:srd`. Počet zásahů je pevně daný.
+const PDF_FIXES = [
+  ['Vyberte si jednu rasovou základní schopnost', 'Vyberte si jednu rasovou zvláštní schopnost', 1],
+  ['*Výrobě elixírů* a *Podávání* *elixírů', '*Výrobě elixírů* a *Používání* *elixírů', 2],
+]
+let json = JSON.stringify(pack, null, 1)
+for (const [from, to, expected] of PDF_FIXES) {
+  const n = json.split(from).length - 1
+  if (n !== expected) {
+    console.error(`Oprava podle PDF zasáhla ${n}× místo ${expected}×: ${from}`)
+    process.exit(1)
+  }
+  json = json.replaceAll(from, to)
+}
+
 mkdirSync('content-packs/local', { recursive: true })
-writeFileSync('content-packs/local/drd2-pravidla-2.json', JSON.stringify(pack, null, 1))
+writeFileSync('content-packs/local/drd2-pravidla-2.json', json)
 const bad = professions.filter((p) => p.abilities.length !== 12 || !p.skills.length)
 if (bad.length) {
   console.error(
