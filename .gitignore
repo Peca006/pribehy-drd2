@@ -1,0 +1,19 @@
+# Zdrojové materiály třetích stran (autorská díla) – nikdy necommitovat
+/reference/
+
+# Vygenerované balíčky obsahu z cizích textů
+/content-packs/local/
+
+# Závislosti a build
+node_modules/
+dist/
+*.local
+.vite/
+coverage/
+
+# Editory a OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
