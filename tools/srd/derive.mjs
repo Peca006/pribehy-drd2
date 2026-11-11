@@ -50,7 +50,8 @@ export function deriveRaces(chapters) {
     let name
     for (const b of raceSection[1]) {
       if (b.type === 'heading' && b.level === 3) name = plainHeading(b)
-      else if (name && b.type === 'p') overviews[name] ??= b.text
+      else if (name && b.type === 'p')
+        overviews[name] ??= b.text.replace(/\s*Jejich popis najdete na straně \d+\./, '')
     }
   }
 

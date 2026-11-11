@@ -1,8 +1,10 @@
 <script lang="ts">
   import type { Inline } from '../core/markdown'
+  import { isRef, openRef } from '../core/refs'
   import Self from './Inline.svelte'
 
-  let { nodes, onlink }: { nodes: Inline[]; onlink?: (href: string) => void } = $props()
+  // odkazy na kapitoly a pojmy se otevírají samy (a tlačítko Zpět vrátí zpět); `onlink` je přepíše
+  let { nodes, onlink = openRef }: { nodes: Inline[]; onlink?: (href: string) => void } = $props()
 </script>
 
 {#each nodes as n}
@@ -13,7 +15,7 @@
   {:else if n.t === 'link'}<a
       href={n.href}
       onclick={(e) => {
-        if (n.href.startsWith('chapter:') && onlink) {
+        if (isRef(n.href)) {
           e.preventDefault()
           onlink(n.href)
         }

@@ -11,16 +11,20 @@ export function parseTitle(text) {
   if (!m) return { name: text.trim() }
   const parts = m[2].split(',').map((s) => s.trim())
   const attribute = parts.find((p) => ATTRS.includes(p))
-  const quick = parts.map((p) => p.match(/rychlá volba:\s*Úroveň\s*(\d+)/i)).find(Boolean)
+  const quick = parts
+    .map((p) => p.match(/rychlá volba:\s*(?:Úroveň\s*(\d+)|(\d+)\s*úroveň)/i))
+    .find(Boolean)
   const rest = parts.filter((p) => p !== attribute && !/rychlá volba/i.test(p))
   const note = attribute || !rest.length ? undefined : rest.join(', ')
   // „rychlá volba: Horda“ (rasová schopnost) – hodnota není úroveň, ale název kultury
-  const culture = parts.map((p) => p.match(/rychlá volba:\s*(?!Úroveň\s*\d)(\S.*)$/i)).find(Boolean)
+  const culture = parts
+    .map((p) => p.match(/rychlá volba:\s*(?!(?:Úroveň\s*\d|\d+\s*úroveň))(\S.*)$/i))
+    .find(Boolean)
   return {
     name: m[1].trim(),
     attribute,
     attributeNote: note,
-    quickPickLevel: quick ? Number(quick[1]) : undefined,
+    quickPickLevel: quick ? Number(quick[1] ?? quick[2]) : undefined,
     quickPickCulture: culture ? culture[1].trim() : undefined,
   }
 }

@@ -12,4 +12,26 @@ describe.skipIf(!existsSync(file))('lokální balíček SRD', () => {
     expect(pack.professions).toHaveLength(15)
     expect(pack.professions.every((p) => p.abilities.length === 12)).toBe(true)
   })
+
+  it('má data pro tvorbu postavy', () => {
+    const pack: ContentPack = JSON.parse(readFileSync(file, 'utf8'))
+    expect(pack.races).toHaveLength(5)
+    expect(pack.races!.every((r) => r.cultures.length === 3 && r.abilities.length === 5)).toBe(true)
+    // ke každé kultuře je právě jedna doporučená rasová schopnost
+    for (const r of pack.races!)
+      for (const c of r.cultures)
+        expect(r.abilities.filter((a) => a.quickPickCulture === c.name)).toHaveLength(1)
+    // ke každé úrovni 1–5 základního povolání nejvýš jedna doporučená schopnost
+    // (v knize má Mastičkář doporučené jen úrovně 1–4)
+    for (const p of pack.professions.filter((x) => x.kind === 'zakladni')) {
+      const levels = p.abilities.map((a) => a.quickPickLevel).filter(Boolean)
+      expect(new Set(levels).size).toBe(levels.length)
+      expect(levels.length).toBeGreaterThanOrEqual(4)
+      expect(levels.every((l) => l! >= 1 && l! <= 5)).toBe(true)
+    }
+    expect(pack.traits).toHaveLength(6)
+    expect(pack.startingKits!.map((k) => k.cash)).toEqual([600, 240, 120])
+    expect(pack.equipment!.length).toBe(8)
+    expect(pack.races![0].summary).not.toMatch(/na straně/)
+  })
 })

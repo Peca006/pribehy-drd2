@@ -35,3 +35,17 @@ Knihy DrD2 a Truhlice jsou autorská díla třetích stran a **nejsou součást�
 ## Licence
 
 Kód: GPL-3.0-or-later, viz [LICENSE](LICENSE). Licence kódu se netýká obsahových balíčků ani textů pravidel.
+
+## Struktura aplikace
+
+Každá funkce je samostatný **modul** (`src/modules/<id>/`), který se zaregistruje do registru
+(`src/core/modules.ts`) a je dostupný přes adresu `#/<id>/…`. Pořadí v navigaci a viditelnost určuje
+modul sám, seznam modulů je v `src/modules/index.ts`. Moduly se nevolají napřímo, ale přes směrovač
+(`go('postavy', id)`), takže je lze snadno přeskládat nebo otevřít z jiného místa.
+
+- `src/core/` – logika bez uživatelského rozhraní: obsahové balíčky, model postavy (deník změn),
+  směrovač, odkazy mezi pojmy a kapitolami.
+- `src/modules/` – funkce: `characters` (deníky postav), `creator` (průvodce tvorbou postavy,
+  kroky v `steps/` se řadí v `steps.ts`), `reader` (příručka), `library` (balíčky).
+- `src/ui/` – sdílené komponenty (zobrazení textů v mini-markdownu, bloky kapitol).
+- Odkazy `chapter:ID#kotva` a `term:ID` v textech se otevírají z kteréhokoli modulu.
