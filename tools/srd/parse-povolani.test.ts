@@ -70,3 +70,14 @@ describe('parseProfessions', () => {
     expect(validatePack(pack)).toEqual([])
   })
 })
+
+describe('opravy zjevných chyb SRD', () => {
+  it('odstraní zbytek značky „CHYBA!!!“ z nadpisu schopnosti i z ID', () => {
+    const html = `<main><div id="content"><h2>Hrdina</h2><h3>Zvláštní schopnosti</h3><h4>Zloději těl CHYBA!!! (Duše)</h4><p>Text.</p></div></main>`
+    const [p] = parseProfessions(html, 'pokrocile')
+    expect(p.abilities[0]).toMatchObject({
+      id: 'schopnost:hrdina/zlodeji-tel',
+      name: 'Zloději těl',
+    })
+  })
+})

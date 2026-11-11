@@ -42,3 +42,14 @@ export function slug(s) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 }
+
+/** Interní odkaz SRD `/zakladni-prirucka/31-xxx.html#kotva` => `chapter:31-xxx#kotva`; ostatní se ponechají. */
+function link(href, text) {
+  const m = href.match(/^\/(?:zakladni-prirucka|bestiar)\/([^#]+?)\.html(#.*)?$/)
+  return `[${text}](${m ? `chapter:${m[1]}${m[2] ?? ''}` : href})`
+}
+
+/** Známé zjevné chyby zdrojového SRD (zbylé značky autora), opravené už při převodu. */
+export function srdFix(text) {
+  return text.replace(/\s*CHYBA!+/g, '')
+}

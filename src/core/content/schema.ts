@@ -1,6 +1,6 @@
 // Schéma obsahového balíčku (content pack). Aplikace sama žádné texty pravidel neobsahuje;
 // balíčky se načítají zvlášť. Texty jsou v „mini-markdownu“: odstavce odděleny prázdným řádkem,
-// `*kurzíva*`, `**tučně**`, `***herní pojem***`, seznamy řádky začínajícími `- `.
+// `*kurzíva*`, `**tučně**`, `***herní pojem***`, odkazy `[text](chapter:ID#kotva)`, seznamy `- `.
 
 export const PACK_FORMAT = 1
 
@@ -53,8 +53,34 @@ export interface Profession {
   abilities: Ability[]
 }
 
+export interface ListItem {
+  text: Markdown
+  items?: ListItem[]
+}
+
+/** Blok textu kapitoly. Nadpisy jsou ploché (úroveň 2–4); úroveň 1 je název kapitoly. */
+export type Block =
+  | { type: 'heading'; level: 2 | 3 | 4; id: string; text: string }
+  | { type: 'p'; text: Markdown }
+  | { type: 'list'; items: ListItem[] }
+  /** citace (typicky „Příklad“) */
+  | { type: 'quote'; blocks: Block[] }
+  /** rámeček s nadpisem (zdůrazněné pravidlo, rada) */
+  | { type: 'card'; title: string; blocks: Block[] }
+  | { type: 'table'; header: string[]; align: ('left' | 'right' | 'center')[]; rows: Markdown[][] }
+  | { type: 'image'; alt: string; src: string }
+  | { type: 'rule' }
+
+export interface Chapter {
+  /** např. `31-zakladni-pravidla` (pořadí podle čísla) */
+  id: string
+  title: string
+  blocks: Block[]
+}
+
 export interface ContentPack {
   manifest: PackManifest
+  chapters?: Chapter[]
   professions: Profession[]
 }
 

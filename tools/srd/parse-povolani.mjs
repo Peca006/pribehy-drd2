@@ -1,9 +1,9 @@
 import { parse } from 'node-html-parser'
-import { blockMd, inlineMd, slug } from './html-md.mjs'
+import { blockMd, inlineMd, slug, srdFix } from './html-md.mjs'
 
 const ATTRS = ['Tělo', 'Duše', 'Vliv']
 
-const headingText = (el) => inlineMd(el).replace(/[*]/g, '').trim()
+const headingText = (el) => srdFix(inlineMd(el).replace(/[*]/g, '').trim())
 
 /** Rozloží nadpis „Název (Tělo, rychlá volba: Úroveň 3)“. */
 export function parseTitle(text) {
