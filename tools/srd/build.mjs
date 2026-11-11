@@ -5,6 +5,14 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { readdirSync } from 'node:fs'
 import { parseProfessions } from './parse-povolani.mjs'
 import { parseChapter } from './parse-chapter.mjs'
+import {
+  CREATION_RULES,
+  deriveEquipment,
+  deriveRaces,
+  deriveStartingKits,
+  deriveTerms,
+  deriveTraits,
+} from './derive.mjs'
 
 const dir = 'reference/srd/'
 const read = (f) => readFileSync(`${dir}${f}`, 'utf8')
@@ -19,6 +27,7 @@ const chapters = readdirSync(dir)
   .sort()
   .map((f) => parseChapter(read(f), f.replace('zakladni-prirucka__', '').replace('.html', '')))
 
+const { races, common } = deriveRaces(chapters)
 const pack = {
   manifest: {
     format: 1,
@@ -29,6 +38,13 @@ const pack = {
   },
   chapters,
   professions,
+  races,
+  commonRaceAbilities: common,
+  traits: deriveTraits(chapters),
+  equipment: deriveEquipment(chapters),
+  startingKits: deriveStartingKits(chapters),
+  creation: CREATION_RULES,
+  terms: deriveTerms(chapters),
 }
 
 // Opravy SRD podle tištěné knihy (drd2-pravidla.pdf); viz `npm run compare:srd`. Počet zásahů je pevně daný.

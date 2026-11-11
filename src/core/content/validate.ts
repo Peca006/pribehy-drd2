@@ -30,5 +30,24 @@ export function validatePack(pack: ContentPack): string[] {
       if (!a.text) errors.push(`${a.id}: prázdný text`)
     }
   }
+  for (const r of pack.races ?? []) {
+    unique(r.id)
+    if (!r.abilities.length) errors.push(`${r.id}: žádné rasové schopnosti`)
+    const cultures = new Set(r.cultures.map((c) => c.name))
+    for (const a of r.abilities) {
+      unique(a.id)
+      if (a.attribute && !ATTRS.includes(a.attribute))
+        errors.push(`${a.id}: neplatná vlastnost „${a.attribute}“`)
+      if (a.quickPickCulture && !cultures.has(a.quickPickCulture))
+        errors.push(`${a.id}: rychlá volba odkazuje na neznámou kulturu „${a.quickPickCulture}“`)
+    }
+  }
+  for (const g of pack.equipment ?? []) {
+    unique(g.id)
+    for (const i of g.items) unique(i.id)
+  }
+  for (const t of pack.traits ?? []) unique(t.id)
+  for (const k of pack.startingKits ?? []) unique(k.id)
+  for (const t of pack.terms ?? []) unique(t.id)
   return errors
 }
