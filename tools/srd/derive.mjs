@@ -225,3 +225,92 @@ export const CREATION_RULES = {
   abilitiesPerLevel: 1,
   purchaseBudget: 900,
 }
+
+/** Hrubý kmen českého slova: prvních 4 písmen (sjednotí „manévr/manévry/manévru“, „ohrožení/ohrožením“). */
+export const stemOf = (w) => w.toLowerCase().slice(0, 4)
+
+function collectTexts(pack) {
+  const out = []
+  const note = (t) => t && out.push(t)
+  const walk = (bs) => {
+    for (const b of bs ?? []) {
+      note(b.text)
+      if (b.items)
+        (function w(i) {
+          i.forEach((x) => (note(x.text), x.items && w(x.items)))
+        })(b.items)
+      if (b.rows) b.rows.flat().forEach(note)
+      walk(b.blocks)
+    }
+  }
+  for (const c of pack.chapters) walk(c.blocks)
+  for (const p of pack.professions) {
+    note(p.intro)
+    p.abilities.forEach((a) => (note(a.text), note(a.flavor)))
+  }
+  for (const r of pack.races ?? []) r.abilities.forEach((a) => note(a.text))
+  return out
+}
+
+/**
+ * Slovník pojmů: pojmy jsou v textu sázené ***tučnou kurzívou***. Pojem dostane vysvětlení, pokud
+ * existuje nadpis (v kapitolách o pravidlech), jehož slovo má stejný kmen jako některý častý pojem;
+ * všechny tvary pojmu z textu se stanou aliasy. `known` jsou už hotové pojmy (např. manévry).
+ */
+export function deriveGlossary(pack, known = []) {
+  const forms = new Map() // tvar → počet
+  for (const t of collectTexts(pack))
+    for (const m of t.matchAll(/\*\*\*([^*]+?)\*\*\*/g)) {
+      const k = m[1].trim().toLowerCase()
+      forms.set(k, (forms.get(k) ?? 0) + 1)
+    }
+  const frequent = [...forms].filter(([, n]) => n >= 3).map(([k]) => k)
+  const taken = new Set(known.flatMap((t) => [t.name, ...(t.aliases ?? [])]))
+  const terms = [...known]
+  const add = (word, ch, h) => {
+    const id = `pojem:${slug(word)}`
+    if (terms.some((t) => t.id === id)) return
+    const stem = stemOf(word)
+    const aliases = frequent.filter((f) => !f.includes(' ') && stemOf(f) === stem && !taken.has(f))
+    if (!aliases.length && !forms.has(word)) return
+    const summary = ch.blocks
+      .slice(ch.blocks.indexOf(h) + 1)
+      .find((b) => b.type === 'p')
+      ?.text.split(/(?<=\.)\s/)[0]
+    const t = {
+      id,
+      name: word,
+      aliases: [...new Set([word, ...aliases])].filter((a) => a !== word),
+      target: `chapter:${ch.id}#${h.id}`,
+      ...(summary ? { summary } : {}),
+    }
+    for (const n of [t.name, ...t.aliases]) taken.add(n)
+    terms.push(t)
+  }
+  const chapters = pack.chapters.filter((c) => /^3[1-7]/.test(c.id))
+  const headings = chapters.flatMap((ch) =>
+    ch.blocks.filter((b) => b.type === 'heading').map((h) => [ch, h, plainHeading(h)]),
+  )
+  // 1. průchod: nadpis je přímo jeden pojem („Výhoda“, „Sudba“)
+  for (const [ch, h, title] of headings) {
+    const word = title
+      .replace(/\(.*\)/, '')
+      .trim()
+      .toLowerCase()
+    if (word && !word.includes(' ')) add(word, ch, h)
+  }
+  // 2. průchod: pojem se vyskytuje ve víceslovném nadpisu („Výsledek hodu, Ohrožení a vyčerpání“)
+  for (const [ch, h, title] of headings)
+    for (const w of title
+      .toLowerCase()
+      .split(/[^\p{L}]+/u)
+      .filter((x) => x.length >= 4)) {
+      const hit = frequent.find((f) => !f.includes(' ') && stemOf(f) === stemOf(w))
+      const total = [...forms]
+        .filter(([f]) => stemOf(f) === stemOf(w))
+        .reduce((n, [, c]) => n + c, 0)
+      if (hit && total >= 40 && !taken.has(w) && !terms.some((t) => stemOf(t.name) === stemOf(w)))
+        add(w, ch, h)
+    }
+  return terms
+}

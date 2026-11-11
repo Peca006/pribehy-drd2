@@ -10,6 +10,7 @@ import {
   deriveEquipment,
   deriveRaces,
   deriveStartingKits,
+  deriveGlossary,
   deriveTerms,
   deriveTraits,
 } from './derive.mjs'
@@ -44,8 +45,9 @@ const pack = {
   equipment: deriveEquipment(chapters),
   startingKits: deriveStartingKits(chapters),
   creation: CREATION_RULES,
-  terms: deriveTerms(chapters),
+  terms: [],
 }
+pack.terms = deriveGlossary(pack, deriveTerms(chapters))
 
 // Opravy SRD podle tištěné knihy (drd2-pravidla.pdf); viz `npm run compare:srd`. Počet zásahů je pevně daný.
 const PDF_FIXES = [

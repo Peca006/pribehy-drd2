@@ -49,3 +49,11 @@ export function findAbility(id: ContentId): Ability | undefined {
   }
   return undefined
 }
+
+/** Tvar pojmu (malými písmeny) → ID pojmu; pojmy v textu se podle něj stávají odkazy. */
+export function termIndex(): Map<string, string> {
+  const m = new Map<string, string>()
+  for (const t of terms())
+    for (const f of [t.name, ...(t.aliases ?? [])]) m.set(f.toLowerCase(), t.id)
+  return m
+}
