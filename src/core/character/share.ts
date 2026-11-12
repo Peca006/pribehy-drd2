@@ -9,6 +9,7 @@ import {
   type Character,
   type CharacterLog,
 } from './model'
+import { sanitizePartyBundle, type PartyBundle } from '../party/share'
 import { scarsOf } from './drafts'
 import { groupRevisions, type Revision } from './revisions'
 
@@ -61,7 +62,7 @@ export interface ReviewBundle {
   note: string
 }
 
-export type Bundle = RevisionBundle | ReviewBundle
+export type Bundle = RevisionBundle | ReviewBundle | PartyBundle
 
 // --- sestavení ---
 
@@ -229,6 +230,7 @@ export function sanitizeBundle(raw: unknown): { bundle?: Bundle; errors: string[
   if (typeof raw !== 'object' || raw === null) return { errors: ['Nejde o balíček postavy.'] }
   const r = raw as Record<string, unknown>
   if (r.v !== SHARE_VERSION) return { errors: [`Nepodporovaná verze balíčku: ${String(r.v)}`] }
+  if (r.type === 'druzina') return sanitizePartyBundle(raw)
   const char = str(r.char, 100)
   if (!char) return { errors: ['Balíčku chybí označení postavy.'] }
   const name = str(r.name, 200) ?? ''

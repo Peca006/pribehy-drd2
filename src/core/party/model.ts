@@ -17,8 +17,17 @@ export interface SessionRecord {
   applied: string[]
 }
 
+/** Průvodce vede družinu (jeho zařízení je pravda); hráč má její kopii a navrhuje zápisy. */
+export type PartyRole = 'pruvodce' | 'hrac'
+
+/** `navrh` = zápis hráče čekající na schválení Průvodce, `zamitnuto` = Průvodce ho zamítl; bez příznaku = schváleno. */
+export type EntryStatus = 'navrh' | 'zamitnuto'
+
 export interface JournalEntry {
   id: string
+  status?: EntryStatus
+  /** poslední úprava (ISO); bez ní platí `at` */
+  edited?: string
   /** den sezení nebo zápisu (ISO datum) */
   at: string
   by: string
@@ -29,12 +38,20 @@ export interface JournalEntry {
 
 export interface Party {
   id: string
+  /** chybí-li (starší družiny), vede ji toto zařízení */
+  role?: PartyRole
   name: string
   notes: string
   members: Member[]
   journal: JournalEntry[]
+  /** ID zamítnutých návrhů hráčů (Průvodce je posílá zpět, aby hráči věděli) */
+  rejected?: string[]
+  /** kdy se naposledy odeslala družina hráčům */
+  lastSent?: string
   updated: string
 }
+
+export const roleOf = (p: Party): PartyRole => p.role ?? 'pruvodce'
 
 let counter = 0
 export const newPartyId = () =>
@@ -42,6 +59,7 @@ export const newPartyId = () =>
 
 export const emptyParty = (name = ''): Party => ({
   id: newPartyId(),
+  role: 'pruvodce',
   name,
   notes: '',
   members: [],

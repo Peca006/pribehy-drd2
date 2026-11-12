@@ -2,12 +2,20 @@
   import { onMount } from 'svelte'
   import { appendEvents, getLog, listLogs } from '../../core/character/store'
   import { characterOf, eventsFor, type CharacterLog } from '../../core/character/model'
-  import { newPartyId, type JournalEntry, type Member, type Party } from '../../core/party/model'
+  import {
+    newPartyId,
+    roleOf,
+    type JournalEntry,
+    type Member,
+    type Party,
+  } from '../../core/party/model'
+  import { approveEntry, rejectEntry } from '../../core/party/share'
   import { deleteParty, getParty, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
 
-  // Družina: členové, poznámky a žurnál dobrodružství (zápisy a zápisy ze sezení s rozdanými zkušenostmi).
+  // Družina: členové, poznámky a žurnál dobrodružství. Průvodce vede družinu (schvaluje zápisy hráčů a zapisuje
+  // sezení se zkušenostmi); hráč má její kopii a navrhuje zápisy, které Průvodce přijme nebo zamítne.
   let { id }: { id: string } = $props()
 
   let party = $state<Party | undefined>(undefined)
@@ -27,11 +35,13 @@
   }
   onMount(load)
 
+  const gm = $derived(party ? roleOf(party) === 'pruvodce' : false)
   const nameOfChar = (cid: string) => {
     const l = logs.find((x) => x.id === cid)
     return l ? characterOf(l).name || '(beze jména)' : undefined
   }
   const free = $derived(logs.filter((l) => !party?.members.some((m) => m.characterId === l.id)))
+  const proposals = $derived(party?.journal.filter((e) => e.status === 'navrh') ?? [])
   const save = async () => {
     if (party) await saveParty($state.snapshot(party) as Party)
   }
@@ -62,6 +72,8 @@
       id: newPartyId(),
       at: new Date().toISOString(),
       by: settings.author,
+      // zápis hráče je návrh, který musí schválit Průvodce
+      ...(gm ? {} : { status: 'navrh' as const }),
       title: entryTitle.trim() || 'Zápis',
       text: entryText.trim(),
     }
@@ -70,15 +82,30 @@
     entryText = ''
     await save()
   }
+  /** Hráč smí měnit a mazat jen vlastní návrhy; Průvodce všechno. */
+  const mine = (e: JournalEntry) => gm || e.status === 'navrh' || e.status === 'zamitnuto'
   async function removeEntry(e: JournalEntry) {
-    if (!party || !confirm(`Smazat zápis „${e.title}“?`)) return
+    if (!party || !mine(e) || !confirm(`Smazat zápis „${e.title}“?`)) return
     party.journal = party.journal.filter((x) => x.id !== e.id)
     await save()
   }
   async function saveEdit(e: JournalEntry) {
     editing = ''
+    e.edited = new Date().toISOString()
+    // upravený zamítnutý návrh jde znovu ke schválení
+    if (e.status === 'zamitnuto') e.status = 'navrh'
     await save()
-    void e
+  }
+  async function approve(e: JournalEntry) {
+    if (!party) return
+    party = approveEntry($state.snapshot(party) as Party, e.id)
+    await save()
+  }
+  async function reject(e: JournalEntry) {
+    if (!party || !confirm(`Zamítnout návrh „${e.title}“? Zápis se odstraní a hráč se to dozví.`))
+      return
+    party = rejectEntry($state.snapshot(party) as Party, e.id)
+    await save()
   }
   const day = (iso: string) => new Date(iso).toLocaleDateString('cs-CZ')
 
@@ -120,68 +147,107 @@
 {:else if !party}
   <p class="muted">Družina nenalezena. <a href="#/druziny">Zpět na seznam</a></p>
 {:else}
-  <input class="title" bind:value={party.name} onblur={save} aria-label="Název družiny" />
+  {#if gm}
+    <input class="title" bind:value={party.name} onblur={save} aria-label="Název družiny" />
+    <p class="muted">Družinu vedete vy (Průvodce).</p>
+  {:else}
+    <h1>{party.name}</h1>
+    <p class="muted">
+      Kopie družiny od Průvodce. Své zápisy můžete navrhovat, Průvodce je schvaluje.
+    </p>
+  {/if}
+  <p class="actions">
+    <a class="btn" href={'#/druziny/' + party.id + '/sdilet'}>Sdílet…</a>
+    <a class="btn" href="#/postavy/import">Import…</a>
+  </p>
 
   <h2>Členové</h2>
   {#each party.members as m (m.id)}
     <div class="row">
       <span>
         <strong>{m.name}</strong>
-        {#if m.characterId}
+        {#if m.characterId && nameOfChar(m.characterId)}
           <a class="muted" href={'#/postavy/' + m.characterId}>postava v zařízení</a>
         {:else}<span class="muted">postava u hráče</span>{/if}
       </span>
-      <button onclick={() => removeMember(m)} aria-label={`Odebrat ${m.name}`}>✕</button>
+      {#if gm}<button onclick={() => removeMember(m)} aria-label={`Odebrat ${m.name}`}>✕</button
+        >{/if}
     </div>
   {:else}
     <p class="muted">Družina zatím nemá členy.</p>
   {/each}
-  {#if free.length}
+  {#if gm}
+    {#if free.length}
+      <div class="row">
+        <select bind:value={pick} aria-label="Postava ze zařízení">
+          <option value="">Přidat postavu z tohoto zařízení…</option>
+          {#each free as l}<option value={l.id}>{characterOf(l).name || '(beze jména)'}</option
+            >{/each}
+        </select>
+        <button disabled={!pick} onclick={addLocal}>Přidat</button>
+      </div>
+    {/if}
     <div class="row">
-      <select bind:value={pick} aria-label="Postava ze zařízení">
-        <option value="">Přidat postavu z tohoto zařízení…</option>
-        {#each free as l}<option value={l.id}>{characterOf(l).name || '(beze jména)'}</option
-          >{/each}
-      </select>
-      <button disabled={!pick} onclick={addLocal}>Přidat</button>
+      <input
+        bind:value={freeName}
+        placeholder="Jiný člen (jméno hráče nebo postavy)"
+        aria-label="Jméno člena"
+        onkeydown={(e) => e.key === 'Enter' && addFree()}
+      />
+      <button disabled={!freeName.trim()} onclick={addFree}>Přidat</button>
     </div>
-  {/if}
-  <div class="row">
-    <input
-      bind:value={freeName}
-      placeholder="Jiný člen (jméno hráče nebo postavy)"
-      aria-label="Jméno člena"
-      onkeydown={(e) => e.key === 'Enter' && addFree()}
-    />
-    <button disabled={!freeName.trim()} onclick={addFree}>Přidat</button>
-  </div>
 
-  <h2>Poznámky k družině</h2>
-  <textarea rows="3" bind:value={party.notes} onblur={save} aria-label="Poznámky k družině"
-  ></textarea>
+    <h2>Poznámky k družině</h2>
+    <textarea rows="3" bind:value={party.notes} onblur={save} aria-label="Poznámky k družině"
+    ></textarea>
+  {:else if party.notes}
+    <h2>Poznámky k družině</h2>
+    <p class="text">{party.notes}</p>
+  {/if}
+
+  {#if gm && proposals.length}
+    <h2>Návrhy hráčů ({proposals.length})</h2>
+    {#each proposals as e (e.id)}
+      <article class="panel">
+        <h3>{e.title}</h3>
+        <p class="muted">{day(e.at)} · {e.by}</p>
+        {#if e.text}<p class="text">{e.text}</p>{/if}
+        <p class="actions">
+          <button class="primary" onclick={() => approve(e)}>Přijmout do žurnálu</button>
+          <button onclick={() => reject(e)}>Zamítnout</button>
+        </p>
+      </article>
+    {/each}
+  {/if}
 
   <h2>Žurnál dobrodružství</h2>
-  <p class="actions">
-    <a class="btn primary" href={'#/druziny/' + party.id + '/sezeni'}>Nové sezení (zkušenosti)</a>
-  </p>
+  {#if gm}
+    <p class="actions">
+      <a class="btn primary" href={'#/druziny/' + party.id + '/sezeni'}>Nové sezení (zkušenosti)</a>
+    </p>
+  {/if}
   <div class="panel">
     <input bind:value={entryTitle} placeholder="Nadpis zápisu" aria-label="Nadpis zápisu" />
     <textarea rows="3" bind:value={entryText} placeholder="Co se stalo…" aria-label="Text zápisu"
     ></textarea>
-    <button disabled={!entryTitle.trim() && !entryText.trim()} onclick={addEntry}
-      >Přidat zápis</button
-    >
+    <button disabled={!entryTitle.trim() && !entryText.trim()} onclick={addEntry}>
+      {gm ? 'Přidat zápis' : 'Navrhnout zápis Průvodci'}
+    </button>
   </div>
   {#if message}<p role="status">{message}</p>{/if}
 
-  {#each party.journal as e (e.id)}
+  {#each party.journal.filter((e) => (gm ? e.status !== 'navrh' : true)) as e (e.id)}
     <article class="panel">
       {#if editing === e.id}
         <input bind:value={e.title} aria-label="Nadpis" />
         <textarea rows="4" bind:value={e.text} aria-label="Text"></textarea>
         <button class="primary" onclick={() => saveEdit(e)}>Uložit</button>
       {:else}
-        <h3>{e.title}</h3>
+        <h3>
+          {e.title}
+          {#if e.status === 'navrh'}<span class="badge">čeká na schválení</span>{/if}
+          {#if e.status === 'zamitnuto'}<span class="badge off">zamítnuto Průvodcem</span>{/if}
+        </h3>
         <p class="muted">{day(e.at)} · {e.by}</p>
         {#if e.text}<p class="text">{e.text}</p>{/if}
         {#if e.session}
@@ -192,17 +258,19 @@
                 {m.name} +{e.session.xp[m.id]}
                 {#if e.session.applied.includes(m.id)}
                   <span class="muted">(připsáno)</span>
-                {:else if m.characterId}
+                {:else if m.characterId && nameOfChar(m.characterId)}
                   <button onclick={() => applyXp(e, m)}>Připsat postavě</button>
                 {:else}<span class="muted">(předat hráči)</span>{/if}
               </li>
             {/each}
           </ul>
         {/if}
-        <p class="actions">
-          <button onclick={() => (editing = e.id)}>Upravit</button>
-          <button onclick={() => removeEntry(e)}>Smazat</button>
-        </p>
+        {#if mine(e)}
+          <p class="actions">
+            <button onclick={() => (editing = e.id)}>Upravit</button>
+            <button onclick={() => removeEntry(e)}>Smazat</button>
+          </p>
+        {/if}
       {/if}
     </article>
   {:else}
@@ -242,5 +310,18 @@
   }
   article h3 {
     margin: 0;
+  }
+  .badge {
+    font-size: 0.7rem;
+    font-weight: normal;
+    padding: 0.05rem 0.5rem;
+    border: 1px solid var(--drd-accent);
+    border-radius: 1rem;
+    margin-left: 0.3rem;
+    white-space: nowrap;
+  }
+  .badge.off {
+    border-color: var(--drd-muted);
+    text-decoration: line-through;
   }
 </style>

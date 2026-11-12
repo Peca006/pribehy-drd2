@@ -3,10 +3,11 @@
   import { emptyParty, type Party } from '../../core/party/model'
   import { listParties, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
+  import PartyShare from './PartyShare.svelte'
   import PartyView from './PartyView.svelte'
   import SessionForm from './SessionForm.svelte'
 
-  // params: [] = seznam družin, [id] = družina, [id, 'sezeni'] = nové sezení
+  // params: [] = seznam družin, [id] = družina, [id, 'sezeni'] = nové sezení, [id, 'sdilet'] = sdílení
   let { params }: { params: string[] } = $props()
 
   let parties = $state.raw<Party[]>([])
@@ -25,6 +26,8 @@
 
 {#if params[0] && params[1] === 'sezeni'}
   <SessionForm id={params[0]} />
+{:else if params[0] && params[1] === 'sdilet'}
+  <PartyShare id={params[0]} />
 {:else if params[0]}
   <PartyView id={params[0]} />
 {:else}
@@ -35,7 +38,10 @@
   {#each parties as p (p.id)}
     <a class="btn panel row" href={'#/druziny/' + p.id}>
       <strong>{p.name}</strong>
-      <span class="muted">členů: {p.members.length} · zápisů v žurnálu: {p.journal.length}</span>
+      <span class="muted"
+        >{p.role === 'hrac' ? 'kopie od Průvodce · ' : ''}členů: {p.members.length} · zápisů v žurnálu:
+        {p.journal.length}</span
+      >
     </a>
   {:else}
     <p class="muted">Zatím žádná družina.</p>
@@ -49,6 +55,7 @@
     />
     <button class="primary" onclick={create}>+ Nová družina</button>
   </div>
+  <p><a class="btn" href="#/postavy/import">Import družiny nebo postavy…</a></p>
 {/if}
 
 <style>

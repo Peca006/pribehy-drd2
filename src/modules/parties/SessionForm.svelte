@@ -4,6 +4,7 @@
   import { characterOf, eventsFor } from '../../core/character/model'
   import {
     newPartyId,
+    roleOf,
     sessionAward,
     XP_ATTENDANCE,
     XP_REWARD_MAX,
@@ -85,6 +86,9 @@
 
 {#if !party}
   <p class="muted">Družina nenalezena. <a href="#/druziny">Zpět na seznam</a></p>
+{:else if roleOf(party) !== 'pruvodce'}
+  <p class="muted">Sezení zapisuje a zkušenosti rozděluje Průvodce družiny.</p>
+  <p><a class="btn" href={'#/druziny/' + id}>← Zpět na družinu</a></p>
 {:else}
   <h1>Nové sezení</h1>
   <label>Název <input bind:value={title} /></label>

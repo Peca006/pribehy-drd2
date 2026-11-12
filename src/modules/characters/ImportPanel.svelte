@@ -16,6 +16,8 @@
   import { appendEvents, getLog, saveLog } from '../../core/character/store'
   import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
   import { onMount } from 'svelte'
+  import { mergeIncoming, type MergeResult } from '../../core/party/share'
+  import { getParty, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import QrScanner from '../../ui/QrScanner.svelte'
@@ -38,6 +40,12 @@
   let replyNote = $state('')
   let replyBundle = $state.raw<ReviewBundle | undefined>(undefined)
   let showReplyQr = $state(false)
+  let partyMerge = $state.raw<MergeResult | undefined>(undefined)
+  async function acceptParty() {
+    if (!bundle || bundle.type !== 'druzina' || !partyMerge?.party) return
+    await saveParty(partyMerge.party)
+    go('druziny', bundle.party.id)
+  }
   let scanner = $state<{ stop: () => void } | undefined>(undefined)
   let scanInfo = $state('')
   const assembler = loadAssembler()
@@ -47,12 +55,17 @@
     reply = ''
     bundle = undefined
     analysis = undefined
+    partyMerge = undefined
     errors = []
     if (!text.trim()) return
     const r = await decodeBundle(text)
     errors = r.errors
     bundle = r.bundle
     if (!bundle) return
+    if (bundle.type === 'druzina') {
+      partyMerge = mergeIncoming(await getParty(bundle.party.id), bundle)
+      return
+    }
     log = await getLog(bundle.char)
     if (bundle.type === 'revize') {
       analysis = analyzeImport(log, bundle)
@@ -287,9 +300,54 @@
       >{showReplyQr ? 'Skrýt QR' : 'Ukázat QR'}</button
     >
     {#if canShare}<button onclick={shareReply}>Sdílet…</button>{/if}
-    <a class="btn" href={'#/postavy/' + bundle?.char}>Otevřít postavu</a>
+    <a class="btn" href={'#/postavy/' + (bundle && 'char' in bundle ? bundle.char : '')}
+      >Otevřít postavu</a
+    >
   </p>
   {#if showReplyQr}<QrView code={reply} />{/if}
+{/if}
+
+{#if bundle?.type === 'druzina' && partyMerge}
+  <h2>Družina {bundle.party.name}</h2>
+  <p>
+    {bundle.from === 'pruvodce'
+      ? `Družinu posílá Průvodce${bundle.author && bundle.author !== 'hráč' ? ' ' + bundle.author : ''}.`
+      : `Návrhy zápisů od hráče${bundle.author && bundle.author !== 'hráč' ? ' ' + bundle.author : ''} (Průvodce je schválí nebo zamítne).`}
+  </p>
+  {#if partyMerge.error}
+    <p class="error" role="alert">{partyMerge.error}</p>
+  {:else}
+    {#if partyMerge.report.created}
+      <p>
+        V zařízení ještě nemáte, vznikne vaše kopie družiny ({bundle.party.members.length} členů).
+      </p>
+    {/if}
+    {#each partyMerge.report.added as e (e.id)}
+      <div class="panel">
+        <strong>{e.title || 'Zápis'}</strong>
+        <span class="muted"> · {e.by} · {new Date(e.at).toLocaleDateString('cs-CZ')} · nový</span>
+        {#if e.text}<p class="entry">{e.text}</p>{/if}
+      </div>
+    {/each}
+    {#each partyMerge.report.updated as e (e.id)}
+      <div class="panel">
+        <strong>{e.title || 'Zápis'}</strong>
+        <span class="muted"> · změněný zápis</span>
+        {#if e.text}<p class="entry">{e.text}</p>{/if}
+      </div>
+    {/each}
+    {#if partyMerge.report.ignored}<p class="muted">
+        Beze změny: {partyMerge.report.ignored}.
+      </p>{/if}
+    <button
+      class="primary"
+      disabled={!partyMerge.report.created &&
+        !partyMerge.report.added.length &&
+        !partyMerge.report.updated.length &&
+        bundle.from === 'hrac'}
+      onclick={acceptParty}>Přijmout</button
+    >
+  {/if}
 {/if}
 
 {#if bundle?.type === 'odpoved'}
@@ -335,6 +393,9 @@
     list-style: none;
     padding-left: 0.5rem;
     font-size: 0.9rem;
+  }
+  .entry {
+    white-space: pre-wrap;
   }
   .actions {
     display: flex;

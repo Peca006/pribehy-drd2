@@ -182,3 +182,15 @@ sdílet přes `navigator.share` jako obrázek, QR na celou obrazovku.
   (nasadit verzi A, otevřít, nasadit verzi B, otevřít znovu: má se objevit pruh „Je dostupná nová verze“).
   Pozor: první nasazení s tímto kódem se do telefonů dostane ještě starým mechanismem (autoUpdate), až další
   verze už přes pruh.
+
+## Sdílení družiny a žurnálu (první verze hotovo)
+
+Pravda je u **Průvodce** (`core/party/share.ts`, `PartyShare.svelte`, Import v `ImportPanel`): Průvodce posílá družinu
+(členy, poznámky, schválené zápisy a zkušenosti ze sezení; jen nové od posledního odeslání, nebo celou) a hráč si
+ji uloží jako **kopii** (role `hrac`). Hráč navrhuje zápisy, které Průvodce **přijme** do žurnálu, nebo **zamítne**
+(zamítnutí se hráčům vrátí s další družinou). Hráč nemění schválené zápisy ani členy; „připsáno“ u zkušeností je
+vždy místní. Přenos jako u postav: kód, soubor, QR (s odkazem do aplikace), Web Share. Ověřeno celým cyklem
+Průvodce → hráč → návrhy → schválení / zamítnutí → hráč.
+
+Zbývá: oddělené role více Průvodců, sdílení členů s postavami (ID postav z jiných zařízení), tajné odměny,
+slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny (zdatnost, povolání).
