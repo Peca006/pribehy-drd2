@@ -1,5 +1,6 @@
 import { emptyCharacter, newId, type Character } from '../../core/character/model'
 import type { Attribute, CreationRules } from '../../core/content/schema'
+import type { DraftData } from './draftData'
 
 /** Rozpracovaná postava v průvodci. Změny z kroků se zapisují přímo sem. */
 export class Draft {
@@ -26,6 +27,33 @@ export class Draft {
       const each = Math.floor(rules.attributePoints / 3)
       this.attributes = { Tělo: each, Duše: each, Vliv: rules.attributePoints - 2 * each }
     }
+  }
+
+  /** Prostá kopie všech vyplněných hodnot (pro uložení). */
+  snapshot(): DraftData {
+    return $state.snapshot({
+      concept: this.concept,
+      name: this.name,
+      raceId: this.raceId,
+      cultureId: this.cultureId,
+      levels: this.levels,
+      attributes: this.attributes,
+      raceAbility: this.raceAbility,
+      weaponKind: this.weaponKind,
+      abilities: this.abilities,
+      trait: this.trait,
+      heroStory: this.heroStory,
+      equipment: this.equipment,
+      cash: this.cash,
+      equipMode: this.equipMode,
+      kitId: this.kitId,
+      cart: this.cart,
+    })
+  }
+
+  /** Přepíše hodnoty uloženými (už očištěnými) daty. */
+  restore(d: DraftData) {
+    Object.assign(this, d)
   }
 
   toCharacter(): Character {
