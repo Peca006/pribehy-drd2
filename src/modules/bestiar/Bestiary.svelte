@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { go } from '../../core/router.svelte'
   import { library } from '../../core/library.svelte'
+  import CreatureImages from './CreatureImages.svelte'
   import CreatureEditor from './CreatureEditor.svelte'
   import CreatureView from './CreatureView.svelte'
   import ExchangePanel from './ExchangePanel.svelte'
@@ -65,6 +66,7 @@
 {:else if creature}
   <nav><a class="btn" href="#/bestiar">← Bestiář</a></nav>
   <CreatureView {creature} />
+  <CreatureImages creatureId={creature.id} />
   <p class="actions">
     {#if isUser(creature)}
       <a class="btn" href={'#/bestiar/uprav/' + encodeURIComponent(creature.id)}>Upravit</a>

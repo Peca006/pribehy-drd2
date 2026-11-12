@@ -1,5 +1,6 @@
 // Stav bestiáře: bytosti z balíčků (jen ke čtení) + vlastní bytosti vypravěče (úpravy, import).
 import type { Creature, CreatureKind } from '../../core/content/schema'
+import { deleteImagesOf } from '../../core/creatures/images'
 import { deleteUserCreature, listUserCreatures, saveUserCreature } from '../../core/creatures/store'
 import { creatureKinds, packCreatures } from '../../core/library.svelte'
 
@@ -16,6 +17,7 @@ export const saveCreature = async (c: Creature) => {
 }
 export const removeCreature = async (id: string) => {
   await deleteUserCreature(id)
+  await deleteImagesOf(id)
   await refreshBestiary()
 }
 

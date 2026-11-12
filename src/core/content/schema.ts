@@ -205,7 +205,7 @@ export interface Creature {
   sections: CreatureSection[]
   /** `user` = vlastní bytost vypravěče; jinak ID balíčku */
   source?: string
-  /** ID bytosti z balíčku, ze které vlastní bytost vznikla (kvůli licenci při sdílení) */
+  /** ID bytosti z balíčku, ze které vlastní bytost vznikla (původ kopie) */
   copiedFrom?: string
 }
 

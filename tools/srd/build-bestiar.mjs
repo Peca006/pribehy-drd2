@@ -5,7 +5,20 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { KINDS, parseCreatures } from './parse-bestiar.mjs'
 import { parseChapter } from './parse-chapter.mjs'
 
-const read = (f) => readFileSync(`reference/srd/bestiar__${f}.html`, 'utf8')
+// Chyby sazby ve zdrojovém HTML SRD (ověřeno proti PDF, `node tools/srd/compare-bestiar.mjs`).
+const HTML_FIXES = [
+  ['mavku lze vyhé svobodit', 'mavku lze vysvobodit'],
+  ['Mnoz nich jsou', 'Mnohé z nich jsou'],
+  [
+    'naposlebůžkům, dy. Neuváženě jsem se vysmívala lidským a když',
+    'naposledy. Neuváženě jsem se vysmívala lidským bůžkům, a když',
+  ],
+]
+const read = (f) => {
+  let html = readFileSync(`reference/srd/bestiar__${f}.html`, 'utf8')
+  for (const [from, to] of HTML_FIXES) html = html.replaceAll(from, to)
+  return html
+}
 const ID = 'drd2-bestiar-2'
 
 const creatures = Object.keys(KINDS).flatMap((f) => parseCreatures(read(f), f, ID))

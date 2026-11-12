@@ -5,7 +5,7 @@
   import { go } from '../../core/router.svelte'
   import { allCreatures, bestiary, refreshBestiary, saveCreature } from './state.svelte'
 
-  // Import a export vlastních bytostí. Bytosti z knižních balíčků se nesdílejí (licence).
+  // Import a export vlastních bytostí.
   let { selected = '' }: { selected?: string } = $props()
   onMount(refreshBestiary)
 
@@ -14,7 +14,6 @@
     if (selected) chosen[selected] = true
   })
   const picked = $derived(bestiary.user.filter((c) => chosen[c.id]))
-  const license = $derived(picked.some((c) => c.copiedFrom))
 
   function download() {
     const blob = new Blob([exportBundle(picked, 'Moje bytosti')], { type: 'application/json' })
@@ -74,12 +73,6 @@
   {#each bestiary.user as c}
     <label class="check"><input type="checkbox" bind:checked={chosen[c.id]} /> {c.name}</label>
   {/each}
-  {#if license}
-    <p class="muted" role="alert">
-      Některé vybrané bytosti vznikly úpravou textu z knihy. Sdílejte je jen tehdy, pokud vám to
-      licence knihy dovoluje.
-    </p>
-  {/if}
   <p class="actions">
     <button class="primary" disabled={!picked.length} onclick={download}>Stáhnout soubor</button>
     <button disabled={!picked.length} onclick={copy}
