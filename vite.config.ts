@@ -9,9 +9,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Družina – Dračí doupě 2',
-        short_name: 'Družina',
-        description: 'Deník postav, družiny a žurnál dobrodružství pro Dračí doupě 2',
+        name: 'Příběhy v Dračím doupěti',
+        short_name: 'Příběhy',
+        description: 'Tvorba a deník postav, bestiář a pravidla pro Dračí doupě 2 – offline',
         lang: 'cs',
         display: 'standalone',
         start_url: './',

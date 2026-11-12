@@ -1,9 +1,10 @@
-# Družina – Dračí doupě 2
+# Příběhy v Dračím doupěti
 
-Offline-first webová aplikace (PWA) pro vypravěče i hráče Dračího doupěte 2: deníky postav, více družin,
-sdílený žurnál dobrodružství a synchronizace bez serveru. Mobile-first, česky.
+Offline-first webová aplikace (PWA) pro vypravěče i hráče Dračího doupěte 2: tvorba a deník postav se
+záznamem změn, bestiář a pravidla po ruce. Bez serveru, data zůstávají ve vašem zařízení. Mobile-first, česky.
 
-Stav: **rané stadium vývoje** (krok 1 – kostra projektu).
+Stav: **rané stadium vývoje**. V plánu jsou ještě družiny, sdílený žurnál dobrodružství a sdílení deníků
+kódem nebo QR.
 
 ## Zásady
 
@@ -35,6 +36,20 @@ Knihy DrD2 a Truhlice jsou autorská díla třetích stran a **nejsou součást�
 ## Licence
 
 Kód: GPL-3.0-or-later, viz [LICENSE](LICENSE). Licence kódu se netýká obsahových balíčků ani textů pravidel.
+
+## Právní upozornění
+
+Tento projekt je **neoficiální fanouškovský nástroj**. Není vytvořen, schválen ani podporován nakladatelstvím
+Altar ani jinými nositeli práv k hře Dračí doupě 2.
+
+Názvy a značky **Altar**, **Dračí doupě**, **DrD 2** (DrD2) a související názvy, loga a označení jsou
+ochrannými známkami či jiným majetkem svých vlastníků a používají se zde pouze k označení hry, se kterou je
+aplikace určena k použití. Texty pravidel, bestiáře a další obsah her jsou autorskými díly svých autorů a
+vydavatelů a řídí se jejich vlastními podmínkami; do aplikace se načítají jen jako samostatné obsahové balíčky
+a jejich použití je na odpovědnosti uživatele.
+
+Software je poskytován „tak, jak je“, bez jakékoli záruky, včetně záruky správnosti či úplnosti pravidel
+(viz GPL-3.0-or-later). Při rozporu s tištěnými knihami platí vždy knihy.
 
 ## Struktura aplikace
 
