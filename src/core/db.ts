@@ -1,8 +1,8 @@
 // Úložiště dat uživatele v IndexedDB (oddělené od obsahových balíčků). Verze se zvyšuje při přidání
 // nového úložiště; stávající data zůstávají.
 const DB = 'drd2-data'
-const VERSION = 3
-export const STORES = ['characters', 'creatures', 'creatureImages'] as const
+const VERSION = 4
+export const STORES = ['characters', 'creatures', 'creatureImages', 'parties'] as const
 export type StoreName = (typeof STORES)[number]
 
 function open(): Promise<IDBDatabase> {

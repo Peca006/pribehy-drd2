@@ -2,6 +2,7 @@
 // nový modul se přidá jedním importem. Moduly se nevolají přímo, ale přes směrovač (`go`).
 import './bestiar'
 import './characters'
+import './parties'
 import './creator'
 import './reader'
 import './library'

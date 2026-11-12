@@ -147,3 +147,15 @@ Samsung A52s nenaskenoval díl o 700 znacích (QR s 89 moduly, asi 3,5 px na mod
 nejvýš 300 znaků, stejně velké, s opravou chyb M (65 modulů, asi 4,7 px) a zobrazené až na 30 rem; střídají se po
 2 s. Počty QR pro zhuštění: 1 až 4 (výchozí 2). Další ladění podle zkušeností: menší díly (200 znaků), větší
 kontrast / celá obrazovka, pomalejší střídání.
+
+## Družiny (první verze hotovo)
+
+Modul **Družina** (`src/modules/parties`, `core/party`): družina má členy (postava v zařízení, nebo jen jméno hráče),
+poznámky a **žurnál dobrodružství** (zápisy s datem a autorem, úpravy, mazání). **Sezení**: přítomní, odměny
+(nejvýš 2 body na hráče, odměnových bodů nejvýš hráči + 1) a shrnutí; za účast 4 body, sečte se a zapíše do žurnálu;
+členům s postavou v zařízení se body rovnou připíšou jako revize deníku („Zkušenosti za sezení…“), ostatním se
+označí „předat hráči“. Uloženo v IndexedDB (`parties`, verze databáze 4).
+
+Zbývá: sdílení družiny a žurnálu mezi zařízeními (revize zápisů jako u postav, schvalování Průvodcem), předání
+zkušeností hráči kódem / QR (stejný formát `DRD2:`), mistr a hráči (role), přehled družiny (zdatnost, povolání,
+Jizvy členů), volitelná pravidla rychlosti postupu (3 nebo 6 bodů za účast), tajné udělování odměn.
