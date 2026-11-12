@@ -20,6 +20,9 @@ Návrhy řešení (vybrat po vyzkoušení na čtečce):
    (`termIndex` v `src/core/library.svelte.ts`), na ostatní místa se odkazuje jen z jeho prvního výskytu.
 4. Případně volba v nastavení čtečky: *Odkazy u všech výskytů / jen u prvního / vůbec*.
 
+Po doplnění pojmů Tělo, Duše, Vliv, Hod, Peníze, Přístup, Náročnost, Aktivace a Příhoda (pokrytí výskytů v sazbě
+***…*** vzrostlo z 53 % na 78 %) je hustota odkazů ještě větší, takže tato úprava nabývá na důležitosti.
+
 Pozor na odkazy ze SRD (ručně vložené autory, `html-md.mjs`): ty se neomezují, jen odkazy tvořené slovníkem.
 
 ## Mapy a obrázky v balíčku (hotovo)

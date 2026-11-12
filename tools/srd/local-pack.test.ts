@@ -34,4 +34,21 @@ describe.skipIf(!existsSync(file))('lokální balíček SRD', () => {
     expect(pack.equipment!.length).toBe(8)
     expect(pack.races![0].summary).not.toMatch(/na straně/)
   })
+
+  it('každý pojem ve slovníku ukazuje na existující nadpis a nemá společné tvary s jiným pojmem', () => {
+    const pack: ContentPack = JSON.parse(readFileSync(file, 'utf8'))
+    const anchors = new Set(
+      pack.chapters.flatMap((c) =>
+        c.blocks.filter((b) => b.type === 'heading').map((b) => `chapter:${c.id}#${(b as { id: string }).id}`),
+      ),
+    )
+    const seen = new Map<string, string>()
+    for (const t of pack.terms ?? []) {
+      expect(anchors.has(t.target), `${t.name}: ${t.target}`).toBe(true)
+      for (const f of [t.name, ...(t.aliases ?? [])].map((x) => x.toLowerCase())) {
+        expect(seen.get(f) ?? t.id, `tvar „${f}“`).toBe(t.id)
+        seen.set(f, t.id)
+      }
+    }
+  })
 })

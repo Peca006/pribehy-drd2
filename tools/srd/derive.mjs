@@ -257,6 +257,45 @@ function collectTexts(pack) {
  * existuje nadpis (v kapitolách o pravidlech), jehož slovo má stejný kmen jako některý častý pojem;
  * všechny tvary pojmu z textu se stanou aliasy. `known` jsou už hotové pojmy (např. manévry).
  */
+/**
+ * Pojmy, které SRD vysvětluje v nadpisu s jiným názvem nebo jen v textu (Vlastnosti, hod kostkami, …),
+ * takže je z nadpisů odvodit nelze. `prefixes` určují, které tvary ze sazby ***…*** jsou aliasy.
+ */
+export const EXTRA_TERMS = [
+  { name: 'tělo', prefixes: ['těl'], chapter: '31', heading: 'vlastnosti' },
+  { name: 'duše', prefixes: ['duš'], chapter: '31', heading: 'vlastnosti' },
+  { name: 'vliv', prefixes: ['vliv'], chapter: '31', heading: 'vlastnosti' },
+  { name: 'hod', prefixes: ['hod'], chapter: '31', heading: 'hod-kostkami' },
+  { name: 'peníze', prefixes: ['peníz', 'peněz', 'penězi'], chapter: '31', heading: 'penize-a-suroviny' },
+  { name: 'přístup', prefixes: ['přístup'], chapter: '31', heading: 'pristupy-k-iniciative' },
+  { name: 'náročnost', prefixes: ['náročn'], chapter: '31', heading: 'kdy-hazet-kostkami' },
+  { name: 'aktivace', prefixes: ['aktivac'], chapter: '35', heading: 'cena' },
+  { name: 'příhoda', prefixes: ['příhod'], chapter: '41', heading: 'dobrodruzstvi-vypravy-a-prihody' },
+]
+
+function addExtraTerms(pack, terms, frequent, taken) {
+  for (const x of EXTRA_TERMS) {
+    const ch = pack.chapters.find((c) => c.id.startsWith(x.chapter))
+    const i = ch?.blocks.findIndex((b) => b.type === 'heading' && b.id === x.heading) ?? -1
+    if (i < 0) throw new Error(`Pojem „${x.name}“: v kapitole ${x.chapter} chybí nadpis ${x.heading}`)
+    const aliases = frequent.filter(
+      (f) => !f.includes(' ') && f !== x.name && x.prefixes.some((p) => f.startsWith(p)) && !taken.has(f),
+    )
+    const summary = ch.blocks
+      .slice(i + 1)
+      .find((b) => b.type === 'p')
+      ?.text.split(/(?<=\.)\s/)[0]
+    terms.push({
+      id: `pojem:${slug(x.name)}`,
+      name: x.name,
+      aliases,
+      target: `chapter:${ch.id}#${x.heading}`,
+      ...(summary ? { summary } : {}),
+    })
+    for (const n of [x.name, ...aliases]) taken.add(n)
+  }
+}
+
 export function deriveGlossary(pack, known = []) {
   const forms = new Map() // tvar → počet
   for (const t of collectTexts(pack))
@@ -312,5 +351,6 @@ export function deriveGlossary(pack, known = []) {
       if (hit && total >= 40 && !taken.has(w) && !terms.some((t) => stemOf(t.name) === stemOf(w)))
         add(w, ch, h)
     }
+  addExtraTerms(pack, terms, frequent, taken)
   return terms
 }
