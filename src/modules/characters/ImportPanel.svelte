@@ -16,6 +16,7 @@
   import { appendEvents, getLog, saveLog } from '../../core/character/store'
   import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
   import { onMount } from 'svelte'
+  import { takeShared } from '../../core/sharedInbox'
   import { mergeIncoming, type MergeResult } from '../../core/party/share'
   import { getParty, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
@@ -92,6 +93,16 @@
   }
   // QR otevřený systémovou čtečkou: kód (nebo jeho díl) je v adrese; díly se skládají mezi otevřeními
   onMount(async () => {
+    if (part === 'sdileno') {
+      // kód sdílený z jiné aplikace
+      history.replaceState(null, '', location.pathname + location.search + '#/postavy/import')
+      const shared = await takeShared()
+      if (shared) {
+        text = shared.trim()
+        await check()
+      } else errors = ['Sdílený kód se nepodařilo načíst.']
+      return
+    }
     if (!part) return
     history.replaceState(null, '', location.pathname + location.search + '#/postavy/import')
     await onscan(part)

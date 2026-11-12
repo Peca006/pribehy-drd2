@@ -14,6 +14,7 @@ export default defineConfig({
   plugins: [
     svelte(),
     VitePWA({
+      workbox: { importScripts: ['share-target.js'] },
       // nová verze se stáhne na pozadí a uživateli se nabídne „Obnovit“ (registraci řeší src/core/pwa.svelte.ts)
       registerType: 'prompt',
       injectRegister: false,
@@ -26,6 +27,13 @@ export default defineConfig({
         start_url: './',
         background_color: '#1c1a17',
         theme_color: '#1c1a17',
+        // cíl sdílení: kód postavy či družiny poslaný z jiné aplikace (zprávy, Quick Share…) se otevře v Importu
+        share_target: {
+          action: './share-target',
+          method: 'POST',
+          enctype: 'multipart/form-data',
+          params: { title: 'title', text: 'text', files: [{ name: 'file', accept: ['text/plain', '.txt'] }] },
+        },
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

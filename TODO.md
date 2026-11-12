@@ -200,3 +200,10 @@ slučování souběžných úprav jednoho zápisu, upozornění „Průvodce zm�
 Ukládání QR jako PNG se zrušilo (zbytné): kód se ukládá a posílá jako text nebo soubor (AirDrop, Quick Share). Díl QR má
 nově až 500 znaků kódu (s odkazem asi 556); zkusit na A52s, případně vrátit menší. Zbývá QR na celou obrazovku.
 
+
+### Příjem sdíleného souboru (první verze hotovo)
+
+Manifest má `share_target` (POST, text/plain): po instalaci PWA se aplikace nabídne v nabídce Sdílet (soubor `.drd2.txt`
+nebo text kódu). `public/share-target.js` (importovaný do service workeru) uloží kód do cache `drd2-shared` a přesměruje na
+`#/postavy/import/sdileno`, kde ho Import načte (`core/sharedInbox.ts`). Ověřit na telefonu (jen u nainstalované PWA).
+`file_handlers` se nedělají: fungují jen na počítači a soubor je `.drd2.txt`.
