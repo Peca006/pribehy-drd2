@@ -14,19 +14,21 @@ Obrázky ze SRD (4 ks) se při sestavení balíčku převedou na WebP a vloží 
 přiblížení (`src/ui/ZoomImage.svelte`). Možné vylepšení: ukládat obrázky z balíčku do IndexedDB jako soubory,
 pokud by velikost JSONu v paměti vadila.
 
-## Import z SRD přímo v zařízení uživatele (bookmarklet)
+## Import ze SRD přímo v zařízení uživatele (bookmarklet, první verze hotova)
 
-Web SRD nemá hlavičky CORS, takže aplikace ani stránka na `github.io` z něj stahovat nemůže (Google Disk se
-zdroji je zastaralý a pro prohlížeč nepoužitelný). Řešení bez serveru je **bookmarklet**: uživatel otevře
-`drd2srd.d20.cz`, klepne na záložku „Převést SRD“, kód běží na stránce SRD (stejná doména, CORS neplatí),
-stáhne stránky podle navigace, převede je a nabídne ke stažení balíček (`.json`), který se nahraje v Knihovně.
+Web SRD nemá hlavičky CORS (a nevysílá ani CSP, ověřeno), proto převod běží jako **bookmarklet** na stránce
+`drd2srd.d20.cz`: záložka načte skript `srd-import.js` z Pages, ten stáhne stránky (stejná doména), převede je a nabídne
+dva soubory `.json` ke stažení (pravidla, bestiář). Text se nehostuje, skript obsahuje jen kód převodníku.
 
-- Text se nehostuje, bere se z webu SRD u uživatele, převodník zvládne vždy aktuální verzi SRD.
-- Potřeba: převodník jako čisté funkce nad řetězci (bez `node:fs`), WebP přes canvas místo `sharp`,
-  stránka s návodem (přetáhnout tlačítko do lišty záložek). Odhad 2–3 dny.
-- Ověřit: web SRD nevysílá CSP (načtení skriptu z `github.io` by mělo projít).
-- Mobil: iOS Safari a Firefox pro Android bookmarklety zvládají, Chrome pro Android ne spolehlivě. Alternativa:
-  balíček sestavit na počítači a soubor přenést.
+- `tools/srd/pipeline.mjs`: čisté funkce nad řetězci HTML (společné pro Node i prohlížeč); `build.mjs` a
+  `build-bestiar.mjs` jsou jen tenké obálky (výstup ověřen: shodný kontrolní součet s původním).
+- `tools/srd/browser/entry.mjs`: stažení stránek, obrázky přes canvas na WebP, okno s průběhem a odkazy ke stažení;
+  `vite.srd.config.ts` ho sestaví do `public/srd-import.js` (gitignorováno, běží před `dev` a `build`).
+- Návod a odkaz záložky: Knihovna → Převod SRD z webu (`SrdImport.svelte`).
+- **Ověřit po nasazení:** celý běh na živém SRD (z localhostu ho prohlížeč zablokuje), počet povolání (15), bytostí (117),
+  obrázků (4), a že balíčky z bookmarkletu jsou shodné s Node verzí.
+- Mobil: iOS Safari a Firefox pro Android bookmarklety zvládají, Chrome pro Android ne spolehlivě (v návodu je
+  odkaz ke zkopírování). Alternativa: balíček sestavit na počítači a soubor přenést.
 
 ## Historie, návrhy a sdílení postav
 
