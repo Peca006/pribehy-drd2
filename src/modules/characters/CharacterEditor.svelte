@@ -8,6 +8,7 @@
   import {
     ATTRIBUTES,
     characterOf,
+    newId,
     eventsFor,
     type Character,
     type CharacterLog,
@@ -40,6 +41,7 @@
     if (saved) {
       draft = saved.character
       base = saved.base
+      note = saved.note
       resumed = true
     } else {
       draft = structuredClone(characterOf(log))
@@ -49,7 +51,7 @@
 
   // každá změna se hned ukládá jako návrh
   $effect(() => {
-    if (draft && log) saveCharacterDraft(id, base, $state.snapshot(draft) as Character)
+    if (draft && log) saveCharacterDraft(id, base, $state.snapshot(draft) as Character, note)
   })
 
   const current = $derived(log ? characterOf(log) : undefined)
@@ -85,6 +87,24 @@
     if (level <= 0) delete draft.professions[pid]
     else draft.professions[pid] = Math.min(5, level)
   }
+  function addScar() {
+    if (!draft) return
+    draft.scars = [...draft.scars, { id: newId(), attribute: 'Tělo', severity: 1, note: '' }]
+  }
+  const effective = $derived(
+    draft
+      ? Object.fromEntries(
+          ATTRIBUTES.map((a) => [
+            a,
+            Math.max(
+              0,
+              draft!.attributes[a] -
+                draft!.scars.filter((s) => s.attribute === a).reduce((n, s) => n + s.severity, 0),
+            ),
+          ]),
+        )
+      : {},
+  )
   function addItem() {
     if (!draft || !newItem.trim()) return
     draft.equipment = [...draft.equipment, newItem.trim()]
@@ -221,6 +241,44 @@
     <span class="muted">= {formatMoney(draft.cash || 0)}</span>
   </label>
 
+  <h2>Zkušenosti</h2>
+  <label>
+    Nespotřebované body zkušeností <input type="number" min="0" bind:value={draft.xp} />
+    <span class="muted">(12 bodů = jedno zlepšení, viz Postup)</span>
+  </label>
+
+  <h2>Jizvy</h2>
+  <p class="muted">
+    Jizva snižuje zdatnost své vlastnosti o svou závažnost (a blokuje obnovu příslušných Zdrojů).
+    Vyléčená jizva se odebere.
+  </p>
+  {#each draft.scars as scar, i (scar.id)}
+    <div class="row">
+      <select bind:value={scar.attribute} aria-label="Vlastnost jizvy">
+        {#each ATTRIBUTES as a}<option value={a}>{a}</option>{/each}
+      </select>
+      <input
+        type="number"
+        min="1"
+        max="5"
+        bind:value={scar.severity}
+        aria-label="Závažnost jizvy"
+        class="narrow"
+      />
+      <input bind:value={scar.note} placeholder="čím, jak se projevuje" aria-label="Popis jizvy" />
+      <button
+        onclick={() => (draft!.scars = draft!.scars.filter((_, j) => j !== i))}
+        aria-label="Odebrat jizvu">✕</button
+      >
+    </div>
+  {/each}
+  <p><button onclick={addScar}>+ Přidat jizvu</button></p>
+  {#if draft.scars.length}
+    <p class="muted">
+      Zdatnost po jizvách: {ATTRIBUTES.map((a) => `${a} ${effective[a]}`).join(', ')}
+    </p>
+  {/if}
+
   <h2>Poznámky</h2>
   <textarea rows="5" bind:value={draft.notes} aria-label="Poznámky"></textarea>
 
@@ -274,6 +332,10 @@
     gap: 0.5rem;
     align-items: center;
     margin: 0.35rem 0;
+  }
+  .narrow {
+    max-width: 4.5rem;
+    flex: 0 0 auto !important;
   }
   .row input,
   .row select,

@@ -10,6 +10,8 @@ export interface CharacterDraft {
   /** počet změn v deníku v době, kdy návrh vznikl (poznáme tak, že se postava mezitím změnila) */
   base: number
   character: Character
+  /** rozepsaný popis změny (zveřejnění) */
+  note: string
   saved: number
 }
 
@@ -86,6 +88,7 @@ export function loadCharacterDraft(id: string): CharacterDraft | undefined {
     return {
       base: num(raw.base) ?? 0,
       character: sanitizeCharacter(raw.character, emptyCharacter(id)),
+      note: str(raw.note, 200) ?? '',
       saved: num(raw.saved) ?? 0,
     }
   } catch {
@@ -93,11 +96,11 @@ export function loadCharacterDraft(id: string): CharacterDraft | undefined {
   }
 }
 
-export function saveCharacterDraft(id: string, base: number, character: Character) {
+export function saveCharacterDraft(id: string, base: number, character: Character, note = '') {
   try {
     localStorage.setItem(
       KEY(id),
-      JSON.stringify({ v: VERSION, base, character, saved: Date.now() }),
+      JSON.stringify({ v: VERSION, base, character, note, saved: Date.now() }),
     )
   } catch {
     /* úložiště nemusí být dostupné; úprava funguje i bez ukládání návrhu */

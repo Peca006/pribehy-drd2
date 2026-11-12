@@ -8,14 +8,17 @@
     type ChangeEvent,
     type CharacterLog,
   } from '../../core/character/model'
+  import { effectiveAttributes } from '../../core/character/play'
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
   import { findAbility, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
   import Md from '../../ui/Md.svelte'
   import { formatMoney } from '../creator/rules'
+  import Advance from './Advance.svelte'
   import CharacterEditor from './CharacterEditor.svelte'
   import CheckList from './CheckList.svelte'
   import History from './History.svelte'
+  import Resources from './Resources.svelte'
   import ImportPanel from './ImportPanel.svelte'
   import SharePanel from './SharePanel.svelte'
 
@@ -59,6 +62,8 @@
   <ImportPanel />
 {:else if params[1] === 'sdilet' && params[0]}
   <SharePanel id={params[0]} />
+{:else if params[1] === 'postup' && params[0]}
+  <Advance id={params[0]} />
 {:else if params[1] === 'uprav' && params[0]}
   <CharacterEditor id={params[0]} />
 {:else if c && current}
@@ -72,10 +77,25 @@
     {#each ATTRIBUTES as k}
       <div>
         <div class="muted">{k}</div>
-        <strong class="big">{c.attributes[k]}</strong>
+        <strong class="big">{effectiveAttributes(c)[k]}</strong>
+        {#if effectiveAttributes(c)[k] !== c.attributes[k]}
+          <div class="muted">
+            zdatnost {c.attributes[k]}, jizvy −{c.attributes[k] - effectiveAttributes(c)[k]}
+          </div>
+        {/if}
       </div>
     {/each}
   </section>
+
+  {#key current.id}<Resources id={current.id} character={c} />{/key}
+
+  {#if c.scars.length}
+    <h2>Jizvy</h2>
+    <ul>
+      {#each c.scars as s}<li>{s.attribute} {s.severity}{s.note ? `: ${s.note}` : ''}</li>{/each}
+    </ul>
+  {/if}
+  <p class="muted">Body zkušeností: {c.xp} (12 = jedno zlepšení)</p>
 
   <h2>Povolání</h2>
   <ul>
@@ -118,6 +138,7 @@
     <a class="btn primary" href={'#/postavy/' + current.id + '/uprav'}
       >{hasDraft ? 'Pokračovat v úpravě (rozpracováno)' : 'Upravit postavu'}</a
     >
+    <a class="btn" href={'#/postavy/' + current.id + '/postup'}>Postup (zlepšení)</a>
     <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
   </p>
   {#if reviews.note}<p class="panel">Vypravěč: „{reviews.note}“</p>{/if}

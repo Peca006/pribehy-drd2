@@ -1,4 +1,5 @@
 // Čitelný popis změn postavy (pro historii a náhled před zveřejněním).
+import type { Scar } from '../../core/character/model'
 import type { RevisionChange } from '../../core/character/revisions'
 import { findAbility, professions, races } from '../../core/library.svelte'
 import { formatMoney } from '../creator/rules'
@@ -9,6 +10,8 @@ const LABELS: Record<string, string> = {
   concept: 'Koncept',
   equipment: 'Výbava',
   cash: 'Hotovost',
+  xp: 'Zkušenosti',
+  scars: 'Jizvy',
   abilities: 'Schopnosti',
   trait: 'Povahový rys',
   heroStory: 'Jak se stal hrdinou',
@@ -47,6 +50,20 @@ function scalar(path: string, v: unknown): string {
 
 /** Řádky popisu jedné změny: u seznamů přidané (+) a odebrané (−) položky, jinak „před → po“. */
 export function describeChange(c: RevisionChange): string[] {
+  if (c.path === 'scars') {
+    const list = (v: unknown) => (Array.isArray(v) ? (v as Scar[]) : [])
+    const fmt = (s: Scar) => `${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''}`
+    const before = list(c.before)
+    const after = list(c.after)
+    const lines = [
+      ...after.filter((s) => !before.some((b) => b.id === s.id)).map((s) => `+ ${fmt(s)}`),
+      ...before.filter((s) => !after.some((a) => a.id === s.id)).map((s) => `− ${fmt(s)}`),
+      ...after
+        .filter((s) => before.some((b) => b.id === s.id && JSON.stringify(b) !== JSON.stringify(s)))
+        .map((s) => `~ ${fmt(s)}`),
+    ]
+    return lines.length ? lines : ['(beze změny)']
+  }
   if (Array.isArray(c.before) || Array.isArray(c.after)) {
     const before = (Array.isArray(c.before) ? c.before : []) as string[]
     const after = (Array.isArray(c.after) ? c.after : []) as string[]
@@ -57,7 +74,11 @@ export function describeChange(c: RevisionChange): string[] {
     ]
     return lines.length ? lines : ['(změněno pořadí)']
   }
-  const before = c.path.startsWith('professions.') && c.before === undefined ? 'nemá' : scalar(c.path, c.before)
-  const after = c.path.startsWith('professions.') && c.after === undefined ? 'odebráno' : scalar(c.path, c.after)
+  const before =
+    c.path.startsWith('professions.') && c.before === undefined ? 'nemá' : scalar(c.path, c.before)
+  const after =
+    c.path.startsWith('professions.') && c.after === undefined
+      ? 'odebráno'
+      : scalar(c.path, c.after)
   return [`${before} → ${after}`]
 }
