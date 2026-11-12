@@ -68,3 +68,13 @@ a navazují na ni novější revize. N = nejmenší, při kterém se kód vejde.
   výchozí revizi jako počátek.
 - Před zhuštěním lze zkusit vynechat velké texty (příběh, poznámky) nebo rozdělit data na více QR / soubor.
 - Změřit skutečnou velikost typických postav a revizí, než se zvolí limit.
+
+## Vestavěný přehled a kontrola postavy (hotovo)
+
+`src/data/skeleton.json` (generuje `tools/srd/build-skeleton.mjs`) obsahuje jen názvy, ID, vlastnosti a čísla
+pravidel tvorby; aplikace s ním funguje bez balíčků a nainstalovaný balíček jeho položky přepisuje podle ID.
+`src/core/character/check.ts` kontroluje postavu (neznámá ID, počet schopností na úrovni, rasové schopnosti,
+kultura, rozsah úrovně, duplicity, hotovost); varuje, ale neblokuje. Zobrazuje se na detailu postavy a
+v editoru. Možné rozšíření: kontrola stavu po každé příchozí revizi při schvalování vypravěčem.
+Zbývá: hotové sady výbavy a ceník bez balíčku (nyní se výbava píše ručně), hláška „Popis je v balíčku“
+u položek bez textu.

@@ -13,6 +13,7 @@
   import Md from '../../ui/Md.svelte'
   import { formatMoney } from '../creator/rules'
   import CharacterEditor from './CharacterEditor.svelte'
+  import CheckList from './CheckList.svelte'
   import History from './History.svelte'
 
   // params: [] = seznam postav, [id] = deník postavy, [id, 'uprav'] = úprava (návrh)
@@ -108,6 +109,8 @@
       >{hasDraft ? 'Pokračovat v úpravě (rozpracováno)' : 'Upravit postavu'}</a
     >
   </p>
+
+  <CheckList character={c} />
 
   <History log={current} onrevert={revert} />
   <button onclick={remove}>Smazat postavu</button>

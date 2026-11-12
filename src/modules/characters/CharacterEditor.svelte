@@ -15,10 +15,11 @@
   import { changesBetween } from '../../core/character/revisions'
   import { appendEvents, getLog } from '../../core/character/store'
   import type { Ability } from '../../core/content/schema'
-  import { library, professions, races } from '../../core/library.svelte'
+  import { commonRaceAbilities, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
   import { formatMoney } from '../creator/rules'
+  import CheckList from './CheckList.svelte'
   import { describeChange, nameOf, pathLabel } from './describe'
 
   // Úprava postavy po vytvoření: změny se dělají na návrhu (kopii postavy uložené v zařízení);
@@ -57,11 +58,12 @@
 
   // --- nabídky z balíčků ---
   const race = $derived(races().find((r) => r.id === draft?.raceId))
-  const commonAbilities = $derived(library.packs.flatMap((p) => p.commonRaceAbilities ?? []))
+  const commonAbilities = $derived(commonRaceAbilities())
   const groups = $derived.by(() => {
     if (!draft) return []
     const out: { title: string; abilities: Ability[] }[] = []
-    if (race) out.push({ title: `Rasa: ${race.name}`, abilities: [...race.abilities, ...commonAbilities] })
+    if (race)
+      out.push({ title: `Rasa: ${race.name}`, abilities: [...race.abilities, ...commonAbilities] })
     for (const p of professions())
       if ((draft.professions[p.id] ?? 0) > 0) out.push({ title: p.name, abilities: p.abilities })
     return out
@@ -92,7 +94,12 @@
   async function publish() {
     if (!log || !current || !draft || !changes.length || !note.trim()) return
     setAuthor(author)
-    const events = eventsFor(current, $state.snapshot(draft) as Character, settings.author, note.trim())
+    const events = eventsFor(
+      current,
+      $state.snapshot(draft) as Character,
+      settings.author,
+      note.trim(),
+    )
     await appendEvents(id, events)
     clearCharacterDraft(id)
     go('postavy', id)
@@ -136,9 +143,13 @@
   {#each Object.keys(draft.professions) as pid}
     <div class="row">
       <span>{nameOf(pid)}</span>
-      <button onclick={() => setLevel(pid, draft!.professions[pid] - 1)} aria-label="Snížit úroveň">−</button>
+      <button onclick={() => setLevel(pid, draft!.professions[pid] - 1)} aria-label="Snížit úroveň"
+        >−</button
+      >
       <strong>{draft.professions[pid]}</strong>
-      <button onclick={() => setLevel(pid, draft!.professions[pid] + 1)} aria-label="Zvýšit úroveň">+</button>
+      <button onclick={() => setLevel(pid, draft!.professions[pid] + 1)} aria-label="Zvýšit úroveň"
+        >+</button
+      >
     </div>
   {/each}
   {#if addable.length}
@@ -162,7 +173,11 @@
     <h3>{g.title}</h3>
     {#each g.abilities as a (a.id)}
       <label class="check">
-        <input type="checkbox" checked={draft.abilities.includes(a.id)} onchange={() => toggle(a.id)} />
+        <input
+          type="checkbox"
+          checked={draft.abilities.includes(a.id)}
+          onchange={() => toggle(a.id)}
+        />
         {a.name}{#if a.attribute}<span class="muted"> ({a.attribute})</span>{/if}
       </label>
     {/each}
@@ -222,12 +237,18 @@
   {:else}
     <p class="muted">Zatím žádná změna proti postavě.</p>
   {/if}
+  <CheckList character={draft} title="Kontrola upravené postavy" />
   <label>
-    Popis změny (povinný) <input bind:value={note} placeholder="např. Koupil jsem meč, přestup na 2. úroveň" />
+    Popis změny (povinný) <input
+      bind:value={note}
+      placeholder="např. Koupil jsem meč, přestup na 2. úroveň"
+    />
   </label>
   <label>Podepsat jako <input bind:value={author} /></label>
   <p class="actions">
-    <button class="primary" disabled={!changes.length || !note.trim()} onclick={publish}>Zveřejnit</button>
+    <button class="primary" disabled={!changes.length || !note.trim()} onclick={publish}
+      >Zveřejnit</button
+    >
     <button onclick={discard}>Zahodit návrh</button>
   </p>
 {/if}

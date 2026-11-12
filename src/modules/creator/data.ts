@@ -8,7 +8,16 @@ import type {
   StartingKit,
   Trait,
 } from '../../core/content/schema'
-import { chapters, library, professions, races } from '../../core/library.svelte'
+import {
+  chapters,
+  commonRaceAbilities,
+  creationRules,
+  equipmentGroups,
+  professions,
+  races,
+  startingKits,
+  traits,
+} from '../../core/library.svelte'
 
 export interface CreationData {
   rules: CreationRules
@@ -20,18 +29,18 @@ export interface CreationData {
   equipment: EquipmentGroup[]
 }
 
-/** `undefined`, pokud žádný balíček neobsahuje data pro tvorbu postavy. */
+/** `undefined`, pokud chybí data pro tvorbu postavy (s vestavěnou kostrou by to nemělo nastat). */
 export function creationData(): CreationData | undefined {
-  const pack = library.packs.find((p) => p.creation && p.races?.length)
-  if (!pack?.creation) return undefined
+  const rules = creationRules()
+  if (!rules || !races().length) return undefined
   return {
-    rules: pack.creation,
+    rules,
     races: races(),
     professions: professions().filter((p) => p.kind === 'zakladni'),
-    commonAbilities: library.packs.flatMap((p) => p.commonRaceAbilities ?? []),
-    traits: library.packs.flatMap((p) => p.traits ?? []),
-    kits: library.packs.flatMap((p) => p.startingKits ?? []),
-    equipment: library.packs.flatMap((p) => p.equipment ?? []),
+    commonAbilities: commonRaceAbilities(),
+    traits: traits(),
+    kits: startingKits(),
+    equipment: equipmentGroups(),
   }
 }
 

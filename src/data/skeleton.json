@@ -1,0 +1,2071 @@
+{
+ "manifest": {
+  "format": 1,
+  "id": "drd2-kostra",
+  "name": "Vestavěný přehled (názvy a čísla)",
+  "version": "1.0.0",
+  "source": {
+   "book": "Dračí doupě 2",
+   "edition": "2"
+  }
+ },
+ "professions": [
+  {
+   "id": "povolani:bojovnik",
+   "name": "Bojovník",
+   "kind": "zakladni",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:bojovnik/bezny-boj-zblizka",
+     "name": "Běžný boj zblízka",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:bojovnik/sila",
+     "name": "Síla",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:bojovnik/bojovnicke-znalosti",
+     "name": "Bojovnické znalosti",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:bojovnik/sebeduvera",
+     "name": "Sebedůvěra",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:bojovnik/cit-pro-zbran",
+     "name": "Cit pro zbraň",
+     "attribute": "Tělo",
+     "quickPickLevel": 1,
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/gladiator",
+     "name": "Gladiátor",
+     "attribute": "Tělo",
+     "quickPickLevel": 3,
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/silak",
+     "name": "Silák",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/osobni-strazce",
+     "name": "Osobní strážce",
+     "attribute": "Tělo",
+     "quickPickLevel": 4,
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/kruhovy-sek",
+     "name": "Kruhový sek",
+     "attribute": "Tělo",
+     "quickPickLevel": 5,
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/padny-uder",
+     "name": "Pádný úder",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/hlava-nehlava",
+     "name": "Hlava nehlava",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/rameno-na-rameno",
+     "name": "Rameno na rameno",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/skald",
+     "name": "Skald",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/skvely-taktik",
+     "name": "Skvělý taktik",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/sampion",
+     "name": "Šampión",
+     "attribute": "Vliv",
+     "quickPickLevel": 2,
+     "text": ""
+    },
+    {
+     "id": "schopnost:bojovnik/precteni-soupere",
+     "name": "Přečtení soupeře",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:lovec",
+   "name": "Lovec",
+   "kind": "zakladni",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:lovec/bezna-strelba",
+     "name": "Běžná střelba",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:lovec/cestovani",
+     "name": "Cestování",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:lovec/orientace-v-divocine",
+     "name": "Orientace v divočině",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lovec/tabornictvi",
+     "name": "Tábornictví",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lovec/lovecke-znalosti",
+     "name": "Lovecké znalosti",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lovec/ovlivnovani-zvirat",
+     "name": "Ovlivňování zvířat",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:lovec/dobra-muska",
+     "name": "Dobrá muška",
+     "attribute": "Tělo",
+     "quickPickLevel": 1,
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/ostrostrelec",
+     "name": "Ostrostřelec",
+     "attribute": "Tělo",
+     "quickPickLevel": 3,
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/dest-strel",
+     "name": "Déšť střel",
+     "attribute": "Tělo",
+     "quickPickLevel": 5,
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/zalesak",
+     "name": "Zálesák",
+     "attribute": "Duše",
+     "quickPickLevel": 4,
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/pruzkumnik",
+     "name": "Průzkumník",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/pruvodce",
+     "name": "Průvodce",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/lovci",
+     "name": "Lovčí",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/neco-z-niceho",
+     "name": "Něco z ničeho",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/jedno-oko-otevrene",
+     "name": "Jedno oko otevřené",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/krotitel",
+     "name": "Krotitel",
+     "attribute": "Vliv",
+     "quickPickLevel": 2,
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/cvicitel",
+     "name": "Cvičitel",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lovec/zarikavac-koni",
+     "name": "Zaříkávač koní",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:kejklir",
+   "name": "Kejklíř",
+   "kind": "zakladni",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:kejklir/bezny-vrh",
+     "name": "Běžný vrh",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:kejklir/pohyblivost",
+     "name": "Pohyblivost",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:kejklir/triky-a-kejkle",
+     "name": "Triky a kejkle",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:kejklir/orientace-ve-meste",
+     "name": "Orientace ve městě",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:kejklir/charisma",
+     "name": "Charisma",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:kejklir/prevleky-a-predstirani",
+     "name": "Převleky a předstírání",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:kejklir/umeni",
+     "name": "Umění",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:kejklir/desiva-presnost",
+     "name": "Děsivá přesnost",
+     "attribute": "Tělo",
+     "quickPickLevel": 1,
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/akrobat",
+     "name": "Akrobat",
+     "attribute": "Tělo",
+     "quickPickLevel": 2,
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/vrhac",
+     "name": "Vrhač",
+     "attribute": "Tělo",
+     "quickPickLevel": 3,
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/plast",
+     "name": "Plášť",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/smrst-dyk",
+     "name": "Smršť dýk",
+     "attribute": "Tělo",
+     "quickPickLevel": 4,
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/zlodej",
+     "name": "Zloděj",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/speh",
+     "name": "Špeh",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/talent",
+     "name": "Talent",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/psi-oci",
+     "name": "Psí oči",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/komediant",
+     "name": "Komediant",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/zmena-tvare",
+     "name": "Změna tváře",
+     "attribute": "Vliv",
+     "quickPickLevel": 5,
+     "text": ""
+    },
+    {
+     "id": "schopnost:kejklir/skryta-kapsa",
+     "name": "Skrytá kapsa",
+     "attribute": "Tělo",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:mastickar",
+   "name": "Mastičkář",
+   "kind": "zakladni",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:mastickar/odolnost-a-vydrz",
+     "name": "Odolnost a výdrž",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:mastickar/osetrovani-lidskeho-tela",
+     "name": "Ošetřování lidského těla",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:mastickar/masti-a-bezne-jedy",
+     "name": "Masti a běžné jedy",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:mastickar/znalost-lidi",
+     "name": "Znalost lidí",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:mastickar/vyjednavani-s-lidmi",
+     "name": "Vyjednávání s lidmi",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:mastickar/dryjacnik",
+     "name": "Dryjáčník",
+     "attribute": "Duše",
+     "quickPickLevel": 2,
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/ranhojic",
+     "name": "Ranhojič",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/cteni-v-dusi",
+     "name": "Čtení v duši",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/umeni-improvizace",
+     "name": "Umění improvizace",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/neobvykle-jedy",
+     "name": "Neobvyklé jedy",
+     "attribute": "Duše",
+     "quickPickLevel": 3,
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/vyjednavac",
+     "name": "Vyjednavač",
+     "attribute": "Vliv",
+     "quickPickLevel": 1,
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/pusobivy-recnik",
+     "name": "Působivý řečník",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/kluzky-jako-uhor",
+     "name": "Kluzký jako úhoř",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/ostry-jazyk",
+     "name": "Ostrý jazyk",
+     "attribute": "Vliv",
+     "quickPickLevel": 4,
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/moudry-radce",
+     "name": "Moudrý rádce",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/hojivy-dotek",
+     "name": "Hojivý dotek",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mastickar/lazebnik",
+     "name": "Lazebník",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:zarikavac",
+   "name": "Zaříkávač",
+   "kind": "zakladni",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:zarikavac/ucenost",
+     "name": "Učenost",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:zarikavac/znalost-nadprirozena",
+     "name": "Znalost nadpřirozena",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:zarikavac/osetrovani-lidske-duse",
+     "name": "Ošetřování lidské duše",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:zarikavac/vule",
+     "name": "Vůle",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:zarikavac/zarikani",
+     "name": "Zaříkání",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:zarikavac/vyjednavani-s-nadprirozenem",
+     "name": "Vyjednávání s nadpřirozenem",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:zarikavac/knihomol",
+     "name": "Knihomol",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/sila-osobnosti",
+     "name": "Síla osobnosti",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/bystrost",
+     "name": "Bystrost",
+     "attribute": "Duše",
+     "quickPickLevel": 4,
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/dar-tvoreni",
+     "name": "Dar tvoření",
+     "attribute": "Duše",
+     "quickPickLevel": 3,
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/zrici-straze",
+     "name": "Zřící stráže",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/carovne-straze",
+     "name": "Čarovné stráže",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/pan-symbolu",
+     "name": "Pán symbolů",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/divoky-talent",
+     "name": "Divoký talent",
+     "attribute": "Vliv",
+     "quickPickLevel": 1,
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/povolavac",
+     "name": "Povolávač",
+     "attribute": "Vliv",
+     "quickPickLevel": 2,
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/modlitby-a-urknuti",
+     "name": "Modlitby a uřknutí",
+     "attribute": "Vliv",
+     "quickPickLevel": 5,
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/mysticky-kruh",
+     "name": "Mystický kruh",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zarikavac/veze-a-chramy",
+     "name": "Věže a chrámy",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:valecnik",
+   "name": "Válečník",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:valecnik/jizdni-boj-zblizka",
+     "name": "Jízdní boj zblízka",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:valecnik/kovarstvi",
+     "name": "Kovářství",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:valecnik/valecnicke-znalosti",
+     "name": "Válečnické znalosti",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:valecnik/jednani-s-vyssi-spolecnosti",
+     "name": "Jednání s vyšší společností",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:valecnik/pusobeni-ve-vyssi-spolecnosti",
+     "name": "Působení ve vyšší společnosti",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:valecnik/vedeni-lidi-v-boji",
+     "name": "Vedení lidí v boji",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:valecnik/bohatyr",
+     "name": "Bohatýr",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/sermir",
+     "name": "Šermíř",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/valecny-tanecnik",
+     "name": "Válečný tanečník",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/veteran",
+     "name": "Veterán",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/urozeny",
+     "name": "Urozený",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/velitel",
+     "name": "Velitel",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/kavalir",
+     "name": "Kavalír",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/hrdinsky-duch",
+     "name": "Hrdinský duch",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/vudcovske-charisma",
+     "name": "Vůdcovské charisma",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/popularita",
+     "name": "Popularita",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/bojovy-vycvik",
+     "name": "Bojový výcvik",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:valecnik/slavne-jmeno",
+     "name": "Slavné jméno",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:hranicar",
+   "name": "Hraničář",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:hranicar/boj-proti-netvorum",
+     "name": "Boj proti netvorům",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:hranicar/hranicarske-znalosti",
+     "name": "Hraničářské znalosti",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:hranicar/tesarina",
+     "name": "Tesařina",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:hranicar/ovlivnovani-netvoru",
+     "name": "Ovlivňování netvorů",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:hranicar/vedeni-primitivnich-netvoru",
+     "name": "Vedení primitivních netvorů",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:hranicar/drakobijce",
+     "name": "Drakobijce",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/berserk",
+     "name": "Berserk",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/strazce-hranic",
+     "name": "Strážce hranic",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/divy-muz",
+     "name": "Divý muž",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/znalec-netvoru",
+     "name": "Znalec netvorů",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/jazyk-poutniku",
+     "name": "Jazyk poutníků",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/dravci-instinkty",
+     "name": "Dravčí instinkty",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/ohar",
+     "name": "Ohař",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/cvicitel-netvoru",
+     "name": "Cvičitel netvorů",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/slavny-stvurobijce",
+     "name": "Slavný stvůrobijce",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/krotitel-draku",
+     "name": "Krotitel draků",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hranicar/znalec-krajiny",
+     "name": "Znalec krajiny",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:saman",
+   "name": "Šaman",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:saman/vyroba-omamnych-latek-a-odvaru",
+     "name": "Výroba omamných látek a odvarů",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:saman/podavani-omamnych-latek",
+     "name": "Podávání omamných látek",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:saman/hadacstvi",
+     "name": "Hadačství",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:saman/leceni-zvirat",
+     "name": "Léčení zvířat",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:saman/magie-zvirat",
+     "name": "Magie zvířat",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:saman/medicinman",
+     "name": "Medicinman",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/velky-hadac",
+     "name": "Velký hadač",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/carovne-napoje",
+     "name": "Čarovné nápoje",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/znak-mury",
+     "name": "Znak můry",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/zveropan",
+     "name": "Zvěropán",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/vladce-selem",
+     "name": "Vládce šelem",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/znak-vlkodlaka",
+     "name": "Znak vlkodlaka",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/menic-podob",
+     "name": "Měnič podob",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/neviditelny-jezdec",
+     "name": "Neviditelný jezdec",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/vudce-smecky",
+     "name": "Vůdce smečky",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/bezmezna-duvera",
+     "name": "Bezmezná důvěra",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:saman/stopy-zvere",
+     "name": "Stopy zvěře",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:druid",
+   "name": "Druid",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:druid/magie-kamene",
+     "name": "Magie kamene",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:druid/magie-vody",
+     "name": "Magie vody",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:druid/magie-dreva",
+     "name": "Magie dřeva",
+     "attribute": "Duše",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:druid/mlha-a-led",
+     "name": "Mlha a led",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/skaly-a-prach",
+     "name": "Skály a prach",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/koreny-a-slahouny",
+     "name": "Kořeny a šlahouny",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/spodni-proudy",
+     "name": "Spodní proudy",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/tiha-zeme",
+     "name": "Tíha země",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/hnev-lesa",
+     "name": "Hněv lesa",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/pamet-vody",
+     "name": "Paměť vody",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/pamet-kamene",
+     "name": "Paměť kamene",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/pamet-dreva",
+     "name": "Paměť dřeva",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/znak-vodanoje",
+     "name": "Znak vodanoje",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/znak-skalnika",
+     "name": "Znak skalnika",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:druid/znak-lesije",
+     "name": "Znak lešije",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:lupic",
+   "name": "Lupič",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:lupic/vzdusna-akrobacie",
+     "name": "Vzdušná akrobacie",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:lupic/mechanismy",
+     "name": "Mechanismy",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lupic/padelatelstvi",
+     "name": "Padělatelství",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lupic/vyroba-kontaktnich-jedu",
+     "name": "Výroba kontaktních jedů",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lupic/pouziti-kontaktnich-jedu",
+     "name": "Použití kontaktních jedů",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lupic/nektary",
+     "name": "Nektary",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:lupic/pusobeni-v-mestanstvu-a-sedlactvu",
+     "name": "Působení v měšťanstvu a sedláctvu",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:lupic/pavouk",
+     "name": "Pavouk",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/jako-blesk",
+     "name": "Jako blesk",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/mechanik",
+     "name": "Mechanik",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/zaskodnik",
+     "name": "Záškodník",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/padelatel",
+     "name": "Padělatel",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/mordyr",
+     "name": "Mordýř",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/dotykovy-jed",
+     "name": "Dotykový jed",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/protrely",
+     "name": "Protřelý",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/mestske-stiny",
+     "name": "Městské stíny",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/zlatousty",
+     "name": "Zlatoústý",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/licidla-a-masky",
+     "name": "Líčidla a masky",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lupic/mesto-jako-na-dlani",
+     "name": "Město jako na dlani",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:zved",
+   "name": "Zvěd",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:zved/boj-zdalky-ze-sedla-i-kozliku",
+     "name": "Boj zdálky ze sedla i kozlíku",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:zved/kocary-a-koraby",
+     "name": "Kočáry a koráby",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:zved/utajovani-informaci",
+     "name": "Utajování informací",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:zved/jednani-s-podsvetim",
+     "name": "Jednání s podsvětím",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:zved/pusobeni-v-podsveti",
+     "name": "Působení v podsvětí",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:zved/vedeni-lidi-mimo-boj",
+     "name": "Vedení lidí mimo boj",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:zved/obnovovani-lidskeho-vlivu",
+     "name": "Obnovování lidského vlivu",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:zved/najezdnik",
+     "name": "Nájezdník",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/zbojnik",
+     "name": "Zbojník",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/priskokem-vpred",
+     "name": "Přískokem vpřed",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/budu-te-kryt",
+     "name": "Budu tě krýt",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/nouzove-strely",
+     "name": "Nouzové střely",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/lesni-prizrak",
+     "name": "Lesní přízrak",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/cerna-ovce",
+     "name": "Černá ovce",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/kapitan",
+     "name": "Kapitán",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/seda-eminence",
+     "name": "Šedá eminence",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/kamuflaz",
+     "name": "Kamufláž",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/poradce",
+     "name": "Poradce",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:zved/znalec-podsveti",
+     "name": "Znalec podsvětí",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:vedmak",
+   "name": "Vědmák",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:vedmak/boj-zblizka-proti-nezivym",
+     "name": "Boj zblízka proti neživým",
+     "attribute": "Tělo",
+     "items": []
+    },
+    {
+     "id": "dovednost:vedmak/vedmacke-znalosti",
+     "name": "Vědmácké znalosti",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:vedmak/znameni",
+     "name": "Znamení",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:vedmak/ovlivnovani-nezivych",
+     "name": "Ovlivňování neživých",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:vedmak/znameni-fehu",
+     "name": "Znamení Fehu",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/znameni-othala",
+     "name": "Znamení Othala",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/znameni-berkano",
+     "name": "Znamení Berkano",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/znameni-tiwaz",
+     "name": "Znamení Tiwaz",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/znak-slunce",
+     "name": "Znak slunce",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/stribrna-zbran",
+     "name": "Stříbrná zbraň",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/vymitac",
+     "name": "Vymítač",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/postrach-prizraku",
+     "name": "Postrach přízraků",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/znalec-demonu",
+     "name": "Znalec démonů",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/svaty-hnev",
+     "name": "Svatý hněv",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/zmutovane-telo",
+     "name": "Zmutované tělo",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:vedmak/zlodeji-tel",
+     "name": "Zloději těl",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:alchymista",
+   "name": "Alchymista",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:alchymista/alchymicke-znalosti",
+     "name": "Alchymické znalosti",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:alchymista/vyroba-traskavin-ziravin-a-plynnych-jedu",
+     "name": "Výroba třaskavin, žíravin a plynných jedů",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:alchymista/pouzivani-traskavin-ziravin-a-plynnych-jedu",
+     "name": "Používání třaskavin, žíravin a plynných jedů",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:alchymista/vyroba-elixiru",
+     "name": "Výroba elixírů",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:alchymista/umely-zivot",
+     "name": "Umělý život",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:alchymista/pouzivani-elixiru",
+     "name": "Používání elixírů",
+     "attributeNote": "podle prováděné akce",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:alchymista/ohnestrujce",
+     "name": "Ohněstrůjce",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/vyrobce-elixiru",
+     "name": "Výrobce elixírů",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/mudrc",
+     "name": "Mudrc",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/ziva-voda",
+     "name": "Živá voda",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/lamac-nadprirozena",
+     "name": "Lamač nadpřirozena",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/neobvykle-spouste",
+     "name": "Neobvyklé spouště",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/posileni-elixiru",
+     "name": "Posílení elixíru",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/pan-golemu",
+     "name": "Pán golemů",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/umela-duse",
+     "name": "Umělá duše",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/stvoritel",
+     "name": "Stvořitel",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/telesna-straz",
+     "name": "Tělesná stráž",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:alchymista/hracicka",
+     "name": "Hračička",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:carodej",
+   "name": "Čaroděj",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:carodej/magie-ohne",
+     "name": "Magie ohně",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:carodej/magie-vetru",
+     "name": "Magie větru",
+     "attribute": "Duše",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:carodej/pan-ohne",
+     "name": "Pán ohně",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/vladce-vetru",
+     "name": "Vládce větru",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/draci-dech",
+     "name": "Dračí dech",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/sila-vichrice",
+     "name": "Síla vichřice",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/vecny-zar",
+     "name": "Věčný žár",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/kvileni-meluziny",
+     "name": "Kvílení meluzíny",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/znak-salamandra",
+     "name": "Znak salamandra",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/znak-sylfy",
+     "name": "Znak sylfy",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/plamenne-peklo",
+     "name": "Plamenné peklo",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/vzdusny-vir",
+     "name": "Vzdušný vír",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/magicky-stit",
+     "name": "Magický štít",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:carodej/spolecnost-demonu",
+     "name": "Společnost démonů",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "povolani:mag",
+   "name": "Mág",
+   "kind": "pokrocile",
+   "intro": "",
+   "skills": [
+    {
+     "id": "dovednost:mag/magie-iluzi",
+     "name": "Magie iluzí",
+     "attribute": "Duše",
+     "items": []
+    },
+    {
+     "id": "dovednost:mag/magie-mysli",
+     "name": "Magie mysli",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:mag/jednani-s-duchovenstvem-a-vzdelanci",
+     "name": "Jednání s duchovenstvem a vzdělanci",
+     "attribute": "Vliv",
+     "items": []
+    },
+    {
+     "id": "dovednost:mag/pusobeni-mezi-duchovenstvem-a-vzdelanci",
+     "name": "Působení mezi duchovenstvem a vzdělanci",
+     "attribute": "Vliv",
+     "items": []
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:mag/vladce-iluzi",
+     "name": "Vládce iluzí",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/armada-prizraku",
+     "name": "Armáda přízraků",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/mameni-smyslu",
+     "name": "Mámení smyslů",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/preludy",
+     "name": "Přeludy",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/znak-fantoma",
+     "name": "Znak fantóma",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/odhodlana-mysl",
+     "name": "Odhodlaná mysl",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/lamac-vuli",
+     "name": "Lamač vůlí",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/davova-psychoza",
+     "name": "Davová psychóza",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/neviditelny-loutkar",
+     "name": "Neviditelný loutkář",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/pozirac-dusi",
+     "name": "Požírač duší",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/znak-upira",
+     "name": "Znak upíra",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:mag/podivny-pritelicek",
+     "name": "Podivný přítelíček",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  }
+ ],
+ "races": [
+  {
+   "id": "rasa:lide",
+   "name": "Lidé",
+   "text": "",
+   "names": [],
+   "cultures": [
+    {
+     "id": "kultura:lide/lide-kralovstvi",
+     "name": "Lidé království",
+     "text": ""
+    },
+    {
+     "id": "kultura:lide/osadnici",
+     "name": "Osadníci",
+     "text": ""
+    },
+    {
+     "id": "kultura:lide/barbari",
+     "name": "Barbaři",
+     "text": ""
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:lide/jmenem-krale",
+     "name": "Jménem krále",
+     "attribute": "Duše",
+     "quickPickCulture": "Lidé království",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lide/zarputilost",
+     "name": "Zarputilost",
+     "attribute": "Vliv",
+     "quickPickCulture": "Osadníci",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lide/idol-zen-ci-muzu",
+     "name": "Idol žen či mužů",
+     "attribute": "Vliv",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lide/lvi-srdce",
+     "name": "Lví srdce",
+     "attribute": "Vliv",
+     "quickPickCulture": "Barbaři",
+     "text": ""
+    },
+    {
+     "id": "schopnost:lide/styky",
+     "name": "Styky",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "rasa:elfove",
+   "name": "Elfové",
+   "text": "",
+   "names": [],
+   "cultures": [
+    {
+     "id": "kultura:elfove/lid-pahorku",
+     "name": "Lid pahorků",
+     "alias": "Elfové Domů",
+     "text": ""
+    },
+    {
+     "id": "kultura:elfove/lid-noci",
+     "name": "Lid noci",
+     "text": ""
+    },
+    {
+     "id": "kultura:elfove/lesni-elfove",
+     "name": "Lesní elfové",
+     "text": ""
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:elfove/vznesenost",
+     "name": "Vznešenost",
+     "attribute": "Vliv",
+     "quickPickCulture": "Lid pahorků",
+     "text": ""
+    },
+    {
+     "id": "schopnost:elfove/tesknota",
+     "name": "Tesknota",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:elfove/jsme-jedne-krve",
+     "name": "Jsme jedné krve",
+     "attribute": "Vliv",
+     "quickPickCulture": "Lesní elfové",
+     "text": ""
+    },
+    {
+     "id": "schopnost:elfove/plast-soumraku",
+     "name": "Plášť soumraku",
+     "attribute": "Duše",
+     "quickPickCulture": "Lid noci",
+     "text": ""
+    },
+    {
+     "id": "schopnost:elfove/pamet-rodu",
+     "name": "Paměť rodu",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "rasa:trpaslici",
+   "name": "Trpaslíci",
+   "text": "",
+   "names": [],
+   "cultures": [
+    {
+     "id": "kultura:trpaslici/horsti-trpaslici",
+     "name": "Horští trpaslíci",
+     "text": ""
+    },
+    {
+     "id": "kultura:trpaslici/hlubinni-trpaslici",
+     "name": "Hlubinní trpaslíci",
+     "text": ""
+    },
+    {
+     "id": "kultura:trpaslici/osamoceni-trpaslici",
+     "name": "Osamocení trpaslíci",
+     "text": ""
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:trpaslici/nocni-oci",
+     "name": "Noční oči",
+     "attribute": "Duše",
+     "quickPickCulture": "Hlubinní trpaslíci",
+     "text": ""
+    },
+    {
+     "id": "schopnost:trpaslici/sila-prisahy",
+     "name": "Síla přísahy",
+     "attribute": "Duše",
+     "quickPickCulture": "Horští trpaslíci",
+     "text": ""
+    },
+    {
+     "id": "schopnost:trpaslici/nezdolnost",
+     "name": "Nezdolnost",
+     "attribute": "Tělo",
+     "quickPickCulture": "Osamocení trpaslíci",
+     "text": ""
+    },
+    {
+     "id": "schopnost:trpaslici/jatra-ze-zuly",
+     "name": "Játra ze žuly",
+     "attribute": "Tělo",
+     "text": ""
+    },
+    {
+     "id": "schopnost:trpaslici/pouto-krve",
+     "name": "Pouto krve",
+     "attribute": "Vliv",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "rasa:hobiti",
+   "name": "Hobiti",
+   "text": "",
+   "names": [],
+   "cultures": [
+    {
+     "id": "kultura:hobiti/usedli-hobiti",
+     "name": "Usedlí hobiti",
+     "text": ""
+    },
+    {
+     "id": "kultura:hobiti/potulni-hobiti",
+     "name": "Potulní hobiti",
+     "text": ""
+    },
+    {
+     "id": "kultura:hobiti/horda",
+     "name": "Horda",
+     "text": ""
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:hobiti/sesty-smysl",
+     "name": "Šestý smysl",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hobiti/takovy-prcek",
+     "name": "Takový prcek!",
+     "attribute": "Tělo",
+     "quickPickCulture": "Horda",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hobiti/dobra-nalada",
+     "name": "Dobrá nálada",
+     "attribute": "Duše",
+     "quickPickCulture": "Usedlí hobiti",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hobiti/tichoslapek",
+     "name": "Tichošlápek",
+     "attribute": "Duše",
+     "quickPickCulture": "Potulní hobiti",
+     "text": ""
+    },
+    {
+     "id": "schopnost:hobiti/labuznik",
+     "name": "Labužník",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "id": "rasa:krollove",
+   "name": "Krollové",
+   "text": "",
+   "names": [],
+   "cultures": [
+    {
+     "id": "kultura:krollove/hranicni-krollove",
+     "name": "Hraniční krollové",
+     "text": ""
+    },
+    {
+     "id": "kultura:krollove/divoci-krollove",
+     "name": "Divocí krollové",
+     "text": ""
+    },
+    {
+     "id": "kultura:krollove/spoutani-krollove",
+     "name": "Spoutaní krollové",
+     "text": ""
+    }
+   ],
+   "abilities": [
+    {
+     "id": "schopnost:krollove/netopyri-sluch",
+     "name": "Netopýří sluch",
+     "attribute": "Duše",
+     "text": ""
+    },
+    {
+     "id": "schopnost:krollove/zbesilost",
+     "name": "Zběsilost",
+     "attribute": "Tělo",
+     "quickPickCulture": "Spoutaní krollové",
+     "text": ""
+    },
+    {
+     "id": "schopnost:krollove/odznaky-hrdinstvi",
+     "name": "Odznaky hrdinství",
+     "attribute": "Vliv",
+     "quickPickCulture": "Hraniční krollové",
+     "text": ""
+    },
+    {
+     "id": "schopnost:krollove/zubri-kuze",
+     "name": "Zubří kůže",
+     "attribute": "Tělo",
+     "quickPickCulture": "Divocí krollové",
+     "text": ""
+    },
+    {
+     "id": "schopnost:krollove/koreny-magie",
+     "name": "Kořeny magie",
+     "attribute": "Duše",
+     "text": ""
+    }
+   ]
+  }
+ ],
+ "commonRaceAbilities": [
+  {
+   "id": "schopnost:rasa/rodova-zbran",
+   "name": "Rodová zbraň",
+   "attribute": "Tělo",
+   "text": ""
+  }
+ ],
+ "traits": [
+  {
+   "id": "rys:duelant",
+   "name": "Duelant",
+   "text": ""
+  },
+  {
+   "id": "rys:rebel",
+   "name": "Rebel",
+   "text": ""
+  },
+  {
+   "id": "rys:kodex",
+   "name": "Kodex",
+   "text": ""
+  },
+  {
+   "id": "rys:primost",
+   "name": "Přímost",
+   "text": ""
+  },
+  {
+   "id": "rys:suknickar",
+   "name": "Sukničkář",
+   "text": ""
+  },
+  {
+   "id": "rys:sedmilhar",
+   "name": "Sedmilhář",
+   "text": ""
+  }
+ ],
+ "creation": {
+  "startingLevels": 3,
+  "attributePoints": 15,
+  "attributeMin": 1,
+  "attributeRecommendedMin": 3,
+  "raceAbilities": 1,
+  "abilitiesPerLevel": 1,
+  "purchaseBudget": 900
+ }
+}

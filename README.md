@@ -51,7 +51,8 @@ a jejich použití je na odpovědnosti uživatele.
 Zdrojem převodníku je veřejně dostupné SRD Dračího doupěte II na [drd2srd.d20.cz](https://drd2srd.d20.cz/),
 které vzniklo podle jeho autorů s výslovným svolením nakladatelství Altar a autorů hry. Web SRD nestanoví
 podmínky pro další šíření textu ani pro odvozená díla, a proto **repozitář ani nasazená aplikace žádný text
-SRD neobsahují**. Případné balíčky se šíří jen soukromě v uzavřeném okruhu testerů, dokud nebudou podmínky
+SRD neobsahují**. Vestavěný přehled (`src/data/skeleton.json`) obsahuje jen názvy, identifikátory a číselné
+parametry (názvy povolání, ras, schopností, počty úrovní), nikoli popisy ani texty pravidel. Případné balíčky se šíří jen soukromě v uzavřeném okruhu testerů, dokud nebudou podmínky
 upřesněny s nositeli práv.
 
 Software je poskytován „tak, jak je“, bez jakékoli záruky, včetně záruky správnosti či úplnosti pravidel

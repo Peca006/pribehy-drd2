@@ -15,6 +15,9 @@
     ),
   )
   const left = $derived(data.rules.purchaseBudget - spent)
+  // bez balíčku pravidel (jen vestavěná kostra) nejsou hotové sady ani ceník: výbava se píše ručně
+  const manual = $derived(data.kits.length === 0 && priced.length === 0)
+  const lines = $derived(draft.equipment.join('\n'))
 
   function chooseKit(id: string) {
     const kit = data.kits.find((k) => k.id === id)
@@ -54,55 +57,75 @@
 </script>
 
 <h2>Výbava</h2>
-<p class="muted">
-  Vyberte hotovou sadu, nebo si nakupte vlastní výbavu v hodnotě {formatMoney(
-    data.rules.purchaseBudget,
-  )}.
-</p>
-
-<div class="tabs">
-  <button class:primary={draft.equipMode === 'kit'} onclick={() => (draft.equipMode = 'kit')}>
-    Hotové sady
-  </button>
-  <button class:primary={draft.equipMode === 'buy'} onclick={startBuying}>Vlastní nákup</button>
-</div>
-
-{#if draft.equipMode === 'kit'}
-  {#each data.kits as k}
-    <div class="panel" class:sel={draft.kitId === k.id}>
-      <button class="primary" onclick={() => chooseKit(k.id)}>
-        {draft.kitId === k.id ? '✓ ' : ''}{k.name}
-      </button>
-      <ul>
-        {#each k.lines as l}<li><strong>{l.label}:</strong> {plain(l.text)}</li>{/each}
-      </ul>
-    </div>
-  {/each}
+{#if manual}
+  <p class="muted">
+    Hotové sady ani ceník nejsou nainstalované (načtěte balíček pravidel v Knihovně). Výbavu zatím
+    napište ručně, jednu položku na řádek. Podle pravidel je k nákupu k dispozici
+    {formatMoney(data.rules.purchaseBudget)}.
+  </p>
+  <label>
+    Výzbroj a výstroj
+    <textarea
+      rows="6"
+      value={lines}
+      oninput={(e) => (draft.equipment = e.currentTarget.value.split('\n').filter((l) => l.trim()))}
+    ></textarea>
+  </label>
+  <label>
+    Hotovost v haléřích <input type="number" min="0" bind:value={draft.cash} />
+    <span class="muted">= {formatMoney(draft.cash || 0)}</span>
+  </label>
 {:else}
-  <p><strong>Zbývá: {formatMoney(left)}</strong></p>
-  {#each priced as g}
-    <details>
-      <summary>{g.name}</summary>
-      {#each g.items as i}
-        <div class="item">
-          <span>{plain(i.name)} <span class="muted">– {i.price.text}</span></span>
-          <span class="stepper">
-            <button
-              aria-label="Ubrat {plain(i.name)}"
-              onclick={() => buy(i.id, -1)}
-              disabled={!draft.cart[i.id]}>−</button
-            >
-            <output>{draft.cart[i.id] ?? 0}</output>
-            <button
-              aria-label="Přidat {plain(i.name)}"
-              onclick={() => buy(i.id, 1)}
-              disabled={(i.price.min ?? 0) > left}>+</button
-            >
-          </span>
-        </div>
-      {/each}
-    </details>
-  {/each}
+  <p class="muted">
+    Vyberte hotovou sadu, nebo si nakupte vlastní výbavu v hodnotě {formatMoney(
+      data.rules.purchaseBudget,
+    )}.
+  </p>
+
+  <div class="tabs">
+    <button class:primary={draft.equipMode === 'kit'} onclick={() => (draft.equipMode = 'kit')}>
+      Hotové sady
+    </button>
+    <button class:primary={draft.equipMode === 'buy'} onclick={startBuying}>Vlastní nákup</button>
+  </div>
+
+  {#if draft.equipMode === 'kit'}
+    {#each data.kits as k}
+      <div class="panel" class:sel={draft.kitId === k.id}>
+        <button class="primary" onclick={() => chooseKit(k.id)}>
+          {draft.kitId === k.id ? '✓ ' : ''}{k.name}
+        </button>
+        <ul>
+          {#each k.lines as l}<li><strong>{l.label}:</strong> {plain(l.text)}</li>{/each}
+        </ul>
+      </div>
+    {/each}
+  {:else}
+    <p><strong>Zbývá: {formatMoney(left)}</strong></p>
+    {#each priced as g}
+      <details>
+        <summary>{g.name}</summary>
+        {#each g.items as i}
+          <div class="item">
+            <span>{plain(i.name)} <span class="muted">– {i.price.text}</span></span>
+            <span class="stepper">
+              <button
+                aria-label="Ubrat {plain(i.name)}"
+                onclick={() => buy(i.id, -1)}
+                disabled={!draft.cart[i.id]}>−</button
+              >
+              <output>{draft.cart[i.id] ?? 0}</output>
+              <button
+                aria-label="Přidat {plain(i.name)}"
+                onclick={() => buy(i.id, 1)}
+                disabled={(i.price.min ?? 0) > left}>+</button
+              >
+            </span>
+          </div>
+        {/each}
+      </details>
+    {/each}
+  {/if}
 {/if}
 
 <style>

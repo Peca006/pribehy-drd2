@@ -15,7 +15,11 @@
     const rev = revisions[i]
     const undo = revertEvents(log, rev, settings.author, `Vrácení: ${rev.note || 'změna'}`)
     if (!undo.length) return
-    if (confirm(`Vrátit změnu „${rev.note || 'bez popisu'}“? Vznikne nová revize s původními hodnotami.`))
+    if (
+      confirm(
+        `Vrátit změnu „${rev.note || 'bez popisu'}“? Vznikne nová revize s původními hodnotami.`,
+      )
+    )
       onrevert(undo)
   }
 </script>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { emptyCharacter, eventsFor } from '../../core/character/model'
   import { saveLog } from '../../core/character/store'
+  import { hasRulesPack } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import { creationData } from './data'
@@ -60,6 +61,12 @@
 </script>
 
 <h1>Tvorba postavy</h1>
+{#if data && !hasRulesPack()}
+  <p class="muted">
+    Používáte vestavěný přehled (názvy a čísla) bez popisů pravidel. Popisy, hotové sady výbavy a
+    ceník doplní balíček pravidel v <a href="#/knihovna">Knihovně</a>.
+  </p>
+{/if}
 {#if !data}
   <p class="muted">
     Pro tvorbu postavy je potřeba nainstalovaný balíček s pravidly (rasy, povolání, výbava).
