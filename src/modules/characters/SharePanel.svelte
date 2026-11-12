@@ -54,7 +54,7 @@
   let compactOn = $state(false)
   let maxQr = $state(1)
   let fitted = $state.raw<Fitted | undefined>(undefined)
-  const canCompact = $derived(sinceIndex < 0 && revs.length > 1)
+  const canCompact = $derived(sinceIndex < 0 && revs.length > 0)
   $effect(() => {
     const l = log
     fitted = undefined
@@ -154,7 +154,7 @@
       {#if canCompact}
         <label class="check">
           <input type="checkbox" bind:checked={compactOn} />
-          Zhustit starší historii, aby se vešla do
+          Zmenšit pro QR (zhustit starší historii, případně vynechat dlouhé texty), nejvýš
           <select bind:value={maxQr} disabled={!compactOn} aria-label="Nejvýš QR kódů">
             <option value={1}>1 QR</option>
             <option value={2}>2 QR</option>
@@ -168,7 +168,12 @@
             {fitted.merged} nejstarších revizí je sloučeno do výchozího stavu; jejich podrobnosti se příjemci
             nepřenesou (v zařízení vám zůstanou).
           {:else}
-            Zhuštění není potřeba, historie se vejde celá.
+            Historie se přenese celá.
+          {/if}
+          {#if fitted.omitted.length}
+            Kvůli velikosti nejsou přiloženy texty: {fitted.omitted
+              .map((p) => (p === 'notes' ? 'poznámky' : 'příběh hrdiny'))
+              .join(', ')}.
           {/if}
           {#if !fitted.fits}
             Ani po zhuštění se kód nevejde do {maxQr} QR (potřebuje {fitted.qrCount}).

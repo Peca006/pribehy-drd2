@@ -113,4 +113,5 @@ aby se zachovalo co nejvíc historie. Jen pro QR (kód, soubor a sdílení posí
 `compact: { upTo, hash }`; příjemce s plnou historií ověří otisk (`stateHash`) a starší revize vynechá, příjemce
 bez deníku dostane výchozí stav jako první revizi, při neshodě nebo chybějícím základu je upozorněn.
 Ověřeno: postava se 14 revizemi 3872 znaků → 689 znaků (1 QR), QR přečteno zpět a import dal shodný stav.
-Zbývá: omezení velkých textů (příběh, poznámky) před zhuštěním, když se nevejde ani zhuštěný stav.
+Když se nevejde ani zhuštěný stav, vynechají se poznámky, pak i příběh hrdiny (`omitted` v balíčku, příjemce
+je upozorněn). Ověřeno: 5595 znaků (8 QR) → 1 QR.

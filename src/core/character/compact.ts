@@ -26,6 +26,15 @@ const shared = (r: Revision): SharedRevision => ({
 })
 
 /** Balíček, ve kterém je `keepLast` posledních revizí beze změny a starší jsou sloučené do výchozího stavu. */
+/** Bez změn zadaných cest (kvůli velikosti); revize, které tím zůstanou prázdné, se vynechají. */
+export function withoutPaths(b: RevisionBundle, omit: string[]): RevisionBundle {
+  if (!omit.length) return b
+  const revisions = b.revisions
+    .map((r) => ({ ...r, events: r.events.filter((e) => !omit.includes(e.path)) }))
+    .filter((r) => r.events.length)
+  return { ...b, omitted: omit, revisions }
+}
+
 export function buildCompactBundle(
   log: CharacterLog,
   name: string,
@@ -64,6 +73,8 @@ export interface Fitted {
   bundle: RevisionBundle
   /** kolik nejstarších revizí se sloučilo do výchozího stavu (0 = nic) */
   merged: number
+  /** cesty textů vynechaných kvůli velikosti (poznámky, příběh) */
+  omitted: string[]
   /** vejde se kód do požadovaného počtu QR? */
   fits: boolean
   /** počet QR, které kód potřebuje */
@@ -72,29 +83,41 @@ export interface Fitted {
 
 const qrCount = (code: string) => Math.max(1, Math.ceil(code.length / QR_CHUNK))
 
+/** Texty, které se vynechají (v tomto pořadí), když se kód nevejde ani po úplném zhuštění. */
+const OMIT_STEPS: string[][] = [['notes'], ['notes', 'heroStory']]
+
 /**
  * Nejmenší zhuštění (nejvíc zachované historie), při kterém se kód vejde do `maxQr` QR. Když se nevejde
- * ani s úplným zhuštěním, vrátí nejmenší možný kód a `fits: false`.
+ * ani s úplným zhuštěním, vynechá poznámky a příběh; když ani to nestačí, vrátí nejmenší možný kód
+ * a `fits: false`.
  */
 export async function fitForQr(log: CharacterLog, name: string, maxQr: number): Promise<Fitted> {
   const limit = maxQr * QR_CHUNK
   const n = groupRevisions(log.events).length
-  const make = async (keepLast: number): Promise<Fitted> => {
-    const bundle =
+  const make = async (keepLast: number, omit: string[] = []): Promise<Fitted> => {
+    const whole =
       keepLast >= n ? buildRevisionBundle(log, name, null) : buildCompactBundle(log, name, keepLast)
+    const merged = whole.compact ? n - (whole.revisions.length - 1) : 0
+    const bundle = withoutPaths(whole, omit)
     const code = await encodeBundle(bundle)
     return {
       code,
       bundle,
-      merged: bundle.compact ? n - (bundle.revisions.length - 1) : 0,
+      merged,
+      omitted: omit,
       fits: code.length <= limit,
       qrCount: qrCount(code),
     }
   }
   const full = await make(n)
-  if (full.fits || n < 2) return full
-  const smallest = await make(0)
-  if (!smallest.fits) return smallest
+  if (full.fits) return full
+  // nejmenší možný kód: úplné zhuštění (u jedné revize žádné), případně bez dlouhých textů
+  let smallest = await make(n < 2 ? n : 0)
+  for (const omit of OMIT_STEPS) {
+    if (smallest.fits) break
+    smallest = await make(n < 2 ? n : 0, omit)
+  }
+  if (!smallest.fits || smallest.omitted.length || n < 2) return smallest
   // hledáme největší počet zachovaných revizí, se kterým se kód ještě vejde
   let lo = 0
   let hi = n - 2

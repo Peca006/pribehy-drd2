@@ -120,4 +120,38 @@ describe('zhuštění historie', () => {
     expect(f.merged).toBe(0)
     expect(f.bundle.compact).toBeUndefined()
   })
+
+  it('když se nevejde ani zhuštěný stav, vynechají se poznámky a příběh a příjemce o tom ví', async () => {
+    const big: CharacterLog = {
+      id: 'b',
+      events: eventsFor(
+        emptyCharacter('b'),
+        { ...emptyCharacter('b'), name: 'Velká', cash: 10, notes: rnd(3000), heroStory: rnd(3000) },
+        'P',
+        'Tvorba',
+      ),
+    }
+    const f = await fitForQr(big, 'Velká', 1)
+    expect(f.fits).toBe(true)
+    expect(f.omitted).toEqual(['notes', 'heroStory'])
+    const dec = await decodeBundle(f.code)
+    expect((dec.bundle as typeof f.bundle).omitted).toEqual(['notes', 'heroStory'])
+    const got = characterOf(
+      applyRevisions(undefined, f.bundle, new Set(f.bundle.revisions.map((r) => r.id))),
+    )
+    expect(got.name).toBe('Velká')
+    expect(got.notes).toBe('')
+    expect(got.heroStory).toBe('')
+    // nejdřív se vynechají jen poznámky, když to stačí
+    const mid: CharacterLog = {
+      id: 'm',
+      events: eventsFor(
+        emptyCharacter('m'),
+        { ...emptyCharacter('m'), name: 'M', notes: rnd(3000), heroStory: rnd(100) },
+        'P',
+        'T',
+      ),
+    }
+    expect((await fitForQr(mid, 'M', 1)).omitted).toEqual(['notes'])
+  })
 })

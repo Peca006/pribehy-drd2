@@ -206,6 +206,12 @@
   <h2>Postava {bundle.name || bundle.char}</h2>
   <p>{KIND[analysis.kind]}</p>
   {#if analysis.note}<p class="muted">{analysis.note}</p>{/if}
+  {#if bundle.omitted?.length}
+    <p class="muted">
+      Hráč kvůli velikosti QR neposlal: {bundle.omitted.map(pathLabel).join(', ').toLowerCase()}.
+      Tyto texty se nezmění (u nové postavy zůstanou prázdné).
+    </p>
+  {/if}
   {#if analysis.conflicts.length}
     <p class="panel error" role="alert">
       Změněno na obou stranách: {analysis.conflicts.map(pathLabel).join(', ')}.

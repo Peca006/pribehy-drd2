@@ -44,6 +44,8 @@ export interface RevisionBundle {
    * `hash` je otisk stavu postavy v té chvíli (příjemce s plnou historií podle něj ověří, že souhlasí).
    */
   compact?: { upTo: string; hash: string }
+  /** cesty textových polí, které se kvůli velikosti (QR) nepřenesly, např. `notes` */
+  omitted?: string[]
   revisions: SharedRevision[]
 }
 
@@ -259,6 +261,7 @@ export function sanitizeBundle(raw: unknown): { bundle?: Bundle; errors: string[
       name,
       base: str(r.base, 100) ?? null,
       ...compactOf(r.compact),
+      ...omittedOf(r.omitted),
       revisions,
     },
     errors,
@@ -314,6 +317,15 @@ export function stateHash(c: Character): string {
   h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
   return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0')
+}
+
+/** Texty, které lze kvůli velikosti vynechat (jen dlouhé volné texty). */
+export const OMITTABLE = ['notes', 'heroStory']
+
+function omittedOf(raw: unknown): { omitted?: string[] } {
+  if (!Array.isArray(raw)) return {}
+  const list = raw.filter((x): x is string => typeof x === 'string' && OMITTABLE.includes(x))
+  return list.length ? { omitted: [...new Set(list)] } : {}
 }
 
 function compactOf(raw: unknown): { compact?: { upTo: string; hash: string } } {
