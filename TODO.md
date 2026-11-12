@@ -55,3 +55,16 @@ Způsoby přenosu (koncept, pořadí se ještě určí):
   pro uživatele a téměř bez práce navíc; příjemce soubor otevře v aplikaci (zaregistrovat typ souboru /
   `file_handlers` v manifestu PWA, na iOS import přes tlačítko).
 - Příjem souboru z jiných aplikací: `share_target` v manifestu PWA (Android).
+
+### Zhuštění historie pro QR
+
+Když se revize s historií nevejdou do QR (cíl cca 1,2 kB po stlačení, rozumný limit 1–1,5 kB), starší revize
+od začátku se při **exportu** sloučí do jedné výchozí revize „stav k revizi N“ (`eventsFor(prázdná, stav v čase N)`)
+a navazují na ni novější revize. N = nejmenší, při kterém se kód vejde.
+
+- Jen pro přenos; místní deník zůstává celý (nevratné zhuštění přímo v deníku jen jako zvláštní volba).
+- Výchozí revize nese otisk (hash) stavu v čase N: příjemce s plnou historií porovná otisk se svým stavem;
+  při shodě přijme navazující revize, při neshodě upozorní na rozdílný základ. Příjemce bez historie vezme
+  výchozí revizi jako počátek.
+- Před zhuštěním lze zkusit vynechat velké texty (příběh, poznámky) nebo rozdělit data na více QR / soubor.
+- Změřit skutečnou velikost typických postav a revizí, než se zvolí limit.
