@@ -194,3 +194,10 @@ Průvodce → hráč → návrhy → schválení / zamítnutí → hráč.
 
 Zbývá: oddělené role více Průvodců, sdílení členů s postavami (ID postav z jiných zařízení), tajné odměny,
 slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny (zdatnost, povolání).
+
+### QR jako obrázek (hotovo)
+
+Pod každým QR je **Uložit obrázek** (PNG, u více dílů všechny za sebou) a **Sdílet obrázek…** (Web Share s
+obrázky: zprávy, AirDrop, Quick Share). `ui/qrImage.ts` kreslí QR přímo do canvasu v celých pixelech (asi 1000 px,
+bílé pozadí, tichá zóna). Ověřeno: PNG se přečetly zpět a složily na shodný kód. Uložení do zařízení a sdílení
+obrázků je potřeba zkusit na telefonu. Zbývá QR na celou obrazovku a tisk.
