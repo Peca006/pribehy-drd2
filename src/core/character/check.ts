@@ -18,6 +18,7 @@ export interface CheckContext {
 }
 
 const MAX_LEVEL = 5
+const MAX_SCAR = 5
 
 export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[] {
   const out: CharacterCheck[] = []
@@ -84,11 +85,19 @@ export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[
     } else if (raceIds.has(id)) raceCount++
     else warn(`Rasová schopnost „${id}“ nepatří k rase postavy.`)
   }
+  // zlepšení zdatnosti (o 1 nad body z tvorby postavy) dává jednu schopnost rasy nebo povolání navíc
+  const attrSum = ATTRIBUTES.reduce(
+    (s, a) => s + (Number.isFinite(c.attributes[a]) ? c.attributes[a] : 0),
+    0,
+  )
+  const extra = Math.max(0, attrSum - rules.attributePoints)
+  const extraNote = extra ? ` (a ${extra} navíc za zlepšení zdatnosti)` : ''
   for (const [pid, n] of perProfession) {
     const p = known.get(pid)!
     const lvl = c.professions[pid] ?? 0
     const allowed = lvl * rules.abilitiesPerLevel
-    if (n > allowed) err(`${p.name}: ${n} schopností, úroveň ${lvl} jich dovoluje ${allowed}.`)
+    if (n > allowed + extra)
+      err(`${p.name}: ${n} schopností, úroveň ${lvl} jich dovoluje ${allowed}${extraNote}.`)
     else if (n < allowed) warn(`${p.name}: ${n} schopností, úroveň ${lvl} jich má ${allowed}.`)
   }
   for (const [pid, lvl] of Object.entries(c.professions)) {
@@ -96,11 +105,45 @@ export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[
     if (p && lvl > 0 && !perProfession.has(pid) && rules.abilitiesPerLevel > 0)
       warn(`${p.name}: žádná schopnost, úroveň ${lvl} jich má ${lvl * rules.abilitiesPerLevel}.`)
   }
-  if (race && raceCount > rules.raceAbilities)
-    err(`Rasových schopností je ${raceCount}, pravidla dovolují ${rules.raceAbilities}.`)
-  else if (race && raceCount < rules.raceAbilities) warn('Chybí rasová schopnost (nebo Rodová zbraň).')
+  const levelsTotal = Object.values(c.professions).reduce(
+    (s, l) => s + (Number.isFinite(l) ? l : 0),
+    0,
+  )
+  const abilitiesAllowed = rules.raceAbilities + levelsTotal * rules.abilitiesPerLevel + extra
+  const abilitiesHave = new Set(c.abilities.filter((a) => allKnown.has(a))).size
+  if (abilitiesHave > abilitiesAllowed)
+    err(
+      `Schopností je celkem ${abilitiesHave}, pravidla dovolují ${abilitiesAllowed}${extra ? ' (včetně zlepšení zdatnosti)' : ''}.`,
+    )
+  if (race && raceCount > rules.raceAbilities + extra)
+    err(
+      `Rasových schopností je ${raceCount}, pravidla dovolují ${rules.raceAbilities}${extraNote}.`,
+    )
+  else if (race && raceCount < rules.raceAbilities)
+    warn('Chybí rasová schopnost (nebo Rodová zbraň).')
   if (c.abilities.some((a) => a.endsWith('rodova-zbran')) && !c.weaponKind.trim())
     warn('Rodová zbraň: chybí druh zbraně.')
+
+  // pokročilá povolání vyžadují 6 úrovní ve dvou základních povoláních, ze kterých vycházejí (min. 1 z každého)
+  for (const [pid, lvl] of Object.entries(c.professions)) {
+    const p = known.get(pid)
+    if (!p?.requires?.length || !(lvl > 0)) continue
+    const have = p.requires.map((r) => c.professions[r] ?? 0)
+    if (have.some((l) => l < 1) || have.reduce((s, l) => s + l, 0) < 6)
+      warn(
+        `${p.name}: pokročilé povolání vyžaduje alespoň 6 úrovní v povoláních ${p.requires
+          .map((r) => known.get(r)?.name ?? r)
+          .join(' a ')} (po jedné z každého).`,
+      )
+  }
+
+  // zkušenosti a jizvy
+  if (!Number.isInteger(c.xp) || c.xp < 0) err('Body zkušeností musí být nezáporné celé číslo.')
+  for (const s of c.scars) {
+    if (!ATTRIBUTES.includes(s.attribute)) err(`Jizva „${s.note}“: neplatná vlastnost.`)
+    else if (!Number.isInteger(s.severity) || s.severity < 1 || s.severity > MAX_SCAR)
+      err(`Jizva (${s.attribute}): závažnost ${s.severity} je mimo rozsah 1 až ${MAX_SCAR}.`)
+  }
 
   // výbava a peníze
   if (!Number.isInteger(c.cash) || c.cash < 0)

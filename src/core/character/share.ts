@@ -9,6 +9,7 @@ import {
   type Character,
   type CharacterLog,
 } from './model'
+import { scarsOf } from './drafts'
 import { groupRevisions, type Revision } from './revisions'
 
 export const SHARE_VERSION = 1
@@ -181,6 +182,14 @@ export function sanitizeEvent(raw: unknown): SharedEvent | undefined {
         .slice(0, n)
         .map((x) => x.slice(0, len)),
     }
+  }
+  if (path === 'xp') {
+    const n = num(v)
+    return n === undefined || n < 0 ? undefined : { id, path, value: n }
+  }
+  if (path === 'scars') {
+    if (!Array.isArray(v)) return undefined
+    return { id, path, value: scarsOf(v) }
   }
   if (path === 'cash') {
     const n = num(v)

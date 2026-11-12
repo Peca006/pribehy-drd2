@@ -34,6 +34,8 @@ export interface Skill {
 export interface Ability {
   id: ContentId
   name: string
+  /** odkaz na místo v SRD (cesta a kotva, např. `zakladni-prirucka/25-zakladni-povolani.html#sila-telo`) */
+  srd?: string
   attribute?: Attribute
   attributeNote?: string
   /** od jaké úrovně je „rychlá volba“ při tvorbě postavy */
@@ -49,7 +51,11 @@ export type ProfessionKind = 'zakladni' | 'pokrocile' | 'mistrovske'
 export interface Profession {
   id: ContentId
   name: string
+  /** odkaz na místo v SRD, viz `Ability.srd` */
+  srd?: string
   kind: ProfessionKind
+  /** pokročilé povolání: ID dvou základních povolání, ze kterých vychází (jinak chybí) */
+  requires?: ContentId[]
   intro: Markdown
   skills: Skill[]
   abilities: Ability[]
@@ -83,6 +89,7 @@ export interface Chapter {
 export interface Culture {
   id: ContentId
   name: string
+  srd?: string
   /** upřesnění v závorce nadpisu, např. „Elfové Domů“ */
   alias?: string
   text: Markdown
@@ -91,6 +98,7 @@ export interface Culture {
 export interface Race {
   id: ContentId
   name: string
+  srd?: string
   /** krátký přehled pro výběr (z kapitoly o tvorbě hrdiny) */
   summary?: Markdown
   /** úvodní věta (motto) z kapitoly o rasách */
@@ -106,6 +114,7 @@ export interface Race {
 export interface Trait {
   id: ContentId
   name: string
+  srd?: string
   flavor?: Markdown
   /** kdy se rys uplatní */
   text: Markdown

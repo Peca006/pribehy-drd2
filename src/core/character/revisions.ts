@@ -1,6 +1,13 @@
 // Revize deníku postavy: změny zveřejněné společně (jedno „Zveřejnit“) tvoří jednu revizi. Z deníku se dá
 // zjistit, co revize změnila („před → po“), a vytvořit nová revize, která ji vrací (historie se nikdy nemaže).
-import { applyChange, characterOf, eventsFor, type Character, type ChangeEvent, type CharacterLog } from './model'
+import {
+  applyChange,
+  characterOf,
+  eventsFor,
+  type Character,
+  type ChangeEvent,
+  type CharacterLog,
+} from './model'
 
 export interface Revision {
   id: string
@@ -73,7 +80,12 @@ export function changesBetween(before: Character, after: Character): RevisionCha
  * Změny, které vrátí hodnoty z doby před revizí. Platí vůči současnému stavu: pozdější změny
  * stejných polí se přepíšou, ostatní zůstanou.
  */
-export function revertEvents(log: CharacterLog, rev: Revision, by: string, note: string): ChangeEvent[] {
+export function revertEvents(
+  log: CharacterLog,
+  rev: Revision,
+  by: string,
+  note: string,
+): ChangeEvent[] {
   const current = characterOf(log)
   const rid = `rev-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
   const at = new Date().toISOString()

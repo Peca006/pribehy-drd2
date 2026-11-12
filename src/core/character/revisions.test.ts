@@ -1,9 +1,19 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { clearCharacterDraft, loadCharacterDraft, sanitizeCharacter, saveCharacterDraft } from './drafts'
+import {
+  clearCharacterDraft,
+  loadCharacterDraft,
+  sanitizeCharacter,
+  saveCharacterDraft,
+} from './drafts'
 import { characterOf, emptyCharacter, eventsFor, type CharacterLog } from './model'
 import { changesBetween, groupRevisions, revertEvents, revisionChanges } from './revisions'
 
-const base = { ...emptyCharacter('a'), name: 'Jarik', attributes: { Tělo: 6, Duše: 5, Vliv: 4 }, cash: 600 }
+const base = {
+  ...emptyCharacter('a'),
+  name: 'Jarik',
+  attributes: { Tělo: 6, Duše: 5, Vliv: 4 },
+  cash: 600,
+}
 
 function logWith(...steps: [Partial<typeof base>, string][]): CharacterLog {
   let cur = emptyCharacter('a')
@@ -21,7 +31,10 @@ describe('revize', () => {
   it('změny zveřejněné společně tvoří jednu revizi', () => {
     const log = logWith([base, 'Tvorba'], [{ cash: 240, equipment: ['Meč'] }, 'Nákup'])
     const revs = groupRevisions(log.events)
-    expect(revs.map((r) => [r.note, r.events.length])).toEqual([['Tvorba', 5], ['Nákup', 2]])
+    expect(revs.map((r) => [r.note, r.events.length])).toEqual([
+      ['Tvorba', 5],
+      ['Nákup', 2],
+    ])
   })
 
   it('starší záznamy bez ID revize se seskupí podle času, autora a poznámky', () => {
@@ -62,7 +75,9 @@ describe('revize', () => {
   })
 
   it('changesBetween popíše rozdíl dvou postav', () => {
-    expect(changesBetween(base, { ...base, cash: 1 })).toEqual([{ path: 'cash', before: 600, after: 1 }])
+    expect(changesBetween(base, { ...base, cash: 1 })).toEqual([
+      { path: 'cash', before: 600, after: 1 },
+    ])
   })
 })
 

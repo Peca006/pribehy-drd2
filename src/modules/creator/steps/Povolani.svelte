@@ -45,7 +45,7 @@
         >
       </span>
     </div>
-    <Md text={p.intro.split('\n\n')[0]} hint />
+    <Md text={p.intro.split('\n\n')[0]} hint srd={p.srd} />
     <details>
       <summary>Dovednosti</summary>
       <ul>

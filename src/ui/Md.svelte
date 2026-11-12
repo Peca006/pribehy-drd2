@@ -3,8 +3,10 @@
   import { parseInline } from '../core/markdown'
   import Inline from './Inline.svelte'
 
-  // `hint`: u povinného textu (popis schopnosti, kultury, …) se při prázdném textu ukáže nápověda
-  let { text, hint = false }: { text: string; hint?: boolean } = $props()
+  // `hint`: u povinného textu (popis schopnosti, kultury, …) se při prázdném textu ukáže nápověda;
+  // `srd` je cesta s kotvou do SRD, kam odkazuje slovo „pravidla“
+  let { text, hint = false, srd }: { text: string; hint?: boolean; srd?: string } = $props()
+  const SRD_BASE = 'https://drd2srd.d20.cz/'
   const parts = $derived(
     text
       .split('\n\n')
@@ -19,7 +21,9 @@
 
 {#if hint && !text.trim()}
   <p class="muted nodesc">
-    Pro popis <a href="#/knihovna">instaluj balíček</a>, nebo čti pravidla.
+    Pro popis <a href="#/knihovna">instaluj balíček</a>, nebo čti
+    {#if srd}<a href={SRD_BASE + srd} target="_blank" rel="noopener noreferrer">pravidla</a
+      >{:else}pravidla{/if}.
   </p>
 {/if}
 

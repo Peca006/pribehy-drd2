@@ -24,7 +24,7 @@
       <span>
         <strong>{t.name}</strong>
         {#if t.flavor}<Md text={t.flavor} />{/if}
-        <Md text={t.text} hint />
+        <Md text={t.text} hint srd={t.srd} />
       </span>
     </label>
   </div>

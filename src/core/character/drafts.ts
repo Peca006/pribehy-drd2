@@ -1,6 +1,6 @@
 // Návrh úpravy postavy (koncept před „Zveřejnit“): úplná kopie postavy, uložená jen v tomto zařízení.
 // Do deníku se zapíše až při zveřejnění, a to jen rozdíl proti postavě – jako jedna revize.
-import { emptyCharacter, type Character } from './model'
+import { emptyCharacter, type Character, type Scar } from './model'
 
 const KEY = (id: string) => `drd2-char-draft:${id}`
 const VERSION = 1
@@ -18,10 +18,39 @@ const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : u
 const strs = (v: unknown, max = 300) =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string').slice(0, max) : []
 
+/** Platné jizvy ze seznamu neznámého původu (nejvýš 50). */
+export function scarsOf(v: unknown): Scar[] {
+  if (!Array.isArray(v)) return []
+  const out: Scar[] = []
+  for (const x of v.slice(0, 50)) {
+    if (typeof x !== 'object' || x === null) continue
+    const s = x as Record<string, unknown>
+    const attribute = ATTRS.find((a) => a === s.attribute)
+    const severity = num(s.severity)
+    if (
+      !attribute ||
+      severity === undefined ||
+      !Number.isInteger(severity) ||
+      severity < 1 ||
+      severity > 9
+    )
+      continue
+    out.push({
+      id: str(s.id, 100) || `j${out.length}`,
+      attribute,
+      severity,
+      note: str(s.note, 300) ?? '',
+    })
+  }
+  return out
+}
+
 /** Očistí neznámá data na platnou postavu; chybějící hodnoty vezme z `fallback`. */
 export function sanitizeCharacter(raw: unknown, fallback: Character): Character {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>
-  const a = (typeof r.attributes === 'object' && r.attributes !== null ? r.attributes : {}) as Record<string, unknown>
+  const a = (
+    typeof r.attributes === 'object' && r.attributes !== null ? r.attributes : {}
+  ) as Record<string, unknown>
   const attributes = { ...fallback.attributes }
   for (const k of ATTRS) attributes[k] = num(a[k]) ?? attributes[k]
   const professions: Record<string, number> = {}
@@ -44,6 +73,8 @@ export function sanitizeCharacter(raw: unknown, fallback: Character): Character 
     heroStory: str(r.heroStory) ?? '',
     equipment: strs(r.equipment, 500).map((x) => x.slice(0, 500)),
     cash: Math.max(0, num(r.cash) ?? 0),
+    xp: Math.max(0, num(r.xp) ?? 0),
+    scars: scarsOf(r.scars),
     notes: str(r.notes) ?? '',
   }
 }
@@ -64,7 +95,10 @@ export function loadCharacterDraft(id: string): CharacterDraft | undefined {
 
 export function saveCharacterDraft(id: string, base: number, character: Character) {
   try {
-    localStorage.setItem(KEY(id), JSON.stringify({ v: VERSION, base, character, saved: Date.now() }))
+    localStorage.setItem(
+      KEY(id),
+      JSON.stringify({ v: VERSION, base, character, saved: Date.now() }),
+    )
   } catch {
     /* úložiště nemusí být dostupné; úprava funguje i bez ukládání návrhu */
   }

@@ -10,6 +10,7 @@ import {
   CREATION_RULES,
   deriveEquipment,
   deriveRaces,
+  deriveRequirements,
   deriveStartingKits,
   deriveGlossary,
   deriveTerms,
@@ -37,6 +38,8 @@ if (missing.length) {
 }
 const images = await embedImages(chapters, assets)
 
+const requirements = deriveRequirements(chapters, professions)
+for (const p of professions) if (requirements.has(p.id)) p.requires = requirements.get(p.id)
 const { races, common } = deriveRaces(chapters)
 const pack = {
   manifest: {

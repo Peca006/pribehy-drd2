@@ -4,6 +4,16 @@ import type { Attribute, ContentId } from '../content/schema'
 
 export const ATTRIBUTES: Attribute[] = ['Tělo', 'Duše', 'Vliv']
 
+/** Jizva: trvalejší zranění či újma; snižuje příslušnou zdatnost o svou závažnost. */
+export interface Scar {
+  id: string
+  attribute: Attribute
+  /** závažnost 1 až 5 (výše náročnosti omezených akcí) */
+  severity: number
+  /** čím je jizva způsobena, jak se projevuje */
+  note: string
+}
+
 export interface Character {
   id: string
   name: string
@@ -26,6 +36,9 @@ export interface Character {
   equipment: string[]
   /** hotovost v haléřích */
   cash: number
+  /** nespotřebované body zkušeností (12 = jedno zlepšení postavy) */
+  xp: number
+  scars: Scar[]
   notes: string
 }
 
@@ -41,6 +54,8 @@ export const emptyCharacter = (id: string): Character => ({
   heroStory: '',
   equipment: [],
   cash: 0,
+  xp: 0,
+  scars: [],
   notes: '',
 })
 

@@ -38,6 +38,28 @@ function sections(blocks, level) {
   return out
 }
 
+/**
+ * Pokročilá povolání: ze dvou základních, ze kterých vycházejí („Základní povolání: Lovec + Mastičkář“
+ * pod nadpisem povolání v kapitole o pokročilých povoláních). Vrací Map ID povolání → ID dvou základních.
+ */
+export function deriveRequirements(chapters, professions) {
+  const ch = chapterOf(chapters, '26')
+  const out = new Map()
+  if (!ch) return out
+  const byName = new Map(professions.map((p) => [p.name.toLowerCase(), p.id]))
+  let current
+  for (const b of ch.blocks) {
+    if (b.type === 'heading' && b.level === 2) current = byName.get(plainHeading(b).toLowerCase())
+    else if (b.type === 'p' && current) {
+      const m = /Základní\s+povolání\**:\s*(.+)$/.exec(b.text.replace(/\*/g, ''))
+      if (!m) continue
+      const ids = m[1].split('+').map((x) => byName.get(x.trim().toLowerCase()))
+      if (ids.length === 2 && ids.every(Boolean)) out.set(current, ids)
+    }
+  }
+  return out
+}
+
 /** Rasy z kapitoly „Rasy“ (+ společné schopnosti), stručné přehledy z kapitoly o tvorbě hrdiny. */
 export function deriveRaces(chapters) {
   const ch = chapterOf(chapters, '24')

@@ -96,7 +96,7 @@
           >{/if}
       </summary>
       {#if a?.flavor}<Md text={a.flavor} />{/if}
-      {#if a}<Md text={a.text} hint />{/if}
+      {#if a}<Md text={a.text} hint srd={a.srd} />{/if}
     </details>
   {/each}
 

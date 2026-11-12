@@ -14,6 +14,7 @@
    "id": "povolani:bojovnik",
    "name": "Bojovník",
    "kind": "zakladni",
+   "srd": "zakladni-prirucka/25-zakladni-povolani.html#bojovnik",
    "intro": "",
    "skills": [
     {
@@ -47,6 +48,7 @@
      "name": "Cit pro zbraň",
      "attribute": "Tělo",
      "quickPickLevel": 1,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#cit-pro-zbran-telo-rychla-volba-uroven-1",
      "text": ""
     },
     {
@@ -54,12 +56,14 @@
      "name": "Gladiátor",
      "attribute": "Tělo",
      "quickPickLevel": 3,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#gladiator-telo-rychla-volba-uroven-3",
      "text": ""
     },
     {
      "id": "schopnost:bojovnik/silak",
      "name": "Silák",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#silak-telo",
      "text": ""
     },
     {
@@ -67,6 +71,7 @@
      "name": "Osobní strážce",
      "attribute": "Tělo",
      "quickPickLevel": 4,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#osobni-strazce-telo-rychla-volba-uroven-4",
      "text": ""
     },
     {
@@ -74,36 +79,42 @@
      "name": "Kruhový sek",
      "attribute": "Tělo",
      "quickPickLevel": 5,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#kruhovy-sek-telo-rychla-volba-uroven-5",
      "text": ""
     },
     {
      "id": "schopnost:bojovnik/padny-uder",
      "name": "Pádný úder",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#padny-uder-telo",
      "text": ""
     },
     {
      "id": "schopnost:bojovnik/hlava-nehlava",
      "name": "Hlava nehlava",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#hlava-nehlava-telo",
      "text": ""
     },
     {
      "id": "schopnost:bojovnik/rameno-na-rameno",
      "name": "Rameno na rameno",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#rameno-na-rameno-telo",
      "text": ""
     },
     {
      "id": "schopnost:bojovnik/skald",
      "name": "Skald",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#skald-duse",
      "text": ""
     },
     {
      "id": "schopnost:bojovnik/skvely-taktik",
      "name": "Skvělý taktik",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#skvely-taktik-duse",
      "text": ""
     },
     {
@@ -111,12 +122,14 @@
      "name": "Šampión",
      "attribute": "Vliv",
      "quickPickLevel": 2,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#sampion-vliv-rychla-volba-uroven-2",
      "text": ""
     },
     {
      "id": "schopnost:bojovnik/precteni-soupere",
      "name": "Přečtení soupeře",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#precteni-soupere-vliv",
      "text": ""
     }
    ]
@@ -125,6 +138,7 @@
    "id": "povolani:lovec",
    "name": "Lovec",
    "kind": "zakladni",
+   "srd": "zakladni-prirucka/25-zakladni-povolani.html#lovec",
    "intro": "",
    "skills": [
     {
@@ -170,6 +184,7 @@
      "name": "Dobrá muška",
      "attribute": "Tělo",
      "quickPickLevel": 1,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#dobra-muska-telo-rychla-volba-uroven-1",
      "text": ""
     },
     {
@@ -177,6 +192,7 @@
      "name": "Ostrostřelec",
      "attribute": "Tělo",
      "quickPickLevel": 3,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#ostrostrelec-telo-rychla-volba-uroven-3",
      "text": ""
     },
     {
@@ -184,6 +200,7 @@
      "name": "Déšť střel",
      "attribute": "Tělo",
      "quickPickLevel": 5,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#dest-strel-telo-rychla-volba-uroven-5",
      "text": ""
     },
     {
@@ -191,36 +208,42 @@
      "name": "Zálesák",
      "attribute": "Duše",
      "quickPickLevel": 4,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#zalesak-duse-rychla-volba-uroven-4",
      "text": ""
     },
     {
      "id": "schopnost:lovec/pruzkumnik",
      "name": "Průzkumník",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#pruzkumnik-duse",
      "text": ""
     },
     {
      "id": "schopnost:lovec/pruvodce",
      "name": "Průvodce",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#pruvodce-duse",
      "text": ""
     },
     {
      "id": "schopnost:lovec/lovci",
      "name": "Lovčí",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#lovci-duse",
      "text": ""
     },
     {
      "id": "schopnost:lovec/neco-z-niceho",
      "name": "Něco z ničeho",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#neco-z-niceho-duse",
      "text": ""
     },
     {
      "id": "schopnost:lovec/jedno-oko-otevrene",
      "name": "Jedno oko otevřené",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#jedno-oko-otevrene-duse",
      "text": ""
     },
     {
@@ -228,18 +251,21 @@
      "name": "Krotitel",
      "attribute": "Vliv",
      "quickPickLevel": 2,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#krotitel-vliv-rychla-volba-uroven-2",
      "text": ""
     },
     {
      "id": "schopnost:lovec/cvicitel",
      "name": "Cvičitel",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#cvicitel-vliv",
      "text": ""
     },
     {
      "id": "schopnost:lovec/zarikavac-koni",
      "name": "Zaříkávač koní",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#zarikavac-koni-vliv",
      "text": ""
     }
    ]
@@ -248,6 +274,7 @@
    "id": "povolani:kejklir",
    "name": "Kejklíř",
    "kind": "zakladni",
+   "srd": "zakladni-prirucka/25-zakladni-povolani.html#kejklir",
    "intro": "",
    "skills": [
     {
@@ -299,6 +326,7 @@
      "name": "Děsivá přesnost",
      "attribute": "Tělo",
      "quickPickLevel": 1,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#desiva-presnost-telo-rychla-volba-uroven-1",
      "text": ""
     },
     {
@@ -306,6 +334,7 @@
      "name": "Akrobat",
      "attribute": "Tělo",
      "quickPickLevel": 2,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#akrobat-telo-rychla-volba-uroven-2",
      "text": ""
     },
     {
@@ -313,12 +342,14 @@
      "name": "Vrhač",
      "attribute": "Tělo",
      "quickPickLevel": 3,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#vrhac-telo-rychla-volba-uroven-3",
      "text": ""
     },
     {
      "id": "schopnost:kejklir/plast",
      "name": "Plášť",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#plast-telo",
      "text": ""
     },
     {
@@ -326,36 +357,42 @@
      "name": "Smršť dýk",
      "attribute": "Tělo",
      "quickPickLevel": 4,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#smrst-dyk-telo-rychla-volba-uroven-4",
      "text": ""
     },
     {
      "id": "schopnost:kejklir/zlodej",
      "name": "Zloděj",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#zlodej-duse",
      "text": ""
     },
     {
      "id": "schopnost:kejklir/speh",
      "name": "Špeh",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#speh-duse",
      "text": ""
     },
     {
      "id": "schopnost:kejklir/talent",
      "name": "Talent",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#talent-vliv",
      "text": ""
     },
     {
      "id": "schopnost:kejklir/psi-oci",
      "name": "Psí oči",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#psi-oci-vliv",
      "text": ""
     },
     {
      "id": "schopnost:kejklir/komediant",
      "name": "Komediant",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#komediant-vliv",
      "text": ""
     },
     {
@@ -363,12 +400,14 @@
      "name": "Změna tváře",
      "attribute": "Vliv",
      "quickPickLevel": 5,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#zmena-tvare-vliv-rychla-volba-uroven-5",
      "text": ""
     },
     {
      "id": "schopnost:kejklir/skryta-kapsa",
      "name": "Skrytá kapsa",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#skryta-kapsa-telo",
      "text": ""
     }
    ]
@@ -377,6 +416,7 @@
    "id": "povolani:mastickar",
    "name": "Mastičkář",
    "kind": "zakladni",
+   "srd": "zakladni-prirucka/25-zakladni-povolani.html#mastickar",
    "intro": "",
    "skills": [
     {
@@ -416,24 +456,28 @@
      "name": "Dryjáčník",
      "attribute": "Duše",
      "quickPickLevel": 2,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#dryjacnik-duse-rychla-volba-uroven-2",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/ranhojic",
      "name": "Ranhojič",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#ranhojic-duse",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/cteni-v-dusi",
      "name": "Čtení v duši",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#cteni-v-dusi-duse",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/umeni-improvizace",
      "name": "Umění improvizace",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#umeni-improvizace-duse",
      "text": ""
     },
     {
@@ -441,6 +485,7 @@
      "name": "Neobvyklé jedy",
      "attribute": "Duše",
      "quickPickLevel": 3,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#neobvykle-jedy-duse-rychla-volba-uroven-3",
      "text": ""
     },
     {
@@ -448,18 +493,21 @@
      "name": "Vyjednavač",
      "attribute": "Vliv",
      "quickPickLevel": 1,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#vyjednavac-vliv-rychla-volba-uroven-1",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/pusobivy-recnik",
      "name": "Působivý řečník",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#pusobivy-recnik-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/kluzky-jako-uhor",
      "name": "Kluzký jako úhoř",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#kluzky-jako-uhor-vliv",
      "text": ""
     },
     {
@@ -467,24 +515,28 @@
      "name": "Ostrý jazyk",
      "attribute": "Vliv",
      "quickPickLevel": 4,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#ostry-jazyk-vliv-rychla-volba-uroven-4",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/moudry-radce",
      "name": "Moudrý rádce",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#moudry-radce-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/hojivy-dotek",
      "name": "Hojivý dotek",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#hojivy-dotek-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mastickar/lazebnik",
      "name": "Lazebník",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#lazebnik-vliv",
      "text": ""
     }
    ]
@@ -493,6 +545,7 @@
    "id": "povolani:zarikavac",
    "name": "Zaříkávač",
    "kind": "zakladni",
+   "srd": "zakladni-prirucka/25-zakladni-povolani.html#zarikavac",
    "intro": "",
    "skills": [
     {
@@ -537,12 +590,14 @@
      "id": "schopnost:zarikavac/knihomol",
      "name": "Knihomol",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#knihomol-duse",
      "text": ""
     },
     {
      "id": "schopnost:zarikavac/sila-osobnosti",
      "name": "Síla osobnosti",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#sila-osobnosti-duse",
      "text": ""
     },
     {
@@ -550,6 +605,7 @@
      "name": "Bystrost",
      "attribute": "Duše",
      "quickPickLevel": 4,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#bystrost-duse-rychla-volba-uroven-4",
      "text": ""
     },
     {
@@ -557,24 +613,28 @@
      "name": "Dar tvoření",
      "attribute": "Duše",
      "quickPickLevel": 3,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#dar-tvoreni-duse-rychla-volba-3-uroven",
      "text": ""
     },
     {
      "id": "schopnost:zarikavac/zrici-straze",
      "name": "Zřící stráže",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#zrici-straze-duse",
      "text": ""
     },
     {
      "id": "schopnost:zarikavac/carovne-straze",
      "name": "Čarovné stráže",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#carovne-straze-duse",
      "text": ""
     },
     {
      "id": "schopnost:zarikavac/pan-symbolu",
      "name": "Pán symbolů",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#pan-symbolu-duse",
      "text": ""
     },
     {
@@ -582,6 +642,7 @@
      "name": "Divoký talent",
      "attribute": "Vliv",
      "quickPickLevel": 1,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#divoky-talent-vliv-rychla-volba-uroven-1",
      "text": ""
     },
     {
@@ -589,6 +650,7 @@
      "name": "Povolávač",
      "attribute": "Vliv",
      "quickPickLevel": 2,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#povolavac-vliv-rychla-volba-uroven-2",
      "text": ""
     },
     {
@@ -596,18 +658,21 @@
      "name": "Modlitby a uřknutí",
      "attribute": "Vliv",
      "quickPickLevel": 5,
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#modlitby-a-urknuti-vliv-rychla-volba-uroven-5",
      "text": ""
     },
     {
      "id": "schopnost:zarikavac/mysticky-kruh",
      "name": "Mystický kruh",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#mysticky-kruh-vliv",
      "text": ""
     },
     {
      "id": "schopnost:zarikavac/veze-a-chramy",
      "name": "Věže a chrámy",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/25-zakladni-povolani.html#veze-a-chramy-vliv",
      "text": ""
     }
    ]
@@ -616,6 +681,11 @@
    "id": "povolani:valecnik",
    "name": "Válečník",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:bojovnik",
+    "povolani:kejklir"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#valecnik",
    "intro": "",
    "skills": [
     {
@@ -660,72 +730,84 @@
      "id": "schopnost:valecnik/bohatyr",
      "name": "Bohatýr",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#bohatyr-telo",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/sermir",
      "name": "Šermíř",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#sermir-telo",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/valecny-tanecnik",
      "name": "Válečný tanečník",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#valecny-tanecnik-telo",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/veteran",
      "name": "Veterán",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#veteran-duse",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/urozeny",
      "name": "Urozený",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#urozeny-vliv",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/velitel",
      "name": "Velitel",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#velitel-vliv",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/kavalir",
      "name": "Kavalír",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#kavalir-vliv",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/hrdinsky-duch",
      "name": "Hrdinský duch",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#hrdinsky-duch-vliv",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/vudcovske-charisma",
      "name": "Vůdcovské charisma",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vudcovske-charisma-vliv",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/popularita",
      "name": "Popularita",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#popularita-vliv",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/bojovy-vycvik",
      "name": "Bojový výcvik",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#bojovy-vycvik-vliv",
      "text": ""
     },
     {
      "id": "schopnost:valecnik/slavne-jmeno",
      "name": "Slavné jméno",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#slavne-jmeno-vliv",
      "text": ""
     }
    ]
@@ -734,6 +816,11 @@
    "id": "povolani:hranicar",
    "name": "Hraničář",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:bojovnik",
+    "povolani:lovec"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#hranicar",
    "intro": "",
    "skills": [
     {
@@ -772,72 +859,84 @@
      "id": "schopnost:hranicar/drakobijce",
      "name": "Drakobijce",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#drakobijce-telo",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/berserk",
      "name": "Berserk",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#berserk-telo",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/strazce-hranic",
      "name": "Strážce hranic",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#strazce-hranic-duse",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/divy-muz",
      "name": "Divý muž",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#divy-muz-duse",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/znalec-netvoru",
      "name": "Znalec netvorů",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znalec-netvoru-duse",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/jazyk-poutniku",
      "name": "Jazyk poutníků",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#jazyk-poutniku-duse",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/dravci-instinkty",
      "name": "Dravčí instinkty",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#dravci-instinkty-duse",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/ohar",
      "name": "Ohař",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#ohar-duse",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/cvicitel-netvoru",
      "name": "Cvičitel netvorů",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#cvicitel-netvoru-vliv",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/slavny-stvurobijce",
      "name": "Slavný stvůrobijce",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#slavny-stvurobijce-vliv",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/krotitel-draku",
      "name": "Krotitel draků",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#krotitel-draku-vliv",
      "text": ""
     },
     {
      "id": "schopnost:hranicar/znalec-krajiny",
      "name": "Znalec krajiny",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znalec-krajiny-duse",
      "text": ""
     }
    ]
@@ -846,6 +945,11 @@
    "id": "povolani:saman",
    "name": "Šaman",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:lovec",
+    "povolani:mastickar"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#saman",
    "intro": "",
    "skills": [
     {
@@ -884,72 +988,84 @@
      "id": "schopnost:saman/medicinman",
      "name": "Medicinman",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#medicinman-duse",
      "text": ""
     },
     {
      "id": "schopnost:saman/velky-hadac",
      "name": "Velký hadač",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#velky-hadac-duse",
      "text": ""
     },
     {
      "id": "schopnost:saman/carovne-napoje",
      "name": "Čarovné nápoje",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#carovne-napoje-duse",
      "text": ""
     },
     {
      "id": "schopnost:saman/znak-mury",
      "name": "Znak můry",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-mury-duse",
      "text": ""
     },
     {
      "id": "schopnost:saman/zveropan",
      "name": "Zvěropán",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#zveropan-vliv",
      "text": ""
     },
     {
      "id": "schopnost:saman/vladce-selem",
      "name": "Vládce šelem",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vladce-selem-vliv",
      "text": ""
     },
     {
      "id": "schopnost:saman/znak-vlkodlaka",
      "name": "Znak vlkodlaka",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-vlkodlaka-vliv",
      "text": ""
     },
     {
      "id": "schopnost:saman/menic-podob",
      "name": "Měnič podob",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#menic-podob-vliv",
      "text": ""
     },
     {
      "id": "schopnost:saman/neviditelny-jezdec",
      "name": "Neviditelný jezdec",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#neviditelny-jezdec-vliv",
      "text": ""
     },
     {
      "id": "schopnost:saman/vudce-smecky",
      "name": "Vůdce smečky",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vudce-smecky-vliv",
      "text": ""
     },
     {
      "id": "schopnost:saman/bezmezna-duvera",
      "name": "Bezmezná důvěra",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#bezmezna-duvera-vliv",
      "text": ""
     },
     {
      "id": "schopnost:saman/stopy-zvere",
      "name": "Stopy zvěře",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#stopy-zvere-duse",
      "text": ""
     }
    ]
@@ -958,6 +1074,11 @@
    "id": "povolani:druid",
    "name": "Druid",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:lovec",
+    "povolani:zarikavac"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#druid",
    "intro": "",
    "skills": [
     {
@@ -984,72 +1105,84 @@
      "id": "schopnost:druid/mlha-a-led",
      "name": "Mlha a led",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mlha-a-led-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/skaly-a-prach",
      "name": "Skály a prach",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#skaly-a-prach-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/koreny-a-slahouny",
      "name": "Kořeny a šlahouny",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#koreny-a-slahouny-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/spodni-proudy",
      "name": "Spodní proudy",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#spodni-proudy-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/tiha-zeme",
      "name": "Tíha země",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#tiha-zeme-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/hnev-lesa",
      "name": "Hněv lesa",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#hnev-lesa-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/pamet-vody",
      "name": "Paměť vody",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#pamet-vody-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/pamet-kamene",
      "name": "Paměť kamene",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#pamet-kamene-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/pamet-dreva",
      "name": "Paměť dřeva",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#pamet-dreva-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/znak-vodanoje",
      "name": "Znak vodanoje",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-vodanoje-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/znak-skalnika",
      "name": "Znak skalnika",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-skalnika-duse",
      "text": ""
     },
     {
      "id": "schopnost:druid/znak-lesije",
      "name": "Znak lešije",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-lesije-duse",
      "text": ""
     }
    ]
@@ -1058,6 +1191,11 @@
    "id": "povolani:lupic",
    "name": "Lupič",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:kejklir",
+    "povolani:mastickar"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#lupic",
    "intro": "",
    "skills": [
     {
@@ -1108,72 +1246,84 @@
      "id": "schopnost:lupic/pavouk",
      "name": "Pavouk",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#pavouk-telo",
      "text": ""
     },
     {
      "id": "schopnost:lupic/jako-blesk",
      "name": "Jako blesk",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#jako-blesk-telo",
      "text": ""
     },
     {
      "id": "schopnost:lupic/mechanik",
      "name": "Mechanik",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mechanik-duse",
      "text": ""
     },
     {
      "id": "schopnost:lupic/zaskodnik",
      "name": "Záškodník",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#zaskodnik-duse",
      "text": ""
     },
     {
      "id": "schopnost:lupic/padelatel",
      "name": "Padělatel",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#padelatel-duse",
      "text": ""
     },
     {
      "id": "schopnost:lupic/mordyr",
      "name": "Mordýř",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mordyr-duse",
      "text": ""
     },
     {
      "id": "schopnost:lupic/dotykovy-jed",
      "name": "Dotykový jed",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#dotykovy-jed-duse",
      "text": ""
     },
     {
      "id": "schopnost:lupic/protrely",
      "name": "Protřelý",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#protrely-vliv",
      "text": ""
     },
     {
      "id": "schopnost:lupic/mestske-stiny",
      "name": "Městské stíny",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mestske-stiny-duse",
      "text": ""
     },
     {
      "id": "schopnost:lupic/zlatousty",
      "name": "Zlatoústý",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#zlatousty-vliv",
      "text": ""
     },
     {
      "id": "schopnost:lupic/licidla-a-masky",
      "name": "Líčidla a masky",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#licidla-a-masky-vliv",
      "text": ""
     },
     {
      "id": "schopnost:lupic/mesto-jako-na-dlani",
      "name": "Město jako na dlani",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mesto-jako-na-dlani-duse",
      "text": ""
     }
    ]
@@ -1182,6 +1332,11 @@
    "id": "povolani:zved",
    "name": "Zvěd",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:kejklir",
+    "povolani:lovec"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#zved",
    "intro": "",
    "skills": [
     {
@@ -1232,72 +1387,84 @@
      "id": "schopnost:zved/najezdnik",
      "name": "Nájezdník",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#najezdnik-telo",
      "text": ""
     },
     {
      "id": "schopnost:zved/zbojnik",
      "name": "Zbojník",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#zbojnik-telo",
      "text": ""
     },
     {
      "id": "schopnost:zved/priskokem-vpred",
      "name": "Přískokem vpřed",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#priskokem-vpred-telo",
      "text": ""
     },
     {
      "id": "schopnost:zved/budu-te-kryt",
      "name": "Budu tě krýt",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#budu-te-kryt-telo",
      "text": ""
     },
     {
      "id": "schopnost:zved/nouzove-strely",
      "name": "Nouzové střely",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#nouzove-strely-telo",
      "text": ""
     },
     {
      "id": "schopnost:zved/lesni-prizrak",
      "name": "Lesní přízrak",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#lesni-prizrak-duse",
      "text": ""
     },
     {
      "id": "schopnost:zved/cerna-ovce",
      "name": "Černá ovce",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#cerna-ovce-vliv",
      "text": ""
     },
     {
      "id": "schopnost:zved/kapitan",
      "name": "Kapitán",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#kapitan-vliv",
      "text": ""
     },
     {
      "id": "schopnost:zved/seda-eminence",
      "name": "Šedá eminence",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#seda-eminence-vliv",
      "text": ""
     },
     {
      "id": "schopnost:zved/kamuflaz",
      "name": "Kamufláž",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#kamuflaz-duse",
      "text": ""
     },
     {
      "id": "schopnost:zved/poradce",
      "name": "Poradce",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#poradce-vliv",
      "text": ""
     },
     {
      "id": "schopnost:zved/znalec-podsveti",
      "name": "Znalec podsvětí",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znalec-podsveti-vliv",
      "text": ""
     }
    ]
@@ -1306,6 +1473,11 @@
    "id": "povolani:vedmak",
    "name": "Vědmák",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:mastickar",
+    "povolani:bojovnik"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vedmak",
    "intro": "",
    "skills": [
     {
@@ -1338,71 +1510,83 @@
      "id": "schopnost:vedmak/znameni-fehu",
      "name": "Znamení Fehu",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znameni-fehu-vliv",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/znameni-othala",
      "name": "Znamení Othala",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znameni-othala-vliv",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/znameni-berkano",
      "name": "Znamení Berkano",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znameni-berkano-vliv",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/znameni-tiwaz",
      "name": "Znamení Tiwaz",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znameni-tiwaz-vliv",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/znak-slunce",
      "name": "Znak slunce",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-slunce-duse",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/stribrna-zbran",
      "name": "Stříbrná zbraň",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#stribrna-zbran-telo",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/vymitac",
      "name": "Vymítač",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vymitac-vliv",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/postrach-prizraku",
      "name": "Postrach přízraků",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#postrach-prizraku-vliv",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/znalec-demonu",
      "name": "Znalec démonů",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znalec-demonu-duse",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/svaty-hnev",
      "name": "Svatý hněv",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#svaty-hnev-duse",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/zmutovane-telo",
      "name": "Zmutované tělo",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#zmutovane-telo-telo",
      "text": ""
     },
     {
      "id": "schopnost:vedmak/zlodeji-tel",
      "name": "Zloději těl",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#zlodeji-tel-chyba",
      "text": ""
     }
    ]
@@ -1411,6 +1595,11 @@
    "id": "povolani:alchymista",
    "name": "Alchymista",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:mastickar",
+    "povolani:zarikavac"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#alchymista",
    "intro": "",
    "skills": [
     {
@@ -1455,72 +1644,84 @@
      "id": "schopnost:alchymista/ohnestrujce",
      "name": "Ohněstrůjce",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#ohnestrujce-duse",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/vyrobce-elixiru",
      "name": "Výrobce elixírů",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vyrobce-elixiru-duse",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/mudrc",
      "name": "Mudrc",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mudrc-duse",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/ziva-voda",
      "name": "Živá voda",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#ziva-voda-duse",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/lamac-nadprirozena",
      "name": "Lamač nadpřirozena",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#lamac-nadprirozena-duse",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/neobvykle-spouste",
      "name": "Neobvyklé spouště",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#neobvykle-spouste-duse",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/posileni-elixiru",
      "name": "Posílení elixíru",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#posileni-elixiru-duse",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/pan-golemu",
      "name": "Pán golemů",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#pan-golemu-vliv",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/umela-duse",
      "name": "Umělá duše",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#umela-duse-vliv",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/stvoritel",
      "name": "Stvořitel",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#stvoritel-vliv",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/telesna-straz",
      "name": "Tělesná stráž",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#telesna-straz-telo",
      "text": ""
     },
     {
      "id": "schopnost:alchymista/hracicka",
      "name": "Hračička",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#hracicka-duse",
      "text": ""
     }
    ]
@@ -1529,6 +1730,11 @@
    "id": "povolani:carodej",
    "name": "Čaroděj",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:zarikavac",
+    "povolani:bojovnik"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#carodej",
    "intro": "",
    "skills": [
     {
@@ -1549,72 +1755,84 @@
      "id": "schopnost:carodej/pan-ohne",
      "name": "Pán ohně",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#pan-ohne-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/vladce-vetru",
      "name": "Vládce větru",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vladce-vetru-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/draci-dech",
      "name": "Dračí dech",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#draci-dech-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/sila-vichrice",
      "name": "Síla vichřice",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#sila-vichrice-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/vecny-zar",
      "name": "Věčný žár",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vecny-zar-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/kvileni-meluziny",
      "name": "Kvílení meluzíny",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#kvileni-meluziny-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/znak-salamandra",
      "name": "Znak salamandra",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-salamandra-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/znak-sylfy",
      "name": "Znak sylfy",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-sylfy-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/plamenne-peklo",
      "name": "Plamenné peklo",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#plamenne-peklo-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/vzdusny-vir",
      "name": "Vzdušný vír",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vzdusny-vir-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/magicky-stit",
      "name": "Magický štít",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#magicky-stit-duse",
      "text": ""
     },
     {
      "id": "schopnost:carodej/spolecnost-demonu",
      "name": "Společnost démonů",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#spolecnost-demonu-vliv",
      "text": ""
     }
    ]
@@ -1623,6 +1841,11 @@
    "id": "povolani:mag",
    "name": "Mág",
    "kind": "pokrocile",
+   "requires": [
+    "povolani:zarikavac",
+    "povolani:kejklir"
+   ],
+   "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mag",
    "intro": "",
    "skills": [
     {
@@ -1655,72 +1878,84 @@
      "id": "schopnost:mag/vladce-iluzi",
      "name": "Vládce iluzí",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#vladce-iluzi-duse",
      "text": ""
     },
     {
      "id": "schopnost:mag/armada-prizraku",
      "name": "Armáda přízraků",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#armada-prizraku-duse",
      "text": ""
     },
     {
      "id": "schopnost:mag/mameni-smyslu",
      "name": "Mámení smyslů",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#mameni-smyslu-duse",
      "text": ""
     },
     {
      "id": "schopnost:mag/preludy",
      "name": "Přeludy",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#preludy-duse",
      "text": ""
     },
     {
      "id": "schopnost:mag/znak-fantoma",
      "name": "Znak fantóma",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-fantoma-duse",
      "text": ""
     },
     {
      "id": "schopnost:mag/odhodlana-mysl",
      "name": "Odhodlaná mysl",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#odhodlana-mysl-duse",
      "text": ""
     },
     {
      "id": "schopnost:mag/lamac-vuli",
      "name": "Lamač vůlí",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#lamac-vuli-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mag/davova-psychoza",
      "name": "Davová psychóza",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#davova-psychoza-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mag/neviditelny-loutkar",
      "name": "Neviditelný loutkář",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#neviditelny-loutkar-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mag/pozirac-dusi",
      "name": "Požírač duší",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#pozirac-dusi-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mag/znak-upira",
      "name": "Znak upíra",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#znak-upira-vliv",
      "text": ""
     },
     {
      "id": "schopnost:mag/podivny-pritelicek",
      "name": "Podivný přítelíček",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/26-pokrocila-povolani.html#podivny-pritelicek-vliv",
      "text": ""
     }
    ]
@@ -1730,22 +1965,26 @@
   {
    "id": "rasa:lide",
    "name": "Lidé",
+   "srd": "zakladni-prirucka/24-rasy.html#lide",
    "text": "",
    "names": [],
    "cultures": [
     {
      "id": "kultura:lide/lide-kralovstvi",
      "name": "Lidé království",
+     "srd": "zakladni-prirucka/24-rasy.html#lide-kralovstvi",
      "text": ""
     },
     {
      "id": "kultura:lide/osadnici",
      "name": "Osadníci",
+     "srd": "zakladni-prirucka/24-rasy.html#osadnici",
      "text": ""
     },
     {
      "id": "kultura:lide/barbari",
      "name": "Barbaři",
+     "srd": "zakladni-prirucka/24-rasy.html#barbari",
      "text": ""
     }
    ],
@@ -1755,6 +1994,7 @@
      "name": "Jménem krále",
      "attribute": "Duše",
      "quickPickCulture": "Lidé království",
+     "srd": "zakladni-prirucka/24-rasy.html#jmenem-krale-duse-rychla-volba-lide-kralovstvi",
      "text": ""
     },
     {
@@ -1762,12 +2002,14 @@
      "name": "Zarputilost",
      "attribute": "Vliv",
      "quickPickCulture": "Osadníci",
+     "srd": "zakladni-prirucka/24-rasy.html#zarputilost-vliv-rychla-volba-osadnici",
      "text": ""
     },
     {
      "id": "schopnost:lide/idol-zen-ci-muzu",
      "name": "Idol žen či mužů",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/24-rasy.html#idol-zen-ci-muzu-vliv",
      "text": ""
     },
     {
@@ -1775,12 +2017,14 @@
      "name": "Lví srdce",
      "attribute": "Vliv",
      "quickPickCulture": "Barbaři",
+     "srd": "zakladni-prirucka/24-rasy.html#lvi-srdce-vliv-rychla-volba-barbari",
      "text": ""
     },
     {
      "id": "schopnost:lide/styky",
      "name": "Styky",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/24-rasy.html#styky-vliv",
      "text": ""
     }
    ]
@@ -1788,6 +2032,7 @@
   {
    "id": "rasa:elfove",
    "name": "Elfové",
+   "srd": "zakladni-prirucka/24-rasy.html#elfove",
    "text": "",
    "names": [],
    "cultures": [
@@ -1795,16 +2040,19 @@
      "id": "kultura:elfove/lid-pahorku",
      "name": "Lid pahorků",
      "alias": "Elfové Domů",
+     "srd": "zakladni-prirucka/24-rasy.html#elfove",
      "text": ""
     },
     {
      "id": "kultura:elfove/lid-noci",
      "name": "Lid noci",
+     "srd": "zakladni-prirucka/24-rasy.html#lid-noci",
      "text": ""
     },
     {
      "id": "kultura:elfove/lesni-elfove",
      "name": "Lesní elfové",
+     "srd": "zakladni-prirucka/24-rasy.html#lesni-elfove",
      "text": ""
     }
    ],
@@ -1814,12 +2062,14 @@
      "name": "Vznešenost",
      "attribute": "Vliv",
      "quickPickCulture": "Lid pahorků",
+     "srd": "zakladni-prirucka/24-rasy.html#vznesenost-vliv-rychla-volba-lid-pahorku",
      "text": ""
     },
     {
      "id": "schopnost:elfove/tesknota",
      "name": "Tesknota",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/24-rasy.html#tesknota-duse",
      "text": ""
     },
     {
@@ -1827,6 +2077,7 @@
      "name": "Jsme jedné krve",
      "attribute": "Vliv",
      "quickPickCulture": "Lesní elfové",
+     "srd": "zakladni-prirucka/24-rasy.html#jsme-jedne-krve-vliv-rychla-volba-lesni-elfove",
      "text": ""
     },
     {
@@ -1834,12 +2085,14 @@
      "name": "Plášť soumraku",
      "attribute": "Duše",
      "quickPickCulture": "Lid noci",
+     "srd": "zakladni-prirucka/24-rasy.html#plast-soumraku-duse-rychla-volba-lid-noci",
      "text": ""
     },
     {
      "id": "schopnost:elfove/pamet-rodu",
      "name": "Paměť rodu",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/24-rasy.html#pamet-rodu-duse",
      "text": ""
     }
    ]
@@ -1847,22 +2100,26 @@
   {
    "id": "rasa:trpaslici",
    "name": "Trpaslíci",
+   "srd": "zakladni-prirucka/24-rasy.html#trpaslici",
    "text": "",
    "names": [],
    "cultures": [
     {
      "id": "kultura:trpaslici/horsti-trpaslici",
      "name": "Horští trpaslíci",
+     "srd": "zakladni-prirucka/24-rasy.html#horsti-trpaslici",
      "text": ""
     },
     {
      "id": "kultura:trpaslici/hlubinni-trpaslici",
      "name": "Hlubinní trpaslíci",
+     "srd": "zakladni-prirucka/24-rasy.html#hlubinni-trpaslici",
      "text": ""
     },
     {
      "id": "kultura:trpaslici/osamoceni-trpaslici",
      "name": "Osamocení trpaslíci",
+     "srd": "zakladni-prirucka/24-rasy.html#osamoceni-trpaslici",
      "text": ""
     }
    ],
@@ -1872,6 +2129,7 @@
      "name": "Noční oči",
      "attribute": "Duše",
      "quickPickCulture": "Hlubinní trpaslíci",
+     "srd": "zakladni-prirucka/24-rasy.html#nocni-oci-duse-rychla-volba-hlubinni-trpaslici",
      "text": ""
     },
     {
@@ -1879,6 +2137,7 @@
      "name": "Síla přísahy",
      "attribute": "Duše",
      "quickPickCulture": "Horští trpaslíci",
+     "srd": "zakladni-prirucka/24-rasy.html#sila-prisahy-duse-rychla-volba-horsti-trpaslici",
      "text": ""
     },
     {
@@ -1886,18 +2145,21 @@
      "name": "Nezdolnost",
      "attribute": "Tělo",
      "quickPickCulture": "Osamocení trpaslíci",
+     "srd": "zakladni-prirucka/24-rasy.html#nezdolnost-telo-rychla-volba-osamoceni-trpaslici",
      "text": ""
     },
     {
      "id": "schopnost:trpaslici/jatra-ze-zuly",
      "name": "Játra ze žuly",
      "attribute": "Tělo",
+     "srd": "zakladni-prirucka/24-rasy.html#jatra-ze-zuly-telo",
      "text": ""
     },
     {
      "id": "schopnost:trpaslici/pouto-krve",
      "name": "Pouto krve",
      "attribute": "Vliv",
+     "srd": "zakladni-prirucka/24-rasy.html#pouto-krve-vliv",
      "text": ""
     }
    ]
@@ -1905,22 +2167,26 @@
   {
    "id": "rasa:hobiti",
    "name": "Hobiti",
+   "srd": "zakladni-prirucka/24-rasy.html#hobiti",
    "text": "",
    "names": [],
    "cultures": [
     {
      "id": "kultura:hobiti/usedli-hobiti",
      "name": "Usedlí hobiti",
+     "srd": "zakladni-prirucka/24-rasy.html#usedli-hobiti",
      "text": ""
     },
     {
      "id": "kultura:hobiti/potulni-hobiti",
      "name": "Potulní hobiti",
+     "srd": "zakladni-prirucka/24-rasy.html#potulni-hobiti",
      "text": ""
     },
     {
      "id": "kultura:hobiti/horda",
      "name": "Horda",
+     "srd": "zakladni-prirucka/24-rasy.html#horda",
      "text": ""
     }
    ],
@@ -1929,6 +2195,7 @@
      "id": "schopnost:hobiti/sesty-smysl",
      "name": "Šestý smysl",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/24-rasy.html#sesty-smysl-duse",
      "text": ""
     },
     {
@@ -1936,6 +2203,7 @@
      "name": "Takový prcek!",
      "attribute": "Tělo",
      "quickPickCulture": "Horda",
+     "srd": "zakladni-prirucka/24-rasy.html#takovy-prcek-telo-rychla-volba-horda",
      "text": ""
     },
     {
@@ -1943,6 +2211,7 @@
      "name": "Dobrá nálada",
      "attribute": "Duše",
      "quickPickCulture": "Usedlí hobiti",
+     "srd": "zakladni-prirucka/24-rasy.html#dobra-nalada-duse-rychla-volba-usedli-hobiti",
      "text": ""
     },
     {
@@ -1950,12 +2219,14 @@
      "name": "Tichošlápek",
      "attribute": "Duše",
      "quickPickCulture": "Potulní hobiti",
+     "srd": "zakladni-prirucka/24-rasy.html#tichoslapek-duse-rychla-volba-potulni-hobiti",
      "text": ""
     },
     {
      "id": "schopnost:hobiti/labuznik",
      "name": "Labužník",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/24-rasy.html#labuznik-duse",
      "text": ""
     }
    ]
@@ -1963,22 +2234,26 @@
   {
    "id": "rasa:krollove",
    "name": "Krollové",
+   "srd": "zakladni-prirucka/24-rasy.html#krollove",
    "text": "",
    "names": [],
    "cultures": [
     {
      "id": "kultura:krollove/hranicni-krollove",
      "name": "Hraniční krollové",
+     "srd": "zakladni-prirucka/24-rasy.html#hranicni-krollove",
      "text": ""
     },
     {
      "id": "kultura:krollove/divoci-krollove",
      "name": "Divocí krollové",
+     "srd": "zakladni-prirucka/24-rasy.html#divoci-krollove",
      "text": ""
     },
     {
      "id": "kultura:krollove/spoutani-krollove",
      "name": "Spoutaní krollové",
+     "srd": "zakladni-prirucka/24-rasy.html#spoutani-krollove",
      "text": ""
     }
    ],
@@ -1987,6 +2262,7 @@
      "id": "schopnost:krollove/netopyri-sluch",
      "name": "Netopýří sluch",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/24-rasy.html#netopyri-sluch-duse",
      "text": ""
     },
     {
@@ -1994,6 +2270,7 @@
      "name": "Zběsilost",
      "attribute": "Tělo",
      "quickPickCulture": "Spoutaní krollové",
+     "srd": "zakladni-prirucka/24-rasy.html#zbesilost-telo-rychla-volba-spoutani-krollove",
      "text": ""
     },
     {
@@ -2001,6 +2278,7 @@
      "name": "Odznaky hrdinství",
      "attribute": "Vliv",
      "quickPickCulture": "Hraniční krollové",
+     "srd": "zakladni-prirucka/24-rasy.html#odznaky-hrdinstvi-vliv-rychla-volba-hranicni-krollove",
      "text": ""
     },
     {
@@ -2008,12 +2286,14 @@
      "name": "Zubří kůže",
      "attribute": "Tělo",
      "quickPickCulture": "Divocí krollové",
+     "srd": "zakladni-prirucka/24-rasy.html#zubri-kuze-telo-rychla-volba-divoci-krollove",
      "text": ""
     },
     {
      "id": "schopnost:krollove/koreny-magie",
      "name": "Kořeny magie",
      "attribute": "Duše",
+     "srd": "zakladni-prirucka/24-rasy.html#koreny-magie-duse",
      "text": ""
     }
    ]
@@ -2024,6 +2304,7 @@
    "id": "schopnost:rasa/rodova-zbran",
    "name": "Rodová zbraň",
    "attribute": "Tělo",
+   "srd": "zakladni-prirucka/24-rasy.html#rodova-zbran",
    "text": ""
   }
  ],
@@ -2031,31 +2312,37 @@
   {
    "id": "rys:duelant",
    "name": "Duelant",
+   "srd": "zakladni-prirucka/23-tvorba-hrdiny.html#duelant",
    "text": ""
   },
   {
    "id": "rys:rebel",
    "name": "Rebel",
+   "srd": "zakladni-prirucka/23-tvorba-hrdiny.html#rebel",
    "text": ""
   },
   {
    "id": "rys:kodex",
    "name": "Kodex",
+   "srd": "zakladni-prirucka/23-tvorba-hrdiny.html#kodex",
    "text": ""
   },
   {
    "id": "rys:primost",
    "name": "Přímost",
+   "srd": "zakladni-prirucka/23-tvorba-hrdiny.html#primost",
    "text": ""
   },
   {
    "id": "rys:suknickar",
    "name": "Sukničkář",
+   "srd": "zakladni-prirucka/23-tvorba-hrdiny.html#suknickar",
    "text": ""
   },
   {
    "id": "rys:sedmilhar",
    "name": "Sedmilhář",
+   "srd": "zakladni-prirucka/23-tvorba-hrdiny.html#sedmilhar",
    "text": ""
   }
  ],
