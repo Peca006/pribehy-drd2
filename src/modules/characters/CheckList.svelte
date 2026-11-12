@@ -4,17 +4,26 @@
   import { commonRaceAbilities, creationRules, professions, races } from '../../core/library.svelte'
 
   // Kontrola postavy proti pravidlům (neznámá ID, počet schopností, …). Jen upozorňuje, nic neblokuje.
-  let { character, title = 'Kontrola postavy' }: { character: Character; title?: string } = $props()
+  // `baseline`: stav před změnou; problémy, které v něm nebyly, se označí jako nové
+  let {
+    character,
+    baseline,
+    title = 'Kontrola postavy',
+  }: { character: Character; baseline?: Character; title?: string } = $props()
 
-  const checks = $derived.by(() => {
+  const run = (c: Character) => {
     const rules = creationRules()
     if (!rules) return []
-    return checkCharacter(character, {
+    return checkCharacter(c, {
       rules,
       professions: professions(),
       races: races(),
       commonAbilities: commonRaceAbilities(),
     })
+  }
+  const checks = $derived.by(() => {
+    const known = baseline ? new Set(run(baseline).map((x) => x.text)) : undefined
+    return run(character).map((x) => ({ ...x, isNew: !!known && !known.has(x.text) }))
   })
 </script>
 
@@ -26,6 +35,7 @@
         <li class={c.level === 'chyba' ? 'error' : 'warn'}>
           <span aria-hidden="true">{c.level === 'chyba' ? '⛔' : '⚠'}</span>
           <span class="sr-only">{c.level}: </span>{c.text}
+          {#if c.isNew}<span class="new">nové</span>{/if}
         </li>
       {/each}
     </ul>
@@ -44,6 +54,13 @@
   }
   .warn {
     color: var(--drd-text);
+  }
+  .new {
+    font-size: 0.75rem;
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--drd-accent);
+    border-radius: 1rem;
+    margin-left: 0.3rem;
   }
   .sr-only {
     position: absolute;

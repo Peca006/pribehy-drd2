@@ -92,3 +92,15 @@ analýza), `reviews.ts` (stav revizí). Přijaté revize se do deníku vypravě�
 Zbývá: QR (knihovna pro generování a čtení, případně více QR), zhuštění historie (viz výše), Web NFC,
 Wi-Fi/WebRTC, otevření souboru přímo z AirDropu / Quick Share (`file_handlers`, `share_target` v manifestu),
 kontrola postavy po každé příchozí revizi (`checkCharacter`) v importu, ruční slučování konfliktů.
+
+## QR a kontrola při importu (hotovo)
+
+Kód `DRD2:` se zobrazí jako QR (`qrcode-generator`, `src/ui/QrView.svelte`); delší kód se rozdělí na díly
+`DRD2Q:id.i.n.…` (700 znaků na QR), která se střídají a čtečka je složí (`core/character/qr.ts`). Čtečka
+kamerou (`jsqr`, `src/ui/QrScanner.svelte`) je v Importu; potřebuje https nebo localhost a povolení kamery.
+Ověřeno v prohlížeči na vykresleném QR (4 díly, 2,7 kB kódu se složily shodně); čtení skutečnou kamerou a
+na telefonu zatím nezkoušeno. Import ukazuje kontrolu postavy po přijetí zaškrtnutých revizí a označuje nové
+problémy proti současnému stavu.
+
+Zbývá: ověřit čtení kamerou na telefonu (světlo, velikost QR), případně větší díly / ECC podle zkušeností,
+zhuštění historie, NFC, Wi-Fi/WebRTC, `file_handlers` a `share_target`.

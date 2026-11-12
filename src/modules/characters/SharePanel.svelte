@@ -5,6 +5,7 @@
   import { groupRevisions } from '../../core/character/revisions'
   import { buildRevisionBundle, encodeBundle } from '../../core/character/share'
   import { getLog } from '../../core/character/store'
+  import QrView from '../../ui/QrView.svelte'
 
   // Sdílení revizí postavy (hráč → vypravěč): kód k vložení, soubor nebo systémové sdílení
   // (AirDrop, Quick Share, zprávy). Odeslané revize se označí a příště se posílají jen novější.
@@ -45,6 +46,7 @@
     )
   let copied = $state(false)
   let copyFailed = $state(false)
+  let showQr = $state(false)
   async function copy() {
     try {
       await navigator.clipboard.writeText(code)
@@ -123,9 +125,16 @@
       </p>{/if}
     <p class="actions">
       <button class="primary" onclick={copy}>{copied ? 'Zkopírováno ✓' : 'Zkopírovat kód'}</button>
+      <button
+        onclick={() => {
+          showQr = !showQr
+          if (showQr) sent()
+        }}>{showQr ? 'Skrýt QR' : 'Ukázat QR'}</button
+      >
       <button onclick={download}>Stáhnout soubor</button>
       {#if canShare}<button onclick={share}>Sdílet…</button>{/if}
     </p>
+    {#if showQr}<QrView {code} />{/if}
   {/if}
 {/if}
 

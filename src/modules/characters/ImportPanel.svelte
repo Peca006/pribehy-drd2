@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CharacterLog } from '../../core/character/model'
+  import { characterOf, type CharacterLog } from '../../core/character/model'
   import { recordResponse } from '../../core/character/reviews'
   import { groupRevisions, revertEvents, revisionChanges } from '../../core/character/revisions'
   import {
@@ -7,14 +7,19 @@
     applyRevisions,
     decodeBundle,
     encodeBundle,
+    previewAfter,
     type Bundle,
     type ImportAnalysis,
     type ReviewBundle,
     type RevisionBundle,
   } from '../../core/character/share'
   import { appendEvents, getLog, saveLog } from '../../core/character/store'
+  import { QrAssembler } from '../../core/character/qr'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
+  import QrScanner from '../../ui/QrScanner.svelte'
+  import QrView from '../../ui/QrView.svelte'
+  import CheckList from './CheckList.svelte'
   import { describeChange, pathLabel } from './describe'
 
   // Import kódu nebo souboru od jiného zařízení: revize od hráče (přijmout / zamítnout) a odpověď
@@ -29,6 +34,10 @@
   let reply = $state('')
   let replyNote = $state('')
   let replyBundle = $state.raw<ReviewBundle | undefined>(undefined)
+  let showReplyQr = $state(false)
+  let scanner = $state<{ stop: () => void } | undefined>(undefined)
+  let scanInfo = $state('')
+  const assembler = new QrAssembler()
 
   async function check() {
     result = ''
@@ -47,6 +56,17 @@
       accept = Object.fromEntries(analysis.fresh.map((x) => [x.id, true]))
     }
   }
+  // QR z kamery: díly se skládají, hotový kód se zpracuje stejně jako vložený text
+  async function onscan(t: string) {
+    const s = assembler.add(t)
+    if (s.status === 'partial') scanInfo = `Naskenováno ${s.have} z ${s.total} QR…`
+    else if (s.status === 'complete') {
+      scanInfo = ''
+      scanner?.stop()
+      text = s.code
+      await check()
+    }
+  }
   async function onfile(e: Event) {
     const input = e.currentTarget as HTMLInputElement
     const f = input.files?.[0]
@@ -56,6 +76,19 @@
     }
     input.value = ''
   }
+
+  // kontrola postavy po přijetí zaškrtnutých revizí (s označením nových problémů)
+  const acceptedSet = $derived(
+    new Set(
+      Object.entries(accept)
+        .filter(([, v]) => v)
+        .map(([k]) => k),
+    ),
+  )
+  const afterChar = $derived(
+    bundle?.type === 'revize' && analysis ? previewAfter(log, bundle, acceptedSet) : undefined,
+  )
+  const beforeChar = $derived(log ? characterOf(log) : undefined)
 
   // změny jednotlivých příchozích revizí v pořadí, v jakém se použijí
   const shown = $derived.by(() => {
@@ -158,6 +191,8 @@
   Vybrat soubor…
   <input type="file" accept=".txt,.json,text/plain,application/json" onchange={onfile} hidden />
 </label>
+<QrScanner bind:this={scanner} {onscan} />
+{#if scanInfo}<p role="status">{scanInfo}</p>{/if}
 <textarea
   rows="4"
   bind:value={text}
@@ -197,6 +232,13 @@
     </div>
   {/each}
   {#if analysis.fresh.length}
+    {#if afterChar}
+      <CheckList
+        character={afterChar}
+        baseline={beforeChar}
+        title="Kontrola postavy po přijetí zaškrtnutých revizí"
+      />
+    {/if}
     <p class="muted">Zaškrtnuté revize se přijmou, ostatní se zamítnou.</p>
     <button class="primary" onclick={decide}>Potvrdit rozhodnutí</button>
   {/if}
@@ -216,9 +258,13 @@
   <textarea rows="3" readonly value={reply} aria-label="Kód odpovědi"></textarea>
   <p class="actions">
     <button onclick={copyReply}>{copied ? 'Zkopírováno ✓' : 'Zkopírovat odpověď'}</button>
+    <button onclick={() => (showReplyQr = !showReplyQr)}
+      >{showReplyQr ? 'Skrýt QR' : 'Ukázat QR'}</button
+    >
     {#if canShare}<button onclick={shareReply}>Sdílet…</button>{/if}
     <a class="btn" href={'#/postavy/' + bundle?.char}>Otevřít postavu</a>
   </p>
+  {#if showReplyQr}<QrView code={reply} />{/if}
 {/if}
 
 {#if bundle?.type === 'odpoved'}
