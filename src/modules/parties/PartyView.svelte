@@ -9,7 +9,9 @@
     type Member,
     type Party,
   } from '../../core/party/model'
+  import { partyOverview } from '../../core/party/overview'
   import { approveEntry, rejectEntry } from '../../core/party/share'
+  import { professions } from '../../core/library.svelte'
   import { deleteParty, getParty, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
@@ -41,6 +43,15 @@
     return l ? characterOf(l).name || '(beze jména)' : undefined
   }
   const free = $derived(logs.filter((l) => !party?.members.some((m) => m.characterId === l.id)))
+  const overview = $derived(
+    party
+      ? partyOverview(
+          party.members,
+          logs,
+          (pid) => professions().find((p) => p.id === pid)?.name ?? pid,
+        )
+      : [],
+  )
   const proposals = $derived(party?.journal.filter((e) => e.status === 'navrh') ?? [])
   const save = async () => {
     if (party) await saveParty($state.snapshot(party) as Party)
@@ -205,6 +216,32 @@
     <p class="text">{party.notes}</p>
   {/if}
 
+  {#if overview.length}
+    <h2>Přehled družiny</h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>Postava</th><th>Tělo</th><th>Duše</th><th>Vliv</th><th>XP</th></tr>
+        </thead>
+        <tbody>
+          {#each overview as r (r.member.id)}
+            <tr>
+              <td>
+                <a href={'#/postavy/' + r.member.characterId}>{r.name}</a>
+                {#if r.professions.length}<br /><span class="muted">{r.professions.join(', ')}</span>{/if}
+                {#if r.scars.length}<br /><span class="muted">Jizvy: {r.scars.join('; ')}</span>{/if}
+              </td>
+              {#each ['Tělo', 'Duše', 'Vliv'] as const as a}
+                <td class:reduced={r.reduced.includes(a)}>{r.attributes[a]}</td>
+              {/each}
+              <td>{r.xp}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  {/if}
+
   {#if gm && proposals.length}
     <h2>Návrhy hráčů ({proposals.length})</h2>
     {#each proposals as e (e.id)}
@@ -310,6 +347,23 @@
   }
   article h3 {
     margin: 0;
+  }
+  .scroll {
+    overflow-x: auto;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 0.25rem 0.4rem;
+    border-bottom: 1px solid var(--drd-muted);
+  }
+  .reduced {
+    color: var(--drd-accent);
+    font-weight: bold;
   }
   .badge {
     font-size: 0.7rem;

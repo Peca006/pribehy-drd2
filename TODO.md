@@ -193,7 +193,7 @@ vždy místní. Přenos jako u postav: kód, soubor, QR (s odkazem do aplikace),
 Průvodce → hráč → návrhy → schválení / zamítnutí → hráč.
 
 Zbývá: oddělené role více Průvodců, sdílení členů s postavami (ID postav z jiných zařízení), tajné odměny,
-slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny (zdatnost, povolání).
+slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny hotov (zdatnost po jizvách, povolání, jizvy, XP v `PartyView`).
 
 ### QR jako obrázek (hotovo)
 
