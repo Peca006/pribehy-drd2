@@ -3,6 +3,7 @@
   import { characterOf, type CharacterLog } from '../../core/character/model'
   import { loadReviews, markSent, type Reviews } from '../../core/character/reviews'
   import { groupRevisions } from '../../core/character/revisions'
+  import { slugify } from '../../core/creatures/bundle'
   import { buildRevisionBundle, encodeBundle } from '../../core/character/share'
   import { getLog } from '../../core/character/store'
   import QrView from '../../ui/QrView.svelte'
@@ -62,7 +63,7 @@
   function download() {
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' }))
-    a.download = `postava-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'drd2'}.drd2.txt`
+    a.download = `postava-${slugify(name) || 'drd2'}.drd2.txt`
     a.click()
     URL.revokeObjectURL(a.href)
     sent()
