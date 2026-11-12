@@ -1,9 +1,16 @@
 <script lang="ts">
   import type { Creature } from '../../core/content/schema'
+  import { termIndex } from '../../core/library.svelte'
+  import { settings } from '../../core/settings.svelte'
+  import { limitCreatureLinks } from '../../core/termLinks'
   import Md from '../../ui/Md.svelte'
   import { findCreature, isUser, kindName } from './state.svelte'
 
-  let { creature }: { creature: Creature } = $props()
+  let { creature: source }: { creature: Creature } = $props()
+  // odkazy z pojmů podle nastavení (výchozí: jen první výskyt u bytosti)
+  const creature = $derived(
+    limitCreatureLinks(source, { mode: settings.termLinks, index: termIndex() }),
+  )
   const base = $derived(creature.variantOf ? findCreature(creature.variantOf) : undefined)
   const limits = $derived(creature.limits ?? undefined)
   const ch = $derived(creature.characteristic)

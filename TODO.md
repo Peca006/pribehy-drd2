@@ -1,14 +1,11 @@
 # Nápady a dolaďování
 
-## Rejstřík pojmů: příliš mnoho odkazů (čtečka hotovo, zbývá Bestiář)
+## Rejstřík pojmů: počet odkazů (hotovo)
 
-Ve čtečce kapitol má odkaz z pojmu (`***pojem***`) jen první výskyt v kapitole a žádný pojem, jehož vysvětlení
-je v téže kapitole (`src/core/termLinks.ts`, značka `NO_LINK` v `parseInline`). Ostatní výskyty zůstávají tučnou
-kurzívou bez odkazu. Zbývá:
-
-- Stejné pravidlo pro text bytostí v Bestiáři (`Md` u karty bytosti), kde se pojmy opakují u každé bytosti.
-- Případně volba v nastavení čtečky: *Odkazy u všech výskytů / jen u prvního / vůbec*.
-- Zvážit, zda v dlouhé kapitole (31) nedávat odkaz i podruhé až za určitou vzdáleností od prvního výskytu.
+Odkazy z pojmů (`***pojem***`) se omezují při zobrazení (`src/core/termLinks.ts`, značka `NO_LINK` v `parseInline`),
+v kapitolách i u karet bytostí. Nastavení „Odkazy v textu“ (`src/core/settings.svelte.ts`, uloženo v localStorage):
+jen první výskyt (výchozí) · první a po 5000 znacích textu · všechny · žádné. Pojem vysvětlený v téže kapitole
+se odkazuje jen před místem vysvětlení.
 
 ## Mapy a obrázky v balíčku (hotovo)
 

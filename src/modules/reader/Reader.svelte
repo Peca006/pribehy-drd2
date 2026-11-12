@@ -2,18 +2,26 @@
   import { chapters, termIndex, terms } from '../../core/library.svelte'
   import { limitTermLinks } from '../../core/termLinks'
   import { back, go } from '../../core/router.svelte'
+  import { settings } from '../../core/settings.svelte'
   import BlockView from '../../ui/BlockView.svelte'
+  import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
 
   // params: [ID kapitoly, kotva?] – bez parametrů se ukáže seznam kapitol
   let { params }: { params: string[] } = $props()
   const chapter = $derived(chapters().find((c) => c.id === params[0]))
-  // odkazy z pojmů jen u prvního výskytu v kapitole a ne na tutéž kapitolu
+  // počet odkazů z pojmů podle nastavení (výchozí: jen první výskyt v kapitole)
   const blocks = $derived.by(() => {
     if (!chapter) return []
-    const home = new Map(terms().map((t) => [t.id, /^chapter:([^#]+)/.exec(t.target)?.[1]]))
+    const home = new Map(
+      terms().map((t) => {
+        const m = /^chapter:([^#]+)(?:#(.+))?$/.exec(t.target)
+        return [t.id, m ? { chapter: m[1], anchor: m[2] } : undefined] as const
+      }),
+    )
     return limitTermLinks(chapter.blocks, {
+      mode: settings.termLinks,
       index: termIndex(),
-      homeChapter: (id) => home.get(id),
+      home: (id) => home.get(id),
       chapterId: chapter.id,
     })
   })
@@ -31,6 +39,7 @@
 {#if chapter}
   <nav>
     <button onclick={back}>← Zpět</button> <button onclick={() => go('ctenar')}>Kapitoly</button>
+    <LinkModeSelect />
   </nav>
   <article>
     <h1>{chapter.title}</h1>

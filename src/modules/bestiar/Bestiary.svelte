@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { go } from '../../core/router.svelte'
   import { library } from '../../core/library.svelte'
+  import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
   import CreatureImages from './CreatureImages.svelte'
   import CreatureEditor from './CreatureEditor.svelte'
   import CreatureView from './CreatureView.svelte'
@@ -64,7 +65,7 @@
 {:else if params[0] === 'uprav' && editing}
   <CreatureEditor initial={editing} />
 {:else if creature}
-  <nav><a class="btn" href="#/bestiar">← Bestiář</a></nav>
+  <nav><a class="btn" href="#/bestiar">← Bestiář</a> <LinkModeSelect /></nav>
   <CreatureView {creature} />
   <CreatureImages creatureId={creature.id} />
   <p class="actions">
