@@ -126,3 +126,17 @@ vysílačkami: jedno zařízení poslouchá (mikrofon), druhé kód „přehraje
 funguje mezi blízkými zařízeními i přes vysílačku. Zábavné i užitečné, když selže kamera nebo světlo. Rizika:
 šum v místnosti, mikrofon vyžaduje povolení a https, rozdíly zařízení; začít jednoduchým FSK s jedním
 kanálem a opakováním, pak teprve OFDM. Využije stejný balíček a kód `DRD2:` (stlačený, případně zhuštěný).
+
+## Úprava postavy podle pravidel (hotovo)
+
+- **Postup** (`core/character/advance.ts`, `Advance.svelte`): za 12 bodů zkušeností buď úroveň povolání + schopnost
+  povolání, nebo zdatnost +1 + schopnost rasy / ovládaného povolání; nejvyšší úroveň 5, pokročilé povolání
+  vyžaduje 6 úrovní ve dvou základních (po jedné z každého; `requires` odvozené z SRD), volitelné zapomínání.
+  Výsledek jde do návrhu úpravy s předvyplněným popisem; zveřejní se v editoru jako revize.
+- **Zkušenosti** (`xp`, nespotřebované body) a **Jizvy** (`scars`, snižují zdatnost) jsou v deníku (revize,
+  sdílení, kontrola postavy); **Zdroje** (čerpání Tělo/Duše/Vliv) jen v zařízení (`play.ts`), ne v historii.
+- Kontrola postavy počítá se zlepšením zdatnosti (schopnost navíc) a hlídá pokročilá povolání a jizvy.
+- Popis změny se ukládá do návrhu. Nápověda u položek bez textu odkazuje na SRD (`srd` v kostře).
+
+Zbývá: Suroviny, léčení jizev a obnova Zdrojů podle pravidel (blokování obnovy jizvami), povolání z Her mocných,
+přidělení XP za sezení pro celou družinu (až s družinami).

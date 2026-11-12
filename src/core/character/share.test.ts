@@ -92,6 +92,18 @@ describe('balíček revizí a kód', () => {
       id: '1',
       path: 'professions.x',
     })
+    expect(sanitizeEvent({ id: '1', path: 'xp', value: 12 })?.value).toBe(12)
+    expect(sanitizeEvent({ id: '1', path: 'xp', value: -1 })).toBeUndefined()
+    const scars = sanitizeEvent({
+      id: '1',
+      path: 'scars',
+      value: [
+        { id: 'a', attribute: 'Tělo', severity: 2, note: 'kotník' },
+        { id: 'b', attribute: 'Síla', severity: 2, note: 'x' },
+        { id: 'c', attribute: 'Duše', severity: 99, note: 'x' },
+      ],
+    })
+    expect(scars?.value).toEqual([{ id: 'a', attribute: 'Tělo', severity: 2, note: 'kotník' }])
   })
 })
 
