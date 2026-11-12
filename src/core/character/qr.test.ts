@@ -8,16 +8,21 @@ describe('dělení kódu na QR', () => {
     expect(splitForQr('DRD2:abc')).toEqual(['DRD2:abc'])
   })
 
-  it('dlouhý kód se rozdělí a složí zpět, i v jiném pořadí a s opakováním', () => {
+  it('dlouhý kód se rozdělí na stejně velké díly a složí zpět, i v jiném pořadí a s opakováním', () => {
     const parts = splitForQr(code)
-    expect(parts.length).toBe(Math.ceil(code.length / QR_CHUNK))
-    expect(parts.every((p) => p.length <= QR_CHUNK + 20)).toBe(true)
+    const n = parts.length
+    expect(n).toBe(Math.ceil(code.length / QR_CHUNK))
+    expect(n).toBeGreaterThan(3)
+    const sizes = parts.map((p) => p.split('.')[3].length)
+    expect(Math.max(...sizes) - Math.min(...sizes)).toBeLessThanOrEqual(1)
+    expect(Math.max(...sizes)).toBeLessThanOrEqual(QR_CHUNK)
     const a = new QrAssembler()
-    const order = [2, 0, 0, 1].map((i) => parts[i])
-    const states = order.map((p) => a.add(p))
-    expect(states.map((s) => s.status)).toEqual(['partial', 'partial', 'partial', 'partial'])
-    expect(states[3]).toEqual({ status: 'partial', have: 3, total: 4 })
-    expect(a.add(parts[3]).status).toBe('complete')
+    const first = [2, 0, 0, 1].map((i) => a.add(parts[i]))
+    expect(first.map((x) => x.status)).toEqual(['partial', 'partial', 'partial', 'partial'])
+    expect(first[3]).toEqual({ status: 'partial', have: 3, total: n })
+    const rest = parts.slice(3).map((p) => a.add(p))
+    expect(rest.slice(0, -1).every((x) => x.status === 'partial')).toBe(true)
+    expect(rest[rest.length - 1].status).toBe('complete')
   })
 
   it('složený kód je shodný s původním', () => {

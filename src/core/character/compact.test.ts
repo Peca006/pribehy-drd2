@@ -96,22 +96,22 @@ describe('zhuštění historie', () => {
   })
 
   it('fitForQr zhustí jen tolik, kolik je potřeba', async () => {
-    const full = await encodeBundle((await fitForQr(log, 'D', 99)).bundle)
-    expect(full.length).toBeGreaterThan(QR_CHUNK) // celá historie by potřebovala víc QR
-    const f1 = await fitForQr(log, 'D', 1)
-    expect(f1.fits).toBe(true)
-    expect(f1.qrCount).toBe(1)
-    expect(f1.merged).toBeGreaterThan(1)
+    const none = await fitForQr(log, 'D', 99)
+    expect(none.merged).toBe(0)
+    expect(none.code.length).toBeGreaterThan(2 * QR_CHUNK) // celá historie by potřebovala hodně QR
+    const f3 = await fitForQr(log, 'D', 3)
+    expect(f3.fits).toBe(true)
+    expect(f3.omitted).toEqual([])
+    expect(f3.qrCount).toBeLessThanOrEqual(3)
+    expect(f3.merged).toBeGreaterThan(1)
     expect(
       characterOf(
-        applyRevisions(undefined, f1.bundle, new Set(f1.bundle.revisions.map((r) => r.id))),
+        applyRevisions(undefined, f3.bundle, new Set(f3.bundle.revisions.map((r) => r.id))),
       ),
     ).toEqual(characterOf(log))
     // povolíme-li víc QR, zachová se víc historie
-    const f3 = await fitForQr(log, 'D', 3)
-    expect(f3.merged).toBeLessThan(f1.merged)
-    const none = await fitForQr(log, 'D', 99)
-    expect(none.merged).toBe(0)
+    const f6 = await fitForQr(log, 'D', 6)
+    expect(f6.merged).toBeLessThan(f3.merged)
   })
 
   it('jedna revize se nezhušťuje', async () => {
@@ -152,6 +152,6 @@ describe('zhuštění historie', () => {
         'T',
       ),
     }
-    expect((await fitForQr(mid, 'M', 1)).omitted).toEqual(['notes'])
+    expect((await fitForQr(mid, 'M', 2)).omitted).toEqual(['notes'])
   })
 })

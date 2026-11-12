@@ -11,12 +11,13 @@
   let paused = $state(false)
   const timer = setInterval(() => {
     if (!paused && parts.length > 1) index = (index + 1) % parts.length
-  }, 1500)
+  }, 2000)
   onDestroy(() => clearInterval(timer))
 
   // čtvercová matice jako jediná cesta SVG (ostrá při libovolné velikosti), s tichou zónou
   const svg = $derived.by(() => {
-    const qr = qrcode(0, 'L')
+    // oprava chyb M: čtečka snese drobné nečistoty, odlesky a neostrost displeje
+    const qr = qrcode(0, 'M')
     qr.addData(parts[Math.min(index, parts.length - 1)], 'Byte')
     qr.make()
     const n = qr.getModuleCount()
@@ -55,7 +56,7 @@
     text-align: center;
   }
   svg {
-    width: min(100%, 22rem);
+    width: min(100%, 30rem);
     height: auto;
     border-radius: 6px;
   }

@@ -52,7 +52,7 @@
   let showQr = $state(false)
   // zhuštění starší historie jen pro QR (kód, soubor a sdílení zůstávají s celou historií)
   let compactOn = $state(false)
-  let maxQr = $state(1)
+  let maxQr = $state(2)
   let fitted = $state.raw<Fitted | undefined>(undefined)
   const canCompact = $derived(sinceIndex < 0 && revs.length > 0)
   $effect(() => {
@@ -159,6 +159,7 @@
             <option value={1}>1 QR</option>
             <option value={2}>2 QR</option>
             <option value={3}>3 QR</option>
+            <option value={4}>4 QR</option>
           </select>
         </label>
       {/if}

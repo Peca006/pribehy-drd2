@@ -1,19 +1,25 @@
-// Přenos kódu `DRD2:…` pomocí QR. Jeden QR bezpečně unese asi 700–1000 znaků (telefon ho přečte z displeje
-// druhého telefonu); delší kód se rozdělí na několik QR (díly), která se střídají na displeji, a čtečka je
-// složí. Díl má tvar `DRD2Q:<id>.<číslo>.<počet>.<kus kódu>`; krátký kód se posílá beze změny.
+// Přenos kódu `DRD2:…` pomocí QR. Hustý QR (stovky znaků) telefon z displeje druhého telefonu nepřečte
+// (zkoušeno: díl 700 znaků na Samsungu A52s nešel naskenovat), proto se kód dělí na menší, řidší QR, která se
+// střídají na displeji, a čtečka je složí. Díl má tvar `DRD2Q:<id>.<číslo>.<počet>.<kus kódu>`; krátký kód se posílá beze změny.
 const PART = 'DRD2Q:'
 const CODE = 'DRD2:'
-/** nejvíc znaků kódu v jednom QR */
-export const QR_CHUNK = 700
+/** nejvíc znaků kódu v jednom QR (menší díl = řidší QR, spolehlivější čtení z displeje) */
+export const QR_CHUNK = 300
 
 export function splitForQr(code: string, size = QR_CHUNK): string[] {
   if (code.length <= size) return [code]
   const id = Math.random().toString(36).slice(2, 6)
   const n = Math.ceil(code.length / size)
-  return Array.from(
-    { length: n },
-    (_, i) => `${PART}${id}.${i + 1}.${n}.${code.slice(i * size, (i + 1) * size)}`,
-  )
+  // díly stejně velké (rozdíl nejvýš o 1 znak), aby žádný QR nebyl hustší než ostatní
+  const base = Math.floor(code.length / n)
+  const rem = code.length % n
+  let at = 0
+  return Array.from({ length: n }, (_, i) => {
+    const len = base + (i < rem ? 1 : 0)
+    const chunk = code.slice(at, at + len)
+    at += len
+    return `${PART}${id}.${i + 1}.${n}.${chunk}`
+  })
 }
 
 export type ScanState =

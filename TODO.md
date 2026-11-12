@@ -140,3 +140,10 @@ kanálem a opakováním, pak teprve OFDM. Využije stejný balíček a kód `DRD
 
 Zbývá: Suroviny, léčení jizev a obnova Zdrojů podle pravidel (blokování obnovy jizvami), povolání z Her mocných,
 přidělení XP za sezení pro celou družinu (až s družinami).
+
+### QR: velikost dílů (z testu na telefonu)
+
+Samsung A52s nenaskenoval díl o 700 znacích (QR s 89 moduly, asi 3,5 px na modul na displeji). Díly jsou nově
+nejvýš 300 znaků, stejně velké, s opravou chyb M (65 modulů, asi 4,7 px) a zobrazené až na 30 rem; střídají se po
+2 s. Počty QR pro zhuštění: 1 až 4 (výchozí 2). Další ladění podle zkušeností: menší díly (200 znaků), větší
+kontrast / celá obrazovka, pomalejší střídání.
