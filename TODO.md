@@ -29,7 +29,16 @@ Obrázky ze SRD (4 ks) se při sestavení balíčku převedou na WebP a vloží 
 přiblížení (`src/ui/ZoomImage.svelte`). Možné vylepšení: ukládat obrázky z balíčku do IndexedDB jako soubory,
 pokud by velikost JSONu v paměti vadila.
 
-## Import z SRD přímo v aplikaci
+## Import z SRD přímo v zařízení uživatele (bookmarklet)
 
-Web SRD nepovoluje stahování z prohlížeče (nemá CORS hlavičky), takže přímé stažení v aplikaci nejde.
-Viz diskuse; ověřit, zda existuje zdrojový markdown SRD na GitHubu (ten CORS má a bude stabilnější než HTML).
+Web SRD nemá hlavičky CORS, takže aplikace ani stránka na `github.io` z něj stahovat nemůže (Google Disk se
+zdroji je zastaralý a pro prohlížeč nepoužitelný). Řešení bez serveru je **bookmarklet**: uživatel otevře
+`drd2srd.d20.cz`, klepne na záložku „Převést SRD“, kód běží na stránce SRD (stejná doména, CORS neplatí),
+stáhne stránky podle navigace, převede je a nabídne ke stažení balíček (`.json`), který se nahraje v Knihovně.
+
+- Text se nehostuje, bere se z webu SRD u uživatele, převodník zvládne vždy aktuální verzi SRD.
+- Potřeba: převodník jako čisté funkce nad řetězci (bez `node:fs`), WebP přes canvas místo `sharp`,
+  stránka s návodem (přetáhnout tlačítko do lišty záložek). Odhad 2–3 dny.
+- Ověřit: web SRD nevysílá CSP (načtení skriptu z `github.io` by mělo projít).
+- Mobil: iOS Safari a Firefox pro Android bookmarklety zvládají, Chrome pro Android ne spolehlivě. Alternativa:
+  balíček sestavit na počítači a soubor přenést.
