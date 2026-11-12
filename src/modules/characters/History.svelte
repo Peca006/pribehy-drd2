@@ -1,12 +1,26 @@
 <script lang="ts">
   import type { ChangeEvent, CharacterLog } from '../../core/character/model'
+  import type { ReviewStatus } from '../../core/character/reviews'
   import { groupRevisions, revertEvents, revisionChanges } from '../../core/character/revisions'
   import { settings } from '../../core/settings.svelte'
   import { describeChange, pathLabel } from './describe'
 
   // Historie změn postavy po revizích (nejnovější nahoře). Vrácení revize přidá novou revizi
   // s původními hodnotami, nic se nemaže.
-  let { log, onrevert }: { log: CharacterLog; onrevert: (events: ChangeEvent[]) => void } = $props()
+  let {
+    log,
+    onrevert,
+    status = {},
+  }: {
+    log: CharacterLog
+    onrevert: (events: ChangeEvent[]) => void
+    status?: Record<string, ReviewStatus>
+  } = $props()
+  const BADGE: Record<ReviewStatus, string> = {
+    odeslano: 'odesláno vypravěči',
+    prijato: 'přijato vypravěčem',
+    zamitnuto: 'zamítnuto vypravěčem',
+  }
 
   const revisions = $derived(groupRevisions(log.events).reverse())
   const when = (iso: string) => new Date(iso).toLocaleString('cs-CZ')
@@ -34,6 +48,8 @@
         <summary>
           <strong>{rev.note || 'Změna'}</strong>
           <span class="muted"> · {rev.by} · {when(rev.at)} · změn: {changes.length}</span>
+          {#if status[rev.id]}<span class="badge {status[rev.id]}">{BADGE[status[rev.id]]}</span
+            >{/if}
         </summary>
         <ul class="changes">
           {#each changes as c}
@@ -72,5 +88,19 @@
   }
   summary {
     cursor: pointer;
+  }
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 1rem;
+    border: 1px solid var(--drd-muted);
+    margin-left: 0.3rem;
+    white-space: nowrap;
+  }
+  .badge.prijato {
+    border-color: var(--drd-accent);
+  }
+  .badge.zamitnuto {
+    text-decoration: line-through;
   }
 </style>

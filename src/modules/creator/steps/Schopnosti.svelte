@@ -59,7 +59,7 @@
       <details>
         <summary>Popis</summary>
         {#if a.flavor}<Md text={a.flavor} />{/if}
-        <Md text={a.text} />
+        <Md text={a.text} hint />
       </details>
     </div>
   {/each}
@@ -96,7 +96,7 @@
       <details>
         <summary>Popis</summary>
         {#if a.flavor}<Md text={a.flavor} />{/if}
-        <Md text={a.text} />
+        <Md text={a.text} hint />
       </details>
     </div>
   {/each}

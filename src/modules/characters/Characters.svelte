@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { hasCharacterDraft } from '../../core/character/drafts'
+  import { loadReviews, type Reviews } from '../../core/character/reviews'
   import {
     ATTRIBUTES,
     characterOf,
@@ -15,18 +16,23 @@
   import CharacterEditor from './CharacterEditor.svelte'
   import CheckList from './CheckList.svelte'
   import History from './History.svelte'
+  import ImportPanel from './ImportPanel.svelte'
+  import SharePanel from './SharePanel.svelte'
 
-  // params: [] = seznam postav, [id] = deník postavy, [id, 'uprav'] = úprava (návrh)
+  // params: [] = seznam, ['import'] = import kódu, [id] = deník postavy, [id, 'uprav'] = úprava (návrh),
+  // [id, 'sdilet'] = sdílení revizí
   let { params }: { params: string[] } = $props()
 
   let logs = $state<CharacterLog[]>([])
   let current = $state<CharacterLog | undefined>(undefined)
   let hasDraft = $state(false)
+  let reviews = $state<Reviews>({ status: {} })
 
   async function load() {
     logs = await listLogs()
     current = params[0] ? await getLog(params[0]) : undefined
     hasDraft = params[0] ? hasCharacterDraft(params[0]) : false
+    reviews = params[0] ? loadReviews(params[0]) : { status: {} }
   }
   onMount(load)
   $effect(() => {
@@ -49,7 +55,11 @@
   }
 </script>
 
-{#if params[1] === 'uprav' && params[0]}
+{#if params[0] === 'import'}
+  <ImportPanel />
+{:else if params[1] === 'sdilet' && params[0]}
+  <SharePanel id={params[0]} />
+{:else if params[1] === 'uprav' && params[0]}
   <CharacterEditor id={params[0]} />
 {:else if c && current}
   <nav><a class="btn" href="#/postavy">← Postavy</a></nav>
@@ -86,7 +96,7 @@
           >{/if}
       </summary>
       {#if a?.flavor}<Md text={a.flavor} />{/if}
-      {#if a}<Md text={a.text} />{/if}
+      {#if a}<Md text={a.text} hint />{/if}
     </details>
   {/each}
 
@@ -108,11 +118,13 @@
     <a class="btn primary" href={'#/postavy/' + current.id + '/uprav'}
       >{hasDraft ? 'Pokračovat v úpravě (rozpracováno)' : 'Upravit postavu'}</a
     >
+    <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
   </p>
+  {#if reviews.note}<p class="panel">Vypravěč: „{reviews.note}“</p>{/if}
 
   <CheckList character={c} />
 
-  <History log={current} onrevert={revert} />
+  <History log={current} status={reviews.status} onrevert={revert} />
   <button onclick={remove}>Smazat postavu</button>
 {:else if params[0]}
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>
@@ -131,7 +143,10 @@
   {:else}
     <p class="muted">Zatím žádná postava.</p>
   {/each}
-  <a class="btn primary" href="#/tvorba">Nová postava</a>
+  <p class="actions">
+    <a class="btn primary" href="#/tvorba">Nová postava</a>
+    <a class="btn" href="#/postavy/import">Import…</a>
+  </p>
 {/if}
 
 <style>

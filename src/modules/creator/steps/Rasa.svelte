@@ -52,7 +52,7 @@
                 >{/if}</span
             >
           </label>
-          {#if draft.cultureId === c.id}<div class="culture"><Md text={c.text} /></div>{/if}
+          {#if draft.cultureId === c.id}<div class="culture"><Md text={c.text} hint /></div>{/if}
         {/each}
       </fieldset>
       {@const link = manualLink('24', r.name)}

@@ -78,3 +78,17 @@ kultura, rozsah úrovně, duplicity, hotovost); varuje, ale neblokuje. Zobrazuje
 v editoru. Možné rozšíření: kontrola stavu po každé příchozí revizi při schvalování vypravěčem.
 Zbývá: hotové sady výbavy a ceník bez balíčku (nyní se výbava píše ručně), hláška „Popis je v balíčku“
 u položek bez textu.
+
+## Sdílení revizí (první verze hotovo)
+
+Hráč: Postava → **Sdílet…** (`SharePanel`): kód `DRD2:` (stlačený JSON), soubor nebo systémové sdílení; posílají se
+změny od posledního odeslání, nebo celá postava (nová postava asi 450 znaků, revize s několika změnami asi 400).
+Vypravěč: Postavy → **Import…** (`ImportPanel`): náhled „před → po“ po revizích, detekce navázání / rozdílného
+stavu / neznámého základu a konfliktů, **Přijmout** (zaškrtnuté) nebo zamítnout, volitelně kód **odpovědi**
+hráči (přijato / zamítnuto + poznámka). Hráč odpověď naimportuje: revize dostanou štítek (odesláno / přijato /
+zamítnuto) a zamítnuté změny lze jedním tlačítkem vrátit. Jádro: `core/character/share.ts` (balíček, očištění,
+analýza), `reviews.ts` (stav revizí). Přijaté revize se do deníku vypravěče přidají beze změny ID.
+
+Zbývá: QR (knihovna pro generování a čtení, případně více QR), zhuštění historie (viz výše), Web NFC,
+Wi-Fi/WebRTC, otevření souboru přímo z AirDropu / Quick Share (`file_handlers`, `share_target` v manifestu),
+kontrola postavy po každé příchozí revizi (`checkCharacter`) v importu, ruční slučování konfliktů.

@@ -3,7 +3,8 @@
   import { parseInline } from '../core/markdown'
   import Inline from './Inline.svelte'
 
-  let { text }: { text: string } = $props()
+  // `hint`: u povinného textu (popis schopnosti, kultury, …) se při prázdném textu ukáže nápověda
+  let { text, hint = false }: { text: string; hint?: boolean } = $props()
   const parts = $derived(
     text
       .split('\n\n')
@@ -16,6 +17,12 @@
   )
 </script>
 
+{#if hint && !text.trim()}
+  <p class="muted nodesc">
+    Pro popis <a href="#/knihovna">instaluj balíček</a>, nebo čti pravidla.
+  </p>
+{/if}
+
 {#each parts as part}
   {#if 'list' in part}
     <ul>
@@ -25,3 +32,10 @@
     <p><Inline nodes={parseInline(part.p)} /></p>
   {/if}
 {/each}
+
+<style>
+  .nodesc {
+    font-size: 0.85rem;
+    margin: 0.25rem 0;
+  }
+</style>
