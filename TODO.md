@@ -168,3 +168,17 @@ Systémová čtečka QR (Samsung) text `DRD2:…` načetla, ale nemohla ho před
 skládají (uložené v zařízení 15 minut, „Zahodit naskenované díly“). Čtečka v aplikaci rozumí odkazům i holému
 kódu. Díly mají nejvýš 250 znaků kódu (s odkazem asi 306 znaků v QR). Nápady: stáhnout QR jako obrázek (PNG),
 sdílet přes `navigator.share` jako obrázek, QR na celou obrazovku.
+
+## Aktualizace a instalace PWA (hotovo, ověřit na telefonu)
+
+- **Aktualizace** (`core/pwa.svelte.ts`, `ui/AppBanners.svelte`): service worker stáhne novou verzi na pozadí a
+  nad navigací se nabídne „Obnovit“ (rozepsané návrhy jsou uložené v zařízení). Kontrola při spuštění, po návratu do
+  aplikace (nejvýš co 10 min) a každou hodinu; ruční tlačítko je v Knihovna → Aplikace (verze, datum sestavení).
+- **Instalace**: tlačítko „Nainstalovat“ (Chrome/Edge: událost `beforeinstallprompt`) v pruhu a v Knihovna → Aplikace;
+  na iOS návod Sdílet → Přidat na plochu; ikony PNG (192, 512, maskable, apple-touch) v `public/icons`
+  (`tools/make-icons.mjs`), manifest s `purpose: maskable`.
+- Stav: tlačítka a pruhy ověřeny simulací událostí; samotný service worker se v prohlížeči vývojového panelu nedá
+  zaregistrovat (chyba prostředí), takže celý cyklus nové verze je potřeba zkusit na telefonu po nasazení
+  (nasadit verzi A, otevřít, nasadit verzi B, otevřít znovu: má se objevit pruh „Je dostupná nová verze“).
+  Pozor: první nasazení s tímto kódem se do telefonů dostane ještě starým mechanismem (autoUpdate), až další
+  verze už přes pruh.

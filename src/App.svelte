@@ -1,13 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { refreshLibrary } from './core/library.svelte'
+  import { initPwa } from './core/pwa.svelte'
   import { allModules, getModule } from './core/modules'
   import { router, startRouter, toHash } from './core/router.svelte'
   import { DEFAULT_MODULE } from './modules'
+  import AppBanners from './ui/AppBanners.svelte'
 
   onMount(() => {
     startRouter()
     refreshLibrary()
+    initPwa()
   })
 
   const active = $derived(getModule(router.module || DEFAULT_MODULE))
@@ -24,6 +27,7 @@
       <p>Stránka nenalezena. <a href={toHash(DEFAULT_MODULE)}>Domů</a></p>
     {/if}
   </main>
+  <AppBanners />
   <nav class="tabs" aria-label="Hlavní navigace">
     {#each tabs as m}
       <a href={toHash(m.id)} aria-current={active?.id === m.id ? 'page' : undefined}>

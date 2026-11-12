@@ -1,6 +1,7 @@
 <script lang="ts">
   import { installPack, removePack } from '../../core/content/store'
   import { library, refreshLibrary } from '../../core/library.svelte'
+  import AppInfo from './AppInfo.svelte'
 
   let error = $state('')
 
@@ -49,6 +50,8 @@
 {:else}
   <p class="muted">Zatím žádný.</p>
 {/each}
+
+<AppInfo />
 
 <style>
   .pack {

@@ -1,7 +1,7 @@
 {
   "name": "pribehy-drd2",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Tvorba a deník postav, bestiář a nástroje pro Dračí doupě 2 (PWA, offline-first, bez serveru)",
   "author": "Petr Palička <36405857+Peca006@users.noreply.github.com>",
   "license": "GPL-3.0-or-later",
