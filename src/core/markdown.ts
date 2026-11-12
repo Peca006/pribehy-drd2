@@ -2,7 +2,9 @@
 
 export type Inline =
   | { t: 'text'; v: string }
-  | { t: 'em' | 'strong' | 'term'; c: Inline[] }
+  | { t: 'em' | 'strong'; c: Inline[] }
+  /** pojem ze sazby ***…***; `plain` = bez odkazu (viz `limitTermLinks`) */
+  | { t: 'term'; c: Inline[]; plain?: boolean }
   | { t: 'link'; href: string; c: Inline[] }
 
 const MARKS: [string, 'term' | 'strong' | 'em'][] = [
@@ -10,6 +12,9 @@ const MARKS: [string, 'term' | 'strong' | 'em'][] = [
   ['**', 'strong'],
   ['*', 'em'],
 ]
+
+/** Neviditelný znak (word joiner) před ***pojmem***: pojem se zobrazí bez odkazu. */
+export const NO_LINK = '⁠'
 
 export function parseInline(src: string): Inline[] {
   const out: Inline[] = []
@@ -35,8 +40,12 @@ export function parseInline(src: string): Inline[] {
       let end = src.indexOf(mark, i + mark.length)
       while (end > 0 && /\s/.test(src[end - 1])) end = src.indexOf(mark, end + 1)
       if (end > i + mark.length) {
+        // značka NO_LINK těsně před ***pojmem*** říká, že se z něj nemá dělat odkaz
+        const plain = t === 'term' && buf.endsWith(NO_LINK)
+        if (plain) buf = buf.slice(0, -NO_LINK.length)
         flush()
-        out.push({ t, c: parseInline(src.slice(i + mark.length, end)) })
+        const c = parseInline(src.slice(i + mark.length, end))
+        out.push(plain ? { t: 'term', c, plain } : { t, c })
         i = end + mark.length
         continue outer
       }

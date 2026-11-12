@@ -17,7 +17,7 @@
   {#if n.t === 'text'}{n.v}
   {:else if n.t === 'em'}<em><Self nodes={n.c} {onlink} /></em>
   {:else if n.t === 'strong'}<strong><Self nodes={n.c} {onlink} /></strong>
-  {:else if n.t === 'term' && termId(n.c)}<a
+  {:else if n.t === 'term' && !n.plain && termId(n.c)}<a
       class="term"
       href={'#/ctenar'}
       onclick={(e) => {

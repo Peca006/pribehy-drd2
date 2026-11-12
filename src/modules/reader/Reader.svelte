@@ -1,11 +1,22 @@
 <script lang="ts">
-  import { chapters } from '../../core/library.svelte'
+  import { chapters, termIndex, terms } from '../../core/library.svelte'
+  import { limitTermLinks } from '../../core/termLinks'
   import { back, go } from '../../core/router.svelte'
   import BlockView from '../../ui/BlockView.svelte'
 
   // params: [ID kapitoly, kotva?] – bez parametrů se ukáže seznam kapitol
   let { params }: { params: string[] } = $props()
   const chapter = $derived(chapters().find((c) => c.id === params[0]))
+  // odkazy z pojmů jen u prvního výskytu v kapitole a ne na tutéž kapitolu
+  const blocks = $derived.by(() => {
+    if (!chapter) return []
+    const home = new Map(terms().map((t) => [t.id, /^chapter:([^#]+)/.exec(t.target)?.[1]]))
+    return limitTermLinks(chapter.blocks, {
+      index: termIndex(),
+      homeChapter: (id) => home.get(id),
+      chapterId: chapter.id,
+    })
+  })
 
   $effect(() => {
     const anchor = params[1]
@@ -23,7 +34,7 @@
   </nav>
   <article>
     <h1>{chapter.title}</h1>
-    <BlockView blocks={chapter.blocks} />
+    <BlockView {blocks} />
   </article>
 {:else}
   <h1>Příručka</h1>
