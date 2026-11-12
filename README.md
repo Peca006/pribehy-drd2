@@ -48,6 +48,12 @@ aplikace určena k použití. Texty pravidel, bestiáře a další obsah her jso
 vydavatelů a řídí se jejich vlastními podmínkami; do aplikace se načítají jen jako samostatné obsahové balíčky
 a jejich použití je na odpovědnosti uživatele.
 
+Zdrojem převodníku je veřejně dostupné SRD Dračího doupěte II na [drd2srd.d20.cz](https://drd2srd.d20.cz/),
+které vzniklo podle jeho autorů s výslovným svolením nakladatelství Altar a autorů hry. Web SRD nestanoví
+podmínky pro další šíření textu ani pro odvozená díla, a proto **repozitář ani nasazená aplikace žádný text
+SRD neobsahují**. Případné balíčky se šíří jen soukromě v uzavřeném okruhu testerů, dokud nebudou podmínky
+upřesněny s nositeli práv.
+
 Software je poskytován „tak, jak je“, bez jakékoli záruky, včetně záruky správnosti či úplnosti pravidel
 (viz GPL-3.0-or-later). Při rozporu s tištěnými knihami platí vždy knihy.
 
@@ -63,6 +69,6 @@ modul sám, seznam modulů je v `src/modules/index.ts`. Moduly se nevolají nap�
 - `src/modules/` – funkce: `characters` (deníky postav), `creator` (průvodce tvorbou postavy,
   kroky v `steps/` se řadí v `steps.ts`), `reader` (příručka), `library` (balíčky).
 - `bestiar` – bestiář pro vypravěče: bytosti z balíčku (jen ke čtení) a vlastní bytosti (editor,
-  import/export JSON). Vlastní bytosti jsou v oddělené části úložiště. Bestiář je součástí SRD, lze ho tedy volně používat a sdílet. Ke každé bytosti si lze přidat vlastní obrázky (ukládají se jen v zařízení).
+  import/export JSON). Vlastní bytosti jsou v oddělené části úložiště. Bestiář vychází ze SRD (viz Právní upozornění). Ke každé bytosti si lze přidat vlastní obrázky (ukládají se jen v zařízení).
 - `src/ui/` – sdílené komponenty (zobrazení textů v mini-markdownu, bloky kapitol).
 - Odkazy `chapter:ID#kotva` a `term:ID` v textech se otevírají z kteréhokoli modulu.
