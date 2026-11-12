@@ -3,6 +3,7 @@
   import { parseInline } from '../core/markdown'
   import Inline from './Inline.svelte'
   import Self from './BlockView.svelte'
+  import ZoomImage from './ZoomImage.svelte'
 
   let { blocks, onlink }: { blocks: Block[]; onlink?: (href: string) => void } = $props()
 </script>
@@ -58,7 +59,11 @@
       </table>
     </div>
   {:else if b.type === 'image'}
-    <p class="image-note">[obrázek: {b.alt}]</p>
+    {#if b.src.startsWith('data:image/')}
+      <ZoomImage src={b.src} alt={b.alt} />
+    {:else}
+      <p class="image-note">[obrázek: {b.alt}]</p>
+    {/if}
   {:else if b.type === 'rule'}
     <hr />
   {/if}

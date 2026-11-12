@@ -22,11 +22,12 @@ Návrhy řešení (vybrat po vyzkoušení na čtečce):
 
 Pozor na odkazy ze SRD (ručně vložené autory, `html-md.mjs`): ty se neomezují, jen odkazy tvořené slovníkem.
 
-## Mapy a obrázky v balíčku
+## Mapy a obrázky v balíčku (hotovo)
 
-SRD má 4 obrázky (`Naložení`, `Radvanovo Panství`, `Vlci`, `Bílý hrad`, celkem asi 2,7 MB). Převodník
-(`parse-chapter.mjs`) je už vypíše jako bloky `image` se zdrojovou adresou. Chybí jejich uložení do balíčku
-a zobrazení ve čtečce (včetně přiblížení, mapy se při hře používají). Viz diskuse v historii session.
+Obrázky ze SRD (4 ks) se při sestavení balíčku převedou na WebP a vloží do JSONu jako `data:image/webp`
+(`tools/srd/images.mjs`, zdrojové PNG se stahují do `reference/srd/assets/`). Čtečka je zobrazí s možností
+přiblížení (`src/ui/ZoomImage.svelte`). Možné vylepšení: ukládat obrázky z balíčku do IndexedDB jako soubory,
+pokud by velikost JSONu v paměti vadila.
 
 ## Import z SRD přímo v aplikaci
 

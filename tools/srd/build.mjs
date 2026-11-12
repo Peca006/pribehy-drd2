@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { readdirSync } from 'node:fs'
 import { parseProfessions } from './parse-povolani.mjs'
 import { parseChapter } from './parse-chapter.mjs'
+import { embedImages, missingImages } from './images.mjs'
 import {
   CREATION_RULES,
   deriveEquipment,
@@ -27,6 +28,14 @@ const chapters = readdirSync(dir)
   .filter((f) => f.startsWith('zakladni-prirucka__'))
   .sort()
   .map((f) => parseChapter(read(f), f.replace('zakladni-prirucka__', '').replace('.html', '')))
+
+const assets = `${dir}assets/`
+const missing = missingImages(chapters, assets)
+if (missing.length) {
+  console.error(`Chybí obrázky v ${assets}: ${missing.join(', ')} (stáhnout z drd2srd.d20.cz/assets/)`)
+  process.exit(1)
+}
+const images = await embedImages(chapters, assets)
 
 const { races, common } = deriveRaces(chapters)
 const pack = {
@@ -75,5 +84,5 @@ if (bad.length) {
   process.exit(1)
 }
 console.log(
-  `kapitol: ${chapters.length}, povolání: ${professions.length}, schopností: ${professions.reduce((n, p) => n + p.abilities.length, 0)}`,
+  `kapitol: ${chapters.length}, povolání: ${professions.length}, schopností: ${professions.reduce((n, p) => n + p.abilities.length, 0)}, obrázků: ${images.count} (${Math.round(images.bytes / 1024)} kB WebP)`,
 )
