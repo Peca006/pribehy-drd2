@@ -138,7 +138,8 @@ kanálem a opakováním, pak teprve OFDM. Využije stejný balíček a kód `DRD
 - Kontrola postavy počítá se zlepšením zdatnosti (schopnost navíc) a hlídá pokročilá povolání a jizvy.
 - Popis změny se ukládá do návrhu. Nápověda u položek bez textu odkazuje na SRD (`srd` v kostře).
 
-Zbývá: Suroviny, léčení jizev a obnova Zdrojů podle pravidel (blokování obnovy jizvami), povolání z Her mocných,
+Hojení jizev je hotovo (Zmírnit o 1 / Zahojeno na detailu postavy, revize v deníku; `core/character/healing.ts`; obnovu Zdrojů jizvy už omezují).
+Zbývá: Suroviny, povolání z Her mocných,
 přidělení XP za sezení pro celou družinu (až s družinami).
 
 ### QR: velikost dílů (z testu na telefonu)

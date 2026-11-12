@@ -6,8 +6,12 @@
     ATTRIBUTES,
     characterOf,
     type ChangeEvent,
+    type Character,
+    eventsFor,
     type CharacterLog,
   } from '../../core/character/model'
+  import { easeScar, healScar } from '../../core/character/healing'
+  import { settings } from '../../core/settings.svelte'
   import { effectiveAttributes } from '../../core/character/play'
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
   import { findAbility, professions, races } from '../../core/library.svelte'
@@ -47,6 +51,14 @@
   const race = $derived(races().find((r) => r.id === c?.raceId))
   const culture = $derived(race?.cultures.find((x) => x.id === c?.cultureId))
 
+  /** Hojení jizvy jako samostatná revize v deníku (s poznámkou, kterou jizvu a jak). */
+  async function healing(c: Character, scarId: string, fn: typeof easeScar, what: string) {
+    if (!current) return
+    const s = c.scars.find((x) => x.id === scarId)
+    if (!s) return
+    const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
+    current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
+  }
   async function revert(events: ChangeEvent[]) {
     if (current) current = await appendEvents(current.id, events)
   }
@@ -92,8 +104,20 @@
   {#if c.scars.length}
     <h2>Jizvy</h2>
     <ul>
-      {#each c.scars as s}<li>{s.attribute} {s.severity}{s.note ? `: ${s.note}` : ''}</li>{/each}
+      {#each c.scars as s (s.id)}
+        <li>
+          {s.attribute} {s.severity}{s.note ? `: ${s.note}` : ''}
+          {#if s.severity > 1}
+            <button onclick={() => healing(c, s.id, easeScar, 'Zmírnění')}>Zmírnit o 1</button>
+          {/if}
+          <button onclick={() => healing(c, s.id, healScar, 'Zahojení')}>Zahojeno</button>
+        </li>
+      {/each}
     </ul>
+    <p class="muted">
+      Jizvy se hojí mezi výpravami (dobu odhadne Průvodce, závažnější ubývají postupně); na výpravě je léčí dovednosti.
+      Hojení se zapíše do deníku jako revize.
+    </p>
   {/if}
   <p class="muted">Body zkušeností: {c.xp} (12 = jedno zlepšení)</p>
 
