@@ -104,3 +104,13 @@ problémy proti současnému stavu.
 
 Zbývá: ověřit čtení kamerou na telefonu (světlo, velikost QR), případně větší díly / ECC podle zkušeností,
 zhuštění historie, NFC, Wi-Fi/WebRTC, `file_handlers` a `share_target`.
+
+## Zhuštění historie pro QR (hotovo)
+
+Na obrazovce Sdílet lze u QR zapnout „Zhustit starší historii, aby se vešla do 1/2/3 QR“ (`core/character/compact.ts`):
+starší revize se sloučí do výchozí revize „Zhuštěná historie“ a novější zůstanou; míra zhuštění se hledá půlením,
+aby se zachovalo co nejvíc historie. Jen pro QR (kód, soubor a sdílení posílají celou historii). Balíček nese
+`compact: { upTo, hash }`; příjemce s plnou historií ověří otisk (`stateHash`) a starší revize vynechá, příjemce
+bez deníku dostane výchozí stav jako první revizi, při neshodě nebo chybějícím základu je upozorněn.
+Ověřeno: postava se 14 revizemi 3872 znaků → 689 znaků (1 QR), QR přečteno zpět a import dal shodný stav.
+Zbývá: omezení velkých textů (příběh, poznámky) před zhuštěním, když se nevejde ani zhuštěný stav.

@@ -205,6 +205,7 @@
 {#if bundle?.type === 'revize' && analysis}
   <h2>Postava {bundle.name || bundle.char}</h2>
   <p>{KIND[analysis.kind]}</p>
+  {#if analysis.note}<p class="muted">{analysis.note}</p>{/if}
   {#if analysis.conflicts.length}
     <p class="panel error" role="alert">
       Změněno na obou stranách: {analysis.conflicts.map(pathLabel).join(', ')}.

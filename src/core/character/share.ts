@@ -39,6 +39,11 @@ export interface RevisionBundle {
   name: string
   /** ID revize, na kterou první přiložená revize navazuje (null = od vzniku postavy) */
   base: string | null
+  /**
+   * Zhuštěná historie: první revize je „výchozí stav“ nahrazující všechny starší revize až po `upTo`;
+   * `hash` je otisk stavu postavy v té chvíli (příjemce s plnou historií podle něj ověří, že souhlasí).
+   */
+  compact?: { upTo: string; hash: string }
   revisions: SharedRevision[]
 }
 
@@ -253,6 +258,7 @@ export function sanitizeBundle(raw: unknown): { bundle?: Bundle; errors: string[
       char,
       name,
       base: str(r.base, 100) ?? null,
+      ...compactOf(r.compact),
       revisions,
     },
     errors,
@@ -285,6 +291,39 @@ export async function decodeBundle(text: string): Promise<{ bundle?: Bundle; err
 
 // --- analýza a přijetí ---
 
+/** Otisk stavu postavy (nekryptografický, jen k odhalení rozdílného základu). */
+export function stateHash(c: Character): string {
+  const canon = (v: unknown): unknown =>
+    Array.isArray(v)
+      ? v.map(canon)
+      : v && typeof v === 'object'
+        ? Object.fromEntries(
+            Object.entries(v)
+              .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+              .map(([k, x]) => [k, canon(x)]),
+          )
+        : v
+  const s = JSON.stringify(canon(c))
+  let h1 = 0xdeadbeef
+  let h2 = 0x41c6ce57
+  for (let i = 0; i < s.length; i++) {
+    const ch = s.charCodeAt(i)
+    h1 = Math.imul(h1 ^ ch, 2654435761)
+    h2 = Math.imul(h2 ^ ch, 1597334677)
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
+  return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0')
+}
+
+function compactOf(raw: unknown): { compact?: { upTo: string; hash: string } } {
+  if (typeof raw !== 'object' || raw === null) return {}
+  const r = raw as Record<string, unknown>
+  const upTo = str(r.upTo, 100)
+  const hash = str(r.hash, 40)
+  return upTo && hash ? { compact: { upTo, hash } } : {}
+}
+
 export type ImportKind = 'nova-postava' | 'navazuje' | 'jiny-stav' | 'neznamy-zaklad' | 'nic-noveho'
 
 export interface ImportAnalysis {
@@ -293,13 +332,45 @@ export interface ImportAnalysis {
   fresh: SharedRevision[]
   /** cesty, které se změnily jak v příchozích revizích, tak v místních revizích po základu */
   conflicts: string[]
+  /** upozornění k zhuštěné historii */
+  note?: string
 }
 
 const pathsOf = (events: { path: string }[]) => new Set(events.map((e) => e.path))
 
 export function analyzeImport(log: CharacterLog | undefined, b: RevisionBundle): ImportAnalysis {
-  if (!log) return { kind: 'nova-postava', fresh: b.revisions, conflicts: [] }
+  if (!log) {
+    const note = b.compact ? 'Starší historie je zhuštěná do výchozího stavu.' : undefined
+    return { kind: 'nova-postava', fresh: b.revisions, conflicts: [], ...(note ? { note } : {}) }
+  }
   const mine = groupRevisions(log.events)
+  if (b.compact) {
+    // zhuštěné revize se vynechají, když je deník zná a jeho stav souhlasí s otiskem
+    const at = mine.findIndex((r) => r.id === b.compact!.upTo)
+    const known =
+      at >= 0 &&
+      stateHash(
+        characterOf({ id: log.id, events: mine.slice(0, at + 1).flatMap((r) => r.events) }),
+      ) === b.compact.hash
+    if (known) {
+      const rest = analyzeImport(log, {
+        ...b,
+        compact: undefined,
+        base: b.compact.upTo,
+        revisions: b.revisions.slice(1),
+      })
+      return { ...rest, note: 'Zhuštěné starší revize už v deníku jsou a souhlasí.' }
+    }
+    const why =
+      at >= 0 ? 'Zhuštěný stav se liší od stavu v deníku.' : 'Zhuštěný základ v deníku není.'
+    const fresh = b.revisions.filter((r) => !mine.some((m) => m.id === r.id))
+    return {
+      kind: 'neznamy-zaklad',
+      fresh,
+      conflicts: [],
+      note: `${why} První revize obsahuje celý stav postavy; přijmutím přepíše současné hodnoty.`,
+    }
+  }
   const have = new Set(mine.map((r) => r.id))
   const fresh = b.revisions.filter((r) => !have.has(r.id))
   if (!fresh.length) return { kind: 'nic-noveho', fresh, conflicts: [] }
@@ -311,7 +382,7 @@ export function analyzeImport(log: CharacterLog | undefined, b: RevisionBundle):
   const local = mine.slice(at + 1).filter((r) => !b.revisions.some((x) => x.id === r.id))
   const localPaths = pathsOf(local.flatMap((r) => r.events))
   const conflicts = [...pathsOf(fresh.flatMap((r) => r.events))].filter((p) => localPaths.has(p))
-  return { kind: 'jiny-stav', fresh, conflicts }
+  return { kind: local.length ? 'jiny-stav' : 'navazuje', fresh, conflicts }
 }
 
 /** Přidá vybrané revize do deníku (nová postava = nový deník); ostatní se přeskočí. */

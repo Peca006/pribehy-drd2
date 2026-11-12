@@ -4,6 +4,8 @@
   import { loadReviews, markSent, type Reviews } from '../../core/character/reviews'
   import { groupRevisions } from '../../core/character/revisions'
   import { slugify } from '../../core/creatures/bundle'
+  import { fitForQr, type Fitted } from '../../core/character/compact'
+  import { QR_CHUNK, splitForQr } from '../../core/character/qr'
   import { buildRevisionBundle, encodeBundle } from '../../core/character/share'
   import { getLog } from '../../core/character/store'
   import QrView from '../../ui/QrView.svelte'
@@ -48,6 +50,19 @@
   let copied = $state(false)
   let copyFailed = $state(false)
   let showQr = $state(false)
+  // zhuštění starší historie jen pro QR (kód, soubor a sdílení zůstávají s celou historií)
+  let compactOn = $state(false)
+  let maxQr = $state(1)
+  let fitted = $state.raw<Fitted | undefined>(undefined)
+  const canCompact = $derived(sinceIndex < 0 && revs.length > 1)
+  $effect(() => {
+    const l = log
+    fitted = undefined
+    if (!l || !showQr || !compactOn || !canCompact) return
+    fitForQr(l, name, maxQr).then((f) => (fitted = f))
+  })
+  const qrCode = $derived(compactOn && canCompact && fitted ? fitted.code : code)
+  const qrCount = $derived(splitForQr(qrCode).length)
   async function copy() {
     try {
       await navigator.clipboard.writeText(code)
@@ -135,7 +150,37 @@
       <button onclick={download}>Stáhnout soubor</button>
       {#if canShare}<button onclick={share}>Sdílet…</button>{/if}
     </p>
-    {#if showQr}<QrView {code} />{/if}
+    {#if showQr}
+      {#if canCompact}
+        <label class="check">
+          <input type="checkbox" bind:checked={compactOn} />
+          Zhustit starší historii, aby se vešla do
+          <select bind:value={maxQr} disabled={!compactOn} aria-label="Nejvýš QR kódů">
+            <option value={1}>1 QR</option>
+            <option value={2}>2 QR</option>
+            <option value={3}>3 QR</option>
+          </select>
+        </label>
+      {/if}
+      {#if compactOn && fitted}
+        <p class="muted">
+          {#if fitted.merged}
+            {fitted.merged} nejstarších revizí je sloučeno do výchozího stavu; jejich podrobnosti se příjemci
+            nepřenesou (v zařízení vám zůstanou).
+          {:else}
+            Zhuštění není potřeba, historie se vejde celá.
+          {/if}
+          {#if !fitted.fits}
+            Ani po zhuštění se kód nevejde do {maxQr} QR (potřebuje {fitted.qrCount}).
+          {/if}
+        </p>
+      {:else if !compactOn && code.length > QR_CHUNK}
+        <p class="muted">
+          Kód potřebuje {qrCount} QR. Zhuštěním starší historie lze počet snížit.
+        </p>
+      {/if}
+      <QrView code={qrCode} />
+    {/if}
   {/if}
 {/if}
 
