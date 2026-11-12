@@ -1,91 +1,38 @@
 // Lokální nástroj: převede stažené stránky SRD (reference/srd) na obsahový balíček.
 // Výstup patří do content-packs/local/ (gitignorováno – texty jsou autorské dílo).
 // Použití: node tools/srd/build.mjs
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
-import { readdirSync } from 'node:fs'
-import { parseProfessions } from './parse-povolani.mjs'
-import { parseChapter } from './parse-chapter.mjs'
-import { embedImages, missingImages } from './images.mjs'
-import {
-  CREATION_RULES,
-  deriveEquipment,
-  deriveRaces,
-  deriveRequirements,
-  deriveStartingKits,
-  deriveGlossary,
-  deriveTerms,
-  deriveTraits,
-} from './derive.mjs'
+// Totéž dělá bookmarklet přímo v prohlížeči (viz tools/srd/browser/entry.mjs), obě cesty sdílí `pipeline.mjs`.
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs'
+import { buildRulesChapters, embedImagesWith, finishRulesPack } from './pipeline.mjs'
+import { missingImages, nodeImageLoader } from './images.mjs'
 
 const dir = 'reference/srd/'
-const read = (f) => readFileSync(`${dir}${f}`, 'utf8')
+const pages = Object.fromEntries(
+  readdirSync(dir)
+    .filter((f) => f.startsWith('zakladni-prirucka__'))
+    .map((f) => [
+      f.replace('zakladni-prirucka__', '').replace('.html', ''),
+      readFileSync(`${dir}${f}`, 'utf8'),
+    ]),
+)
 
-const professions = [
-  ...parseProfessions(read('zakladni-prirucka__25-zakladni-povolani.html'), 'zakladni'),
-  ...parseProfessions(read('zakladni-prirucka__26-pokrocila-povolani.html'), 'pokrocile'),
-]
-
-const chapters = readdirSync(dir)
-  .filter((f) => f.startsWith('zakladni-prirucka__'))
-  .sort()
-  .map((f) => parseChapter(read(f), f.replace('zakladni-prirucka__', '').replace('.html', '')))
-
+const built = buildRulesChapters(pages)
 const assets = `${dir}assets/`
-const missing = missingImages(chapters, assets)
+const missing = missingImages(built.chapters, assets)
 if (missing.length) {
   console.error(`Chybí obrázky v ${assets}: ${missing.join(', ')} (stáhnout z drd2srd.d20.cz/assets/)`)
   process.exit(1)
 }
-const images = await embedImages(chapters, assets)
-
-const requirements = deriveRequirements(chapters, professions)
-for (const p of professions) if (requirements.has(p.id)) p.requires = requirements.get(p.id)
-const { races, common } = deriveRaces(chapters)
-const pack = {
-  manifest: {
-    format: 1,
-    id: 'drd2-pravidla-2',
-    name: 'Dračí doupě 2 – Pravidla (SRD)',
-    version: '2.0.0',
-    source: { book: 'Dračí doupě 2: Pravidla (SRD, drd2srd.d20.cz)', edition: '2' },
-  },
-  chapters,
-  professions,
-  races,
-  commonRaceAbilities: common,
-  traits: deriveTraits(chapters),
-  equipment: deriveEquipment(chapters),
-  startingKits: deriveStartingKits(chapters),
-  creation: CREATION_RULES,
-  terms: [],
-}
-pack.terms = deriveGlossary(pack, deriveTerms(chapters))
-
-// Opravy SRD podle tištěné knihy (drd2-pravidla.pdf); viz `npm run compare:srd`. Počet zásahů je pevně daný.
-const PDF_FIXES = [
-  ['Vyberte si jednu rasovou základní schopnost', 'Vyberte si jednu rasovou zvláštní schopnost', 1],
-  ['*Výrobě elixírů* a *Podávání* *elixírů', '*Výrobě elixírů* a *Používání* *elixírů', 2],
-]
-let json = JSON.stringify(pack, null, 1)
-for (const [from, to, expected] of PDF_FIXES) {
-  const n = json.split(from).length - 1
-  if (n !== expected) {
-    console.error(`Oprava podle PDF zasáhla ${n}× místo ${expected}×: ${from}`)
-    process.exit(1)
-  }
-  json = json.replaceAll(from, to)
+const loader = nodeImageLoader(assets)
+const count = await embedImagesWith(built.chapters, loader)
+const { json, problems } = finishRulesPack(built)
+if (problems.length) {
+  console.error(problems.join('\n'))
+  process.exit(1)
 }
 
 mkdirSync('content-packs/local', { recursive: true })
 writeFileSync('content-packs/local/drd2-pravidla-2.json', json)
-const bad = professions.filter((p) => p.abilities.length !== 12 || !p.skills.length)
-if (bad.length) {
-  console.error(
-    'Podezřelá povolání (očekává se 12 schopností a aspoň 1 dovednost):',
-    bad.map((p) => p.name),
-  )
-  process.exit(1)
-}
 console.log(
-  `kapitol: ${chapters.length}, povolání: ${professions.length}, schopností: ${professions.reduce((n, p) => n + p.abilities.length, 0)}, obrázků: ${images.count} (${Math.round(images.bytes / 1024)} kB WebP)`,
+  `kapitol: ${built.chapters.length}, povolání: ${built.professions.length}, schopností: ${built.professions.reduce((n, p) => n + p.abilities.length, 0)}, obrázků: ${count} (${Math.round(loader.bytes() / 1024)} kB WebP)`,
 )

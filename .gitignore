@@ -17,3 +17,6 @@ coverage/
 !.vscode/extensions.json
 .DS_Store
 Thumbs.db
+
+# Vygenerovaný bookmarklet (npm run build:bookmarklet)
+/public/srd-import.js

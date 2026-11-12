@@ -1,18 +1,13 @@
 // Obrázky ze SRD se do balíčku vkládají přímo do JSONu jako `data:image/webp;base64,…`.
 // Zdrojové PNG se stahují ručně do reference/srd/assets/ (gitignorováno), viz `missingImages`.
+// (Prohlížečová verze s canvasem je v tools/srd/browser/entry.mjs.)
 import { existsSync, readFileSync } from 'node:fs'
-import { basename } from 'node:path'
 import sharp from 'sharp'
+import { basename, walkImages } from './pipeline.mjs'
 
 const MAX_SIDE = 1600
 
-/** Projde bloky kapitoly (i vnořené) a zavolá `fn` pro každý blok `image`. */
-export function walkImages(blocks, fn) {
-  for (const b of blocks) {
-    if (b.type === 'image') fn(b)
-    else if (b.blocks) walkImages(b.blocks, fn)
-  }
-}
+export { walkImages }
 
 /** Názvy souborů obrázků, které chybí v `assetsDir`. */
 export function missingImages(chapters, assetsDir) {
@@ -25,25 +20,17 @@ export function missingImages(chapters, assetsDir) {
   return [...out]
 }
 
-/** Nahradí `src` obrázků data URI ve WebP (zmenšení jen u příliš velkých). Vrací počet a velikost. */
-export async function embedImages(chapters, assetsDir) {
-  const cache = new Map()
+/** Načítač obrázků pro `embedImagesWith`: zmenší (jen příliš velké) a převede na WebP. */
+export function nodeImageLoader(assetsDir) {
   let bytes = 0
-  for (const ch of chapters) {
-    const jobs = []
-    walkImages(ch.blocks, (b) => jobs.push(b))
-    for (const b of jobs) {
-      const file = basename(b.src)
-      if (!cache.has(file)) {
-        const webp = await sharp(readFileSync(`${assetsDir}${file}`))
-          .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true })
-          .webp({ quality: 85, effort: 6 })
-          .toBuffer()
-        bytes += webp.length
-        cache.set(file, `data:image/webp;base64,${webp.toString('base64')}`)
-      }
-      b.src = cache.get(file)
-    }
+  const load = async (_src, file) => {
+    const webp = await sharp(readFileSync(`${assetsDir}${file}`))
+      .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 85, effort: 6 })
+      .toBuffer()
+    bytes += webp.length
+    return `data:image/webp;base64,${webp.toString('base64')}`
   }
-  return { count: cache.size, bytes }
+  load.bytes = () => bytes
+  return load
 }

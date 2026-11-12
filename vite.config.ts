@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [
     svelte(),
     VitePWA({
-      workbox: { importScripts: ['share-target.js'] },
+      workbox: { importScripts: ['share-target.js'], globIgnores: ['**/srd-import.js'] },
       // nová verze se stáhne na pozadí a uživateli se nabídne „Obnovit“ (registraci řeší src/core/pwa.svelte.ts)
       registerType: 'prompt',
       injectRegister: false,
