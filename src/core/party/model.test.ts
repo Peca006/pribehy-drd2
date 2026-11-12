@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { emptyParty, sessionAward, type Member } from './model'
+import { baseXpOf, emptyParty, GM_VOTE, sessionAward, tallyVotes, type Member } from './model'
 
 const m = (id: string): Member => ({ id, name: id.toUpperCase() })
 const members = [m('a'), m('b'), m('c')]
@@ -36,5 +36,22 @@ describe('zkušenosti za sezení', () => {
 
   it('prázdná družina má jedinečné ID', () => {
     expect(emptyParty('X').id).not.toBe(emptyParty('X').id)
+  })
+})
+
+describe('rychlost postupu', () => {
+  it('výchozí je 4 body za účast', () => {
+    expect(baseXpOf(emptyParty('X'))).toBe(4)
+    expect(baseXpOf({ ...emptyParty('X'), baseXp: 6 })).toBe(6)
+  })
+})
+
+describe('tajné odměny', () => {
+  it('sečte hlasy a nezapočítá vlastní ani pro nepřítomného', () => {
+    const att = new Set(['a', 'b'])
+    const r = tallyVotes(members, att, { a: 'b', b: 'b', c: 'a', [GM_VOTE]: 'b' })
+    expect(r.reward).toEqual({ b: 2 })
+    expect(r.problems).toHaveLength(1)
+    expect(tallyVotes(members, att, { a: 'c' }).problems.join()).toMatch(/nepřítomného/)
   })
 })

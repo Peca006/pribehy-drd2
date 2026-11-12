@@ -3,10 +3,12 @@
   import { appendEvents, getLog } from '../../core/character/store'
   import { characterOf, eventsFor } from '../../core/character/model'
   import {
+    baseXpOf,
+    GM_VOTE,
     newPartyId,
     roleOf,
     sessionAward,
-    XP_ATTENDANCE,
+    tallyVotes,
     XP_REWARD_MAX,
     type JournalEntry,
     type Party,
@@ -25,6 +27,11 @@
   let text = $state('')
   let attended = $state<Record<string, boolean>>({})
   let reward = $state<Record<string, number>>({})
+  // tajné odměny: každý dá jeden bod, součty se ukážou až po odkrytí
+  let secret = $state(false)
+  let votes = $state<Record<string, string>>({})
+  let voting = $state('')
+  let revealed = $state(false)
   let apply = $state(true)
   let busy = $state(false)
 
@@ -42,9 +49,20 @@
         .map(([k]) => k),
     ),
   )
-  const award = $derived(
-    party ? sessionAward(party.members, present, reward) : { xp: {}, problems: [] },
+  const base = $derived(party ? baseXpOf(party) : 4)
+  const tally = $derived(
+    party ? tallyVotes(party.members, present, votes) : { reward: {}, problems: [] },
   )
+  const effectiveReward = $derived(secret ? tally.reward : reward)
+  const award = $derived(
+    party
+      ? sessionAward(party.members, present, effectiveReward, base)
+      : { xp: {}, problems: [] },
+  )
+  const givers = $derived([
+    { id: GM_VOTE, name: 'Průvodce' },
+    ...(party?.members.filter((m) => present.has(m.id)) ?? []),
+  ])
 
   async function save() {
     if (!party || busy) return
@@ -96,9 +114,13 @@
 
   <h2>Přítomní a odměny</h2>
   <p class="muted">
-    Za účast {XP_ATTENDANCE} body. Odměnu (nejvýš {XP_REWARD_MAX} body na hráče) uděluje každý hráč i
-    Průvodce vždy jedním bodem za hraní role, spolupráci nebo rozvíjení příběhu.
+    Za účast {base} body{#if base !== 4} (rychlost postupu družiny){/if}. Odměnu (nejvýš {XP_REWARD_MAX} body
+    na hráče) uděluje každý hráč i Průvodce vždy jedním bodem za hraní role, spolupráci nebo rozvíjení příběhu.
   </p>
+  <label class="check">
+    <input type="checkbox" bind:checked={secret} />
+    <span>Tajné odměny (každý vybere sám, kdo se mu líbil; zapíšou se jen součty)</span>
+  </label>
   {#each party.members as m (m.id)}
     <div class="row" class:off={!attended[m.id]}>
       <label class="check">
@@ -106,23 +128,62 @@
         <span>{m.name}</span>
       </label>
       {#if attended[m.id]}
-        <span class="stepper">
-          <button
-            onclick={() => (reward[m.id] = Math.max(0, (reward[m.id] ?? 0) - 1))}
-            aria-label={`Ubrat odměnu ${m.name}`}>−</button
-          >
-          <output>{reward[m.id] ?? 0}</output>
-          <button
-            onclick={() => (reward[m.id] = Math.min(XP_REWARD_MAX, (reward[m.id] ?? 0) + 1))}
-            aria-label={`Přidat odměnu ${m.name}`}>+</button
-          >
-        </span>
-        <strong class="total">+{award.xp[m.id]}</strong>
+        {#if !secret}
+          <span class="stepper">
+            <button
+              onclick={() => (reward[m.id] = Math.max(0, (reward[m.id] ?? 0) - 1))}
+              aria-label={`Ubrat odměnu ${m.name}`}>−</button
+            >
+            <output>{reward[m.id] ?? 0}</output>
+            <button
+              onclick={() => (reward[m.id] = Math.min(XP_REWARD_MAX, (reward[m.id] ?? 0) + 1))}
+              aria-label={`Přidat odměnu ${m.name}`}>+</button
+            >
+          </span>
+        {/if}
+        {#if !secret || revealed}<strong class="total">+{award.xp[m.id]}</strong>{/if}
       {/if}
     </div>
   {:else}
     <p class="muted">Družina nemá členy. <a href={'#/druziny/' + id}>Přidejte je</a>.</p>
   {/each}
+
+  {#if secret}
+    <h3>Hlasování</h3>
+    <p class="muted">
+      Zařízení předávejte po jednom. Zadaný hlas se hned zakryje; kdo koho vybral, se nikam nezapíše.
+    </p>
+    {#each givers as g (g.id)}
+      <div class="row">
+        <span>{g.name}</span>
+        {#if votes[g.id] && voting !== g.id}
+          <span>
+            zadáno ✓ <button onclick={() => (voting = g.id)}>Změnit</button>
+          </span>
+        {:else}
+          <select
+            value={votes[g.id] ?? ''}
+            onchange={(e) => {
+              votes[g.id] = e.currentTarget.value
+              voting = ''
+            }}
+            aria-label={`Hlas: ${g.name}`}
+          >
+            <option value="">Koho odměnit…</option>
+            {#each party.members.filter((m) => present.has(m.id) && m.id !== g.id) as m (m.id)}
+              <option value={m.id}>{m.name}</option>
+            {/each}
+          </select>
+        {/if}
+      </div>
+    {/each}
+    <button onclick={() => (revealed = !revealed)}>
+      {revealed ? 'Skrýt součty' : 'Odkrýt součty'}
+    </button>
+    {#if revealed}
+      {#each tally.problems as p}<p class="error" role="alert">{p}</p>{/each}
+    {/if}
+  {/if}
   {#each award.problems as p}<p class="error" role="alert">{p}</p>{/each}
 
   <label class="check">

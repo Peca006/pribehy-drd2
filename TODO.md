@@ -89,8 +89,7 @@ hráči (přijato / zamítnuto + poznámka). Hráč odpověď naimportuje: reviz
 zamítnuto) a zamítnuté změny lze jedním tlačítkem vrátit. Jádro: `core/character/share.ts` (balíček, očištění,
 analýza), `reviews.ts` (stav revizí). Přijaté revize se do deníku vypravěče přidají beze změny ID.
 
-Zbývá: Web NFC, Wi-Fi/WebRTC, `file_handlers` (jen počítač), kontrola postavy po každé příchozí revizi
-(`checkCharacter`) v importu, ruční slučování konfliktů. (QR, zhuštění historie a `share_target` jsou hotové.)
+Zbývá: Web NFC, Wi-Fi/WebRTC, `file_handlers` (jen počítač), ruční slučování konfliktů. (Kontrola každé příchozí revize v importu je hotová.) (QR, zhuštění historie a `share_target` jsou hotové.)
 
 ## QR a kontrola při importu (hotovo)
 
@@ -156,7 +155,7 @@ poznámky a **žurnál dobrodružství** (zápisy s datem a autorem, úpravy, ma
 označí „předat hráči“. Uloženo v IndexedDB (`parties`, verze databáze 4).
 
 Sdílení družiny, role Průvodce / hráč a přehled družiny jsou hotové (viz níže).
-Zbývá: volitelná pravidla rychlosti postupu (3 nebo 6 bodů za účast), tajné udělování odměn.
+Hotovo: rychlost postupu družiny (3 / 4 / 6 bodů za účast) a tajné odměny (hlasování, zapisují se jen součty).
 
 ### QR jako odkaz do aplikace (z testu na telefonu)
 
@@ -189,8 +188,7 @@ ji uloží jako **kopii** (role `hrac`). Hráč navrhuje zápisy, které Průvod
 vždy místní. Přenos jako u postav: kód, soubor, QR (s odkazem do aplikace), Web Share. Ověřeno celým cyklem
 Průvodce → hráč → návrhy → schválení / zamítnutí → hráč.
 
-Zbývá: oddělené role více Průvodců, sdílení členů s postavami (ID postav z jiných zařízení), tajné odměny,
-slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny je hotový (zdatnost po jizvách, povolání, jizvy, XP v `PartyView`).
+Zbývá: oddělené role více Průvodců, sdílení členů s postavami (ID postav z jiných zařízení), slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny je hotový (zdatnost po jizvách, povolání, jizvy, XP v `PartyView`).
 
 ### QR bez obrázků (hotovo)
 

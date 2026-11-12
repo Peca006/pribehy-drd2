@@ -46,10 +46,20 @@ export interface Party {
   journal: JournalEntry[]
   /** ID zamítnutých návrhů hráčů (Průvodce je posílá zpět, aby hráči věděli) */
   rejected?: string[]
+  /** body za účast na sezení (rychlost postupu): 3 pomalý, 4 běžný (výchozí), 6 rychlý */
+  baseXp?: number
   /** kdy se naposledy odeslala družina hráčům */
   lastSent?: string
   updated: string
 }
+
+/** Možné rychlosti postupu: body zkušeností za účast na sezení. */
+export const PACES = [
+  { xp: 3, label: 'pomalý (3 body za účast)' },
+  { xp: 4, label: 'běžný (4 body za účast)' },
+  { xp: 6, label: 'rychlý (6 bodů za účast)' },
+]
+export const baseXpOf = (p: Party): number => p.baseXp ?? 4
 
 export const roleOf = (p: Party): PartyRole => p.role ?? 'pruvodce'
 
@@ -110,4 +120,30 @@ export function sessionAward(
       `Odměnových bodů je ${rewards}, rozdělit lze nejvýš ${players + 1} (každý hráč jeden a Průvodce jeden).`,
     )
   return { xp, problems }
+}
+
+/** Klíč hlasu Průvodce při tajných odměnách (hráči mají klíč podle ID člena). */
+export const GM_VOTE = 'pruvodce'
+
+/**
+ * Tajné odměny: každý přítomný hráč a Průvodce dá jeden bod jinému přítomnému hráči (`votes`: kdo → komu).
+ * Do sezení se zapíše jen součet pro každého, ne kdo koho vybral. Vlastní hlas a hlas pro nepřítomného se nezapočítá.
+ */
+export function tallyVotes(
+  members: Member[],
+  attended: Set<string>,
+  votes: Record<string, string>,
+): { reward: Record<string, number>; problems: string[] } {
+  const reward: Record<string, number> = {}
+  const problems: string[] = []
+  const nameOf = (id: string) => members.find((m) => m.id === id)?.name ?? id
+  for (const [giver, to] of Object.entries(votes)) {
+    if (!to) continue
+    const gname = giver === GM_VOTE ? 'Průvodce' : nameOf(giver)
+    if (giver !== GM_VOTE && !attended.has(giver)) continue
+    if (giver === to) problems.push(`${gname}: vlastní hlas se nezapočítá.`)
+    else if (!attended.has(to)) problems.push(`${gname}: hlas pro nepřítomného se nezapočítá.`)
+    else reward[to] = (reward[to] ?? 0) + 1
+  }
+  return { reward, problems }
 }

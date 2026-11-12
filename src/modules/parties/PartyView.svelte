@@ -3,7 +3,9 @@
   import { appendEvents, getLog, listLogs } from '../../core/character/store'
   import { characterOf, eventsFor, type CharacterLog } from '../../core/character/model'
   import {
+    baseXpOf,
     newPartyId,
+    PACES,
     roleOf,
     type JournalEntry,
     type Member,
@@ -207,6 +209,19 @@
       />
       <button disabled={!freeName.trim()} onclick={addFree}>Přidat</button>
     </div>
+
+    <h2>Rychlost postupu</h2>
+    <select
+      value={baseXpOf(party)}
+      onchange={(e) => {
+        party!.baseXp = Number(e.currentTarget.value)
+        save()
+      }}
+      aria-label="Rychlost postupu"
+    >
+      {#each PACES as p}<option value={p.xp}>{p.label}</option>{/each}
+    </select>
+    <p class="muted">Kolik bodů zkušeností dostane každý za účast na sezení (odměny se přidávají k tomu).</p>
 
     <h2>Poznámky k družině</h2>
     <textarea rows="3" bind:value={party.notes} onblur={save} aria-label="Poznámky k družině"

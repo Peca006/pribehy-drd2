@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { characterOf, type CharacterLog } from '../../core/character/model'
+  import { characterOf, emptyCharacter, type CharacterLog } from '../../core/character/model'
   import { recordResponse } from '../../core/character/reviews'
   import { groupRevisions, revertEvents, revisionChanges } from '../../core/character/revisions'
   import {
@@ -136,9 +136,11 @@
     const b: RevisionBundle = bundle
     let tmp: CharacterLog | undefined = log
     return analysis.fresh.map((r) => {
+      const prev = tmp ? characterOf(tmp) : undefined
       tmp = applyRevisions(tmp, b, new Set([r.id]))
       const rev = groupRevisions(tmp.events).find((x) => x.id === r.id)
-      return { r, changes: rev ? revisionChanges(tmp, rev) : [] }
+      // stav po této revizi (v pořadí příchozích) a před ní, k posouzení, co která revize pokazila
+      return { r, changes: rev ? revisionChanges(tmp, rev) : [], before: prev, after: characterOf(tmp) }
     })
   })
 
@@ -259,7 +261,7 @@
       Změněno na obou stranách: {analysis.conflicts.map(pathLabel).join(', ')}.
     </p>
   {/if}
-  {#each shown as { r, changes } (r.id)}
+  {#each shown as { r, changes, before, after } (r.id)}
     <div class="panel">
       <label class="check">
         <input type="checkbox" bind:checked={accept[r.id]} />
@@ -278,6 +280,12 @@
           <li class="muted">Beze změny.</li>
         {/each}
       </ul>
+      <CheckList
+        character={after}
+        baseline={before ?? emptyCharacter(after.id)}
+        onlyNew
+        title="Tato revize způsobuje"
+      />
     </div>
   {/each}
   {#if analysis.fresh.length}

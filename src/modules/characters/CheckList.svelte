@@ -9,7 +9,8 @@
     character,
     baseline,
     title = 'Kontrola postavy',
-  }: { character: Character; baseline?: Character; title?: string } = $props()
+    onlyNew = false,
+  }: { character: Character; baseline?: Character; title?: string; onlyNew?: boolean } = $props()
 
   const run = (c: Character) => {
     const rules = creationRules()
@@ -23,7 +24,8 @@
   }
   const checks = $derived.by(() => {
     const known = baseline ? new Set(run(baseline).map((x) => x.text)) : undefined
-    return run(character).map((x) => ({ ...x, isNew: !!known && !known.has(x.text) }))
+    const all = run(character).map((x) => ({ ...x, isNew: !!known && !known.has(x.text) }))
+    return onlyNew ? all.filter((x) => x.isNew) : all
   })
 </script>
 
