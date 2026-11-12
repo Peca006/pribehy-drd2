@@ -59,7 +59,7 @@
 </script>
 
 {#if params[0] === 'import'}
-  <ImportPanel />
+  <ImportPanel part={params[1]} />
 {:else if params[1] === 'sdilet' && params[0]}
   <SharePanel id={params[0]} />
 {:else if params[1] === 'postup' && params[0]}

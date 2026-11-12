@@ -159,3 +159,12 @@ označí „předat hráči“. Uloženo v IndexedDB (`parties`, verze databáze
 Zbývá: sdílení družiny a žurnálu mezi zařízeními (revize zápisů jako u postav, schvalování Průvodcem), předání
 zkušeností hráči kódem / QR (stejný formát `DRD2:`), mistr a hráči (role), přehled družiny (zdatnost, povolání,
 Jizvy členů), volitelná pravidla rychlosti postupu (3 nebo 6 bodů za účast), tajné udělování odměn.
+
+### QR jako odkaz do aplikace (z testu na telefonu)
+
+Systémová čtečka QR (Samsung) text `DRD2:…` načetla, ale nemohla ho předat aplikaci. QR proto obsahuje **odkaz**
+`<adresa aplikace>#/postavy/import/<kód nebo díl>` (volba „QR obsahuje odkaz do aplikace“, výchozí zapnuto):
+čtečka fotoaparátu ho otevře přímo v aplikaci a Import kód převezme. U kódů z více QR se díly otevírané postupně
+skládají (uložené v zařízení 15 minut, „Zahodit naskenované díly“). Čtečka v aplikaci rozumí odkazům i holému
+kódu. Díly mají nejvýš 250 znaků kódu (s odkazem asi 306 znaků v QR). Nápady: stáhnout QR jako obrázek (PNG),
+sdílet přes `navigator.share` jako obrázek, QR na celou obrazovku.

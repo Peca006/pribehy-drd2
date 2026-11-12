@@ -131,7 +131,7 @@ describe('zhuštění historie', () => {
         'Tvorba',
       ),
     }
-    const f = await fitForQr(big, 'Velká', 1)
+    const f = await fitForQr(big, 'Velká', 2)
     expect(f.fits).toBe(true)
     expect(f.omitted).toEqual(['notes', 'heroStory'])
     const dec = await decodeBundle(f.code)

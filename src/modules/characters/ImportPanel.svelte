@@ -14,7 +14,8 @@
     type RevisionBundle,
   } from '../../core/character/share'
   import { appendEvents, getLog, saveLog } from '../../core/character/store'
-  import { QrAssembler } from '../../core/character/qr'
+  import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
+  import { onMount } from 'svelte'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import QrScanner from '../../ui/QrScanner.svelte'
@@ -24,6 +25,8 @@
 
   // Import kódu nebo souboru od jiného zařízení: revize od hráče (přijmout / zamítnout) a odpověď
   // vypravěče (stav revizí, vrácení zamítnutých změn).
+  // `part`: kód nebo díl kódu z adresy (QR s odkazem otevřený systémovou čtečkou)
+  let { part }: { part?: string } = $props()
   let text = $state('')
   let errors = $state<string[]>([])
   let bundle = $state.raw<Bundle | undefined>(undefined)
@@ -37,7 +40,7 @@
   let showReplyQr = $state(false)
   let scanner = $state<{ stop: () => void } | undefined>(undefined)
   let scanInfo = $state('')
-  const assembler = new QrAssembler()
+  const assembler = loadAssembler()
 
   async function check() {
     result = ''
@@ -58,8 +61,10 @@
   }
   // QR z kamery: díly se skládají, hotový kód se zpracuje stejně jako vložený text
   async function onscan(t: string) {
-    const s = assembler.add(t)
-    if (s.status === 'partial') scanInfo = `Naskenováno ${s.have} z ${s.total} QR…`
+    const s = assembler.add(fromScan(t))
+    saveAssembler(assembler)
+    if (s.status === 'partial')
+      scanInfo = `Naskenováno ${s.have} z ${s.total} QR, naskenujte další…`
     else if (s.status === 'complete') {
       scanInfo = ''
       scanner?.stop()
@@ -67,6 +72,17 @@
       await check()
     }
   }
+  function discardParts() {
+    assembler.reset()
+    saveAssembler(assembler)
+    scanInfo = ''
+  }
+  // QR otevřený systémovou čtečkou: kód (nebo jeho díl) je v adrese; díly se skládají mezi otevřeními
+  onMount(async () => {
+    if (!part) return
+    history.replaceState(null, '', location.pathname + location.search + '#/postavy/import')
+    await onscan(part)
+  })
   async function onfile(e: Event) {
     const input = e.currentTarget as HTMLInputElement
     const f = input.files?.[0]
@@ -192,7 +208,9 @@
   <input type="file" accept=".txt,.json,text/plain,application/json" onchange={onfile} hidden />
 </label>
 <QrScanner bind:this={scanner} {onscan} />
-{#if scanInfo}<p role="status">{scanInfo}</p>{/if}
+{#if scanInfo}<p role="status">
+    {scanInfo} <button onclick={discardParts}>Zahodit naskenované díly</button>
+  </p>{/if}
 <textarea
   rows="4"
   bind:value={text}

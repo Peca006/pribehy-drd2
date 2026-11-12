@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { QR_CHUNK, QrAssembler, splitForQr } from './qr'
+import { beforeEach } from 'vitest'
+import {
+  QR_CHUNK,
+  QrAssembler,
+  fromScan,
+  loadAssembler,
+  saveAssembler,
+  splitForQr,
+  toLink,
+} from './qr'
 
 const code = 'DRD2:' + 'abcdefghij'.repeat(250) // 2505 znaků, 4 díly
 
@@ -42,5 +51,47 @@ describe('dělení kódu na QR', () => {
     a.add(p1[0])
     expect(a.add(p2[1])).toMatchObject({ status: 'partial', have: 1 })
     expect(a.add('DRD2:krátký')).toEqual({ status: 'complete', code: 'DRD2:krátký' })
+  })
+})
+
+const store = new Map<string, string>()
+globalThis.localStorage = {
+  getItem: (k: string) => store.get(k) ?? null,
+  setItem: (k: string, v: string) => void store.set(k, v),
+  removeItem: (k: string) => void store.delete(k),
+} as Storage
+
+describe('QR s odkazem do aplikace', () => {
+  beforeEach(() => store.clear())
+  const base = 'https://example.github.io/app/'
+
+  it('odkaz nese kód a čtečka ho z něj zase vybere', () => {
+    const link = toLink('DRD2:abc-_', base)
+    expect(link).toBe('https://example.github.io/app/#/postavy/import/DRD2:abc-_')
+    expect(fromScan(link)).toBe('DRD2:abc-_')
+    expect(fromScan('  DRD2:holý  ')).toBe('DRD2:holý')
+    const part = splitForQr('DRD2:' + 'x'.repeat(600))[1]
+    expect(fromScan(toLink(part, base))).toBe(part)
+  })
+
+  it('díly z odkazů se skládají i mezi jednotlivými otevřeními aplikace', () => {
+    const code = 'DRD2:' + 'abcdefghij'.repeat(60)
+    const parts = splitForQr(code).map((p) => toLink(p, base))
+    expect(parts.length).toBeGreaterThan(2)
+    let last
+    for (const p of parts) {
+      const a = loadAssembler() // nové otevření aplikace = nový složeč, díly jsou v úložišti
+      last = a.add(fromScan(p))
+      saveAssembler(a)
+    }
+    expect(last).toEqual({ status: 'complete', code })
+    expect(loadAssembler().snapshot().parts).toEqual([])
+  })
+
+  it('poškozená nebo stará uložená data se ignorují', () => {
+    store.set('drd2-qr-parts', '{nesmysl')
+    expect(loadAssembler().snapshot().parts).toEqual([])
+    store.set('drd2-qr-parts', JSON.stringify({ id: 'ab', total: 2, parts: [[1, 'x']], at: 1 }))
+    expect(loadAssembler().snapshot().parts).toEqual([])
   })
 })
