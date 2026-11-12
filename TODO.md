@@ -166,7 +166,7 @@ Systémová čtečka QR (Samsung) text `DRD2:…` načetla, ale nemohla ho před
 `<adresa aplikace>#/postavy/import/<kód nebo díl>` (volba „QR obsahuje odkaz do aplikace“, výchozí zapnuto):
 čtečka fotoaparátu ho otevře přímo v aplikaci a Import kód převezme. U kódů z více QR se díly otevírané postupně
 skládají (uložené v zařízení 15 minut, „Zahodit naskenované díly“). Čtečka v aplikaci rozumí odkazům i holému
-kódu. Díly mají nejvýš 250 znaků kódu (s odkazem asi 306 znaků v QR). Nápady: stáhnout QR jako obrázek (PNG),
+kódu. Díly mají nejvýš 500 znaků kódu (s odkazem asi 556 znaků v QR). Nápady: stáhnout QR jako obrázek (PNG),
 sdílet přes `navigator.share` jako obrázek, QR na celou obrazovku.
 
 ## Aktualizace a instalace PWA (hotovo, ověřit na telefonu)
@@ -195,9 +195,8 @@ Průvodce → hráč → návrhy → schválení / zamítnutí → hráč.
 Zbývá: oddělené role více Průvodců, sdílení členů s postavami (ID postav z jiných zařízení), tajné odměny,
 slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny hotov (zdatnost po jizvách, povolání, jizvy, XP v `PartyView`).
 
-### QR jako obrázek (hotovo)
+### QR bez obrázků (hotovo)
 
-Pod každým QR je **Uložit obrázek** (PNG, u více dílů všechny za sebou) a **Sdílet obrázek…** (Web Share s
-obrázky: zprávy, AirDrop, Quick Share). `ui/qrImage.ts` kreslí QR přímo do canvasu v celých pixelech (asi 1000 px,
-bílé pozadí, tichá zóna). Ověřeno: PNG se přečetly zpět a složily na shodný kód. Uložení do zařízení a sdílení
-obrázků je potřeba zkusit na telefonu. Zbývá QR na celou obrazovku a tisk.
+Ukládání QR jako PNG se zrušilo (zbytné): kód se ukládá a posílá jako text nebo soubor (AirDrop, Quick Share). Díl QR má
+nově až 500 znaků kódu (s odkazem asi 556); zkusit na A52s, případně vrátit menší. Zbývá QR na celou obrazovku.
+

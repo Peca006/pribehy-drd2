@@ -4,7 +4,7 @@
 const PART = 'DRD2Q:'
 const CODE = 'DRD2:'
 /** nejvíc znaků kódu v jednom QR (menší díl = řidší QR, spolehlivější čtení z displeje) */
-export const QR_CHUNK = 250
+export const QR_CHUNK = 500
 
 export function splitForQr(code: string, size = QR_CHUNK): string[] {
   if (code.length <= size) return [code]

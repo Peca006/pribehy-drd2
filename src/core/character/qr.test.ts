@@ -75,7 +75,7 @@ describe('QR s odkazem do aplikace', () => {
   })
 
   it('díly z odkazů se skládají i mezi jednotlivými otevřeními aplikace', () => {
-    const code = 'DRD2:' + 'abcdefghij'.repeat(60)
+    const code = 'DRD2:' + 'abcdefghij'.repeat(120)
     const parts = splitForQr(code).map((p) => toLink(p, base))
     expect(parts.length).toBeGreaterThan(2)
     let last
