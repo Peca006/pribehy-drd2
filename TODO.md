@@ -27,3 +27,31 @@ stáhne stránky podle navigace, převede je a nabídne ke stažení balíček (
 - Ověřit: web SRD nevysílá CSP (načtení skriptu z `github.io` by mělo projít).
 - Mobil: iOS Safari a Firefox pro Android bookmarklety zvládají, Chrome pro Android ne spolehlivě. Alternativa:
   balíček sestavit na počítači a soubor přenést.
+
+## Historie, návrhy a sdílení postav
+
+Hotovo (lokálně): deník změn je seskupený do **revizí** (`src/core/character/revisions.ts`), historie ukazuje
+„před → po“ a umí **Vrátit tuto změnu** (přidá novou revizi, nic se nemaže). Úprava postavy probíhá na
+**návrhu** uloženém v zařízení (`drafts.ts`), do deníku se zapíše až **Zveřejnit** jako jedna revize s povinným
+popisem a podpisem (nastavení `author`).
+
+Další krok: **sdílení revizí** s vypravěčem. Rozhodnutí: autoritou je deník vypravěče; hráč posílá návrh změny
+(revizi), vypravěč vidí rozdíl a **Přijme / Zamítne**. U hráče by revize byla ve stavu „čeká na schválení“, dokud
+nepřijde potvrzení (nebo import vypravěčova deníku). Revize obsahuje jen změněné cesty a nové hodnoty
+(odhad 100–500 B), stará hodnota se neposílá a odvodí se z deníku příjemce; je potřeba odkaz na revizi, na kterou
+navazuje (detekce rozdílného základu, slučování nepřekrývajících se změn).
+
+Způsoby přenosu (koncept, pořadí se ještě určí):
+
+- **Kód / soubor / QR.** Stlačený JSON (deflate + base64url). QR se spolehlivě čte do cca 1–1,5 kB, větší
+  data na více QR nebo souborem. Funguje všude a offline.
+- **NFC.** Web NFC (`NDEFReader`) je jen v Chrome na Androidu, iOS ho pro weby nemá. Vhodné pro krátké revize.
+- **Bluetooth.** Web Bluetooth neumí běžný přenos souborů mezi telefony, takže jen jako výjimka. Spíše přes
+  systémové sdílení.
+- **Wi-Fi / lokální síť.** Bez serveru jen přes WebRTC (výměna signalizace kódem/QR, pak přímé spojení v téže
+  Wi-Fi). Složitější, ale umožní větší data a oboustrannou synchronizaci.
+- **AirDrop (iOS/macOS) a Quick Share / Nearby Share (Android).** Přes systémové sdílení: Web Share API
+  (`navigator.share` se souborem `.json`) zobrazí systémový dialog, kde je AirDrop, resp. Quick Share. Nejpohodlnější
+  pro uživatele a téměř bez práce navíc; příjemce soubor otevře v aplikaci (zaregistrovat typ souboru /
+  `file_handlers` v manifestu PWA, na iOS import přes tlačítko).
+- Příjem souboru z jiných aplikací: `share_target` v manifestu PWA (Android).

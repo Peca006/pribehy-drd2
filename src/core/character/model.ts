@@ -55,6 +55,8 @@ export interface ChangeEvent {
   value?: unknown
   /** čitelný důvod změny, např. „Tvorba postavy“, „Přestup na 2. úroveň“ */
   note?: string
+  /** revize: změny zveřejněné společně (jedním „Zveřejnit“) mají stejné ID; starší záznamy ho nemají */
+  rev?: string
 }
 
 export interface CharacterLog {
@@ -118,5 +120,6 @@ export function eventsFor(
   note: string,
   at = new Date().toISOString(),
 ): ChangeEvent[] {
-  return diffCharacter(before, after).map((d) => ({ id: newId(), at, by, note, ...d }))
+  const rev = newId()
+  return diffCharacter(before, after).map((d) => ({ id: newId(), at, by, note, rev, ...d }))
 }

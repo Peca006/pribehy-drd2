@@ -4,11 +4,19 @@ import { isLinkMode, type LinkMode } from './termLinks'
 
 const KEY = 'drd2-settings'
 
-function load(): { termLinks: LinkMode } {
-  const s = { termLinks: 'first' as LinkMode }
+interface Settings {
+  /** kolik odkazů z pojmů se v textu ponechá */
+  termLinks: LinkMode
+  /** jméno, kterým se podepisují změny postav (hráč nebo vypravěč) */
+  author: string
+}
+
+function load(): Settings {
+  const s: Settings = { termLinks: 'first', author: 'hráč' }
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}')
     if (isLinkMode(raw.termLinks)) s.termLinks = raw.termLinks
+    if (typeof raw.author === 'string' && raw.author.trim()) s.author = raw.author.trim().slice(0, 60)
   } catch {
     /* výchozí hodnoty */
   }
@@ -17,11 +25,20 @@ function load(): { termLinks: LinkMode } {
 
 export const settings = $state(load())
 
-export function setTermLinks(mode: LinkMode) {
-  settings.termLinks = mode
+function save() {
   try {
-    localStorage.setItem(KEY, JSON.stringify({ termLinks: mode }))
+    localStorage.setItem(KEY, JSON.stringify({ termLinks: settings.termLinks, author: settings.author }))
   } catch {
     /* nastavení platí aspoň do zavření stránky */
   }
+}
+
+export function setTermLinks(mode: LinkMode) {
+  settings.termLinks = mode
+  save()
+}
+
+export function setAuthor(name: string) {
+  settings.author = name.trim().slice(0, 60) || 'hráč'
+  save()
 }

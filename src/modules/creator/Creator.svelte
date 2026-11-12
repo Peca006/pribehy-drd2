@@ -2,6 +2,7 @@
   import { emptyCharacter, eventsFor } from '../../core/character/model'
   import { saveLog } from '../../core/character/store'
   import { go } from '../../core/router.svelte'
+  import { settings } from '../../core/settings.svelte'
   import { creationData } from './data'
   import { Draft } from './draft.svelte'
   import { clearDraft, hasContent, loadDraft, saveDraft } from './draftData'
@@ -51,7 +52,7 @@
   async function finish() {
     if (!draft) return
     const c = draft.toCharacter()
-    const events = eventsFor(emptyCharacter(c.id), c, 'hráč', 'Tvorba postavy')
+    const events = eventsFor(emptyCharacter(c.id), c, settings.author, 'Tvorba postavy')
     await saveLog({ id: c.id, events })
     clearDraft()
     go('postavy', c.id)

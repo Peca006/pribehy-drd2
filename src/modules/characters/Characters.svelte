@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { hasCharacterDraft } from '../../core/character/drafts'
   import {
     ATTRIBUTES,
     characterOf,
-    emptyCharacter,
-    eventsFor,
+    type ChangeEvent,
     type CharacterLog,
   } from '../../core/character/model'
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
@@ -12,18 +12,20 @@
   import { go } from '../../core/router.svelte'
   import Md from '../../ui/Md.svelte'
   import { formatMoney } from '../creator/rules'
+  import CharacterEditor from './CharacterEditor.svelte'
+  import History from './History.svelte'
 
-  // params: [] = seznam postav, [id] = deník postavy
+  // params: [] = seznam postav, [id] = deník postavy, [id, 'uprav'] = úprava (návrh)
   let { params }: { params: string[] } = $props()
 
   let logs = $state<CharacterLog[]>([])
   let current = $state<CharacterLog | undefined>(undefined)
-  let notes = $state('')
+  let hasDraft = $state(false)
 
   async function load() {
     logs = await listLogs()
     current = params[0] ? await getLog(params[0]) : undefined
-    notes = current ? characterOf(current).notes : ''
+    hasDraft = params[0] ? hasCharacterDraft(params[0]) : false
   }
   onMount(load)
   $effect(() => {
@@ -34,13 +36,9 @@
   const c = $derived(current ? characterOf(current) : undefined)
   const race = $derived(races().find((r) => r.id === c?.raceId))
   const culture = $derived(race?.cultures.find((x) => x.id === c?.cultureId))
-  const when = (iso: string) => new Date(iso).toLocaleString('cs-CZ')
 
-  async function saveNotes() {
-    if (!current || !c || notes === c.notes) return
-    const before = c
-    const events = eventsFor(before, { ...before, notes }, 'hráč', 'Poznámky')
-    current = await appendEvents(current.id, events)
+  async function revert(events: ChangeEvent[]) {
+    if (current) current = await appendEvents(current.id, events)
   }
 
   async function remove() {
@@ -48,27 +46,11 @@
     await deleteLog(current.id)
     go('postavy')
   }
-
-  const label = (path: string) =>
-    path
-      .replace('attributes.', 'Zdatnost: ')
-      .replace('professions.', 'Povolání: ')
-      .replace('povolani:', '')
-      .replace(/^name$/, 'Jméno')
-      .replace(/^notes$/, 'Poznámky')
-      .replace(/^concept$/, 'Koncept')
-      .replace(/^equipment$/, 'Výbava')
-      .replace(/^cash$/, 'Hotovost')
-      .replace(/^abilities$/, 'Schopnosti')
-      .replace(/^trait$/, 'Povahový rys')
-      .replace(/^heroStory$/, 'Jak se stal hrdinou')
-      .replace(/^raceId$/, 'Rasa')
-      .replace(/^cultureId$/, 'Kultura')
-      .replace(/^weaponKind$/, 'Druh zbraně')
-  void emptyCharacter
 </script>
 
-{#if c && current}
+{#if params[1] === 'uprav' && params[0]}
+  <CharacterEditor id={params[0]} />
+{:else if c && current}
   <nav><a class="btn" href="#/postavy">← Postavy</a></nav>
   <h1>{c.name}</h1>
   <p class="muted">
@@ -118,15 +100,16 @@
   </ul>
   <p>Hotovost: {formatMoney(c.cash)}</p>
 
-  <h2>Poznámky</h2>
-  <textarea rows="5" bind:value={notes} onblur={saveNotes} aria-label="Poznámky"></textarea>
+  {#if c.notes}<h2>Poznámky</h2>
+    <p class="notes">{c.notes}</p>{/if}
 
-  <h2>Historie změn</h2>
-  <ul class="history">
-    {#each [...current.events].reverse() as e}
-      <li><span class="muted">{when(e.at)} · {e.by} · {e.note ?? ''}</span> – {label(e.path)}</li>
-    {/each}
-  </ul>
+  <p class="actions">
+    <a class="btn primary" href={'#/postavy/' + current.id + '/uprav'}
+      >{hasDraft ? 'Pokračovat v úpravě (rozpracováno)' : 'Upravit postavu'}</a
+    >
+  </p>
+
+  <History log={current} onrevert={revert} />
   <button onclick={remove}>Smazat postavu</button>
 {:else if params[0]}
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>
@@ -166,7 +149,10 @@
     font-size: 2rem;
     color: var(--drd-accent);
   }
-  .history {
-    font-size: 0.9rem;
+  .actions {
+    margin: 1rem 0;
+  }
+  .notes {
+    white-space: pre-wrap;
   }
 </style>
