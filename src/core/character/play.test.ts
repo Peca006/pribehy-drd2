@@ -2,11 +2,13 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { emptyCharacter } from './model'
 import {
   adjust,
+  availableOf,
   effectiveAttributes,
   emptyBonus,
   loadBonus,
   loadSpent,
   loadThreat,
+  payResources,
   saveBonus,
   saveSpent,
   saveThreat,
@@ -72,5 +74,19 @@ describe('Ohrožení', () => {
     expect(loadThreat('t')).toBe(20)
     saveThreat('t', 0)
     expect(store.has('drd2-char-threat:t')).toBe(false)
+  })
+})
+
+describe('placení Zdrojů', () => {
+  const max = { Tělo: 4, Duše: 2, Vliv: 2 }
+  const none = { Tělo: 0, Duše: 0, Vliv: 0 }
+  it('dočasné Zdroje z jizvy se platí první', () => {
+    const r = payResources(none, { ...none, Tělo: 2 }, max, 'Tělo', 3)
+    expect(r?.bonus.Tělo).toBe(0)
+    expect(r?.spent.Tělo).toBe(1)
+  })
+  it('bez dostatku Zdrojů nezaplatí nic', () => {
+    expect(payResources({ ...none, Duše: 1 }, none, max, 'Duše', 2)).toBeUndefined()
+    expect(availableOf({ ...none, Duše: 1 }, { ...none, Duše: 1 }, max, 'Duše')).toBe(2)
   })
 })

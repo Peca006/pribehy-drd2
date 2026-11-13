@@ -13,7 +13,17 @@
   } from '../../core/character/model'
   import { easeScar, healScar } from '../../core/character/healing'
   import { settings } from '../../core/settings.svelte'
-  import { type Bonus, emptyBonus, loadBonus, saveBonus } from '../../core/character/play'
+  import {
+    type Bonus,
+    type Spent,
+    effectiveAttributes,
+    emptyBonus,
+    loadBonus,
+    loadSpent,
+    payResources,
+    saveBonus,
+    saveSpent,
+  } from '../../core/character/play'
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
   import { findAbility, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
@@ -45,6 +55,7 @@
     hasDraft = params[0] ? hasCharacterDraft(params[0]) : false
     reviews = params[0] ? loadReviews(params[0]) : { status: {} }
     bonus = params[0] ? loadBonus(params[0]) : emptyBonus()
+    spent = params[0] ? loadSpent(params[0]) : { Tělo: 0, Duše: 0, Vliv: 0 }
   }
   onMount(load)
   $effect(() => {
@@ -63,6 +74,20 @@
     if (!s) return
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
     current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
+  }
+  let spent = $state<Spent>({ Tělo: 0, Duše: 0, Vliv: 0 })
+  const setSpent = (s: Spent) => {
+    spent = s
+    if (current) saveSpent(current.id, s)
+  }
+  /** Zaplatí Zdroje (dočasné z jizvy první); vrací, zda na to postava měla. */
+  function pay(a: Attribute, n: number): boolean {
+    if (!c) return false
+    const r = payResources(spent, bonus, effectiveAttributes(c), a, n)
+    if (!r) return false
+    setSpent(r.spent)
+    setBonus(r.bonus)
+    return true
   }
   let bonus = $state<Bonus>(emptyBonus())
   const setBonus = (b: Bonus) => {
@@ -112,13 +137,21 @@
     <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
   </p>
   {#key current.id}<Resources
-      id={current.id}
       character={c}
+      {spent}
+      onspent={setSpent}
       {bonus}
       onbonus={setBonus}
       onscar={(a) => (scarFor = a)}
     />{/key}
-  {#key current.id}<Roll id={current.id} character={c} />{/key}
+  {#key current.id}<Roll
+      id={current.id}
+      character={c}
+      {spent}
+      {bonus}
+      {pay}
+      onscar={(a) => (scarFor = a)}
+    />{/key}
   {#if scarMsg}<p class="panel" role="status">{scarMsg}</p>{/if}
   {#if scarFor}
     <ScarDialog

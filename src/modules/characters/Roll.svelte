@@ -1,17 +1,46 @@
 <script lang="ts">
-  import { type Character } from '../../core/character/model'
-  import { loadThreat, MAX_THREAT, saveThreat } from '../../core/character/play'
+  import { ATTRIBUTES, type Character } from '../../core/character/model'
+  import type { Attribute } from '../../core/content/schema'
+  import {
+    availableOf,
+    effectiveAttributes,
+    loadThreat,
+    MAX_THREAT,
+    saveThreat,
+    type Bonus,
+    type Spent,
+  } from '../../core/character/play'
   import { evaluateRoll, levelOf, rollDice, SUCCESS_AT, type Dice } from '../../core/character/roll'
   import { professions } from '../../core/library.svelte'
 
   // Hod (2k6 + úroveň povolání) a Ohrožení. Kostky lze hodit tady, nebo zadat z fyzických kostek.
-  let { id, character }: { id: string; character: Character } = $props()
+  let {
+    id,
+    character,
+    spent,
+    bonus,
+    pay,
+    onscar,
+  }: {
+    id: string
+    character: Character
+    spent: Spent
+    bonus: Bonus
+    /** zaplatí Zdroje vlastnosti; vrací, zda na to postava měla */
+    pay: (a: Attribute, n: number) => boolean
+    onscar: (a: Attribute) => void
+  } = $props()
 
   // komponenta se pro každou postavu vytváří znovu (`{#key}` u volající stránky)
   // svelte-ignore state_referenced_locally
   let threat = $state(loadThreat(id))
   let dice = $state<Dice>([0, 0])
   let used = $state<string[]>([])
+  let intent = $state('')
+  let payAttr = $state<Attribute>('Tělo')
+  /** jak dopadl neúspěšný hod: vyčerpáním zmírněn, nebo přijat */
+  let outcome = $state<'vycerpano' | 'prijato' | undefined>(undefined)
+  let paid = $state(0)
 
   const owned = $derived(
     Object.entries(character.professions)
@@ -28,7 +57,23 @@
 
   const toggle = (pid: string) =>
     (used = used.includes(pid) ? used.filter((x) => x !== pid) : [...used, pid])
-  const setDie = (i: 0 | 1, v: number) => (dice = i === 0 ? [v, dice[1]] : [dice[0], v])
+  const setDie = (i: 0 | 1, v: number) => {
+    dice = i === 0 ? [v, dice[1]] : [dice[0], v]
+    outcome = undefined
+  }
+  function roll() {
+    dice = rollDice()
+    outcome = undefined
+  }
+  // vyčerpání stojí tolik Zdrojů, kolik je Ohrožení (nejméně 1), a Ohrožení se tím zvýší o 1
+  const cost = $derived(Math.max(1, threat))
+  const have = $derived(availableOf(spent, bonus, effectiveAttributes(character), payAttr))
+  function exhaust() {
+    if (!pay(payAttr, cost)) return
+    paid = cost
+    setThreat(Math.max(1, threat) + 1)
+    outcome = 'vycerpano'
+  }
   function setThreat(n: number) {
     threat = Math.min(MAX_THREAT, Math.max(0, n))
     saveThreat(id, threat)
@@ -38,9 +83,15 @@
 <section class="panel" aria-label="Hod">
   <div class="head">
     <strong>Hod</strong>
-    <button class="primary" onclick={() => (dice = rollDice())}>Hodit</button>
+    <button class="primary" onclick={roll}>Hodit</button>
   </div>
 
+  <input
+    type="text"
+    bind:value={intent}
+    placeholder="Záměr a hrozící neúspěch (poznámka)"
+    aria-label="Záměr a hrozící neúspěch"
+  />
   {#if owned.length}
     <div class="chips" role="group" aria-label="Použité povolání">
       {#each owned as p}
@@ -72,16 +123,47 @@
       {#if i === 0}<span>+</span>{/if}
     {/each}
     <span>+ {level} =</span>
-    <strong class="total" class:ok={result?.success} class:bad={result && !result.success}>
+    <strong
+      class="total"
+      class:ok={result?.success || outcome === 'vycerpano'}
+      class:bad={result && !result.success && outcome !== 'vycerpano'}
+    >
       {result ? result.total : '–'}
     </strong>
   </div>
   {#if result}
-    <p role="status" class:ok={result.success} class:bad={!result.success}>
-      {result.success
-        ? `Úspěch (${SUCCESS_AT} a více).`
-        : `Hrozí neúspěch. Můžete se vyčerpat: škrtnete Zdroje podle Ohrožení (nejméně 1) a Ohrožení se zvýší o 1, nebo neúspěch přijmete.`}
-    </p>
+    {#if result.success}
+      <p role="status" class="ok">Úspěch ({SUCCESS_AT} a více).</p>
+      <p class="muted">
+        Zlepšila-li akce vaše okolnosti:
+        <button onclick={() => setThreat(threat - 1)} disabled={threat === 0}>Ohrožení −1</button>
+      </p>
+    {:else if outcome === 'vycerpano'}
+      <p role="status" class="ok">
+        Úspěch vyčerpáním: škrtli jste {paid}
+        {payAttr}, Ohrožení je {threat}. Popište úsilí či újmu a nové potíže.
+      </p>
+    {:else if outcome === 'prijato'}
+      <p role="status" class="bad">Neúspěch přijat, Zdroje zůstaly. Popište následek.</p>
+    {:else}
+      <p role="status" class="bad">
+        Hrozí neúspěch. Vyčerpáním ho zmírníte nebo přemůžete, nebo ho přijmete.
+      </p>
+      <div class="chips" role="group" aria-label="Zdroje k vyčerpání">
+        {#each ATTRIBUTES as a}
+          <button class:primary={payAttr === a} onclick={() => (payAttr = a)}>{a}</button>
+        {/each}
+      </div>
+      <p class="muted">
+        Vyčerpání stojí {cost}
+        {payAttr} (Ohrožení, nejméně 1), máte {have}. Ohrožení se zvýší o 1.
+      </p>
+      <p class="actions">
+        <button class="primary" onclick={exhaust} disabled={have < cost}>Vyčerpat</button>
+        <button onclick={() => (outcome = 'prijato')}>Přijmout</button>
+        {#if have < cost}<button onclick={() => onscar(payAttr)}>Zjizvit se…</button>{/if}
+      </p>
+    {/if}
   {/if}
 
   <div class="threat">
@@ -127,6 +209,11 @@
   }
   .total {
     font-size: 1.6rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   .ok {
     color: #7c7;

@@ -5,31 +5,28 @@
     adjust,
     effectiveAttributes,
     emptyBonus,
-    loadSpent,
-    saveSpent,
     type Bonus,
     type Spent,
   } from '../../core/character/play'
 
   // Zdroje hrdiny během hry: čerpání a obnova po jednom. Jen v tomto zařízení (nejde do historie postavy).
   let {
-    id,
     character,
+    spent,
+    onspent,
     bonus,
     onbonus,
     onscar,
   }: {
-    id: string
     character: Character
+    spent: Spent
+    onspent: (s: Spent) => void
     bonus: Bonus
     onbonus: (b: Bonus) => void
     onscar: (a: Attribute) => void
   } = $props()
 
   const max = $derived(effectiveAttributes(character))
-  // komponenta se pro každou postavu vytváří znovu (`{#key}` u volající stránky)
-  // svelte-ignore state_referenced_locally
-  let spent = $state<Spent>(loadSpent(id))
   // počet sloupců políček podle nejvyššího zdroje (po třech nad sebou), aby řádky i tlačítko Obnovit lícovaly
   const cols = $derived(
     Math.max(1, ...ATTRIBUTES.map((a) => Math.ceil((character.attributes[a] + bonus[a]) / 3))),
@@ -39,12 +36,10 @@
   function change(a: (typeof ATTRIBUTES)[number], by: number) {
     // dočasné Zdroje z jizvy se čerpají jako první
     if (by > 0 && bonus[a] > 0) return onbonus({ ...bonus, [a]: bonus[a] - 1 })
-    spent = adjust(spent, max, a, by)
-    saveSpent(id, spent)
+    onspent(adjust(spent, max, a, by))
   }
   function rest() {
-    spent = { Tělo: 0, Duše: 0, Vliv: 0 }
-    saveSpent(id, spent)
+    onspent({ Tělo: 0, Duše: 0, Vliv: 0 })
     onbonus(emptyBonus())
   }
 </script>

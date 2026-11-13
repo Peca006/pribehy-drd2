@@ -101,3 +101,27 @@ export function saveThreat(id: string, threat: number) {
     /* Ohrožení platí aspoň do zavření stránky */
   }
 }
+
+/** Zdroje, které má vlastnost k dispozici: nevyčerpané plus dočasné z jizvy. */
+export const availableOf = (
+  spent: Spent,
+  bonus: Bonus,
+  max: Record<Attribute, number>,
+  a: Attribute,
+): number => Math.max(0, max[a] - spent[a]) + bonus[a]
+
+/** Zaplatí `n` Zdrojů vlastnosti (dočasné z jizvy jako první); nemá-li dost, vrátí `undefined`. */
+export function payResources(
+  spent: Spent,
+  bonus: Bonus,
+  max: Record<Attribute, number>,
+  a: Attribute,
+  n: number,
+): { spent: Spent; bonus: Bonus } | undefined {
+  if (n > availableOf(spent, bonus, max, a)) return undefined
+  const fromBonus = Math.min(bonus[a], n)
+  return {
+    bonus: { ...bonus, [a]: bonus[a] - fromBonus },
+    spent: { ...spent, [a]: spent[a] + (n - fromBonus) },
+  }
+}
