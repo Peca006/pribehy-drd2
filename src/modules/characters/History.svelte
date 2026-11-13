@@ -38,7 +38,6 @@
   }
 </script>
 
-<h2>Historie změn</h2>
 <ul class="history">
   {#each revisions as rev, i (rev.id)}
     {@const changes = revisionChanges(log, rev)}

@@ -21,6 +21,8 @@
   }
 
   async function remove(id: string) {
+    const name = library.packs.find((p) => p.manifest.id === id)?.manifest.name ?? id
+    if (!confirm(`Odebrat balíček „${name}“? Postavy a zápisy se nemažou, jen texty z balíčku.`)) return
     await removePack(id)
     await refreshLibrary()
   }

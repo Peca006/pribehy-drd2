@@ -169,8 +169,14 @@
 
   <CheckList character={c} />
 
-  <History log={current} status={reviews.status} onrevert={revert} />
-  <button onclick={remove}>Smazat postavu</button>
+  <details class="panel fold">
+    <summary><strong>Historie změn</strong></summary>
+    <History log={current} status={reviews.status} onrevert={revert} />
+  </details>
+  <details class="more">
+    <summary>Další</summary>
+    <button onclick={remove}>Smazat postavu…</button>
+  </details>
 {:else if params[0]}
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>
 {:else}
@@ -213,6 +219,10 @@
     color: var(--drd-accent);
   }
   .actions {
+    margin: 1rem 0;
+  }
+  .fold,
+  .more {
     margin: 1rem 0;
   }
   .notes {
