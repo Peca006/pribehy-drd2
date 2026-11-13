@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { CreationData } from '../data'
   import type { Draft } from '../draft.svelte'
-  import { formatMoney, plain } from '../rules'
+  import { applyKitGear, formatMoney, plain } from '../rules'
 
   let { draft, data }: { draft: Draft; data: CreationData } = $props()
   const items = $derived(data.equipment.flatMap((g) => g.items))
@@ -18,6 +18,10 @@
   // bez balíčku pravidel (jen vestavěná kostra) nejsou hotové sady ani ceník: výbava se píše ručně
   const manual = $derived(!data.kits.some((k) => k.lines.length) && priced.length === 0)
   const lines = $derived(draft.equipment.join('\n'))
+  const SRD_BASE = 'https://drd2srd.d20.cz/'
+  const priceSrd = $derived(data.kits.find((k) => k.priceSrd)?.priceSrd)
+  /** po výběru sady zůstal ručně upravený text beze změny */
+  let kept = $state(false)
 
   function chooseKit(id: string) {
     const kit = data.kits.find((k) => k.id === id)
@@ -25,11 +29,18 @@
     draft.equipMode = 'kit'
     draft.kitId = id
     draft.cart = {}
-    // sada bez popisu (vestavěná kostra) zachová ručně napsanou výbavu a nastaví jen hotovost
+    kept = false
     if (kit.lines.length)
       draft.equipment = kit.lines
         .filter((l) => l.label !== 'Hotovost')
         .map((l) => `${l.label}: ${plain(l.text)}`)
+    else if (kit.gear?.length) {
+      // sada bez popisu (vestavěná kostra): holý výčet položek, jen když nepřepíše vlastní text
+      const r = applyKitGear(draft.equipment, draft.kitLines, kit.gear)
+      draft.equipment = r.equipment
+      draft.kitLines = r.inserted
+      kept = !r.replaced
+    }
     draft.cash = kit.cash ?? 0
   }
 
@@ -62,7 +73,8 @@
 {#if manual}
   <p class="muted">
     Hotové sady ani ceník nejsou nainstalované (načtěte balíček pravidel v části Více). Výbavu zatím
-    napište ručně, jednu položku na řádek. Vyberte úroveň vybavení, nastaví se podle ní hotovost.
+    napište ručně, jednu položku na řádek. Vyberte úroveň vybavení: nastaví se hotovost a vloží výčet
+    položek, který můžete upravit.
   </p>
   <div class="tabs">
     {#each data.kits as k}
@@ -77,9 +89,22 @@
     <textarea
       rows="6"
       value={lines}
-      oninput={(e) => (draft.equipment = e.currentTarget.value.split('\n').filter((l) => l.trim()))}
+      oninput={(e) => {
+        draft.equipment = e.currentTarget.value.split('\n').filter((l) => l.trim())
+        kept = false
+      }}
     ></textarea>
   </label>
+  {#if kept}
+    <p class="muted" role="status">Výčet položek sady se nevložil, vaše výbava zůstala beze změny.</p>
+  {/if}
+  {#if priceSrd}
+    <p class="muted">
+      Ceny a popisy najdete v <a href={SRD_BASE + priceSrd} target="_blank" rel="noopener noreferrer"
+        >ceníku vybavení v SRD</a
+      >.
+    </p>
+  {/if}
   <label>
     Hotovost v haléřích <input type="number" min="0" bind:value={draft.cash} />
     <span class="muted">= {formatMoney(draft.cash || 0)}</span>

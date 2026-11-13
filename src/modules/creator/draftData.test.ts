@@ -21,6 +21,7 @@ const empty: DraftData = {
   equipment: [],
   cash: 0,
   equipMode: 'kit',
+  kitLines: [],
   cart: {},
 }
 
@@ -35,6 +36,11 @@ globalThis.localStorage = {
 beforeEach(() => store.clear())
 
 describe('sanitizeDraft', () => {
+  it('starší uložený koncept bez kitLines dostane prázdné pole, neplatné hodnoty se zahodí', () => {
+    expect(sanitizeDraft({ name: 'A' }, empty).kitLines).toEqual([])
+    expect(sanitizeDraft({ kitLines: ['meč', 1] }, empty).kitLines).toEqual(['meč'])
+  })
+
   it('ponechá jen známá pole správných typů', () => {
     const d = sanitizeDraft(
       {

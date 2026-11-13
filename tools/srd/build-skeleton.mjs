@@ -51,6 +51,38 @@ const ability = (a, srd) => ({
   text: '',
 })
 
+// Holé názvy položek sad výbavy (bez popisů a cen), ručně vybrané; sestavení hlídá kontrola výše.
+const MAX_GEAR = 30
+const KIT_GEAR = {
+  'vybava:obycejna': ['zbraň', 'oblečení', 'torna', 'křesadlo', 'měch na vodu', 'jídlo na tři dny'],
+  'vybava:cenena': [
+    'dvě zbraně',
+    'cestovní oblečení',
+    'torna',
+    'křesadlo',
+    'lano',
+    '2 pochodně',
+    'přikrývka',
+    'měch na vodu',
+    'jídlo na pět dní',
+  ],
+  'vybava:draha': [
+    'zbroj',
+    'dvě zbraně',
+    'drahé oblečení',
+    'torna',
+    'křesadlo',
+    'lano',
+    'lucerna',
+    'olej',
+    'pokrývka',
+    'měch na vodu',
+    'pergameny',
+    'svíčky',
+    'jídlo na týden',
+  ],
+}
+
 const skeleton = {
   manifest: {
     format: 1,
@@ -117,8 +149,23 @@ const skeleton = {
     ),
     text: '',
   })),
-  // sady výbavy: jen název a hotovost (bez řádků s popisem výzbroje a výstroje)
-  startingKits: (src.startingKits ?? []).map((k) => ({ ...pick(k, ['id', 'name', 'cash']), lines: [] })),
+  // sady výbavy: název, hotovost a holý výčet položek (krátké názvy, bez popisů a cen); řádky zůstávají prázdné
+  startingKits: (src.startingKits ?? []).map((k) => {
+    const gear = KIT_GEAR[k.id] ?? []
+    const text = k.lines.map((l) => l.text).join(' ').toLowerCase()
+    for (const g of gear) {
+      // každá položka musí mít oporu ve zdroji (první slovo bez koncovky) a být krátká
+      const word = g.replace(/^\d+ |^(dvě|dvou) /, '').split(' ')[0].slice(0, 4).toLowerCase()
+      if (!text.includes(word)) throw new Error(`položka „${g}“ nemá oporu v sadě ${k.id}`)
+      if (g.length > MAX_GEAR) throw new Error(`položka „${g}“ je příliš dlouhá`)
+    }
+    return {
+      ...pick(k, ['id', 'name', 'cash']),
+      lines: [],
+      gear,
+      priceSrd: link('33', 'cenik-vybaveni'),
+    }
+  }),
   creation: src.creation,
 }
 
