@@ -149,6 +149,10 @@ export interface StartingKit {
   lines: { label: string; text: Markdown }[]
   /** hotovost v haléřích, je-li z textu zřejmá */
   cash?: number
+  /** holý výčet položek (jen krátké názvy, bez popisů a cen); používá vestavěná kostra bez balíčku */
+  gear?: string[]
+  /** cesta do SRD k ceníku vybavení (vestavěná kostra) */
+  priceSrd?: string
 }
 
 /** Číselné parametry tvorby postavy (z kapitoly o tvorbě hrdiny). */

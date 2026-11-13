@@ -23,6 +23,8 @@ export interface DraftData {
   cash: number
   equipMode: 'kit' | 'buy'
   kitId?: string
+  /** řádky výbavy, které sem naposledy vložila sada (smí se vyměnit, jen když je výbava beze změny) */
+  kitLines: string[]
   cart: Record<string, number>
 }
 
@@ -71,6 +73,7 @@ export function sanitizeDraft(raw: unknown, fallback: DraftData): DraftData {
     cash: num(r.cash) ?? 0,
     equipMode: r.equipMode === 'buy' ? 'buy' : 'kit',
     kitId: str(r.kitId, 200),
+    kitLines: strs(r.kitLines),
     cart: nums(r.cart),
   }
 }

@@ -105,3 +105,18 @@ export function formatMoney(heller: number): string {
     .filter(Boolean)
     .join(' ')
 }
+
+/**
+ * Vloží holý výčet položek sady do výbavy, ale jen když je to bezpečné: výbava je prázdná, nebo je v ní
+ * přesně to, co sem vložila předchozí sada (`last`). Ručně upravený nebo vlastní text se nikdy nepřepíše.
+ */
+export function applyKitGear(
+  current: string[],
+  last: string[],
+  gear: string[],
+): { equipment: string[]; inserted: string[]; replaced: boolean } {
+  const lines = current.filter((l) => l.trim())
+  const same = last.length > 0 && lines.length === last.length && lines.every((l, i) => l === last[i])
+  if (!gear.length || (lines.length && !same)) return { equipment: current, inserted: last, replaced: false }
+  return { equipment: [...gear], inserted: [...gear], replaced: true }
+}

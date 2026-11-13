@@ -24,6 +24,18 @@ describe('vestavěná kostra', () => {
     }
   })
 
+  it('sady mají jen holé názvy položek (krátké řetězce bez cen a vět) a odkaz na ceník', () => {
+    for (const k of skeleton.startingKits) {
+      expect(k.gear.length).toBeGreaterThan(0)
+      for (const g of k.gear) {
+        expect(g.length).toBeLessThanOrEqual(30)
+        expect(g).not.toMatch(/[.:;,()*]|\d{2,}|groš|zlat|stříbr/i)
+        expect(g.split(' ').length).toBeLessThanOrEqual(4)
+      }
+      expect(k.priceSrd).toBe('zakladni-prirucka/33-vybaveni.html#cenik-vybaveni')
+    }
+  })
+
   it('má unikátní ID a úplná pravidla tvorby', () => {
     const ids: string[] = []
     for (const p of skeleton.professions) {

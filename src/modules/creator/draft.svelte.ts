@@ -20,6 +20,8 @@ export class Draft {
   /** způsob výběru výbavy */
   equipMode = $state<'kit' | 'buy'>('kit')
   kitId = $state<string | undefined>(undefined)
+  /** řádky, které do výbavy naposledy vložila sada bez popisu (viz `kitId`) */
+  kitLines = $state<string[]>([])
   cart = $state<Record<string, number>>({})
 
   constructor(rules?: CreationRules) {
@@ -47,6 +49,7 @@ export class Draft {
       cash: this.cash,
       equipMode: this.equipMode,
       kitId: this.kitId,
+      kitLines: this.kitLines,
       cart: this.cart,
     })
   }

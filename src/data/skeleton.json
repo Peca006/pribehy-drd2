@@ -2351,19 +2351,56 @@
    "id": "vybava:draha",
    "name": "Drahá",
    "cash": 600,
-   "lines": []
+   "lines": [],
+   "gear": [
+    "zbroj",
+    "dvě zbraně",
+    "drahé oblečení",
+    "torna",
+    "křesadlo",
+    "lano",
+    "lucerna",
+    "olej",
+    "pokrývka",
+    "měch na vodu",
+    "pergameny",
+    "svíčky",
+    "jídlo na týden"
+   ],
+   "priceSrd": "zakladni-prirucka/33-vybaveni.html#cenik-vybaveni"
   },
   {
    "id": "vybava:cenena",
    "name": "Ceněná",
    "cash": 240,
-   "lines": []
+   "lines": [],
+   "gear": [
+    "dvě zbraně",
+    "cestovní oblečení",
+    "torna",
+    "křesadlo",
+    "lano",
+    "2 pochodně",
+    "přikrývka",
+    "měch na vodu",
+    "jídlo na pět dní"
+   ],
+   "priceSrd": "zakladni-prirucka/33-vybaveni.html#cenik-vybaveni"
   },
   {
    "id": "vybava:obycejna",
    "name": "Obyčejná",
    "cash": 120,
-   "lines": []
+   "lines": [],
+   "gear": [
+    "zbraň",
+    "oblečení",
+    "torna",
+    "křesadlo",
+    "měch na vodu",
+    "jídlo na tři dny"
+   ],
+   "priceSrd": "zakladni-prirucka/33-vybaveni.html#cenik-vybaveni"
   }
  ],
  "creation": {

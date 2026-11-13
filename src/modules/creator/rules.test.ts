@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CreationRules, Profession, Race } from '../../core/content/schema'
-import { formatMoney, problems, quickAbilities, quickRaceAbility } from './rules'
+import { applyKitGear, formatMoney, problems, quickAbilities, quickRaceAbility } from './rules'
 
 const rules: CreationRules = {
   startingLevels: 3,
@@ -66,5 +66,26 @@ describe('pravidla tvorby', () => {
     expect(formatMoney(240)).toBe('2 dukáty 4 groše')
     expect(formatMoney(5)).toBe('5 haléřů')
     expect(formatMoney(0)).toBe('0 grošů')
+  })
+})
+
+describe('applyKitGear', () => {
+  const a = ['zbraň', 'torna']
+  const b = ['zbraň', 'lano', 'torna']
+  it('do prázdné výbavy vloží výčet', () => {
+    expect(applyKitGear([], [], a)).toEqual({ equipment: a, inserted: a, replaced: true })
+  })
+  it('při přepnutí sady vymění výčet, který tam vložila předchozí sada', () => {
+    expect(applyKitGear(a, a, b).equipment).toEqual(b)
+  })
+  it('ručně upravený nebo vlastní text nepřepíše', () => {
+    const r = applyKitGear(['zbraň', 'torna', 'můj meč'], a, b)
+    expect(r.replaced).toBe(false)
+    expect(r.equipment).toEqual(['zbraň', 'torna', 'můj meč'])
+    expect(r.inserted).toEqual(a)
+    expect(applyKitGear(['vlastní'], [], b).replaced).toBe(false)
+  })
+  it('sada bez položek nic nemění', () => {
+    expect(applyKitGear([], [], []).replaced).toBe(false)
   })
 })
