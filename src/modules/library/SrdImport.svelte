@@ -22,7 +22,7 @@
   <p>
     Balíčky pravidel a bestiáře si můžete sestavit sami z veřejného SRD, aniž byste cokoli stahovali
     z cizích zdrojů. Převod proběhne ve vašem prohlížeči a texty zůstanou jen u vás. Převodník se spouští
-    na stránce <code>drd2srd.d20.cz</code>, kterou otevřete ve <strong>svém</strong> prohlížeči (odkaz z aplikace by se
+    na stránce <a href={SRD} target="_blank" rel="noreferrer">drd2srd.d20.cz</a>, kterou otevřete ve <strong>svém</strong> prohlížeči (odkaz z aplikace by se
     mohl otevřít v jiném, proto si adresu zkopírujte).
   </p>
   <p class="actions">
