@@ -76,8 +76,8 @@
   }
   .row {
     display: grid;
-    grid-template-columns: 3.2rem 2.5rem 3.6rem 2.5rem minmax(0, 1fr);
-    gap: 0.4rem;
+    grid-template-columns: 2.9rem 2.4rem 3.2rem 2.4rem minmax(0, 1fr);
+    gap: 0.25rem;
     align-items: center;
     margin: 0.35rem 0;
   }
@@ -96,11 +96,13 @@
     text-align: center;
   }
   .boxes {
-    display: flex;
+    display: grid;
+    grid-template-rows: repeat(3, 0.8rem);
+    grid-auto-flow: column;
+    grid-auto-columns: 0.8rem;
     gap: 3px;
-    flex-wrap: wrap;
     align-content: center;
-    justify-content: flex-start;
+    justify-content: start;
   }
   .boxes span {
     width: 0.8rem;

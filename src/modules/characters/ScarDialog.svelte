@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ATTRIBUTES, type Character } from '../../core/character/model'
+  import { type Character } from '../../core/character/model'
   import { MAX_SCAR, inflictScar, type Inflicted } from '../../core/character/healing'
   import { effectiveAttributes } from '../../core/character/play'
   import { newId } from '../../core/character/model'
@@ -18,8 +18,7 @@
     onclose: () => void
   } = $props()
 
-  // svelte-ignore state_referenced_locally
-  let attr = $state<Attribute>(attribute)
+  const attr = attribute
   let severity = $state(1)
   let note = $state('')
   let self = $state(true)
@@ -43,12 +42,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Jizva">
-  <h2>Jizva</h2>
-  <div class="seg" role="group" aria-label="Vlastnost">
-    {#each ATTRIBUTES as a}
-      <button class:primary={attr === a} onclick={() => (attr = a)}>{a}</button>
-    {/each}
-  </div>
+  <h2>Jizva: {attr}</h2>
   <div class="row">
     <span>Závažnost</span>
     <button onclick={() => (severity = Math.max(1, severity - 1))} aria-label="Menší">−</button>
@@ -93,14 +87,6 @@
   }
   h2 {
     margin-top: 0;
-  }
-  .seg {
-    display: flex;
-    gap: 0.4rem;
-    margin-bottom: 0.75rem;
-  }
-  .seg button {
-    flex: 1;
   }
   .row {
     display: flex;
