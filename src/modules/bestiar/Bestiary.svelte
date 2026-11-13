@@ -87,7 +87,7 @@
     <div class="panel">
       <strong>Bytosti z knihy nejsou nainstalované.</strong>
       <p class="muted">
-        Data Bestiáře se načítají zvlášť jako obsahový balíček (<a href="#/knihovna">Knihovna</a>).
+        Data Bestiáře se načítají zvlášť jako obsahový balíček (<a href="#/knihovna">Více</a>).
         Bestiář můžete používat i s vlastními bytostmi – vytvořte si je, nebo je importujte od
         jiných vypravěčů.
       </p>

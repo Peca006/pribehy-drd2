@@ -5,7 +5,7 @@ registerModule({
   id: 'druziny',
   title: 'Družina',
   icon: '🛡️',
-  order: 15,
+  order: 20,
   nav: true,
   component: Parties,
 })

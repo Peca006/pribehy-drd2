@@ -59,7 +59,7 @@
 <h2>Výbava</h2>
 {#if manual}
   <p class="muted">
-    Hotové sady ani ceník nejsou nainstalované (načtěte balíček pravidel v Knihovně). Výbavu zatím
+    Hotové sady ani ceník nejsou nainstalované (načtěte balíček pravidel v části Více). Výbavu zatím
     napište ručně, jednu položku na řádek. Podle pravidel je k nákupu k dispozici
     {formatMoney(data.rules.purchaseBudget)}.
   </p>

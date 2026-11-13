@@ -5,7 +5,7 @@ registerModule({
   id: 'ctenar',
   title: 'Příručka',
   icon: '📖',
-  order: 40,
+  order: 30,
   nav: true,
   component: Reader,
 })

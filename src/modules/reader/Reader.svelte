@@ -51,7 +51,7 @@
     {#each chapters() as c}
       <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
     {:else}
-      <p class="muted">Není nainstalována žádná příručka. Načtěte balíček v Knihovně.</p>
+      <p class="muted">Není nainstalována žádná příručka. Načtěte balíček v části Více.</p>
     {/each}
   </ul>
 {/if}

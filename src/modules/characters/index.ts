@@ -3,7 +3,7 @@ import Characters from './Characters.svelte'
 
 registerModule({
   id: 'postavy',
-  title: 'Postavy',
+  title: 'Postava',
   icon: '🧙',
   order: 10,
   nav: true,

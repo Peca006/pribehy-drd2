@@ -3,8 +3,8 @@ import Library from './Library.svelte'
 
 registerModule({
   id: 'knihovna',
-  title: 'Knihovna',
-  icon: '📚',
+  title: 'Více',
+  icon: '☰',
   order: 90,
   nav: true,
   component: Library,

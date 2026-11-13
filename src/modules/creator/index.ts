@@ -6,6 +6,6 @@ registerModule({
   title: 'Nová postava',
   icon: '✨',
   order: 20,
-  nav: true,
+  nav: false,
   component: Creator,
 })

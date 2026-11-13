@@ -1,6 +1,8 @@
 <script lang="ts">
   import { installPack, removePack } from '../../core/content/store'
   import { library, refreshLibrary } from '../../core/library.svelte'
+  import { setAuthor, settings } from '../../core/settings.svelte'
+  import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
   import AppInfo from './AppInfo.svelte'
   import SrdImport from './SrdImport.svelte'
 
@@ -24,7 +26,9 @@
   }
 </script>
 
-<h1>Knihovna</h1>
+<h1>Více</h1>
+
+<h2>Obsahové balíčky</h2>
 <p class="muted">
   Aplikace neobsahuje texty pravidel. Načtěte obsahový balíček (soubor <code>.json</code>), který
   jste získali zvlášť.
@@ -35,7 +39,7 @@
 </label>
 {#if error}<p class="error" role="alert">{error}</p>{/if}
 
-<h2>Nainstalované balíčky</h2>
+<h3>Nainstalované</h3>
 {#each library.packs as p}
   <div class="panel pack">
     <div>
@@ -54,9 +58,26 @@
 
 <SrdImport />
 
+<h2>Nastavení</h2>
+<div class="panel settings">
+  <label>
+    <span class="muted">Jméno, kterým se podepisují změny postav a zápisy:</span>
+    <input
+      value={settings.author}
+      maxlength="60"
+      onchange={(e) => setAuthor(e.currentTarget.value)}
+    />
+  </label>
+  <LinkModeSelect />
+</div>
+
 <AppInfo />
 
 <style>
+  .settings {
+    display: grid;
+    gap: 0.75rem;
+  }
   .pack {
     display: flex;
     flex-wrap: wrap;

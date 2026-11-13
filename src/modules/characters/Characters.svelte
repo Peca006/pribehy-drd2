@@ -175,6 +175,10 @@
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>
 {:else}
   <h1>Postavy</h1>
+  <p class="actions">
+    <a class="btn primary" href="#/tvorba">+ Nová postava</a>
+    <a class="btn" href="#/postavy/import">Import…</a>
+  </p>
   {#each logs as l}
     {@const ch = characterOf(l)}
     <a class="btn panel row" href={'#/postavy/' + l.id}>
@@ -188,10 +192,6 @@
   {:else}
     <p class="muted">Zatím žádná postava.</p>
   {/each}
-  <p class="actions">
-    <a class="btn primary" href="#/tvorba">Nová postava</a>
-    <a class="btn" href="#/postavy/import">Import…</a>
-  </p>
 {/if}
 
 <style>

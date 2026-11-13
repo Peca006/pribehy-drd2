@@ -5,7 +5,7 @@ registerModule({
   id: 'bestiar',
   title: 'Bestiář',
   icon: '🐺',
-  order: 30,
+  order: 40,
   nav: true,
   component: Bestiary,
 })

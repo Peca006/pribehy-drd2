@@ -64,13 +64,13 @@
 {#if data && !hasRulesPack()}
   <p class="muted">
     Používáte vestavěný přehled (názvy a čísla) bez popisů pravidel. Popisy, hotové sady výbavy a
-    ceník doplní balíček pravidel v <a href="#/knihovna">Knihovně</a>.
+    ceník doplní balíček pravidel v části <a href="#/knihovna">Více</a>.
   </p>
 {/if}
 {#if !data}
   <p class="muted">
     Pro tvorbu postavy je potřeba nainstalovaný balíček s pravidly (rasy, povolání, výbava).
-    <a href="#/knihovna">Otevřít Knihovnu</a>
+    <a href="#/knihovna">Načíst balíček</a>
   </p>
 {:else if draft}
   {#if resumed}
