@@ -66,19 +66,24 @@
   <CreatureEditor initial={editing} />
 {:else if creature}
   <nav><a class="btn" href="#/bestiar">← Bestiář</a> <LinkModeSelect /></nav>
-  <CreatureView {creature} />
-  <CreatureImages creatureId={creature.id} />
   <p class="actions">
     {#if isUser(creature)}
       <a class="btn" href={'#/bestiar/uprav/' + encodeURIComponent(creature.id)}>Upravit</a>
       <a class="btn" href={'#/bestiar/vymena/' + encodeURIComponent(creature.id)}>Sdílet…</a>
-      <button onclick={remove}>Smazat</button>
     {:else}
       <a class="btn" href={'#/bestiar/uprav/' + encodeURIComponent(creature.id)}
         >Vytvořit vlastní kopii…</a
       >
     {/if}
   </p>
+  <CreatureView {creature} />
+  <CreatureImages creatureId={creature.id} />
+  {#if isUser(creature)}
+    <details class="more">
+      <summary>Další</summary>
+      <button onclick={remove}>Smazat bytost…</button>
+    </details>
+  {/if}
 {:else if params[0]}
   <p class="muted">Bytost nenalezena. <a href="#/bestiar">Zpět do bestiáře</a></p>
 {:else}
@@ -93,10 +98,6 @@
       </p>
     </div>
   {/if}
-  <p class="actions">
-    <a class="btn primary" href="#/bestiar/nova">+ Nová bytost</a>
-    <a class="btn" href="#/bestiar/vymena">Import / export</a>
-  </p>
   <input type="search" placeholder="Hledat bytost…" bind:value={query} aria-label="Hledat bytost" />
   <div class="chips">
     <button class:primary={!kind} onclick={() => (kind = '')}>Vše</button>
@@ -104,6 +105,10 @@
       <button class:primary={kind === k.id} onclick={() => (kind = k.id)}>{k.name}</button>
     {/each}
   </div>
+  <p class="actions">
+    <a class="btn primary" href="#/bestiar/nova">+ Nová bytost</a>
+    <a class="btn" href="#/bestiar/vymena">Import / export</a>
+  </p>
   <p class="muted">
     {list.length} bytostí{bestiary.user.length
       ? ` (z toho vlastních: ${bestiary.user.length})`
@@ -130,6 +135,9 @@
 <style>
   nav {
     margin-bottom: var(--drd-gap);
+  }
+  .more {
+    margin: 1rem 0;
   }
   .actions {
     display: flex;
