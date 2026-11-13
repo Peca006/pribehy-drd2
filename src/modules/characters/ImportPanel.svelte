@@ -23,6 +23,7 @@
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import QrScanner from '../../ui/QrScanner.svelte'
+  import RadioReceive from '../../ui/RadioReceive.svelte'
   import QrView from '../../ui/QrView.svelte'
   import CheckList from './CheckList.svelte'
   import { describeChange, pathLabel } from './describe'
@@ -32,6 +33,7 @@
   // `part`: kód nebo díl kódu z adresy (QR s odkazem otevřený systémovou čtečkou)
   let { part }: { part?: string } = $props()
   let text = $state('')
+  let showRadio = $state(false)
   let errors = $state<string[]>([])
   let bundle = $state.raw<Bundle | undefined>(undefined)
   let log = $state.raw<CharacterLog | undefined>(undefined)
@@ -240,6 +242,16 @@
   <input type="file" accept=".txt,.json,text/plain,application/json" onchange={onfile} hidden />
 </label>
 <QrScanner bind:this={scanner} {onscan} />
+<button onclick={() => (showRadio = !showRadio)}
+  >{showRadio ? 'Skrýt zvuk' : 'Přijímat zvukem'}</button
+>
+{#if showRadio}<RadioReceive
+    onresult={async (t) => {
+      text = t
+      showRadio = false
+      await check()
+    }}
+  />{/if}
 {#if scanInfo}<p role="status">
     {scanInfo} <button onclick={discardParts}>Zahodit naskenované díly</button>
   </p>{/if}

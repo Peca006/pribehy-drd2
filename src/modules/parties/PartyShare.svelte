@@ -9,6 +9,7 @@
   import { getParty, saveParty } from '../../core/party/store'
   import { settings } from '../../core/settings.svelte'
   import QrView from '../../ui/QrView.svelte'
+  import RadioSend from '../../ui/RadioSend.svelte'
 
   // Sdílení družiny. Průvodce posílá hráčům družinu a schválené zápisy; hráč posílá Průvodci své návrhy zápisů.
   let { id }: { id: string } = $props()
@@ -17,6 +18,7 @@
   let mode = $state<'nove' | 'cela'>('cela')
   let code = $state('')
   let showQr = $state(false)
+  let showRadio = $state(false)
   let copied = $state(false)
   let copyFailed = $state(false)
 
@@ -135,8 +137,10 @@
         >
         <button onclick={download}>Stáhnout soubor</button>
         {#if canShare}<button onclick={share}>Sdílet…</button>{/if}
+        <button onclick={() => (showRadio = !showRadio)}>{showRadio ? 'Skrýt zvuk' : 'Vysílat zvukem'}</button>
       </p>
       {#if showQr}<QrView {code} />{/if}
+      {#if showRadio}<RadioSend {code} onsent={() => void sent()} />{/if}
     {/if}
   {/if}
 {/if}
