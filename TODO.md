@@ -2,16 +2,16 @@
 
 ## Otevřené úkoly (stav k 13. 11. 2026)
 
-**Nasazeno (main = develop):** pět záložek, dialog Jizva ze Zdrojů, dočasné Zdroje z jizvy (čárkovaná políčka, „Zahodit“),
-výběr rasy klepnutím, kratší tlačítka a výrazné šipky.
+**Nasazeno (main = develop):** pět záložek, dialog Jizva ze Zdrojů, dočasné Zdroje z jizvy, výběr rasy klepnutím, kratší
+tlačítka a šipky, **výbava bez balíčku** (sady Obyčejná / Ceněná / Drahá vloží holý výčet položek, jen když nepřepíše vlastní
+text; ceník odkazem do SRD; v kostře jsou jen krátké názvy položek) a **generátor jmen** (markovský, z příkladů jmen rasy
+v balíčku, tlačítko v kroku Shrnutí; bez balíčku nic nenabízí).
 
-**Větve rozpracované paralelně (po dokončení je sloučí hlavní session; vše se pushuje na origin):**
-
-- `radiogram`: zvukový přenos (krátký handshake, podle kvality kanálu volba AFSK / PSK / QAM / OFDM, rámce s CRC, ACK).
-  Nesměřuje do `develop`/`main`, stav a nedodělky ve větvi v `RADIOGRAM.md`.
-- `vybava-bez-balicku`: po zvolení sady (Obyčejná / Ceněná / Drahá) naskočí holý výčet položek do políčka Výbava, jen když je
-  prázdné nebo obsahuje předchozí vloženou sadu; ručně napsané se nepřepisuje; ceník jako odkaz do SRD. Po kontrole do main.
-- `generator-jmen`: triviální generátor jmen z příkladů jmen ras v balíčku (bez balíčku nic nenabízí). Po kontrole do main.
+**Větev `radiogram` (pushnutá, nesloučená, mimo vydávanou aplikaci):** zvukový přenos kódu. Hotové jádro AFSK 300/600/1200,
+rámce s CRC, handshake (CALL / READY podle změřeného odstupu signálu), dávky s ACK a opakováním, Web Audio vrstva a tlačítka
+Vysílat / Přijímat zvukem; testy se simulovaným kanálem. **Nedodělané:** skutečný zvuk mezi telefony nezkoušen (ladit
+hlasitost, předzvuk, odstup), PSK / QAM / OFDM nejsou (jen AFSK; rozhraní režimů je připravené), chybí oprava chyb (FEC).
+Podrobně v `RADIOGRAM.md` ve větvi. Další krok: zkouška na dvou telefonech, potom PSK a OFDM.
 
 **Přenosy (pořadí):** ruční slučování konfliktů při importu revizí postavy → Wi-Fi / WebRTC → QR na celou obrazovku a tisk
 (hlavně počítač) → NFC (čtení a zápis tagů, jen Chrome na Androidu; úplně nakonec).
