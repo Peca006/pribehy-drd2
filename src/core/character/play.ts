@@ -78,3 +78,26 @@ export function saveBonus(id: string, bonus: Bonus) {
     /* dočasné Zdroje platí aspoň do zavření stránky */
   }
 }
+
+/** Ohrožení postavy: okolnosti, v nichž se nachází (neodvíjí se od jejích vlastností). Jen ve hře, v tomto zařízení. */
+const THREAT_KEY = (id: string) => `drd2-char-threat:${id}`
+export const MAX_THREAT = 20
+
+export function loadThreat(id: string): number {
+  try {
+    const n = JSON.parse(localStorage.getItem(THREAT_KEY(id)) ?? '0')
+    return typeof n === 'number' && Number.isInteger(n) && n >= 0 && n <= MAX_THREAT ? n : 0
+  } catch {
+    return 0
+  }
+}
+
+export function saveThreat(id: string, threat: number) {
+  try {
+    const n = Math.min(MAX_THREAT, Math.max(0, Math.floor(threat)))
+    if (n > 0) localStorage.setItem(THREAT_KEY(id), String(n))
+    else localStorage.removeItem(THREAT_KEY(id))
+  } catch {
+    /* Ohrožení platí aspoň do zavření stránky */
+  }
+}

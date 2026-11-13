@@ -90,6 +90,9 @@ Postup v krocích (každý krok použitelný sám; pomůcky nahrazují papír a 
     a akce prostředí, hrstka a houf; nejdřív jen nápověda s odkazem do příručky, potom pomůcky.
 11. **Navazující pomůcky**: výroba a opravy (Suroviny), léčení Jizev, kouzla a nástrahy (cena Zdrojů), kořist a trofeje.
 
+**Hotovo:** kroky 1 a 2 (panel Hod na detailu postavy: výběr povolání, 2k6 hozené nebo zadané z fyzických kostek, hod a
+úspěch od 9, počítadlo Ohrožení; `core/character/roll.ts`, `play.ts`). Další je krok 3 (zkouška s vyčerpáním).
+
 Pořadí realizace: 1, 2, 3, 4, 6, 5, 7, 8, 9, ostatní podle potřeby. Rozhodnout předem: zda hody žijí jen ve hře (zařízení),
 nebo se zapisují do žurnálu; jak vypadá pomůcka u stolu (jedna obrazovka „Hra“ s postavou, Ohrožením a hodem).
 

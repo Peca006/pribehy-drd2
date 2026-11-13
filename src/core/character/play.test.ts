@@ -6,8 +6,10 @@ import {
   emptyBonus,
   loadBonus,
   loadSpent,
+  loadThreat,
   saveBonus,
   saveSpent,
+  saveThreat,
 } from './play'
 
 const store = new Map<string, string>()
@@ -58,5 +60,17 @@ describe('dočasné Zdroje z jizvy', () => {
     expect(loadBonus('b').Tělo).toBe(3)
     saveBonus('b', emptyBonus())
     expect(store.has('drd2-char-bonus:b')).toBe(false)
+  })
+})
+
+describe('Ohrožení', () => {
+  it('ukládá se v mezích a nula se odstraní', () => {
+    expect(loadThreat('t')).toBe(0)
+    saveThreat('t', 3)
+    expect(loadThreat('t')).toBe(3)
+    saveThreat('t', 99)
+    expect(loadThreat('t')).toBe(20)
+    saveThreat('t', 0)
+    expect(store.has('drd2-char-threat:t')).toBe(false)
   })
 })

@@ -24,6 +24,7 @@
   import CharacterEditor from './CharacterEditor.svelte'
   import CheckList from './CheckList.svelte'
   import History from './History.svelte'
+  import Roll from './Roll.svelte'
   import ScarDialog from './ScarDialog.svelte'
   import Resources from './Resources.svelte'
   import ImportPanel from './ImportPanel.svelte'
@@ -117,6 +118,7 @@
       onbonus={setBonus}
       onscar={(a) => (scarFor = a)}
     />{/key}
+  {#key current.id}<Roll id={current.id} character={c} />{/key}
   {#if scarMsg}<p class="panel" role="status">{scarMsg}</p>{/if}
   {#if scarFor}
     <ScarDialog
