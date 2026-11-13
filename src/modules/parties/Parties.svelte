@@ -3,6 +3,7 @@
   import { emptyParty, type Party } from '../../core/party/model'
   import { listParties, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
+  import Conflict from './Conflict.svelte'
   import PartyShare from './PartyShare.svelte'
   import PartyView from './PartyView.svelte'
   import SessionForm from './SessionForm.svelte'
@@ -26,6 +27,8 @@
 
 {#if params[0] && params[1] === 'sezeni'}
   <SessionForm id={params[0]} />
+{:else if params[0] && params[1] === 'konflikt'}
+  <Conflict id={params[0]} />
 {:else if params[0] && params[1] === 'sdilet'}
   <PartyShare id={params[0]} />
 {:else if params[0]}

@@ -174,6 +174,7 @@
     {#if gm}<a class="btn primary" href={'#/druziny/' + party.id + '/sezeni'}
         >Nové sezení (zkušenosti)</a
       >{/if}
+    {#if gm}<a class="btn" href={'#/druziny/' + party.id + '/konflikt'}>Konflikt</a>{/if}
     <a class="btn" href={'#/druziny/' + party.id + '/sdilet'}>Sdílet…</a>
   </p>
   {#if !gm && party.notes}

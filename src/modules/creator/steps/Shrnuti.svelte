@@ -45,7 +45,9 @@
   <div class="row names">
     <span class="muted">Náhodné jméno:</span>
     {#each race.names as n}
-      <button onclick={() => randomName(n.label)}>{race.names.length > 1 ? n.label : 'Vymyslet'}</button>
+      <button onclick={() => randomName(n.label)}
+        >{race.names.length > 1 ? n.label : 'Vymyslet'}</button
+      >
     {/each}
   </div>
   <details>
@@ -115,4 +117,3 @@
     margin: 0.4rem 0;
   }
 </style>
-

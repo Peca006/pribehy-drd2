@@ -137,7 +137,9 @@
         >
         <button onclick={download}>Stáhnout soubor</button>
         {#if canShare}<button onclick={share}>Sdílet…</button>{/if}
-        <button onclick={() => (showRadio = !showRadio)}>{showRadio ? 'Skrýt zvuk' : 'Vysílat zvukem'}</button>
+        <button onclick={() => (showRadio = !showRadio)}
+          >{showRadio ? 'Skrýt zvuk' : 'Vysílat zvukem'}</button
+        >
       </p>
       {#if showQr}<QrView {code} />{/if}
       {#if showRadio}<RadioSend {code} onsent={() => void sent()} />{/if}

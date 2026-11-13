@@ -116,7 +116,9 @@ export function applyKitGear(
   gear: string[],
 ): { equipment: string[]; inserted: string[]; replaced: boolean } {
   const lines = current.filter((l) => l.trim())
-  const same = last.length > 0 && lines.length === last.length && lines.every((l, i) => l === last[i])
-  if (!gear.length || (lines.length && !same)) return { equipment: current, inserted: last, replaced: false }
+  const same =
+    last.length > 0 && lines.length === last.length && lines.every((l, i) => l === last[i])
+  if (!gear.length || (lines.length && !same))
+    return { equipment: current, inserted: last, replaced: false }
   return { equipment: [...gear], inserted: [...gear], replaced: true }
 }

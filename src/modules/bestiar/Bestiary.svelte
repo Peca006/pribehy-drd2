@@ -1,6 +1,9 @@
 <script lang="ts">
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
+  import { addToConflict, fromCreature } from '../../core/party/conflict'
+  import { roleOf, type Party } from '../../core/party/model'
+  import { listParties } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { library } from '../../core/library.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
@@ -22,7 +25,17 @@
 
   // params: [] seznam · ['nova'] · ['vymena'] · ['uprav', id] · [id] detail
   let { params }: { params: string[] } = $props()
-  onMount(refreshBestiary)
+  let parties = $state<Party[]>([])
+  let conflictParty = $state('')
+  onMount(async () => {
+    refreshBestiary()
+    parties = (await listParties()).filter((p) => roleOf(p) === 'pruvodce')
+  })
+  function toConflict() {
+    if (!creature || !conflictParty) return
+    addToConflict(conflictParty, fromCreature(creature))
+    go('druziny', conflictParty, 'konflikt')
+  }
 
   let query = $state('')
   let kind = $state('')
@@ -77,6 +90,15 @@
       >
     {/if}
   </p>
+  {#if parties.length}
+    <p class="actions">
+      <select bind:value={conflictParty} aria-label="Družina">
+        <option value="">Družina…</option>
+        {#each parties as p}<option value={p.id}>{p.name}</option>{/each}
+      </select>
+      <button disabled={!conflictParty} onclick={toConflict}>Do konfliktu</button>
+    </p>
+  {/if}
   <CreatureView {creature} />
   <CreatureImages creatureId={creature.id} />
   {#if isUser(creature)}

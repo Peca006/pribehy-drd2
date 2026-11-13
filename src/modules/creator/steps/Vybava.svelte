@@ -73,8 +73,8 @@
 {#if manual}
   <p class="muted">
     Hotové sady ani ceník nejsou nainstalované (načtěte balíček pravidel v části Více). Výbavu zatím
-    napište ručně, jednu položku na řádek. Vyberte úroveň vybavení: nastaví se hotovost a vloží výčet
-    položek, který můžete upravit.
+    napište ručně, jednu položku na řádek. Vyberte úroveň vybavení: nastaví se hotovost a vloží
+    výčet položek, který můžete upravit.
   </p>
   <div class="tabs">
     {#each data.kits as k}
@@ -96,12 +96,16 @@
     ></textarea>
   </label>
   {#if kept}
-    <p class="muted" role="status">Výčet položek sady se nevložil, vaše výbava zůstala beze změny.</p>
+    <p class="muted" role="status">
+      Výčet položek sady se nevložil, vaše výbava zůstala beze změny.
+    </p>
   {/if}
   {#if priceSrd}
     <p class="muted">
-      Ceny a popisy najdete v <a href={SRD_BASE + priceSrd} target="_blank" rel="noopener noreferrer"
-        >ceníku vybavení v SRD</a
+      Ceny a popisy najdete v <a
+        href={SRD_BASE + priceSrd}
+        target="_blank"
+        rel="noopener noreferrer">ceníku vybavení v SRD</a
       >.
     </p>
   {/if}
