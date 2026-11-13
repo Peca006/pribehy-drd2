@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import {
     advanceByAttribute,
@@ -98,7 +99,7 @@
   }
 </script>
 
-<nav><a class="btn" href={'#/postavy/' + id}>← Zpět na postavu</a></nav>
+<nav><a class="btn" href={'#/postavy/' + id}><Arrow dir="left" /> Zpět</a></nav>
 
 {#if !log || !start || !ctx}
   <p class="muted">

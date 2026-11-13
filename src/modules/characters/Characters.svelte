@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { hasCharacterDraft } from '../../core/character/drafts'
   import { loadReviews, type Reviews } from '../../core/character/reviews'
@@ -16,12 +17,14 @@
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
   import { findAbility, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
+  import type { Attribute } from '../../core/content/schema'
   import Md from '../../ui/Md.svelte'
   import { formatMoney } from '../creator/rules'
   import Advance from './Advance.svelte'
   import CharacterEditor from './CharacterEditor.svelte'
   import CheckList from './CheckList.svelte'
   import History from './History.svelte'
+  import ScarDialog from './ScarDialog.svelte'
   import Resources from './Resources.svelte'
   import ImportPanel from './ImportPanel.svelte'
   import SharePanel from './SharePanel.svelte'
@@ -59,6 +62,16 @@
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
     current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
   }
+  let scarFor = $state<Attribute | undefined>(undefined)
+  let scarMsg = $state('')
+  async function addScar(next: Character, what: string, gain: number, attr: Attribute) {
+    if (!current || !c) return
+    current = await appendEvents(current.id, eventsFor(c, next, settings.author, `Jizva (${what})`))
+    scarFor = undefined
+    scarMsg = gain
+      ? `Jizva zapsána. Získáváte ${gain} ${gain === 1 ? 'Zdroj' : gain < 5 ? 'Zdroje' : 'Zdrojů'} (${attr}), utraťte ${gain === 1 ? 'ho' : 'je'} v téže akci, jinak propadnou.`
+      : 'Jizva zapsána.'
+  }
   async function revert(events: ChangeEvent[]) {
     if (current) current = await appendEvents(current.id, events)
   }
@@ -79,7 +92,7 @@
 {:else if params[1] === 'uprav' && params[0]}
   <CharacterEditor id={params[0]} />
 {:else if c && current}
-  <nav><a class="btn" href="#/postavy">← Postavy</a></nav>
+  <nav><a class="btn" href="#/postavy"><Arrow dir="left" /> Postavy</a></nav>
   <h1>{c.name}</h1>
   <p class="muted">
     {race?.name ?? ''}{culture ? ` (${culture.name})` : ''}{c.concept ? ' · ' + c.concept : ''}
@@ -87,33 +100,29 @@
 
   <p class="actions">
     <a class="btn primary" href={'#/postavy/' + current.id + '/uprav'}
-      >{hasDraft ? 'Pokračovat v úpravě (rozpracováno)' : 'Upravit postavu'}</a
+      >{hasDraft ? 'Upravit (rozpracováno)' : 'Upravit'}</a
     >
-    <a class="btn" href={'#/postavy/' + current.id + '/postup'}>Postup (zlepšení)</a>
+    <a class="btn" href={'#/postavy/' + current.id + '/postup'}>Vylepšit</a>
     <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
   </p>
-  <section class="panel attrs">
-    {#each ATTRIBUTES as k}
-      <div>
-        <div class="muted">{k}</div>
-        <strong class="big">{effectiveAttributes(c)[k]}</strong>
-        {#if effectiveAttributes(c)[k] !== c.attributes[k]}
-          <div class="muted">
-            zdatnost {c.attributes[k]}, jizvy −{c.attributes[k] - effectiveAttributes(c)[k]}
-          </div>
-        {/if}
-      </div>
-    {/each}
-  </section>
-
-  {#key current.id}<Resources id={current.id} character={c} />{/key}
+  {#key current.id}<Resources id={current.id} character={c} onscar={(a) => (scarFor = a)} />{/key}
+  {#if scarMsg}<p class="panel" role="status">{scarMsg}</p>{/if}
+  {#if scarFor}
+    <ScarDialog
+      character={c}
+      attribute={scarFor}
+      onsave={addScar}
+      onclose={() => (scarFor = undefined)}
+    />
+  {/if}
 
   {#if c.scars.length}
     <h2>Jizvy</h2>
     <ul>
       {#each c.scars as s (s.id)}
         <li>
-          {s.attribute} {s.severity}{s.note ? `: ${s.note}` : ''}
+          {s.attribute}
+          {s.severity}{s.note ? `: ${s.note}` : ''}
           {#if s.severity > 1}
             <button onclick={() => healing(c, s.id, easeScar, 'Zmírnění')}>Zmírnit o 1</button>
           {/if}
@@ -122,8 +131,8 @@
       {/each}
     </ul>
     <p class="muted">
-      Jizvy se hojí mezi výpravami (dobu odhadne Průvodce, závažnější ubývají postupně); na výpravě je léčí dovednosti.
-      Hojení se zapíše do deníku jako revize.
+      Jizvy se hojí mezi výpravami (dobu odhadne Průvodce, závažnější ubývají postupně); na výpravě
+      je léčí dovednosti. Hojení se zapíše do deníku jako revize.
     </p>
   {/if}
 
@@ -175,14 +184,14 @@
   </details>
   <details class="more">
     <summary>Další</summary>
-    <button onclick={remove}>Smazat postavu…</button>
+    <button onclick={remove}>Smazat…</button>
   </details>
 {:else if params[0]}
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>
 {:else}
   <h1>Postavy</h1>
   <p class="actions">
-    <a class="btn primary" href="#/tvorba">+ Nová postava</a>
+    <a class="btn primary" href="#/tvorba">Nová</a>
     <a class="btn" href="#/postavy/import">Import…</a>
   </p>
   {#each logs as l}
@@ -208,15 +217,6 @@
     display: flex;
     flex-direction: column;
     margin: 0.5rem 0;
-  }
-  .attrs {
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-  }
-  .big {
-    font-size: 2rem;
-    color: var(--drd-accent);
   }
   .actions {
     margin: 1rem 0;

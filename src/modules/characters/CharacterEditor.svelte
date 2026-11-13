@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import {
     clearCharacterDraft,
@@ -131,7 +132,7 @@
   }
 </script>
 
-<nav><a class="btn" href={'#/postavy/' + id}>← Zpět na postavu</a></nav>
+<nav><a class="btn" href={'#/postavy/' + id}><Arrow dir="left" /> Zpět</a></nav>
 
 {#if !log}
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>

@@ -85,7 +85,12 @@
       onwheel={wheel}
       ondblclick={() => (scale > 1 ? reset() : zoomTo(2.5))}
     >
-      <img {src} {alt} draggable="false" style:transform={`translate(${x}px, ${y}px) scale(${scale})`} />
+      <img
+        {src}
+        {alt}
+        draggable="false"
+        style:transform={`translate(${x}px, ${y}px) scale(${scale})`}
+      />
     </div>
   </div>
 {/if}

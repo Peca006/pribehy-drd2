@@ -51,10 +51,9 @@ function nums(v: unknown): Record<string, number> {
 export function sanitizeDraft(raw: unknown, fallback: DraftData): DraftData {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>
   const attributes = { ...fallback.attributes }
-  const a = (typeof r.attributes === 'object' && r.attributes !== null ? r.attributes : {}) as Record<
-    string,
-    unknown
-  >
+  const a = (
+    typeof r.attributes === 'object' && r.attributes !== null ? r.attributes : {}
+  ) as Record<string, unknown>
   for (const k of ATTRS) attributes[k] = num(a[k]) ?? attributes[k]
   return {
     concept: str(r.concept) ?? '',

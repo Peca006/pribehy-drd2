@@ -2346,6 +2346,26 @@
    "text": ""
   }
  ],
+ "startingKits": [
+  {
+   "id": "vybava:draha",
+   "name": "Drahá",
+   "cash": 600,
+   "lines": []
+  },
+  {
+   "id": "vybava:cenena",
+   "name": "Ceněná",
+   "cash": 240,
+   "lines": []
+  },
+  {
+   "id": "vybava:obycejna",
+   "name": "Obyčejná",
+   "cash": 120,
+   "lines": []
+  }
+ ],
  "creation": {
   "startingLevels": 3,
   "attributePoints": 15,

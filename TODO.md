@@ -210,4 +210,12 @@ nebo text kódu). `public/share-target.js` (importovaný do service workeru) ulo
 Skin by definoval ovládací prvky souřadnicemi na jednom velkém obrázku: **tlačítko** (klikací oblast), **popis** (label) a
 **výstup** (textové pole), případně pevné rozvržení. Dvě varianty: pixelartový (jako Truhlice) se škálováním podle poměru stran,
 nebo v celých násobcích s posouváním viditelné oblasti, a klasický plovoucí. Předpoklad: nejdřív uklidit stránky a navigaci
-(čtyři záložky: Postavy, Družina, Příručka s Bestiářem, Více), aby definice oblastí odpovídala hotovému rozvržení.
+(pět záložek: Postava, Družina, Příručka, Bestiář, Více), aby definice oblastí odpovídala hotovému rozvržení.
+
+## Nápady z procházení stránek
+
+- **Generátor jmen** v tvorbě postavy: triviální (seznamy slabik/jmen podle rasy), zachovat ráz jmen z příkladů v pravidlech;
+  příklady jsou v balíčku pravidel (`names` u ras), takže generátor může skládat z nich a bez balíčku nic nenabízet.
+- **Dovednosti bez balíčku jako odkaz do SRD** na konkrétní dovednost (v kostře je `srd` jen u povolání a schopností); dát
+  až po odpovědi na dotaz o textech pravidel a nepřeplácat stránku odkazy.
+- Jizvy z Zdrojů: Zdroje získané ze sebezasazené jizvy (závažnost + 2) se zatím jen oznámí, neevidují se.

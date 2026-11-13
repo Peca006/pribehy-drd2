@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ATTRIBUTES, type Character } from '../../core/character/model'
+  import type { Attribute } from '../../core/content/schema'
   import {
     adjust,
     effectiveAttributes,
@@ -9,7 +10,11 @@
   } from '../../core/character/play'
 
   // Zdroje hrdiny během hry: čerpání a obnova po jednom. Jen v tomto zařízení (nejde do historie postavy).
-  let { id, character }: { id: string; character: Character } = $props()
+  let {
+    id,
+    character,
+    onscar,
+  }: { id: string; character: Character; onscar: (a: Attribute) => void } = $props()
 
   const max = $derived(effectiveAttributes(character))
   // komponenta se pro každou postavu vytváří znovu (`{#key}` u volající stránky)
@@ -30,31 +35,36 @@
 <section class="panel" aria-label="Zdroje">
   <div class="head">
     <strong>Zdroje</strong>
-    <button onclick={rest}>Obnovit vše</button>
+    <button onclick={rest}>Obnovit</button>
   </div>
   {#each ATTRIBUTES as a}
+    {@const blocked = character.attributes[a] - max[a]}
     <div class="row">
       <span class="name">{a}</span>
       <button onclick={() => change(a, 1)} disabled={left(a) === 0} aria-label={`Čerpat ${a}`}
         >−</button
       >
-      <strong class="count" aria-label={`${a}: ${left(a)} z ${max[a]}`}
-        >{left(a)}<span class="muted"> / {max[a]}</span></strong
+      <button
+        class="plain count"
+        onclick={() => onscar(a)}
+        aria-label={`${a}: ${left(a)} z ${max[a]}. Zasadit jizvu`}
+        >{left(a)}<span class="muted"> / {max[a]}</span></button
       >
       <button onclick={() => change(a, -1)} disabled={spent[a] === 0} aria-label={`Obnovit ${a}`}
         >+</button
       >
-      <span class="boxes" aria-hidden="true">
+      <button class="plain boxes" onclick={() => onscar(a)} aria-label={`Zasadit jizvu (${a})`}>
         {#each { length: max[a] } as _, i}<span class:used={i >= left(a)}></span>{/each}
-      </span>
+        {#each { length: blocked } as _}<span class="blocked"></span>{/each}
+      </button>
     </div>
   {/each}
   {#if character.scars.length}
     <p class="muted">
-      Maximum Zdrojů je snížené jizvami (zdatnost {ATTRIBUTES.map(
-        (a) => `${a} ${character.attributes[a]}`,
-      ).join(', ')}).
+      Zkřížená políčka jsou zablokovaná jizvami. Klepnutím na hodnotu nebo políčka zasadíte jizvu.
     </p>
+  {:else}
+    <p class="muted">Klepnutím na hodnotu nebo políčka zasadíte jizvu.</p>
   {/if}
 </section>
 
@@ -65,22 +75,32 @@
     align-items: center;
   }
   .row {
-    display: flex;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 3.2rem 2.5rem 3.6rem 2.5rem minmax(0, 1fr);
+    gap: 0.4rem;
     align-items: center;
     margin: 0.35rem 0;
   }
-  .name {
-    width: 3.5rem;
+  .row button:not(.plain) {
+    padding: 0.2rem;
+  }
+  .plain {
+    background: none;
+    border: none;
+    padding: 0;
+    min-height: 44px;
+    color: inherit;
   }
   .count {
-    min-width: 3.5rem;
+    font-weight: bold;
     text-align: center;
   }
   .boxes {
     display: flex;
     gap: 3px;
     flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
   }
   .boxes span {
     width: 0.8rem;
@@ -90,5 +110,21 @@
   }
   .boxes span.used {
     background: transparent;
+  }
+  .boxes span.blocked {
+    background:
+      linear-gradient(
+        to top right,
+        transparent calc(50% - 1px),
+        var(--drd-muted) 50%,
+        transparent calc(50% + 1px)
+      ),
+      linear-gradient(
+        to bottom right,
+        transparent calc(50% - 1px),
+        var(--drd-muted) 50%,
+        transparent calc(50% + 1px)
+      );
+    border-color: var(--drd-muted);
   }
 </style>

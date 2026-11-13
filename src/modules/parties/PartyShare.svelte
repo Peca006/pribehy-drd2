@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { encodeBundle } from '../../core/character/share'
   import { slugify } from '../../core/creatures/bundle'
@@ -76,7 +77,7 @@
   }
 </script>
 
-<nav><a class="btn" href={'#/druziny/' + id}>← Zpět na družinu</a></nav>
+<nav><a class="btn" href={'#/druziny/' + id}><Arrow dir="left" /> Zpět</a></nav>
 
 {#if !party}
   <p class="muted">Družina nenalezena. <a href="#/druziny">Zpět na seznam</a></p>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { characterOf, type CharacterLog } from '../../core/character/model'
   import { loadReviews, markSent, type Reviews } from '../../core/character/reviews'
@@ -97,7 +98,7 @@
   }
 </script>
 
-<nav><a class="btn" href={'#/postavy/' + id}>← Zpět na postavu</a></nav>
+<nav><a class="btn" href={'#/postavy/' + id}><Arrow dir="left" /> Zpět</a></nav>
 
 {#if !log}
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { characterOf, emptyCharacter, type CharacterLog } from '../../core/character/model'
   import { recordResponse } from '../../core/character/reviews'
   import { groupRevisions, revertEvents, revisionChanges } from '../../core/character/revisions'
@@ -140,7 +141,12 @@
       tmp = applyRevisions(tmp, b, new Set([r.id]))
       const rev = groupRevisions(tmp.events).find((x) => x.id === r.id)
       // stav po této revizi (v pořadí příchozích) a před ní, k posouzení, co která revize pokazila
-      return { r, changes: rev ? revisionChanges(tmp, rev) : [], before: prev, after: characterOf(tmp) }
+      return {
+        r,
+        changes: rev ? revisionChanges(tmp, rev) : [],
+        before: prev,
+        after: characterOf(tmp),
+      }
     })
   })
 
@@ -223,7 +229,7 @@
   }
 </script>
 
-<nav><a class="btn" href="#/postavy">← Postavy</a></nav>
+<nav><a class="btn" href="#/postavy"><Arrow dir="left" /> Postavy</a></nav>
 <h1>Import</h1>
 <p class="muted">
   Vložte kód (začíná <code>DRD2:</code>) nebo vyberte soubor od hráče nebo vypravěče. Před uložením

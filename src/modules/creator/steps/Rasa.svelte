@@ -1,5 +1,6 @@
 <script lang="ts">
   import Md from '../../../ui/Md.svelte'
+  import NoDesc from '../../../ui/NoDesc.svelte'
   import type { CreationData } from '../data'
   import { manualLink } from '../data'
   import type { Draft } from '../draft.svelte'
@@ -21,10 +22,20 @@
 </p>
 
 {#each data.races as r}
-  <div class="panel" class:sel={r.id === draft.raceId}>
-    <button class="head" aria-pressed={r.id === draft.raceId} onclick={() => pick(r.id)}>
+  <!-- klepnutí kamkoli do rasy (mimo odkazy a volby kultury) ji vybere -->
+  <div
+    class="panel"
+    class:sel={r.id === draft.raceId}
+    role="presentation"
+    onclick={(e) => {
+      if (!(e.target as HTMLElement).closest('a,input,label,fieldset')) pick(r.id)
+    }}
+  >
+    <label class="head">
+      <input type="radio" name="rasa" checked={r.id === draft.raceId} onchange={() => pick(r.id)} />
       <strong>{r.name}</strong>
-    </button>
+      {#if !r.summary}<NoDesc srd={r.srd} />{/if}
+    </label>
     {#if r.summary}<Md text={r.summary} />{/if}
     {#if r.id === draft.raceId}
       <fieldset>
@@ -52,7 +63,9 @@
                 >{/if}</span
             >
           </label>
-          {#if draft.cultureId === c.id}<div class="culture"><Md text={c.text} hint srd={c.srd} /></div>{/if}
+          {#if draft.cultureId === c.id}<div class="culture">
+              <Md text={c.text} hint srd={c.srd} />
+            </div>{/if}
         {/each}
       </fieldset>
       {@const link = manualLink('24', r.name)}
@@ -68,12 +81,11 @@
     outline: 2px solid var(--drd-accent);
   }
   .head {
-    width: 100%;
-    text-align: left;
-    border: none;
-    background: none;
-    padding: 0;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
     min-height: 32px;
+    cursor: pointer;
   }
   .radio {
     display: flex;

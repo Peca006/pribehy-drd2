@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { appendEvents, getLog } from '../../core/character/store'
   import { characterOf, eventsFor } from '../../core/character/model'
@@ -55,9 +56,7 @@
   )
   const effectiveReward = $derived(secret ? tally.reward : reward)
   const award = $derived(
-    party
-      ? sessionAward(party.members, present, effectiveReward, base)
-      : { xp: {}, problems: [] },
+    party ? sessionAward(party.members, present, effectiveReward, base) : { xp: {}, problems: [] },
   )
   const givers = $derived([
     { id: GM_VOTE, name: 'Průvodce' },
@@ -100,13 +99,13 @@
   }
 </script>
 
-<nav><a class="btn" href={'#/druziny/' + id}>← Zpět na družinu</a></nav>
+<nav><a class="btn" href={'#/druziny/' + id}><Arrow dir="left" /> Zpět</a></nav>
 
 {#if !party}
   <p class="muted">Družina nenalezena. <a href="#/druziny">Zpět na seznam</a></p>
 {:else if roleOf(party) !== 'pruvodce'}
   <p class="muted">Sezení zapisuje a zkušenosti rozděluje Průvodce družiny.</p>
-  <p><a class="btn" href={'#/druziny/' + id}>← Zpět na družinu</a></p>
+  <p><a class="btn" href={'#/druziny/' + id}><Arrow dir="left" /> Zpět</a></p>
 {:else}
   <h1>Nové sezení</h1>
   <label>Název <input bind:value={title} /></label>
@@ -114,8 +113,9 @@
 
   <h2>Přítomní a odměny</h2>
   <p class="muted">
-    Za účast {base} body{#if base !== 4} (rychlost postupu družiny){/if}. Odměnu (nejvýš {XP_REWARD_MAX} body
-    na hráče) uděluje každý hráč i Průvodce vždy jedním bodem za hraní role, spolupráci nebo rozvíjení příběhu.
+    Za účast {base} body{#if base !== 4}
+      (rychlost postupu družiny){/if}. Odměnu (nejvýš {XP_REWARD_MAX} body na hráče) uděluje každý hráč
+    i Průvodce vždy jedním bodem za hraní role, spolupráci nebo rozvíjení příběhu.
   </p>
   <label class="check">
     <input type="checkbox" bind:checked={secret} />
@@ -151,7 +151,8 @@
   {#if secret}
     <h3>Hlasování</h3>
     <p class="muted">
-      Zařízení předávejte po jednom. Zadaný hlas se hned zakryje; kdo koho vybral, se nikam nezapíše.
+      Zařízení předávejte po jednom. Zadaný hlas se hned zakryje; kdo koho vybral, se nikam
+      nezapíše.
     </p>
     {#each givers as g (g.id)}
       <div class="row">

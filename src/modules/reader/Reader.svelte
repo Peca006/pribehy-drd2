@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { chapters, library, termIndex, terms } from '../../core/library.svelte'
   import { limitTermLinks } from '../../core/termLinks'
   import { back, go } from '../../core/router.svelte'
@@ -45,7 +46,8 @@
 
 {#if chapter}
   <nav>
-    <button onclick={back}>← Zpět</button> <button onclick={() => go('ctenar')}>Kapitoly</button>
+    <button onclick={back}><Arrow dir="left" /> Zpět</button>
+    <button onclick={() => go('ctenar')}>Kapitoly</button>
     <LinkModeSelect />
   </nav>
   <article>
@@ -53,8 +55,9 @@
     <BlockView {blocks} />
   </article>
   <nav class="pager">
-    {#if prev}<a class="btn" href={'#/ctenar/' + prev.id}>← {prev.title}</a>{/if}
-    {#if next}<a class="btn" href={'#/ctenar/' + next.id}>{next.title} →</a>{/if}
+    {#if prev}<a class="btn" href={'#/ctenar/' + prev.id}><Arrow dir="left" /> {prev.title}</a>{/if}
+    {#if next}<a class="btn" href={'#/ctenar/' + next.id}>{next.title} <Arrow dir="right" /></a
+      >{/if}
   </nav>
 {:else}
   <h1>Příručka</h1>
@@ -66,7 +69,7 @@
       aria-label="Hledat kapitolu"
     />
     {#if hasCreatures}
-      <p><a class="btn" href="#/bestiar">Přehled bytostí (Bestiář) →</a></p>
+      <p><a class="btn" href="#/bestiar">Bestiář <Arrow dir="right" /></a></p>
     {/if}
   {/if}
   <ul class="chapters">

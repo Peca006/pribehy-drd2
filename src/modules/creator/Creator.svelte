@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { emptyCharacter, eventsFor } from '../../core/character/model'
   import { saveLog } from '../../core/character/store'
   import { hasRulesPack } from '../../core/library.svelte'
@@ -96,10 +97,14 @@
   <Step {draft} {data} {goto} {finish} />
 
   <nav class="nav">
-    <button disabled={index === 0} onclick={() => goto(steps[index - 1].id)}>← Zpět</button>
-    {#if hasContent(draft.snapshot())}<button onclick={restart}>Začít znovu</button>{/if}
+    <button disabled={index === 0} onclick={() => goto(steps[index - 1].id)}
+      ><Arrow dir="left" /> Zpět</button
+    >
+    {#if hasContent(draft.snapshot())}<button onclick={restart}>Znovu</button>{/if}
     {#if index < steps.length - 1}
-      <button class="primary" onclick={() => goto(steps[index + 1].id)}>Dál →</button>
+      <button class="primary" onclick={() => goto(steps[index + 1].id)}
+        >Dál <Arrow dir="right" /></button
+      >
     {/if}
   </nav>
 {/if}

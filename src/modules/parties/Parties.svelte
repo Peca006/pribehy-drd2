@@ -53,7 +53,7 @@
       aria-label="Název nové družiny"
       onkeydown={(e) => e.key === 'Enter' && create()}
     />
-    <button class="primary" onclick={create}>+ Nová družina</button>
+    <button class="primary" onclick={create}>Nová</button>
   </div>
   <p><a class="btn" href="#/postavy/import">Import družiny nebo postavy…</a></p>
 {/if}

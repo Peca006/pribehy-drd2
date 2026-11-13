@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { appendEvents, getLog, listLogs } from '../../core/character/store'
   import { characterOf, eventsFor, type CharacterLog } from '../../core/character/model'
@@ -153,7 +154,7 @@
   }
 </script>
 
-<nav><a class="btn" href="#/druziny">← Družiny</a></nav>
+<nav><a class="btn" href="#/druziny"><Arrow dir="left" /> Družiny</a></nav>
 
 {#if !loaded}
   <p class="muted">Načítání…</p>

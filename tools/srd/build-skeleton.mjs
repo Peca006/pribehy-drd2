@@ -117,6 +117,8 @@ const skeleton = {
     ),
     text: '',
   })),
+  // sady výbavy: jen název a hotovost (bez řádků s popisem výzbroje a výstroje)
+  startingKits: (src.startingKits ?? []).map((k) => ({ ...pick(k, ['id', 'name', 'cash']), lines: [] })),
   creation: src.creation,
 }
 

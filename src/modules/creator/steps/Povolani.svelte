@@ -51,7 +51,7 @@
       <ul>
         {#each p.skills as s}<li>
             <strong>{s.name}</strong>{#if s.attribute}
-              <span class="muted">({s.attribute})</span>{/if}
+              <span class="muted">&nbsp;({s.attribute})</span>{/if}
           </li>{/each}
       </ul>
     </details>

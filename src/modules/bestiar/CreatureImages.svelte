@@ -43,7 +43,9 @@
       {#each items as i (i.id)}
         <figure>
           <img src={i.url} alt="Obrázek bytosti" />
-          <button onclick={() => remove(i.id)} aria-label="Odebrat obrázek" title="Odebrat">✕</button>
+          <button onclick={() => remove(i.id)} aria-label="Odebrat obrázek" title="Odebrat"
+            >✕</button
+          >
         </figure>
       {/each}
     </div>

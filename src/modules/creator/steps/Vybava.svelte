@@ -16,7 +16,7 @@
   )
   const left = $derived(data.rules.purchaseBudget - spent)
   // bez balíčku pravidel (jen vestavěná kostra) nejsou hotové sady ani ceník: výbava se píše ručně
-  const manual = $derived(data.kits.length === 0 && priced.length === 0)
+  const manual = $derived(!data.kits.some((k) => k.lines.length) && priced.length === 0)
   const lines = $derived(draft.equipment.join('\n'))
 
   function chooseKit(id: string) {
@@ -25,9 +25,11 @@
     draft.equipMode = 'kit'
     draft.kitId = id
     draft.cart = {}
-    draft.equipment = kit.lines
-      .filter((l) => l.label !== 'Hotovost')
-      .map((l) => `${l.label}: ${plain(l.text)}`)
+    // sada bez popisu (vestavěná kostra) zachová ručně napsanou výbavu a nastaví jen hotovost
+    if (kit.lines.length)
+      draft.equipment = kit.lines
+        .filter((l) => l.label !== 'Hotovost')
+        .map((l) => `${l.label}: ${plain(l.text)}`)
     draft.cash = kit.cash ?? 0
   }
 
@@ -60,9 +62,16 @@
 {#if manual}
   <p class="muted">
     Hotové sady ani ceník nejsou nainstalované (načtěte balíček pravidel v části Více). Výbavu zatím
-    napište ručně, jednu položku na řádek. Podle pravidel je k nákupu k dispozici
-    {formatMoney(data.rules.purchaseBudget)}.
+    napište ručně, jednu položku na řádek. Vyberte úroveň vybavení, nastaví se podle ní hotovost.
   </p>
+  <div class="tabs">
+    {#each data.kits as k}
+      <button class:primary={draft.kitId === k.id} onclick={() => chooseKit(k.id)}>
+        {draft.kitId === k.id ? '✓ ' : ''}{k.name}
+        <span class="muted">({formatMoney(k.cash ?? 0)})</span>
+      </button>
+    {/each}
+  </div>
   <label>
     Výzbroj a výstroj
     <textarea

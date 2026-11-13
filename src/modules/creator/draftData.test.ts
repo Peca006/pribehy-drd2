@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { clearDraft, hasContent, loadDraft, sanitizeDraft, saveDraft, type DraftData } from './draftData'
+import {
+  clearDraft,
+  hasContent,
+  loadDraft,
+  sanitizeDraft,
+  saveDraft,
+  type DraftData,
+} from './draftData'
 
 const empty: DraftData = {
   concept: '',

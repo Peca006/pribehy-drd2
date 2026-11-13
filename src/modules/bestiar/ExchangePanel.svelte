@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import type { Creature } from '../../core/content/schema'
   import { exportBundle, newCreatureId, parseBundle } from '../../core/creatures/bundle'
@@ -65,7 +66,7 @@
   }
 </script>
 
-<nav><a class="btn" href="#/bestiar">← Bestiář</a></nav>
+<nav><a class="btn" href="#/bestiar"><Arrow dir="left" /> Bestiář</a></nav>
 <h1>Import a export</h1>
 
 <h2>Export vlastních bytostí</h2>

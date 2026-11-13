@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from './Arrow.svelte'
   import { onDestroy } from 'svelte'
   import { splitForQr, toLink } from '../core/character/qr'
   import { qrPath } from './qrImage'
@@ -39,8 +40,10 @@
       Díl {index + 1} z {parts.length} – kódy se střídají, druhé zařízení je naskenuje všechny.
       <button onclick={() => (paused = !paused)}>{paused ? 'Pokračovat' : 'Pozastavit'}</button>
       {#if paused}
-        <button onclick={() => (index = (index + parts.length - 1) % parts.length)}>←</button>
-        <button onclick={() => (index = (index + 1) % parts.length)}>→</button>
+        <button onclick={() => (index = (index + parts.length - 1) % parts.length)}
+          ><Arrow dir="left" /></button
+        >
+        <button onclick={() => (index = (index + 1) % parts.length)}><Arrow dir="right" /></button>
       {/if}
     </p>
   {/if}

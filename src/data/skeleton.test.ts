@@ -12,8 +12,16 @@ describe('vestavěná kostra', () => {
   })
 
   it('nemá kapitoly, bytosti, ceník ani výbavu', () => {
-    for (const k of ['chapters', 'creatures', 'equipment', 'startingKits', 'terms'])
+    for (const k of ['chapters', 'creatures', 'equipment', 'terms'])
       expect(k in skeleton).toBe(false)
+  })
+
+  it('sady výbavy mají jen název a hotovost, bez řádků', () => {
+    expect(skeleton.startingKits.length).toBeGreaterThan(0)
+    for (const k of skeleton.startingKits) {
+      expect(k.lines).toEqual([])
+      expect(k.cash).toBeGreaterThan(0)
+    }
   })
 
   it('má unikátní ID a úplná pravidla tvorby', () => {

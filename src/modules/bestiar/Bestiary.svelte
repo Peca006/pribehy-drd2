@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { go } from '../../core/router.svelte'
   import { library } from '../../core/library.svelte'
@@ -65,7 +66,7 @@
 {:else if params[0] === 'uprav' && editing}
   <CreatureEditor initial={editing} />
 {:else if creature}
-  <nav><a class="btn" href="#/bestiar">← Bestiář</a> <LinkModeSelect /></nav>
+  <nav><a class="btn" href="#/bestiar"><Arrow dir="left" /> Bestiář</a> <LinkModeSelect /></nav>
   <p class="actions">
     {#if isUser(creature)}
       <a class="btn" href={'#/bestiar/uprav/' + encodeURIComponent(creature.id)}>Upravit</a>
@@ -106,7 +107,7 @@
     {/each}
   </div>
   <p class="actions">
-    <a class="btn primary" href="#/bestiar/nova">+ Nová bytost</a>
+    <a class="btn primary" href="#/bestiar/nova">Nová</a>
     <a class="btn" href="#/bestiar/vymena">Import / export</a>
   </p>
   <p class="muted">
