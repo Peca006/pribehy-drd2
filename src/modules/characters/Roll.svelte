@@ -19,6 +19,7 @@
     type Dice,
     type Side,
   } from '../../core/character/roll'
+  import { bestTwo, MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
   import { professions } from '../../core/library.svelte'
 
   // Vyhodnocení akce: zkouška nebo výzva. Hod (2k6 + úroveň povolání), vyčerpání, následky, Ohrožení a Výhody.
@@ -57,6 +58,11 @@
   let payAttr = $state<Attribute>('Tělo')
   let outcome = $state<Outcome>(undefined)
   let paid = $state(0)
+  // manévr: nejvýš jeden v akci; platí se 1 Zdrojem až při použití
+  let man = $state<ManeuverId | undefined>(undefined)
+  let manPaid = $state(false)
+  let manMsg = $state('')
+  let extra = $state(0)
   // střet: soupeř (úroveň a kostky), kdo byl aktér, výsledek losu při úplné shodě
   let oppLevel = $state(0)
   let oppDice = $state<Dice>([0, 0])
@@ -73,8 +79,10 @@
       })),
   )
   const level = $derived(levelOf(character, used))
-  const rolled = $derived(dice[0] > 0 && dice[1] > 0)
-  const result = $derived(rolled ? evaluateRoll(dice, level) : undefined)
+  const rolled = $derived(dice[0] > 0 && dice[1] > 0 && (man !== 'presne' || extra > 0))
+  const result = $derived(
+    rolled ? evaluateRoll(man === 'presne' ? bestTwo([...dice, extra]) : dice, level) : undefined,
+  )
   const oppRolled = $derived(oppDice[0] > 0 && oppDice[1] > 0)
   const opp = $derived(oppRolled ? evaluateRoll(oppDice, oppLevel) : undefined)
   const clashRes = $derived(
@@ -113,13 +121,40 @@
     outcome = undefined
     losWin = undefined
   }
+  /** Nová akce: manévr se znovu neplatí a nic z předchozí akce nezůstává. */
+  function newAction() {
+    reset()
+    manPaid = false
+    manMsg = ''
+    extra = 0
+  }
+  function payManeuver(): boolean {
+    if (!man) return true
+    if (manPaid) return true
+    if (!pay(payAttr, 1)) {
+      manMsg = `Na manévr nemáte Zdroj (${payAttr}).`
+      return false
+    }
+    manPaid = true
+    manMsg = `Manévr zaplacen (1 ${payAttr}).`
+    return true
+  }
+  function pickMan(id: ManeuverId) {
+    if (manPaid) return
+    man = man === id ? undefined : id
+    if (man !== 'presne') extra = 0
+    manMsg = ''
+  }
   function setDie(i: 0 | 1, v: number) {
     dice = i === 0 ? [v, dice[1]] : [dice[0], v]
     reset()
   }
   function roll() {
+    newAction()
+    const m = maneuver(man)
+    if (m?.when === 'pred' && !payManeuver()) return
     dice = rollDice()
-    reset()
+    if (man === 'presne') extra = rollDice()[0]
   }
   function rollOpp() {
     oppDice = rollDice()
@@ -171,6 +206,14 @@
     placeholder="Záměr a hrozící neúspěch (poznámka)"
     aria-label="Záměr a hrozící neúspěch"
   />
+  <div class="chips" role="group" aria-label="Vlastnost dovednosti (Zdroje)">
+    {#each ATTRIBUTES as a}
+      <button class:primary={payAttr === a} onclick={() => (payAttr = a)}>{a}</button>
+    {/each}
+  </div>
+  <p class="muted">
+    Vlastnost, pod kterou spadá použitá dovednost: z ní se platí vyčerpání i manévry.
+  </p>
   {#if owned.length}
     <div class="chips" role="group" aria-label="Použité povolání">
       {#each owned as p}
@@ -188,6 +231,29 @@
         ? ' (bez povolání)'
         : ''}
   </p>
+
+  <div class="chips" role="group" aria-label="Manévr">
+    {#each MANEUVERS as m}
+      <button
+        class:primary={man === m.id}
+        onclick={() => pickMan(m.id)}
+        disabled={manPaid && man !== m.id}
+      >
+        {m.name}
+      </button>
+    {/each}
+  </div>
+  {#if man}
+    <p class="muted">
+      {maneuver(man)?.hint}. Platí se 1 {payAttr}
+      {maneuver(man)?.when === 'pred' ? 'při hodu' : 'po hodu, až když vyhrajete'}; v akci jen
+      jeden.
+      {#if !manPaid && maneuver(man)?.when === 'pred'}
+        <button onclick={payManeuver}>Zaplatit teď</button>
+      {/if}
+    </p>
+  {/if}
+  {#if manMsg}<p role="status" class="muted">{manMsg}</p>{/if}
 
   {#if kind === 'vyzva' && outcome === 'bezreakce'}
     <p role="status" class="bad">
@@ -207,6 +273,20 @@
         </select>
         {#if i === 0}<span>+</span>{/if}
       {/each}
+      {#if man === 'presne'}
+        <span>+</span>
+        <select
+          value={extra}
+          onchange={(e) => {
+            extra = Number(e.currentTarget.value)
+            reset()
+          }}
+          aria-label="Třetí kostka (přesně)"
+        >
+          <option value={0}>?</option>
+          {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
+        </select>
+      {/if}
       <span>+ {level} =</span>
       <strong
         class="total"
@@ -289,10 +369,25 @@
         {kind === 'stret' ? 'Vyhráli jste střet.' : `Úspěch (${SUCCESS_AT} a více).`}
       </p>
       {#if kind === 'zkouska' || kind === 'stret'}
+        {#if man === 'mocne' || man === 'lstive'}
+          <p class="actions">
+            <button class="primary" onclick={payManeuver} disabled={manPaid}>
+              {manPaid
+                ? `${maneuver(man)?.name} použito`
+                : `Použít ${maneuver(man)?.name?.toLowerCase()} (−1 ${payAttr})`}
+            </button>
+          </p>
+          {#if man === 'mocne' && manPaid}
+            <p class="muted">Poražený musí vyčerpat o 1 Zdroj víc, než by jinak platil.</p>
+          {/if}
+        {/if}
+        {@const step = man === 'lstive' && manPaid ? 2 : 1}
         <p class="muted">Následky úspěchu, které jste ohlásili:</p>
         <p class="actions">
-          <button onclick={() => setThreat(threat - 1)} disabled={threat === 0}>Ohrožení −1</button>
-          <button onclick={() => onadvantage(advantage + 1)}>Výhoda +1</button>
+          <button onclick={() => setThreat(threat - step)} disabled={threat === 0}
+            >Ohrožení −{step}</button
+          >
+          <button onclick={() => onadvantage(advantage + step)}>Výhoda +{step}</button>
         </p>
       {:else}
         <p class="muted">
@@ -323,11 +418,6 @@
           ? 'Soupeř zvítězil. Vyčerpáním změníte jeho plný úspěch v částečný, nebo následek přijmete.'
           : 'Hrozí neúspěch. Vyčerpáním ho zmírníte, nebo ho přijmete.'}
       </p>
-      <div class="chips" role="group" aria-label="Zdroje k vyčerpání">
-        {#each ATTRIBUTES as a}
-          <button class:primary={payAttr === a} onclick={() => (payAttr = a)}>{a}</button>
-        {/each}
-      </div>
       <p class="muted">
         Vyčerpání stojí {cost}
         {payAttr} (Ohrožení, nejméně 1), máte {have}{advantage
