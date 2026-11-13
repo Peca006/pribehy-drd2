@@ -170,91 +170,13 @@
     </p>
   {/if}
   <p class="actions">
+    {#if gm}<a class="btn primary" href={'#/druziny/' + party.id + '/sezeni'}
+        >Nové sezení (zkušenosti)</a
+      >{/if}
     <a class="btn" href={'#/druziny/' + party.id + '/sdilet'}>Sdílet…</a>
-    <a class="btn" href="#/postavy/import">Import…</a>
   </p>
-
-  <h2>Členové</h2>
-  {#each party.members as m (m.id)}
-    <div class="row">
-      <span>
-        <strong>{m.name}</strong>
-        {#if m.characterId && nameOfChar(m.characterId)}
-          <a class="muted" href={'#/postavy/' + m.characterId}>postava v zařízení</a>
-        {:else}<span class="muted">postava u hráče</span>{/if}
-      </span>
-      {#if gm}<button onclick={() => removeMember(m)} aria-label={`Odebrat ${m.name}`}>✕</button
-        >{/if}
-    </div>
-  {:else}
-    <p class="muted">Družina zatím nemá členy.</p>
-  {/each}
-  {#if gm}
-    {#if free.length}
-      <div class="row">
-        <select bind:value={pick} aria-label="Postava ze zařízení">
-          <option value="">Přidat postavu z tohoto zařízení…</option>
-          {#each free as l}<option value={l.id}>{characterOf(l).name || '(beze jména)'}</option
-            >{/each}
-        </select>
-        <button disabled={!pick} onclick={addLocal}>Přidat</button>
-      </div>
-    {/if}
-    <div class="row">
-      <input
-        bind:value={freeName}
-        placeholder="Jiný člen (jméno hráče nebo postavy)"
-        aria-label="Jméno člena"
-        onkeydown={(e) => e.key === 'Enter' && addFree()}
-      />
-      <button disabled={!freeName.trim()} onclick={addFree}>Přidat</button>
-    </div>
-
-    <h2>Rychlost postupu</h2>
-    <select
-      value={baseXpOf(party)}
-      onchange={(e) => {
-        party!.baseXp = Number(e.currentTarget.value)
-        save()
-      }}
-      aria-label="Rychlost postupu"
-    >
-      {#each PACES as p}<option value={p.xp}>{p.label}</option>{/each}
-    </select>
-    <p class="muted">Kolik bodů zkušeností dostane každý za účast na sezení (odměny se přidávají k tomu).</p>
-
-    <h2>Poznámky k družině</h2>
-    <textarea rows="3" bind:value={party.notes} onblur={save} aria-label="Poznámky k družině"
-    ></textarea>
-  {:else if party.notes}
-    <h2>Poznámky k družině</h2>
+  {#if !gm && party.notes}
     <p class="text">{party.notes}</p>
-  {/if}
-
-  {#if overview.length}
-    <h2>Přehled družiny</h2>
-    <div class="scroll">
-      <table>
-        <thead>
-          <tr><th>Postava</th><th>Tělo</th><th>Duše</th><th>Vliv</th><th>XP</th></tr>
-        </thead>
-        <tbody>
-          {#each overview as r (r.member.id)}
-            <tr>
-              <td>
-                <a href={'#/postavy/' + r.member.characterId}>{r.name}</a>
-                {#if r.professions.length}<br /><span class="muted">{r.professions.join(', ')}</span>{/if}
-                {#if r.scars.length}<br /><span class="muted">Jizvy: {r.scars.join('; ')}</span>{/if}
-              </td>
-              {#each ['Tělo', 'Duše', 'Vliv'] as const as a}
-                <td class:reduced={r.reduced.includes(a)}>{r.attributes[a]}</td>
-              {/each}
-              <td>{r.xp}</td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
   {/if}
 
   {#if gm && proposals.length}
@@ -272,20 +194,46 @@
     {/each}
   {/if}
 
-  <h2>Žurnál dobrodružství</h2>
-  {#if gm}
-    <p class="actions">
-      <a class="btn primary" href={'#/druziny/' + party.id + '/sezeni'}>Nové sezení (zkušenosti)</a>
-    </p>
+  {#if overview.length}
+    <h2>Přehled družiny</h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>Postava</th><th>Tělo</th><th>Duše</th><th>Vliv</th><th>XP</th></tr>
+        </thead>
+        <tbody>
+          {#each overview as r (r.member.id)}
+            <tr>
+              <td>
+                <a href={'#/postavy/' + r.member.characterId}>{r.name}</a>
+                {#if r.professions.length}<br /><span class="muted">{r.professions.join(', ')}</span
+                  >{/if}
+                {#if r.scars.length}<br /><span class="muted">Jizvy: {r.scars.join('; ')}</span
+                  >{/if}
+              </td>
+              {#each ['Tělo', 'Duše', 'Vliv'] as const as a}
+                <td class:reduced={r.reduced.includes(a)}>{r.attributes[a]}</td>
+              {/each}
+              <td>{r.xp}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   {/if}
-  <div class="panel">
-    <input bind:value={entryTitle} placeholder="Nadpis zápisu" aria-label="Nadpis zápisu" />
-    <textarea rows="3" bind:value={entryText} placeholder="Co se stalo…" aria-label="Text zápisu"
-    ></textarea>
-    <button disabled={!entryTitle.trim() && !entryText.trim()} onclick={addEntry}>
-      {gm ? 'Přidat zápis' : 'Navrhnout zápis Průvodci'}
-    </button>
-  </div>
+
+  <h2>Žurnál dobrodružství</h2>
+  <details class="panel fold">
+    <summary><strong>{gm ? '+ Nový zápis' : '+ Navrhnout zápis Průvodci'}</strong></summary>
+    <div>
+      <input bind:value={entryTitle} placeholder="Nadpis zápisu" aria-label="Nadpis zápisu" />
+      <textarea rows="3" bind:value={entryText} placeholder="Co se stalo…" aria-label="Text zápisu"
+      ></textarea>
+      <button disabled={!entryTitle.trim() && !entryText.trim()} onclick={addEntry}>
+        {gm ? 'Přidat zápis' : 'Navrhnout zápis Průvodci'}
+      </button>
+    </div>
+  </details>
   {#if message}<p role="status">{message}</p>{/if}
 
   {#each party.journal.filter((e) => (gm ? e.status !== 'navrh' : true)) as e (e.id)}
@@ -329,10 +277,79 @@
     <p class="muted">Žurnál je zatím prázdný.</p>
   {/each}
 
-  <p><button onclick={removeParty}>Smazat družinu</button></p>
+  <h2>Členové</h2>
+  {#each party.members as m (m.id)}
+    <div class="row">
+      <span>
+        <strong>{m.name}</strong>
+        {#if m.characterId && nameOfChar(m.characterId)}
+          <a class="muted" href={'#/postavy/' + m.characterId}>postava v zařízení</a>
+        {:else}<span class="muted">postava u hráče</span>{/if}
+      </span>
+      {#if gm}<button onclick={() => removeMember(m)} aria-label={`Odebrat ${m.name}`}>✕</button
+        >{/if}
+    </div>
+  {:else}
+    <p class="muted">Družina zatím nemá členy.</p>
+  {/each}
+  {#if gm}
+    <details class="panel fold">
+      <summary>Přidat člena</summary>
+      {#if free.length}
+        <div class="row">
+          <select bind:value={pick} aria-label="Postava ze zařízení">
+            <option value="">Přidat postavu z tohoto zařízení…</option>
+            {#each free as l}<option value={l.id}>{characterOf(l).name || '(beze jména)'}</option
+              >{/each}
+          </select>
+          <button disabled={!pick} onclick={addLocal}>Přidat</button>
+        </div>
+      {/if}
+      <div class="row">
+        <input
+          bind:value={freeName}
+          placeholder="Jiný člen (jméno hráče nebo postavy)"
+          aria-label="Jméno člena"
+          onkeydown={(e) => e.key === 'Enter' && addFree()}
+        />
+        <button disabled={!freeName.trim()} onclick={addFree}>Přidat</button>
+      </div>
+    </details>
+
+    <details class="panel fold">
+      <summary>Nastavení družiny</summary>
+      <h3>Rychlost postupu</h3>
+      <select
+        value={baseXpOf(party)}
+        onchange={(e) => {
+          party!.baseXp = Number(e.currentTarget.value)
+          save()
+        }}
+        aria-label="Rychlost postupu"
+      >
+        {#each PACES as p}<option value={p.xp}>{p.label}</option>{/each}
+      </select>
+      <p class="muted">
+        Kolik bodů zkušeností dostane každý za účast na sezení (odměny se přidávají k tomu).
+      </p>
+
+      <h3>Poznámky k družině</h3>
+      <textarea rows="3" bind:value={party.notes} onblur={save} aria-label="Poznámky k družině"
+      ></textarea>
+    </details>
+  {/if}
+
+  <details class="more">
+    <summary>Další</summary>
+    <button onclick={removeParty}>Smazat družinu…</button>
+  </details>
 {/if}
 
 <style>
+  .fold,
+  .more {
+    margin: 1rem 0;
+  }
   nav {
     margin-bottom: var(--drd-gap);
   }
