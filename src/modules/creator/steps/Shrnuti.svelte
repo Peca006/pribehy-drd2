@@ -2,6 +2,7 @@
   import { ATTRIBUTES } from '../../../core/character/model'
   import type { CreationData } from '../data'
   import type { Draft } from '../draft.svelte'
+  import { generateName } from '../names'
   import { formatMoney, problems } from '../rules'
 
   let {
@@ -28,6 +29,11 @@
       .filter(Boolean)
       .join(', ')
   const traitName = $derived(data.traits.find((t) => t.id === draft.trait)?.name ?? draft.trait)
+
+  function randomName(label: string) {
+    const n = race && generateName(race.names, Math.random, label)
+    if (n) draft.name = n
+  }
 </script>
 
 <h2>Jméno a shrnutí</h2>
@@ -36,6 +42,12 @@
   <input type="text" bind:value={draft.name} placeholder="např. Jarik" />
 </label>
 {#if race?.names.length}
+  <div class="row names">
+    <span class="muted">Náhodné jméno:</span>
+    {#each race.names as n}
+      <button onclick={() => randomName(n.label)}>{race.names.length > 1 ? n.label : 'Vymyslet'}</button>
+    {/each}
+  </div>
   <details>
     <summary>Typická jména ({race.name})</summary>
     {#each race.names as n}<p><strong>{n.label}:</strong> {n.list.join(', ')}</p>{/each}
@@ -95,4 +107,12 @@
   li {
     margin: 0.25rem 0;
   }
+  .names {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.4rem 0;
+  }
 </style>
+
