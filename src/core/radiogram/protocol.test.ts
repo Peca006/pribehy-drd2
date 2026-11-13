@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { SAMPLE_RATE } from './afsk'
 import { makeChannel, rng, type Channel } from './channel'
+import { MODES } from './modes'
 import { RadioReceiver, RadioSender } from './protocol'
 
 const bytesOf = (n: number, seed = 5) => {
@@ -18,8 +19,8 @@ interface Result {
 }
 
 /** Poloduplexní běh obou stran přes dva simulované kanály. */
-function run(msg: Uint8Array, ab: Channel, ba: Channel, opt: { maxMode?: number; maxTurns?: number } = {}): Result {
-  const sender = new RadioSender(msg, { session: 42, maxMode: opt.maxMode })
+function run(msg: Uint8Array, ab: Channel, ba: Channel, opt: { maxMode?: number; mode?: number; maxTurns?: number } = {}): Result {
+  const sender = new RadioSender(msg, { session: 42, maxMode: opt.maxMode, mode: opt.mode })
   const receiver = new RadioReceiver()
   let seconds = 0
   let turns = 0
@@ -49,7 +50,7 @@ describe('protokol: volání, odpověď, data, potvrzení', () => {
     expect(r.sender.state).toBe('done')
     expect(r.receiver.state).toBe('complete')
     expect(r.receiver.result).toEqual(msg)
-    expect(r.sender.mode.name).toBe('AFSK 1200')
+    expect(r.sender.mode.name).toBe('OFDM 16-QAM')
     expect(r.labels[0]).toBe('Volání')
     expect(r.labels[1]).toBe('Odpověď: připraven')
     expect(r.labels.at(-1)).toMatch(/^Potvrzení 15\/15/)
@@ -70,6 +71,7 @@ describe('protokol: volání, odpověď, data, potvrzení', () => {
     expect(r.receiver.result).toEqual(msg)
     expect(r.sender.state).toBe('done')
     expect(r.receiver.snr).toBeLessThan(18)
+    expect(r.sender.mode.id).toBeLessThan(5)
   })
 
   it('ztráta rámců: výpadky zvuku se opraví opakováním jen chybějících rámců', () => {
@@ -122,6 +124,31 @@ describe('protokol: volání, odpověď, data, potvrzení', () => {
     const slow = run(msg, makeChannel(), makeChannel(), { maxMode: 0 })
     expect(slow.receiver.result).toEqual(msg)
     expect(fast.seconds).toBeLessThan(slow.seconds / 2)
-    console.log(`960 B: AFSK 1200 ${fast.seconds.toFixed(1)} s, AFSK 300 ${slow.seconds.toFixed(1)} s`)
+    console.log(`960 B: ${fast.sender.mode.name} ${fast.seconds.toFixed(1)} s, AFSK 300 ${slow.seconds.toFixed(1)} s`)
+  })
+
+  it('ruční volba režimu: každý režim dopraví zprávu a obě strany ho znají', () => {
+    const msg = bytesOf(300, 77)
+    const lines: string[] = []
+    for (const m of MODES) {
+      const r = run(msg, makeChannel({ delay: 999 }), makeChannel(), { mode: m.id })
+      expect(r.receiver.result, m.name).toEqual(msg)
+      expect(r.sender.state).toBe('done')
+      expect(r.sender.mode.id).toBe(m.id)
+      expect(r.receiver.mode.id).toBe(m.id)
+      expect(r.receiver.forced).toBe(true)
+      expect(r.labels.some((l) => l.includes(m.name))).toBe(true)
+      lines.push(m.name.padEnd(12) + ' ' + r.seconds.toFixed(1) + ' s')
+    }
+    console.log('300 B vynuceným režimem (čas vysílání obou stran):\n' + lines.join('\n'))
+  })
+
+  it('vynucený režim se při potížích nezpomaluje (automatický ano)', () => {
+    const noisy = () => makeChannel({ sigma: 0.8, seed: 5 })
+    const forced = run(bytesOf(200), noisy(), makeChannel(), { mode: 8, maxTurns: 40 })
+    expect(forced.sender.state).toBe('failed')
+    expect(forced.sender.mode.id).toBe(8)
+    const auto = run(bytesOf(200), noisy(), makeChannel())
+    expect(auto.sender.state).toBe('done')
   })
 })

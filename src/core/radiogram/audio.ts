@@ -9,6 +9,8 @@ export interface RadioStatus {
   text: string
   /** režim přenosu, až je znám */
   mode?: string
+  /** režim zvolil člověk (ne automatika) */
+  forced?: boolean
   /** odstup signálu (dB), až je změřen */
   snr?: number
   /** potvrzeno / celkem rámců */
@@ -163,17 +165,20 @@ export async function sendByAudio(
   message: Uint8Array,
   onStatus: (s: RadioStatus) => void,
   signal?: AbortSignal,
+  /** vynucený režim (index do tabulky), jinak automaticky podle handshake */
+  mode?: number,
 ): Promise<boolean> {
   const s = new AudioSession()
   try {
     await s.open()
-    const sender = new RadioSender(message, { fs: s.fs })
+    const sender = new RadioSender(message, { fs: s.fs, mode })
     for (;;) {
       const tx: Tx | undefined = sender.tx()
       if (!tx) break
       onStatus({
         text: tx.label,
         mode: sender.mode.name,
+        forced: mode !== undefined,
         snr: sender.remoteSnr,
         done: sender.confirmed,
         total: sender.frames,
@@ -184,6 +189,7 @@ export async function sendByAudio(
     onStatus({
       text: sender.state === 'done' ? 'Příjemce potvrdil přijetí.' : 'Příjemce neodpovídá, přenos se nezdařil.',
       mode: sender.mode.name,
+      forced: mode !== undefined,
       snr: sender.remoteSnr,
       done: sender.confirmed,
       total: sender.frames,
@@ -221,7 +227,8 @@ export async function receiveByAudio(
       rx.rx(rec)
       const st = (text: string): RadioStatus => ({
         text,
-        mode: rx.mode.name,
+        mode: rx.state === 'idle' ? undefined : rx.mode.name,
+        forced: rx.forced,
         snr: rx.snr,
         done: rx.received,
         total: rx.frames,

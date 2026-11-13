@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
   import { audioSupported, receiveByAudio, type RadioStatus } from '../core/radiogram/audio'
+  import { unpackMessage } from '../core/radiogram/payload'
 
   // Příjem kódu zvukem (experiment „radiogram“). Po dokončení předá text funkci `onresult`.
   let { onresult }: { onresult: (text: string) => void } = $props()
@@ -17,7 +18,7 @@
     running = true
     try {
       const data = await receiveByAudio((s) => (status = s), abort.signal)
-      if (data) onresult(new TextDecoder().decode(data))
+      if (data) onresult(await unpackMessage(data))
     } catch (e) {
       if ((e as Error).name !== 'AbortError')
         error = 'Zvuk se nepodařilo spustit (zkontrolujte povolení mikrofonu; potřebný je https).'
@@ -52,7 +53,7 @@
         {status.done}/{status.total}{/if}
     </p>
     <p class="muted">
-      {#if status.mode}Režim: {status.mode}.{/if}
+      {#if status.mode}Režim: {status.mode} ({status.forced ? 'vybral odesílatel' : 'automaticky'}).{/if}
       {#if status.snr !== undefined}Odstup signálu: {Math.round(status.snr)} dB.{/if}
     </p>
   {/if}

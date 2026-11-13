@@ -10,7 +10,7 @@
 // Odpovědi příjemce jdou vždy nejrobustnějším režimem. Při neúspěšných kolech odesílatel zpomalí na nižší
 // režim; příjemce proto při nezdaru zkouší demodulovat všemi režimy. Jádro nepracuje s hodinami ani zvukovou
 // kartou: hostitel (audio.ts, testy) pouští `tx().audio`, po uplynutí `listen` sekund předá nahrávku do `rx()`.
-import { airtime, demodulate, modulate, SAMPLE_RATE } from './afsk'
+import { SAMPLE_RATE } from './modem'
 import { crc32 } from './crc'
 import {
   CHUNK,
@@ -23,7 +23,7 @@ import {
   Type,
   type Msg,
 } from './frame'
-import { chooseMode, HANDSHAKE_MODE, MODES, modeById, type Mode } from './modes'
+import { AUTO_MODE, chooseMode, HANDSHAKE_MODE, MODES, modeById, slower, type Mode } from './modes'
 
 export interface Tx {
   /** zvuk k přehrání */
@@ -42,12 +42,14 @@ export const BURST = 12
 /** Rezerva na zpoždění zařízení a ticho kolem vysílání (s). */
 const MARGIN = 1.2
 
-const frameAir = (bytes: number, m: Mode) => airtime(bytes, m.afsk)
+const frameAir = (bytes: number, m: Mode) => m.modem.airtime(bytes)
 
 export interface SenderOptions {
   fs?: number
   /** nejrychlejší režim, který smí odesílatel použít */
   maxMode?: number
+  /** vynucený režim (index do tabulky); bez něj se zvolí automaticky podle handshake */
+  mode?: number
   session?: number
   /** kolikrát se opakuje volání, než se vzdá */
   maxCalls?: number
@@ -69,6 +71,7 @@ export class RadioSender {
   private lastCount = 0
   private fs: number
   private maxMode: number
+  private forced?: number
   private opt: Required<Pick<SenderOptions, 'maxCalls' | 'maxStalls'>>
 
   constructor(
@@ -77,6 +80,7 @@ export class RadioSender {
   ) {
     this.fs = o.fs ?? SAMPLE_RATE
     this.maxMode = Math.min(o.maxMode ?? MODES.length - 1, MODES.length - 1)
+    this.forced = o.mode
     this.session = o.session ?? Math.floor(Math.random() * 256)
     this.chunks = splitData(message)
     this.frames = this.chunks.length
@@ -108,16 +112,17 @@ export class RadioSender {
         frames: this.frames,
         crc: crc32(this.message),
         maxMode: this.maxMode,
+        mode: this.forced ?? AUTO_MODE,
       }
       this.calls++
-      const audio = modulate([encodeMsg(call)], HANDSHAKE_MODE.afsk, this.fs)
+      const audio = HANDSHAKE_MODE.modem.modulate([encodeMsg(call)], this.fs)
       return { audio, listen: frameAir(6, HANDSHAKE_MODE) + MARGIN, label: 'Volání' }
     }
     // dávka dalších nepotvrzených rámců
     const todo: number[] = []
     for (let i = 0; i < this.frames && todo.length < BURST; i++) if (!hasBit(this.acked, i)) todo.push(i)
     const msgs = todo.map((seq) => encodeMsg({ type: Type.Data, session: this.session, seq, data: this.chunks[seq] }))
-    const audio = modulate(msgs, this.mode.afsk, this.fs)
+    const audio = this.mode.modem.modulate(msgs, this.fs)
     const ack = frameAir(2 + mapBytes(this.frames), HANDSHAKE_MODE)
     return { audio, listen: ack + MARGIN, label: `Data ${this.confirmed}/${this.frames} (${this.mode.name})` }
   }
@@ -125,12 +130,12 @@ export class RadioSender {
   /** Nahrávka z okna poslechu po posledním `tx()`. */
   rx(samples: Float32Array): void {
     if (this.state === 'call') {
-      const d = demodulate(samples, HANDSHAKE_MODE.afsk, this.fs)
+      const d = HANDSHAKE_MODE.modem.demodulate(samples, this.fs)
       for (const f of d.frames) {
         const m = decodeMsg(f)
         if (m?.type === Type.Ready && m.session === this.session) {
           this.remoteSnr = m.snr
-          this.mode = modeById(Math.min(m.mode, this.maxMode))
+          this.mode = modeById(this.forced ?? Math.min(m.mode, this.maxMode))
           this.state = 'data'
           return
         }
@@ -139,7 +144,7 @@ export class RadioSender {
       return
     }
     if (this.state !== 'data') return
-    const d = demodulate(samples, HANDSHAKE_MODE.afsk, this.fs)
+    const d = HANDSHAKE_MODE.modem.demodulate(samples, this.fs)
     let got = false
     for (const f of d.frames) {
       const m = decodeMsg(f)
@@ -156,7 +161,7 @@ export class RadioSender {
     if (got && n > this.lastCount) this.stalls = 0
     else {
       this.stalls++
-      if (this.stalls % 2 === 0 && this.mode.id > 0) this.mode = modeById(this.mode.id - 1)
+      if (this.stalls % 2 === 0 && this.forced === undefined) this.mode = slower(this.mode)
       if (this.stalls >= this.opt.maxStalls) this.state = 'failed'
     }
     this.lastCount = n
@@ -182,6 +187,8 @@ export class RadioReceiver {
   private size = 0
   private crc = 0
   private maxMode = MODES.length - 1
+  /** odesílatel vynutil režim (neměnit podle kvality kanálu) */
+  forced = false
   private got = new Map<number, Uint8Array>()
   private reply: Msg[] = []
   private replyListen = 0
@@ -209,14 +216,14 @@ export class RadioReceiver {
     const msgs = this.reply.map(encodeMsg)
     const label = this.reply[0].type === Type.Ready ? 'Odpověď: připraven' : `Potvrzení ${this.got.size}/${this.total}`
     this.reply = []
-    const audio = modulate(msgs, HANDSHAKE_MODE.afsk, this.fs)
+    const audio = HANDSHAKE_MODE.modem.modulate(msgs, this.fs)
     return { audio, listen: this.replyListen, label }
   }
 
   /** Nahrávka z okna poslechu. */
   rx(samples: Float32Array): void {
     // volání (nebo opakované volání, když se odpověď ztratila)
-    const call = demodulate(samples, HANDSHAKE_MODE.afsk, this.fs)
+    const call = HANDSHAKE_MODE.modem.demodulate(samples, this.fs)
     for (const f of call.frames) {
       const m = decodeMsg(f)
       if (m?.type !== Type.Call) continue
@@ -231,7 +238,8 @@ export class RadioReceiver {
         this.state = 'receiving'
       }
       this.snr = call.snr === undefined ? 0 : 10 * Math.log10(Math.max(call.snr, 1e-3))
-      this.mode = chooseMode(this.snr, this.maxMode)
+      this.forced = m.mode !== AUTO_MODE
+      this.mode = this.forced ? modeById(m.mode) : chooseMode(this.snr, this.maxMode)
       this.reply = [
         { type: Type.Ready, session: this.session, snr: Math.max(-128, Math.min(127, Math.round(this.snr))), mode: this.mode.id },
       ]
@@ -241,9 +249,9 @@ export class RadioReceiver {
     if (this.state === 'idle') return
     // data: nejdřív v očekávaném režimu, při nezdaru ve všech ostatních
     let any = false
-    const order = [this.mode, ...MODES.filter((m) => m !== this.mode)]
+    const order = this.forced ? [this.mode] : [this.mode, ...MODES.filter((m) => m !== this.mode)]
     for (const m of order) {
-      const d = demodulate(samples, m.afsk, this.fs)
+      const d = m.modem.demodulate(samples, this.fs)
       for (const f of d.frames) {
         const msg = decodeMsg(f)
         if (msg?.type !== Type.Data || msg.session !== this.session || msg.seq >= this.total) continue

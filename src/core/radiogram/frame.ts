@@ -1,6 +1,7 @@
 // Rámce protokolu. Na lince jde rámec jako: předzvuk (střídavé bity) + synchronizační slovo + bajty
 // [délka][obsah][CRC-16]; obsah je zpráva protokolu níže. Vše je nezávislé na modulaci.
 import { crc16 } from './crc'
+import { rsDecode, rsEncode } from './rs'
 
 /** Velikost kusu dat v jednom rámci DATA (bajtů). Malý rámec = kratší, tedy spolehlivější při šumu. */
 export const CHUNK = 48
@@ -21,6 +22,8 @@ export interface Call {
   crc: number
   /** nejrychlejší režim, který odesílatel umí (index do tabulky režimů) */
   maxMode: number
+  /** vynucený režim (index), nebo 255 = automaticky podle handshake */
+  mode: number
 }
 export interface Ready {
   type: typeof Type.Ready
@@ -52,7 +55,7 @@ const r32 = (b: Uint8Array, i: number) => ((b[i] << 24) | (b[i + 1] << 16) | (b[
 export function encodeMsg(m: Msg): Uint8Array {
   switch (m.type) {
     case Type.Call:
-      return Uint8Array.from([m.type, m.session, ...u32(m.size), ...u16(m.frames), ...u32(m.crc), m.maxMode])
+      return Uint8Array.from([m.type, m.session, ...u32(m.size), ...u16(m.frames), ...u32(m.crc), m.maxMode, m.mode])
     case Type.Ready:
       return Uint8Array.from([m.type, m.session, m.snr & 255, m.mode])
     case Type.Data:
@@ -67,8 +70,8 @@ export function decodeMsg(b: Uint8Array): Msg | undefined {
   const session = b[1]
   switch (b[0]) {
     case Type.Call:
-      if (b.length !== 13) return undefined
-      return { type: Type.Call, session, size: r32(b, 2), frames: r16(b, 6), crc: r32(b, 8), maxMode: b[12] }
+      if (b.length !== 14) return undefined
+      return { type: Type.Call, session, size: r32(b, 2), frames: r16(b, 6), crc: r32(b, 8), maxMode: b[12], mode: b[13] }
     case Type.Ready:
       if (b.length !== 4) return undefined
       return { type: Type.Ready, session, snr: (b[2] << 24) >> 24, mode: b[3] }
@@ -81,21 +84,69 @@ export function decodeMsg(b: Uint8Array): Msg | undefined {
   return undefined
 }
 
-/** Bajty rámce na lince: [délka][obsah][CRC-16 z délky a obsahu]. */
-export function wrapPhy(payload: Uint8Array): Uint8Array {
-  if (payload.length > MAX_PAYLOAD) throw new Error('Rámec je příliš dlouhý')
-  const body = Uint8Array.from([payload.length, ...payload])
-  return Uint8Array.from([...body, ...u16(crc16(body))])
+/** Počet bajtů rámce na lince: [délka][~délka][obsah][CRC-16][kontrolní bajty RS]. */
+export const phyBytes = (payloadLen: number, nroots: number) => 2 + payloadLen + 2 + nroots
+
+/** Bajty rámce na lince. Délka je zdvojená (s doplňkem), obsah s CRC-16 je chráněný Reed–Solomonem. */
+export function wrapPhy(payload: Uint8Array, nroots = 0): Uint8Array {
+  if (payload.length + 2 + nroots > 255) throw new Error('Rámec je příliš dlouhý')
+  const body = Uint8Array.from([...payload, ...u16(crc16(payload))])
+  const word = rsEncode(body, nroots)
+  return Uint8Array.from([payload.length, payload.length ^ 0xff, ...word])
 }
 
-/** Zkontroluje CRC a vrátí obsah, jinak undefined. `bytes` může být delší (zbytek se ignoruje). */
-export function unwrapPhy(bytes: Uint8Array): Uint8Array | undefined {
-  if (bytes.length < 3) return undefined
-  const len = bytes[0]
-  if (bytes.length < len + 3) return undefined
-  const body = bytes.subarray(0, len + 1)
-  if (crc16(body) !== r16(bytes, len + 1)) return undefined
-  return bytes.slice(1, len + 1)
+/** Z prvních dvou bajtů rámce na lince zjistí délku obsahu, nebo undefined, když je hlavička poškozená. */
+export function phyLength(b0: number, b1: number): number | undefined {
+  return (b0 ^ b1) === 0xff ? b0 : undefined
+}
+
+export interface Unwrapped {
+  payload: Uint8Array
+  /** kolik bajtů opravil Reed–Solomon */
+  corrected: number
+}
+
+/** Zkontroluje (a opraví) celý rámec na lince; undefined, když je poškozený. */
+export function unwrapPhy(bytes: Uint8Array, nroots = 0): Unwrapped | undefined {
+  if (bytes.length < 2) return undefined
+  const len = phyLength(bytes[0], bytes[1])
+  if (len === undefined || bytes.length < phyBytes(len, nroots)) return undefined
+  const word = bytes.slice(2, phyBytes(len, nroots))
+  const corrected = rsDecode(word, nroots)
+  if (corrected < 0) return undefined
+  const payload = word.subarray(0, len)
+  if (crc16(payload) !== r16(word, len)) return undefined
+  return { payload: payload.slice(), corrected }
+}
+
+/** Skládá rámec z příchozích bitů; sám pozná délku a konec. */
+export class FrameAssembler {
+  private bytes: number[] = []
+  private cur = 0
+  private nbits = 0
+  private need = 0
+  /** hotový rámec (po doručení všech bajtů): obsah, nebo null při poškození */
+  result?: Unwrapped | null
+  constructor(private nroots: number) {}
+
+  get done(): boolean {
+    return this.result !== undefined
+  }
+
+  push(bit: number) {
+    if (this.result !== undefined) return
+    this.cur = (this.cur << 1) | bit
+    if (++this.nbits < 8) return
+    this.bytes.push(this.cur)
+    this.cur = 0
+    this.nbits = 0
+    if (this.bytes.length === 2) {
+      const len = phyLength(this.bytes[0], this.bytes[1])
+      if (len === undefined) this.result = null
+      else this.need = phyBytes(len, this.nroots)
+    }
+    if (this.need && this.bytes.length >= this.need) this.result = unwrapPhy(Uint8Array.from(this.bytes), this.nroots) ?? null
+  }
 }
 
 /** Rozdělí zprávu na kusy po `CHUNK` bajtech. */
