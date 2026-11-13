@@ -10,6 +10,7 @@
   import { buildRevisionBundle, encodeBundle } from '../../core/character/share'
   import { getLog } from '../../core/character/store'
   import QrView from '../../ui/QrView.svelte'
+  import RadioSend from '../../ui/RadioSend.svelte'
 
   // Sdílení revizí postavy (hráč → vypravěč): kód k vložení, soubor nebo systémové sdílení
   // (AirDrop, Quick Share, zprávy). Odeslané revize se označí a příště se posílají jen novější.
@@ -51,6 +52,7 @@
   let copied = $state(false)
   let copyFailed = $state(false)
   let showQr = $state(false)
+  let showRadio = $state(false)
   // zhuštění starší historie jen pro QR (kód, soubor a sdílení zůstávají s celou historií)
   let compactOn = $state(false)
   let maxQr = $state(2)
@@ -150,7 +152,11 @@
       >
       <button onclick={download}>Stáhnout soubor</button>
       {#if canShare}<button onclick={share}>Sdílet…</button>{/if}
+      <button onclick={() => (showRadio = !showRadio)}
+        >{showRadio ? 'Skrýt zvuk' : 'Vysílat zvukem'}</button
+      >
     </p>
+    {#if showRadio}<RadioSend {code} onsent={sent} />{/if}
     {#if showQr}
       {#if canCompact}
         <label class="check">
