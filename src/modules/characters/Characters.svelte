@@ -13,7 +13,7 @@
   } from '../../core/character/model'
   import { easeScar, healScar } from '../../core/character/healing'
   import { settings } from '../../core/settings.svelte'
-  import { effectiveAttributes } from '../../core/character/play'
+  import { type Bonus, emptyBonus, loadBonus, saveBonus } from '../../core/character/play'
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
   import { findAbility, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
@@ -43,6 +43,7 @@
     current = params[0] ? await getLog(params[0]) : undefined
     hasDraft = params[0] ? hasCharacterDraft(params[0]) : false
     reviews = params[0] ? loadReviews(params[0]) : { status: {} }
+    bonus = params[0] ? loadBonus(params[0]) : emptyBonus()
   }
   onMount(load)
   $effect(() => {
@@ -62,15 +63,19 @@
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
     current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
   }
+  let bonus = $state<Bonus>(emptyBonus())
+  const setBonus = (b: Bonus) => {
+    bonus = b
+    if (current) saveBonus(current.id, b)
+  }
   let scarFor = $state<Attribute | undefined>(undefined)
   let scarMsg = $state('')
   async function addScar(next: Character, what: string, gain: number, attr: Attribute) {
     if (!current || !c) return
     current = await appendEvents(current.id, eventsFor(c, next, settings.author, `Jizva (${what})`))
     scarFor = undefined
-    scarMsg = gain
-      ? `Jizva zapsána. Získáváte ${gain} ${gain === 1 ? 'Zdroj' : gain < 5 ? 'Zdroje' : 'Zdrojů'} (${attr}), utraťte ${gain === 1 ? 'ho' : 'je'} v téže akci, jinak propadnou.`
-      : 'Jizva zapsána.'
+    if (gain) setBonus({ ...bonus, [attr]: bonus[attr] + gain })
+    scarMsg = 'Jizva zapsána.'
   }
   async function revert(events: ChangeEvent[]) {
     if (current) current = await appendEvents(current.id, events)
@@ -105,7 +110,13 @@
     <a class="btn" href={'#/postavy/' + current.id + '/postup'}>Vylepšit</a>
     <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
   </p>
-  {#key current.id}<Resources id={current.id} character={c} onscar={(a) => (scarFor = a)} />{/key}
+  {#key current.id}<Resources
+      id={current.id}
+      character={c}
+      {bonus}
+      onbonus={setBonus}
+      onscar={(a) => (scarFor = a)}
+    />{/key}
   {#if scarMsg}<p class="panel" role="status">{scarMsg}</p>{/if}
   {#if scarFor}
     <ScarDialog

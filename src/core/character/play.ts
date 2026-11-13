@@ -49,3 +49,32 @@ export function adjust(
 ): Spent {
   return { ...spent, [a]: Math.min(max[a], Math.max(0, spent[a] + by)) }
 }
+
+/** Dočasné Zdroje ze sebezasazené jizvy (závažnost + 2): platí jen pro jednu akci, nespotřebované propadnou. */
+export type Bonus = Record<Attribute, number>
+export const emptyBonus = (): Bonus => ({ Tělo: 0, Duše: 0, Vliv: 0 })
+const BONUS_KEY = (id: string) => `drd2-char-bonus:${id}`
+
+export function loadBonus(id: string): Bonus {
+  const out = emptyBonus()
+  try {
+    const raw = JSON.parse(localStorage.getItem(BONUS_KEY(id)) ?? '{}')
+    for (const a of ATTRIBUTES) {
+      const n = raw?.[a]
+      if (typeof n === 'number' && Number.isInteger(n) && n > 0 && n <= 99) out[a] = n
+    }
+  } catch {
+    /* žádné dočasné Zdroje */
+  }
+  return out
+}
+
+export function saveBonus(id: string, bonus: Bonus) {
+  try {
+    if (ATTRIBUTES.some((a) => bonus[a] > 0))
+      localStorage.setItem(BONUS_KEY(id), JSON.stringify(bonus))
+    else localStorage.removeItem(BONUS_KEY(id))
+  } catch {
+    /* dočasné Zdroje platí aspoň do zavření stránky */
+  }
+}

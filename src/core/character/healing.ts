@@ -38,7 +38,10 @@ export function inflictScar(
   if (self && severity > effectiveAttributes(c)[scar.attribute])
     return { error: `Zdatnost (${scar.attribute}) by klesla pod 0.` }
   return {
-    character: { ...c, scars: [...c.scars, { id, attribute: scar.attribute, severity, note: scar.note.trim() }] },
+    character: {
+      ...c,
+      scars: [...c.scars, { id, attribute: scar.attribute, severity, note: scar.note.trim() }],
+    },
     gain: self ? severity + 2 : 0,
   }
 }

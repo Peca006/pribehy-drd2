@@ -4,8 +4,10 @@
   import {
     adjust,
     effectiveAttributes,
+    emptyBonus,
     loadSpent,
     saveSpent,
+    type Bonus,
     type Spent,
   } from '../../core/character/play'
 
@@ -13,8 +15,16 @@
   let {
     id,
     character,
+    bonus,
+    onbonus,
     onscar,
-  }: { id: string; character: Character; onscar: (a: Attribute) => void } = $props()
+  }: {
+    id: string
+    character: Character
+    bonus: Bonus
+    onbonus: (b: Bonus) => void
+    onscar: (a: Attribute) => void
+  } = $props()
 
   const max = $derived(effectiveAttributes(character))
   // komponenta se pro každou postavu vytváří znovu (`{#key}` u volající stránky)
@@ -22,17 +32,20 @@
   let spent = $state<Spent>(loadSpent(id))
   // počet sloupců políček podle nejvyššího zdroje (po třech nad sebou), aby řádky i tlačítko Obnovit lícovaly
   const cols = $derived(
-    Math.max(1, ...ATTRIBUTES.map((a) => Math.ceil(character.attributes[a] / 3))),
+    Math.max(1, ...ATTRIBUTES.map((a) => Math.ceil((character.attributes[a] + bonus[a]) / 3))),
   )
   const left = (a: (typeof ATTRIBUTES)[number]) => Math.max(0, max[a] - spent[a])
 
   function change(a: (typeof ATTRIBUTES)[number], by: number) {
+    // dočasné Zdroje z jizvy se čerpají jako první
+    if (by > 0 && bonus[a] > 0) return onbonus({ ...bonus, [a]: bonus[a] - 1 })
     spent = adjust(spent, max, a, by)
     saveSpent(id, spent)
   }
   function rest() {
     spent = { Tělo: 0, Duše: 0, Vliv: 0 }
     saveSpent(id, spent)
+    onbonus(emptyBonus())
   }
 </script>
 
@@ -46,14 +59,18 @@
       {@const blocked = character.attributes[a] - max[a]}
       <div class="row">
         <span class="name">{a}</span>
-        <button onclick={() => change(a, 1)} disabled={left(a) === 0} aria-label={`Čerpat ${a}`}
-          >−</button
+        <button
+          onclick={() => change(a, 1)}
+          disabled={left(a) + bonus[a] === 0}
+          aria-label={`Čerpat ${a}`}>−</button
         >
         <button
           class="plain count"
           onclick={() => onscar(a)}
           aria-label={`${a}: ${left(a)} z ${max[a]}. Zasadit jizvu`}
-          >{left(a)}<span class="muted"> / {max[a]}</span></button
+          >{left(a)}<span class="muted"> / {max[a]}</span>{#if bonus[a]}<span class="bonus">
+              +{bonus[a]}</span
+            >{/if}</button
         >
         <button onclick={() => change(a, -1)} disabled={spent[a] === 0} aria-label={`Obnovit ${a}`}
           >+</button
@@ -61,10 +78,17 @@
         <button class="plain boxes" onclick={() => onscar(a)} aria-label={`Zasadit jizvu (${a})`}>
           {#each { length: max[a] } as _, i}<span class:used={i >= left(a)}></span>{/each}
           {#each { length: blocked } as _}<span class="blocked"></span>{/each}
+          {#each { length: bonus[a] } as _}<span class="bonusbox"></span>{/each}
         </button>
       </div>
     {/each}
   </div>
+  {#if ATTRIBUTES.some((a) => bonus[a] > 0)}
+    <p class="bonusnote" role="status">
+      Zdroje z jizvy propadnou, pokud je neutratíte v téže akci.
+      <button onclick={() => onbonus(emptyBonus())}>Zahodit</button>
+    </p>
+  {/if}
   {#if character.scars.length}
     <p class="muted">
       Zkřížená políčka jsou zablokovaná jizvami. Klepnutím na hodnotu nebo políčka zasadíte jizvu.
@@ -122,6 +146,16 @@
     height: 0.8rem;
     border: 1px solid var(--drd-accent);
     background: var(--drd-accent);
+  }
+  .bonus {
+    color: var(--drd-accent);
+  }
+  .bonusnote {
+    color: var(--drd-accent);
+  }
+  .boxes span.bonusbox {
+    background: transparent;
+    border: 2px dashed var(--drd-accent);
   }
   .boxes span.used {
     background: transparent;

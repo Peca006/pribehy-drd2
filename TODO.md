@@ -1,5 +1,98 @@
 # Nápady a dolaďování
 
+## Otevřené úkoly (stav k 13. 11. 2026)
+
+**Nasazeno (main = develop):** pět záložek, dialog Jizva ze Zdrojů, dočasné Zdroje z jizvy (čárkovaná políčka, „Zahodit“),
+výběr rasy klepnutím, kratší tlačítka a výrazné šipky.
+
+**Větve rozpracované paralelně (po dokončení je sloučí hlavní session; vše se pushuje na origin):**
+
+- `radiogram`: zvukový přenos (krátký handshake, podle kvality kanálu volba AFSK / PSK / QAM / OFDM, rámce s CRC, ACK).
+  Nesměřuje do `develop`/`main`, stav a nedodělky ve větvi v `RADIOGRAM.md`.
+- `vybava-bez-balicku`: po zvolení sady (Obyčejná / Ceněná / Drahá) naskočí holý výčet položek do políčka Výbava, jen když je
+  prázdné nebo obsahuje předchozí vloženou sadu; ručně napsané se nepřepisuje; ceník jako odkaz do SRD. Po kontrole do main.
+- `generator-jmen`: triviální generátor jmen z příkladů jmen ras v balíčku (bez balíčku nic nenabízí). Po kontrole do main.
+
+**Přenosy (pořadí):** ruční slučování konfliktů při importu revizí postavy → Wi-Fi / WebRTC → QR na celou obrazovku a tisk
+(hlavně počítač) → NFC (čtení a zápis tagů, jen Chrome na Androidu; úplně nakonec).
+
+**Postava:** Suroviny (viz níže), Povolání z Her mocných a mistrovská povolání (čeká na odpověď z Altaru), dovednosti bez balíčku
+jako odkaz do SRD (po odpovědi o textech pravidel).
+
+**Čeká na jiné:** Altar (texty pravidel), d20.cz (CORS pro SRD).
+
+**K ověření na telefonu:** share target, cyklus aktualizace PWA, QR díl 500 znaků na A52s, převodník SRD v Chromu, nové Zdroje a
+dialog Jizva na skutečném displeji.
+
+**Další milník: Výpravy.** Sekce pro vypravěče s podklady pro tažení, výpravy a dobrodružství (aplikace je pro uživatele, který
+je Průvodcem i hráčem: spravuje postavy jako hráč a družiny jako vypravěč). Dořešit obsah a vazbu na družiny a žurnál.
+
+### Suroviny (vysvětlení a návrh)
+
+Podle pravidel (Používání dovedností: Výroba, Opravy, Suroviny, Kořist) jsou **Suroviny** druhá „měna“ vedle Peněz: vzácnější
+materiál pro výrobu a opravy (oleje, byliny, kouzelné přísady, čepy, hřebíky, proužky kůže), který nejde sehnat kdekoliv. Hráč
+si v deníku vede jen **celkový počet** Surovin, při použití škrtne tolik, kolik výroba nebo oprava stojí; mezi výpravami se
+Suroviny používají spolu s Penězi. Oprava a léčení Jizev na Poutu stojí 5 Zdrojů za stupeň závažnosti, placených Surovinami;
+řemeslník bere Peníze. Kořist (včetně surovin) se nachází nebo získává zpracováním bytostí. Volitelně „příběhová podoba“:
+seznam drobností s cenou v groších.
+Návrh pro aplikaci: počítadlo Surovin u postavy (vedle hotovosti, v deníku revizí), tlačítka ±, odečtení při výrobě nebo opravě;
+až později pomůcka k výrobě a opravám (cena podle pravidel) a volitelný seznam drobností.
+
+### Rozdíl: slučování konfliktů, „změněno Průvodcem“ a „slučování zápisů“
+
+- **Ruční slučování konfliktů při importu revizí (přenosy, postavy)**: postava má strukturovaný deník revizí; když se dvě
+  větve historie změní na týchž polích (např. hráč i vypravěč upravili zdatnost), import dnes konflikt jen ohlásí. Zbývá
+  nabídnout u každého konfliktního pole volbu „moje / jejich“ a sloučit zbytek. Je to jediné skutečné slučování, které
+  zůstává.
+- **Slučování souběžných úprav jednoho zápisu (družina)**: prakticky odpadá. Schválené zápisy mění jen Průvodce (hráči jen
+  navrhují nové), takže dva lidé jeden zápis souběžně neupraví. Z TODO se vyřazuje.
+- **Upozornění „Průvodce změnil zápis“**: jen informace, žádné slučování: když přijde nová kopie družiny, zápisy, které se
+  proti hráčově kopii změnily, dostanou značku. Malá úprava, nezávislá na slučování.
+
+### Zdroje ze sebezasazené jizvy (hotovo)
+
+Zdroje (závažnost + 2) se po zasazení ukážou u příslušné vlastnosti jako čárkovaná políčka a „+N“; čerpají se jako první;
+„Zahodit“ nebo „Obnovit“ je zruší (nespotřebované propadají, kolo aplikace nesleduje). Uloženo jen v zařízení (`play.ts`).
+
+## Plán: hody a řešení střetů, výzev a zkoušek (podle SRD)
+
+Pravidla (kap. Základní pravidla, Složitější situace, Používání dovedností): hod = 2k6 + úroveň povolání použité dovednosti
+(bez povolání 0, při více povoláních v jedné akci nejnižší úroveň, bytosti charakteristika); úspěch ve zkoušce a výzvě při hodu
+9 a více, ve střetu vyšší hod (shoda: aktér, pak vyšší kostka, pak vyšší součet, pak los). Neúspěch lze zmírnit **vyčerpáním**
+(škrtnout Zdroje podle Ohrožení, nejméně 1, Ohrožení se zvýší o 1) nebo přijmout. Zkouška (proti prostředí nebo nebránícímu se
+protivníkovi), výzva (akce prostředí, následná akce, nástraha; vyčerpání jen zmírňuje) a střet (protiakce aktér × protiaktér;
+vyčerpání změní plný úspěch vítěze v částečný). Následky: Ohrožení ±1, Jizva (závažnost 1, víc manévrem), Výhoda. Manévry:
+obrana, rozsáhle, přesně, mocně, lstivě (platí se při použití, nesčítají se). Konflikt: iniciativa, kola, vyřazení, hrdinská smrt.
+
+Postup v krocích (každý krok použitelný sám; pomůcky nahrazují papír a kostky, nerozhodují za hráče):
+
+1. **Hod**: tlačítko Hodit (2k6) i ruční zadání fyzických kostek; k hodu se přičte úroveň povolání zvolené z postavy (výběr
+   povolání nebo dovednosti, pravidlo nejnižší úrovně při více povoláních, 0 bez povolání); ukáže součet a „9 a více“.
+   Bez postavy jen úroveň zadaná ručně (pro Průvodce a bytosti).
+2. **Ohrožení**: počítadlo u postavy nebo účastníka (jen ve hře, ne v deníku revizí), úprava ±1, připomenutí „vyčerpání
+   vždy aspoň 1 Zdroj a Ohrožení +1“.
+3. **Zkouška (průvodce krokem)**: záměr a hrozící neúspěch (poznámka), hod, výsledek; při neúspěchu volba vyčerpat nebo přijmout:
+   vyčerpání škrtne Zdroje (napojení na `Resources`) podle Ohrožení a zvýší Ohrožení; při úspěchu volitelné následky
+   (Ohrožení −1, Výhoda, Jizva).
+4. **Výzva**: totéž s rozdíly (bez reakce nastane následek hned; úspěch jen odvrátí nebezpečí; vyčerpání jen zmírní).
+5. **Střet dvou účastníků**: aktér a protiaktér, dva hody, vítěz podle pravidel o shodě, poražený popisuje vyčerpání
+   (částečný úspěch vítěze); kontrola tří podmínek protiakce jako nápověda.
+6. **Následky a Výhody**: evidence Výhod a Ohrožení, Jizva z rozhodnutí hráče nebo jako následek (dialog Jizva už je);
+   Jizvy z nepřátelské akce rovnou jako revize deníku.
+7. **Manévry**: seznam (obrana, rozsáhle, přesně, mocně, lstivě) s cenou, platba až při použití, kontrola „nesčítají se“,
+   vliv na Zdroje; popisy jen z balíčku pravidel (bez balíčku název a odkaz do SRD).
+8. **Konflikt (pomůcka vypravěče)**: účastníci (postavy z družiny, bytosti z Bestiáře), iniciativa (podle příběhu nebo hodem
+   bez dovednosti, přístupy, odložení), pořadí a počítadlo kol, Ohrožení a Zdroje účastníků, vyřazení a opuštění boje;
+   uloženo u družiny nebo sezení, shrnutí se zapíše do žurnálu.
+9. **Bytosti v konfliktu**: Sudba a hranice bytostí (charakteristika jako úroveň, Jizvy bytostí jen jako náročnost a součet
+   proti hranici), tlačítka přímo v kartě bytosti z Bestiáře.
+10. **Složitější situace**: zkouška více postav nebo cílů, spolupráce, přípravné akce, ukrývání a odhalování, následné akce
+    a akce prostředí, hrstka a houf; nejdřív jen nápověda s odkazem do příručky, potom pomůcky.
+11. **Navazující pomůcky**: výroba a opravy (Suroviny), léčení Jizev, kouzla a nástrahy (cena Zdrojů), kořist a trofeje.
+
+Pořadí realizace: 1, 2, 3, 4, 6, 5, 7, 8, 9, ostatní podle potřeby. Rozhodnout předem: zda hody žijí jen ve hře (zařízení),
+nebo se zapisují do žurnálu; jak vypadá pomůcka u stolu (jedna obrazovka „Hra“ s postavou, Ohrožením a hodem).
+
 ## Rejstřík pojmů: počet odkazů (hotovo)
 
 Odkazy z pojmů (`***pojem***`) se omezují při zobrazení (`src/core/termLinks.ts`, značka `NO_LINK` v `parseInline`),
@@ -78,8 +171,7 @@ pravidel tvorby; aplikace s ním funguje bez balíčků a nainstalovaný balíč
 `src/core/character/check.ts` kontroluje postavu (neznámá ID, počet schopností na úrovni, rasové schopnosti,
 kultura, rozsah úrovně, duplicity, hotovost); varuje, ale neblokuje. Zobrazuje se na detailu postavy a
 v editoru. Možné rozšíření: kontrola stavu po každé příchozí revizi při schvalování vypravěčem.
-Zbývá: hotové sady výbavy a ceník bez balíčku (nyní se výbava píše ručně), hláška „Popis je v balíčku“
-u položek bez textu.
+Výbava bez balíčku: viz větev `vybava-bez-balicku` nahoře.
 
 ## Sdílení revizí (první verze hotovo)
 
@@ -91,7 +183,7 @@ hráči (přijato / zamítnuto + poznámka). Hráč odpověď naimportuje: reviz
 zamítnuto) a zamítnuté změny lze jedním tlačítkem vrátit. Jádro: `core/character/share.ts` (balíček, očištění,
 analýza), `reviews.ts` (stav revizí). Přijaté revize se do deníku vypravěče přidají beze změny ID.
 
-Zbývá: Web NFC, Wi-Fi/WebRTC, `file_handlers` (jen počítač), ruční slučování konfliktů. (Kontrola každé příchozí revize v importu je hotová.) (QR, zhuštění historie a `share_target` jsou hotové.)
+Zbývá: ruční slučování konfliktů, Wi-Fi/WebRTC, `file_handlers` (jen počítač), nakonec NFC. (Kontrola každé příchozí revize v importu je hotová.) (QR, zhuštění historie a `share_target` jsou hotové.)
 
 ## QR a kontrola při importu (hotovo)
 
@@ -190,7 +282,7 @@ ji uloží jako **kopii** (role `hrac`). Hráč navrhuje zápisy, které Průvod
 vždy místní. Přenos jako u postav: kód, soubor, QR (s odkazem do aplikace), Web Share. Ověřeno celým cyklem
 Průvodce → hráč → návrhy → schválení / zamítnutí → hráč.
 
-Zbývá: oddělené role více Průvodců, sdílení členů s postavami (ID postav z jiných zařízení), slučování souběžných úprav jednoho zápisu, upozornění „Průvodce změnil zápis“, přehled družiny je hotový (zdatnost po jizvách, povolání, jizvy, XP v `PartyView`).
+Zbývá: sdílení členů s postavami (ID postav z jiných zařízení) a značka „změněno Průvodcem“ u zápisů. Více Průvodců se nedělá (uživatel je Průvodcem i hráčem). Přehled družiny je hotový.
 
 ### QR bez obrázků (hotovo)
 
@@ -214,8 +306,6 @@ nebo v celých násobcích s posouváním viditelné oblasti, a klasický plovou
 
 ## Nápady z procházení stránek
 
-- **Generátor jmen** v tvorbě postavy: triviální (seznamy slabik/jmen podle rasy), zachovat ráz jmen z příkladů v pravidlech;
-  příklady jsou v balíčku pravidel (`names` u ras), takže generátor může skládat z nich a bez balíčku nic nenabízet.
+- Generátor jmen: viz větev `generator-jmen` nahoře.
 - **Dovednosti bez balíčku jako odkaz do SRD** na konkrétní dovednost (v kostře je `srd` jen u povolání a schopností); dát
   až po odpovědi na dotaz o textech pravidel a nepřeplácat stránku odkazy.
-- Jizvy z Zdrojů: Zdroje získané ze sebezasazené jizvy (závažnost + 2) se zatím jen oznámí, neevidují se.

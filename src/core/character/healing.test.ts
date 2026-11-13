@@ -30,7 +30,9 @@ describe('zasazení jizvy', () => {
     expect(r.character.scars).toEqual([{ id: 'n', attribute: 'Tělo', severity: 2, note: 'kotník' }])
   })
   it('sám si hráč nesníží zdatnost pod 0, jizva jako následek akce ano', () => {
-    expect('error' in inflictScar(base, { attribute: 'Duše', severity: 2, note: '' }, true, 'n')).toBe(true)
+    expect(
+      'error' in inflictScar(base, { attribute: 'Duše', severity: 2, note: '' }, true, 'n'),
+    ).toBe(true)
     const r = inflictScar(base, { attribute: 'Duše', severity: 2, note: '' }, false, 'n')
     expect('error' in r).toBe(false)
     if (!('error' in r)) expect(r.gain).toBe(0)
