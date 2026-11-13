@@ -85,6 +85,13 @@
     {race?.name ?? ''}{culture ? ` (${culture.name})` : ''}{c.concept ? ' · ' + c.concept : ''}
   </p>
 
+  <p class="actions">
+    <a class="btn primary" href={'#/postavy/' + current.id + '/uprav'}
+      >{hasDraft ? 'Pokračovat v úpravě (rozpracováno)' : 'Upravit postavu'}</a
+    >
+    <a class="btn" href={'#/postavy/' + current.id + '/postup'}>Postup (zlepšení)</a>
+    <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
+  </p>
   <section class="panel attrs">
     {#each ATTRIBUTES as k}
       <div>
@@ -119,7 +126,6 @@
       Hojení se zapíše do deníku jako revize.
     </p>
   {/if}
-  <p class="muted">Body zkušeností: {c.xp} (12 = jedno zlepšení)</p>
 
   <h2>Povolání</h2>
   <ul>
@@ -127,6 +133,7 @@
       <li>{professions().find((p) => p.id === id)?.name ?? id}: úroveň {lvl}</li>
     {/each}
   </ul>
+  <p class="muted">Body zkušeností: {c.xp} (12 = jedno zlepšení)</p>
 
   <h2>Zvláštní schopnosti</h2>
   {#each c.abilities as id}
@@ -158,13 +165,6 @@
   {#if c.notes}<h2>Poznámky</h2>
     <p class="notes">{c.notes}</p>{/if}
 
-  <p class="actions">
-    <a class="btn primary" href={'#/postavy/' + current.id + '/uprav'}
-      >{hasDraft ? 'Pokračovat v úpravě (rozpracováno)' : 'Upravit postavu'}</a
-    >
-    <a class="btn" href={'#/postavy/' + current.id + '/postup'}>Postup (zlepšení)</a>
-    <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
-  </p>
   {#if reviews.note}<p class="panel">Vypravěč: „{reviews.note}“</p>{/if}
 
   <CheckList character={c} />
