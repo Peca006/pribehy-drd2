@@ -91,7 +91,7 @@ Postup v krocích (každý krok použitelný sám; pomůcky nahrazují papír a 
 11. **Navazující pomůcky**: výroba a opravy (Suroviny), léčení Jizev, kouzla a nástrahy (cena Zdrojů), kořist a trofeje.
 
 **Hotovo:** kroky 1 až 3 (zkouška s vyčerpáním: volba vlastnosti, cena = Ohrožení nejméně 1, zvýšení Ohrožení, nabídka zjizvení při nedostatku Zdrojů; stav čerpání se sdílí mezi panely Zdroje a Hod; panel Hod na detailu postavy: výběr povolání, 2k6 hozené nebo zadané z fyzických kostek, hod a
-úspěch od 9, počítadlo Ohrožení; `core/character/roll.ts`, `play.ts`). Hotové jsou i krok 4 (výzva) a krok 6 (Výhoda jako „žolíkový“ Zdroj, platí se první; Ohrožení +1 při přijetí neúspěchu; konec konfliktu zruší Ohrožení i Výhodu). Zatím chybí následky úspěchu kromě Ohrožení −1 (Výhody jsou krok 6) a zápis do žurnálu.
+úspěch od 9, počítadlo Ohrožení; `core/character/roll.ts`, `play.ts`). Hotový je i krok 5 (střet dvou účastníků: aktér / protiaktér, rozhodování shody, vyčerpání poraženého), krok 4 (výzva) a krok 6 (Výhoda jako „žolíkový“ Zdroj, platí se první; Ohrožení +1 při přijetí neúspěchu; konec konfliktu zruší Ohrožení i Výhodu). Zatím chybí následky úspěchu kromě Ohrožení −1 (Výhody jsou krok 6) a zápis do žurnálu.
 
 Pořadí realizace: 1, 2, 3, 4, 6, 5, 7, 8, 9, ostatní podle potřeby. Rozhodnout předem: zda hody žijí jen ve hře (zařízení),
 nebo se zapisují do žurnálu; jak vypadá pomůcka u stolu (jedna obrazovka „Hra“ s postavou, Ohrožením a hodem).

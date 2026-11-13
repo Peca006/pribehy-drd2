@@ -10,7 +10,15 @@
     type Bonus,
     type Spent,
   } from '../../core/character/play'
-  import { evaluateRoll, levelOf, rollDice, SUCCESS_AT, type Dice } from '../../core/character/roll'
+  import {
+    clash,
+    evaluateRoll,
+    levelOf,
+    rollDice,
+    SUCCESS_AT,
+    type Dice,
+    type Side,
+  } from '../../core/character/roll'
   import { professions } from '../../core/library.svelte'
 
   // Vyhodnocení akce: zkouška nebo výzva. Hod (2k6 + úroveň povolání), vyčerpání, následky, Ohrožení a Výhody.
@@ -36,7 +44,7 @@
     onscar: (a: Attribute) => void
   } = $props()
 
-  type Kind = 'zkouska' | 'vyzva'
+  type Kind = 'zkouska' | 'vyzva' | 'stret'
   type Outcome = 'vycerpano' | 'prijato' | 'bezreakce' | undefined
 
   // komponenta se pro každou postavu vytváří znovu (`{#key}` u volající stránky)
@@ -49,6 +57,11 @@
   let payAttr = $state<Attribute>('Tělo')
   let outcome = $state<Outcome>(undefined)
   let paid = $state(0)
+  // střet: soupeř (úroveň a kostky), kdo byl aktér, výsledek losu při úplné shodě
+  let oppLevel = $state(0)
+  let oppDice = $state<Dice>([0, 0])
+  let actor = $state<'me' | 'opp' | 'unclear'>('me')
+  let losWin = $state<'me' | 'opp' | undefined>(undefined)
 
   const owned = $derived(
     Object.entries(character.professions)
@@ -62,6 +75,33 @@
   const level = $derived(levelOf(character, used))
   const rolled = $derived(dice[0] > 0 && dice[1] > 0)
   const result = $derived(rolled ? evaluateRoll(dice, level) : undefined)
+  const oppRolled = $derived(oppDice[0] > 0 && oppDice[1] > 0)
+  const opp = $derived(oppRolled ? evaluateRoll(oppDice, oppLevel) : undefined)
+  const clashRes = $derived(
+    result && opp
+      ? clash(
+          { dice, total: result.total },
+          { dice: oppDice, total: opp.total },
+          actor === 'me' ? ('a' as Side) : actor === 'opp' ? ('b' as Side) : undefined,
+        )
+      : undefined,
+  )
+  /** vyhodnocení je rozhodnuto (u střetu i po losu) */
+  const done = $derived(
+    kind === 'stret' ? !!clashRes && (clashRes.winner !== 'los' || !!losWin) : !!result,
+  )
+  const won = $derived(
+    kind === 'stret'
+      ? clashRes?.winner === 'a' || (clashRes?.winner === 'los' && losWin === 'me')
+      : !!result?.success,
+  )
+  const REASONS: Record<string, string> = {
+    hod: 'vyšší hod',
+    aktér: 'při shodě vítězí aktér',
+    kostka: 'při shodě vyšší kostka',
+    součet: 'při shodě vyšší součet kostek',
+    los: 'úplná shoda, rozhodne los',
+  }
   const maxes = $derived(effectiveAttributes(character))
   // vyčerpání stojí tolik Zdrojů, kolik je Ohrožení (nejméně 1), a Ohrožení se tím zvýší o 1
   const cost = $derived(Math.max(1, threat))
@@ -69,13 +109,20 @@
 
   const toggle = (pid: string) =>
     (used = used.includes(pid) ? used.filter((x) => x !== pid) : [...used, pid])
-  const reset = () => (outcome = undefined)
+  const reset = () => {
+    outcome = undefined
+    losWin = undefined
+  }
   function setDie(i: 0 | 1, v: number) {
     dice = i === 0 ? [v, dice[1]] : [dice[0], v]
     reset()
   }
   function roll() {
     dice = rollDice()
+    reset()
+  }
+  function rollOpp() {
+    oppDice = rollDice()
     reset()
   }
   function setKind(k: Kind) {
@@ -109,11 +156,14 @@
   <div class="chips" role="group" aria-label="Druh vyhodnocení">
     <button class:primary={kind === 'zkouska'} onclick={() => setKind('zkouska')}>Zkouška</button>
     <button class:primary={kind === 'vyzva'} onclick={() => setKind('vyzva')}>Výzva</button>
+    <button class:primary={kind === 'stret'} onclick={() => setKind('stret')}>Střet</button>
   </div>
   <p class="muted">
     {kind === 'zkouska'
       ? 'Proti prostředí nebo protivníkovi, který se nebrání.'
-      : 'Akce prostředí, následná akce nebo nástraha. Postava reaguje protiakcí.'}
+      : kind === 'vyzva'
+        ? 'Akce prostředí, následná akce nebo nástraha. Postava reaguje protiakcí.'
+        : 'Soupeř se akci brání protiakcí. Vyšší hod vítězí.'}
   </p>
   <input
     type="text"
@@ -160,12 +210,62 @@
       <span>+ {level} =</span>
       <strong
         class="total"
-        class:ok={result?.success || outcome === 'vycerpano'}
-        class:bad={result && !result.success && outcome !== 'vycerpano'}
+        class:ok={won || outcome === 'vycerpano'}
+        class:bad={result && done && !won && outcome !== 'vycerpano'}
       >
         {result ? result.total : '–'}
       </strong>
     </div>
+    {#if kind === 'stret'}
+      <div class="opp">
+        <strong>Soupeř</strong>
+        <div class="dice">
+          {#each [0, 1] as i}
+            <select
+              value={oppDice[i as 0 | 1]}
+              onchange={(e) => {
+                const v = Number(e.currentTarget.value)
+                oppDice = i === 0 ? [v, oppDice[1]] : [oppDice[0], v]
+                reset()
+              }}
+              aria-label={`Kostka soupeře ${i + 1}`}
+            >
+              <option value={0}>?</option>
+              {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
+            </select>
+            {#if i === 0}<span>+</span>{/if}
+          {/each}
+          <span>+ {oppLevel} =</span>
+          <strong class="total">{opp ? opp.total : '–'}</strong>
+        </div>
+        <div class="threat">
+          <span>Úroveň soupeře</span>
+          <button
+            onclick={() => ((oppLevel = Math.max(0, oppLevel - 1)), reset())}
+            aria-label="Snížit úroveň soupeře">−</button
+          >
+          <strong class="count">{oppLevel}</strong>
+          <button
+            onclick={() => ((oppLevel = oppLevel + 1), reset())}
+            aria-label="Zvýšit úroveň soupeře">+</button
+          >
+        </div>
+        <p class="actions">
+          <button onclick={rollOpp}>Hodit za soupeře</button>
+        </p>
+        <div class="chips" role="group" aria-label="Aktér">
+          <button class:primary={actor === 'me'} onclick={() => ((actor = 'me'), reset())}
+            >Aktér jsem já</button
+          >
+          <button class:primary={actor === 'opp'} onclick={() => ((actor = 'opp'), reset())}
+            >Aktér je soupeř</button
+          >
+          <button class:primary={actor === 'unclear'} onclick={() => ((actor = 'unclear'), reset())}
+            >Nejasné</button
+          >
+        </div>
+      </div>
+    {/if}
     {#if kind === 'vyzva' && !rolled}
       <p class="actions">
         <button onclick={() => (outcome = 'bezreakce')}>Nereaguji</button>
@@ -173,10 +273,22 @@
     {/if}
   {/if}
 
-  {#if result && outcome !== 'bezreakce'}
-    {#if result.success}
-      <p role="status" class="ok">Úspěch ({SUCCESS_AT} a více).</p>
-      {#if kind === 'zkouska'}
+  {#if kind === 'stret' && clashRes?.winner === 'los' && !losWin && outcome !== 'bezreakce'}
+    <p role="status">Úplná shoda. Rozhodněte losem:</p>
+    <p class="actions">
+      <button onclick={() => (losWin = 'me')}>Los vyhrál/a jsem</button>
+      <button onclick={() => (losWin = 'opp')}>Los vyhrál soupeř</button>
+    </p>
+  {/if}
+  {#if done && outcome !== 'bezreakce'}
+    {#if kind === 'stret' && clashRes}
+      <p class="muted">{REASONS[clashRes.reason]}.</p>
+    {/if}
+    {#if won}
+      <p role="status" class="ok">
+        {kind === 'stret' ? 'Vyhráli jste střet.' : `Úspěch (${SUCCESS_AT} a více).`}
+      </p>
+      {#if kind === 'zkouska' || kind === 'stret'}
         <p class="muted">Následky úspěchu, které jste ohlásili:</p>
         <p class="actions">
           <button onclick={() => setThreat(threat - 1)} disabled={threat === 0}>Ohrožení −1</button>
@@ -191,7 +303,9 @@
       <p role="status" class="ok">
         {kind === 'zkouska'
           ? `Úspěch vyčerpáním: škrtli jste ${paid} ${payAttr}, Ohrožení je ${threat}. Popište úsilí či újmu a nové potíže.`
-          : `Neúspěch zmírněn: škrtli jste ${paid} ${payAttr}, Ohrožení je ${threat}. Místo vážných následků popište jen komplikaci.`}
+          : kind === 'stret'
+            ? `Vyčerpali jste se (${paid} ${payAttr}, Ohrožení je ${threat}): soupeřův úspěch je jen částečný. Popište vlastní komplikaci, kterou jste si přinesli.`
+            : `Neúspěch zmírněn: škrtli jste ${paid} ${payAttr}, Ohrožení je ${threat}. Místo vážných následků popište jen komplikaci.`}
       </p>
     {:else if outcome === 'prijato'}
       <p role="status" class="bad">
@@ -204,7 +318,11 @@
         <button onclick={() => onscar(payAttr)}>Jizva…</button>
       </p>
     {:else}
-      <p role="status" class="bad">Hrozí neúspěch. Vyčerpáním ho zmírníte, nebo ho přijmete.</p>
+      <p role="status" class="bad">
+        {kind === 'stret'
+          ? 'Soupeř zvítězil. Vyčerpáním změníte jeho plný úspěch v částečný, nebo následek přijmete.'
+          : 'Hrozí neúspěch. Vyčerpáním ho zmírníte, nebo ho přijmete.'}
+      </p>
       <div class="chips" role="group" aria-label="Zdroje k vyčerpání">
         {#each ATTRIBUTES as a}
           <button class:primary={payAttr === a} onclick={() => (payAttr = a)}>{a}</button>
@@ -281,6 +399,11 @@
     width: 3.6rem;
     min-width: 3.6rem;
     text-align: center;
+  }
+  .opp {
+    border-top: 1px solid var(--drd-muted);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
   }
   .total {
     font-size: 1.6rem;

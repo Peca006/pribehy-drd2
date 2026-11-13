@@ -33,6 +33,31 @@ export function evaluateRoll(dice: Dice, level: number): RollResult {
   return { sum, total, success: total >= SUCCESS_AT }
 }
 
-/** Výsledek střetu dvou účastníků: kdo má vyšší hod; shoda se řeší dál (aktér, vyšší kostka, součet, los). */
-export const compareRolls = (a: number, b: number): 'a' | 'b' | 'remiza' =>
-  a > b ? 'a' : b > a ? 'b' : 'remiza'
+export type Side = 'a' | 'b'
+
+export interface ClashResult {
+  /** vítěz, nebo `los`, když nerozhodla žádná shoda */
+  winner: Side | 'los'
+  /** čím se rozhodlo */
+  reason: 'hod' | 'aktér' | 'kostka' | 'součet' | 'los'
+}
+
+/**
+ * Střet dvou účastníků: vyšší hod vítězí. Při shodě vítězí aktér (ten, kdo hlásil akci první). Není-li zřejmé, kdo jím byl,
+ * rozhoduje vyšší hodnota na jedné z kostek, pak vyšší součet kostek a nakonec los.
+ */
+export function clash(
+  a: { dice: Dice; total: number },
+  b: { dice: Dice; total: number },
+  actor?: Side,
+): ClashResult {
+  if (a.total !== b.total) return { winner: a.total > b.total ? 'a' : 'b', reason: 'hod' }
+  if (actor) return { winner: actor, reason: 'aktér' }
+  const hi = (d: Dice) => Math.max(d[0], d[1])
+  if (hi(a.dice) !== hi(b.dice))
+    return { winner: hi(a.dice) > hi(b.dice) ? 'a' : 'b', reason: 'kostka' }
+  const sum = (d: Dice) => d[0] + d[1]
+  if (sum(a.dice) !== sum(b.dice))
+    return { winner: sum(a.dice) > sum(b.dice) ? 'a' : 'b', reason: 'součet' }
+  return { winner: 'los', reason: 'los' }
+}
