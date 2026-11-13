@@ -204,3 +204,10 @@ Manifest má `share_target` (POST, text/plain): po instalaci PWA se aplikace nab
 nebo text kódu). `public/share-target.js` (importovaný do service workeru) uloží kód do cache `drd2-shared` a přesměruje na
 `#/postavy/import/sdileno`, kde ho Import načte (`core/sharedInbox.ts`). Ověřit na telefonu (jen u nainstalované PWA).
 `file_handlers` se nedělají: fungují jen na počítači a soubor je `.drd2.txt`.
+
+## Nápad: skiny s obrázkovou mapou ovládacích prvků (později)
+
+Skin by definoval ovládací prvky souřadnicemi na jednom velkém obrázku: **tlačítko** (klikací oblast), **popis** (label) a
+**výstup** (textové pole), případně pevné rozvržení. Dvě varianty: pixelartový (jako Truhlice) se škálováním podle poměru stran,
+nebo v celých násobcích s posouváním viditelné oblasti, a klasický plovoucí. Předpoklad: nejdřív uklidit stránky a navigaci
+(čtyři záložky: Postavy, Družina, Příručka s Bestiářem, Více), aby definice oblastí odpovídala hotovému rozvržení.
