@@ -85,6 +85,13 @@ describe('placení Zdrojů', () => {
     expect(r?.bonus.Tělo).toBe(0)
     expect(r?.spent.Tělo).toBe(1)
   })
+  it('Výhoda platí za jakoukoli vlastnost a spotřebuje se jako první', () => {
+    const r = payResources(none, { ...none, Tělo: 1 }, max, 'Duše', 3, 2)
+    expect(r?.advantage).toBe(0)
+    expect(r?.bonus.Tělo).toBe(1)
+    expect(r?.spent.Duše).toBe(1)
+    expect(payResources(none, none, { ...max, Duše: 0 }, 'Duše', 2, 2)?.advantage).toBe(0)
+  })
   it('bez dostatku Zdrojů nezaplatí nic', () => {
     expect(payResources({ ...none, Duše: 1 }, none, max, 'Duše', 2)).toBeUndefined()
     expect(availableOf({ ...none, Duše: 1 }, { ...none, Duše: 1 }, max, 'Duše')).toBe(2)

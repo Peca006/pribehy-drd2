@@ -13,12 +13,15 @@
   import { evaluateRoll, levelOf, rollDice, SUCCESS_AT, type Dice } from '../../core/character/roll'
   import { professions } from '../../core/library.svelte'
 
-  // Hod (2k6 + úroveň povolání) a Ohrožení. Kostky lze hodit tady, nebo zadat z fyzických kostek.
+  // Vyhodnocení akce: zkouška nebo výzva. Hod (2k6 + úroveň povolání), vyčerpání, následky, Ohrožení a Výhody.
+  // Kostky lze hodit tady, nebo zadat z fyzických kostek.
   let {
     id,
     character,
     spent,
     bonus,
+    advantage,
+    onadvantage,
     pay,
     onscar,
   }: {
@@ -26,20 +29,25 @@
     character: Character
     spent: Spent
     bonus: Bonus
+    advantage: number
+    onadvantage: (n: number) => void
     /** zaplatí Zdroje vlastnosti; vrací, zda na to postava měla */
     pay: (a: Attribute, n: number) => boolean
     onscar: (a: Attribute) => void
   } = $props()
 
+  type Kind = 'zkouska' | 'vyzva'
+  type Outcome = 'vycerpano' | 'prijato' | 'bezreakce' | undefined
+
   // komponenta se pro každou postavu vytváří znovu (`{#key}` u volající stránky)
   // svelte-ignore state_referenced_locally
   let threat = $state(loadThreat(id))
+  let kind = $state<Kind>('zkouska')
   let dice = $state<Dice>([0, 0])
   let used = $state<string[]>([])
   let intent = $state('')
   let payAttr = $state<Attribute>('Tělo')
-  /** jak dopadl neúspěšný hod: vyčerpáním zmírněn, nebo přijat */
-  let outcome = $state<'vycerpano' | 'prijato' | undefined>(undefined)
+  let outcome = $state<Outcome>(undefined)
   let paid = $state(0)
 
   const owned = $derived(
@@ -54,29 +62,42 @@
   const level = $derived(levelOf(character, used))
   const rolled = $derived(dice[0] > 0 && dice[1] > 0)
   const result = $derived(rolled ? evaluateRoll(dice, level) : undefined)
+  const maxes = $derived(effectiveAttributes(character))
+  // vyčerpání stojí tolik Zdrojů, kolik je Ohrožení (nejméně 1), a Ohrožení se tím zvýší o 1
+  const cost = $derived(Math.max(1, threat))
+  const have = $derived(availableOf(spent, bonus, maxes, payAttr, advantage))
 
   const toggle = (pid: string) =>
     (used = used.includes(pid) ? used.filter((x) => x !== pid) : [...used, pid])
-  const setDie = (i: 0 | 1, v: number) => {
+  const reset = () => (outcome = undefined)
+  function setDie(i: 0 | 1, v: number) {
     dice = i === 0 ? [v, dice[1]] : [dice[0], v]
-    outcome = undefined
+    reset()
   }
   function roll() {
     dice = rollDice()
-    outcome = undefined
+    reset()
   }
-  // vyčerpání stojí tolik Zdrojů, kolik je Ohrožení (nejméně 1), a Ohrožení se tím zvýší o 1
-  const cost = $derived(Math.max(1, threat))
-  const have = $derived(availableOf(spent, bonus, effectiveAttributes(character), payAttr))
+  function setKind(k: Kind) {
+    kind = k
+    reset()
+  }
+  function setThreat(n: number) {
+    threat = Math.min(MAX_THREAT, Math.max(0, n))
+    saveThreat(id, threat)
+  }
   function exhaust() {
     if (!pay(payAttr, cost)) return
     paid = cost
     setThreat(Math.max(1, threat) + 1)
     outcome = 'vycerpano'
   }
-  function setThreat(n: number) {
-    threat = Math.min(MAX_THREAT, Math.max(0, n))
-    saveThreat(id, threat)
+  /** Konec konfliktu: Ohrožení zaniká a nespotřebovaná Výhoda propadá. */
+  function endConflict() {
+    setThreat(0)
+    onadvantage(0)
+    dice = [0, 0]
+    reset()
   }
 </script>
 
@@ -85,7 +106,15 @@
     <strong>Hod</strong>
     <button class="primary" onclick={roll}>Hodit</button>
   </div>
-
+  <div class="chips" role="group" aria-label="Druh vyhodnocení">
+    <button class:primary={kind === 'zkouska'} onclick={() => setKind('zkouska')}>Zkouška</button>
+    <button class:primary={kind === 'vyzva'} onclick={() => setKind('vyzva')}>Výzva</button>
+  </div>
+  <p class="muted">
+    {kind === 'zkouska'
+      ? 'Proti prostředí nebo protivníkovi, který se nebrání.'
+      : 'Akce prostředí, následná akce nebo nástraha. Postava reaguje protiakcí.'}
+  </p>
   <input
     type="text"
     bind:value={intent}
@@ -110,45 +139,72 @@
         : ''}
   </p>
 
-  <div class="dice">
-    {#each [0, 1] as i}
-      <select
-        value={dice[i as 0 | 1]}
-        onchange={(e) => setDie(i as 0 | 1, Number(e.currentTarget.value))}
-        aria-label={`Kostka ${i + 1}`}
+  {#if kind === 'vyzva' && outcome === 'bezreakce'}
+    <p role="status" class="bad">
+      Bez reakce nastane následek hned a nelze ho zmírnit vyčerpáním. Popište ho a zapište podle
+      pravidel.
+    </p>
+  {:else}
+    <div class="dice">
+      {#each [0, 1] as i}
+        <select
+          value={dice[i as 0 | 1]}
+          onchange={(e) => setDie(i as 0 | 1, Number(e.currentTarget.value))}
+          aria-label={`Kostka ${i + 1}`}
+        >
+          <option value={0}>?</option>
+          {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
+        </select>
+        {#if i === 0}<span>+</span>{/if}
+      {/each}
+      <span>+ {level} =</span>
+      <strong
+        class="total"
+        class:ok={result?.success || outcome === 'vycerpano'}
+        class:bad={result && !result.success && outcome !== 'vycerpano'}
       >
-        <option value={0}>?</option>
-        {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
-      </select>
-      {#if i === 0}<span>+</span>{/if}
-    {/each}
-    <span>+ {level} =</span>
-    <strong
-      class="total"
-      class:ok={result?.success || outcome === 'vycerpano'}
-      class:bad={result && !result.success && outcome !== 'vycerpano'}
-    >
-      {result ? result.total : '–'}
-    </strong>
-  </div>
-  {#if result}
+        {result ? result.total : '–'}
+      </strong>
+    </div>
+    {#if kind === 'vyzva' && !rolled}
+      <p class="actions">
+        <button onclick={() => (outcome = 'bezreakce')}>Nereaguji</button>
+      </p>
+    {/if}
+  {/if}
+
+  {#if result && outcome !== 'bezreakce'}
     {#if result.success}
       <p role="status" class="ok">Úspěch ({SUCCESS_AT} a více).</p>
-      <p class="muted">
-        Zlepšila-li akce vaše okolnosti:
-        <button onclick={() => setThreat(threat - 1)} disabled={threat === 0}>Ohrožení −1</button>
-      </p>
+      {#if kind === 'zkouska'}
+        <p class="muted">Následky úspěchu, které jste ohlásili:</p>
+        <p class="actions">
+          <button onclick={() => setThreat(threat - 1)} disabled={threat === 0}>Ohrožení −1</button>
+          <button onclick={() => onadvantage(advantage + 1)}>Výhoda +1</button>
+        </p>
+      {:else}
+        <p class="muted">
+          Bezprostřední nebezpečí pominulo. Úspěch ve výzvě nesnižuje Ohrožení ani nedává Výhodu.
+        </p>
+      {/if}
     {:else if outcome === 'vycerpano'}
       <p role="status" class="ok">
-        Úspěch vyčerpáním: škrtli jste {paid}
-        {payAttr}, Ohrožení je {threat}. Popište úsilí či újmu a nové potíže.
+        {kind === 'zkouska'
+          ? `Úspěch vyčerpáním: škrtli jste ${paid} ${payAttr}, Ohrožení je ${threat}. Popište úsilí či újmu a nové potíže.`
+          : `Neúspěch zmírněn: škrtli jste ${paid} ${payAttr}, Ohrožení je ${threat}. Místo vážných následků popište jen komplikaci.`}
       </p>
     {:else if outcome === 'prijato'}
-      <p role="status" class="bad">Neúspěch přijat, Zdroje zůstaly. Popište následek.</p>
-    {:else}
       <p role="status" class="bad">
-        Hrozí neúspěch. Vyčerpáním ho zmírníte nebo přemůžete, nebo ho přijmete.
+        Neúspěch přijat, Zdroje zůstaly. Popište následek a zapište ho:
       </p>
+      <p class="actions">
+        <button onclick={() => setThreat(threat + 1)} disabled={threat >= MAX_THREAT}
+          >Ohrožení +1</button
+        >
+        <button onclick={() => onscar(payAttr)}>Jizva…</button>
+      </p>
+    {:else}
+      <p role="status" class="bad">Hrozí neúspěch. Vyčerpáním ho zmírníte, nebo ho přijmete.</p>
       <div class="chips" role="group" aria-label="Zdroje k vyčerpání">
         {#each ATTRIBUTES as a}
           <button class:primary={payAttr === a} onclick={() => (payAttr = a)}>{a}</button>
@@ -156,7 +212,9 @@
       </div>
       <p class="muted">
         Vyčerpání stojí {cost}
-        {payAttr} (Ohrožení, nejméně 1), máte {have}. Ohrožení se zvýší o 1.
+        {payAttr} (Ohrožení, nejméně 1), máte {have}{advantage
+          ? ` (včetně Výhody ${advantage})`
+          : ''}. Ohrožení se zvýší o 1.
       </p>
       <p class="actions">
         <button class="primary" onclick={exhaust} disabled={have < cost}>Vyčerpat</button>
@@ -180,6 +238,22 @@
       aria-label="Zvýšit Ohrožení">+</button
     >
   </div>
+  <div class="threat">
+    <span>Výhoda</span>
+    <button
+      onclick={() => onadvantage(advantage - 1)}
+      disabled={advantage === 0}
+      aria-label="Ubrat Výhodu">−</button
+    >
+    <strong class="count">{advantage}</strong>
+    <button onclick={() => onadvantage(advantage + 1)} aria-label="Přidat Výhodu">+</button>
+  </div>
+  {#if threat > 0 || advantage > 0}
+    <p class="muted">
+      Po skončení konfliktu Ohrožení zaniká a Výhoda propadá.
+      <button onclick={endConflict}>Konec konfliktu</button>
+    </p>
+  {/if}
 </section>
 
 <style>
@@ -193,7 +267,8 @@
   .head {
     justify-content: space-between;
   }
-  .chips {
+  .chips,
+  .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
@@ -209,11 +284,6 @@
   }
   .total {
     font-size: 1.6rem;
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
   }
   .ok {
     color: #7c7;

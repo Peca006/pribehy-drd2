@@ -108,20 +108,48 @@ export const availableOf = (
   bonus: Bonus,
   max: Record<Attribute, number>,
   a: Attribute,
-): number => Math.max(0, max[a] - spent[a]) + bonus[a]
+  advantage = 0,
+): number => Math.max(0, max[a] - spent[a]) + bonus[a] + advantage
 
-/** Zaplatí `n` Zdrojů vlastnosti (dočasné z jizvy jako první); nemá-li dost, vrátí `undefined`. */
+/**
+ * Zaplatí `n` Zdrojů vlastnosti. Nejdřív se spotřebuje Výhoda (zaniká s koncem konfliktu a platí za jakoukoli vlastnost),
+ * pak dočasné Zdroje z jizvy, nakonec vlastní Zdroje. Nemá-li postava dost, vrátí `undefined`.
+ */
 export function payResources(
   spent: Spent,
   bonus: Bonus,
   max: Record<Attribute, number>,
   a: Attribute,
   n: number,
-): { spent: Spent; bonus: Bonus } | undefined {
-  if (n > availableOf(spent, bonus, max, a)) return undefined
-  const fromBonus = Math.min(bonus[a], n)
+  advantage = 0,
+): { spent: Spent; bonus: Bonus; advantage: number } | undefined {
+  if (n > availableOf(spent, bonus, max, a, advantage)) return undefined
+  const fromAdv = Math.min(advantage, n)
+  const fromBonus = Math.min(bonus[a], n - fromAdv)
   return {
+    advantage: advantage - fromAdv,
     bonus: { ...bonus, [a]: bonus[a] - fromBonus },
-    spent: { ...spent, [a]: spent[a] + (n - fromBonus) },
+    spent: { ...spent, [a]: spent[a] + (n - fromAdv - fromBonus) },
+  }
+}
+
+/** Výhoda: „žolíkový“ Zdroj pro konflikt, bez maxima; po konfliktu zaniká. Jen ve hře, v tomto zařízení. */
+const ADV_KEY = (id: string) => `drd2-char-adv:${id}`
+
+export function loadAdvantage(id: string): number {
+  try {
+    const n = JSON.parse(localStorage.getItem(ADV_KEY(id)) ?? '0')
+    return typeof n === 'number' && Number.isInteger(n) && n > 0 && n <= 99 ? n : 0
+  } catch {
+    return 0
+  }
+}
+
+export function saveAdvantage(id: string, n: number) {
+  try {
+    if (n > 0) localStorage.setItem(ADV_KEY(id), String(Math.min(99, Math.floor(n))))
+    else localStorage.removeItem(ADV_KEY(id))
+  } catch {
+    /* Výhoda platí aspoň do zavření stránky */
   }
 }

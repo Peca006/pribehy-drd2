@@ -18,9 +18,11 @@
     type Spent,
     effectiveAttributes,
     emptyBonus,
+    loadAdvantage,
     loadBonus,
     loadSpent,
     payResources,
+    saveAdvantage,
     saveBonus,
     saveSpent,
   } from '../../core/character/play'
@@ -55,6 +57,7 @@
     hasDraft = params[0] ? hasCharacterDraft(params[0]) : false
     reviews = params[0] ? loadReviews(params[0]) : { status: {} }
     bonus = params[0] ? loadBonus(params[0]) : emptyBonus()
+    advantage = params[0] ? loadAdvantage(params[0]) : 0
     spent = params[0] ? loadSpent(params[0]) : { Tělo: 0, Duše: 0, Vliv: 0 }
   }
   onMount(load)
@@ -83,11 +86,17 @@
   /** Zaplatí Zdroje (dočasné z jizvy první); vrací, zda na to postava měla. */
   function pay(a: Attribute, n: number): boolean {
     if (!c) return false
-    const r = payResources(spent, bonus, effectiveAttributes(c), a, n)
+    const r = payResources(spent, bonus, effectiveAttributes(c), a, n, advantage)
     if (!r) return false
     setSpent(r.spent)
     setBonus(r.bonus)
+    setAdvantage(r.advantage)
     return true
+  }
+  let advantage = $state(0)
+  const setAdvantage = (n: number) => {
+    advantage = Math.max(0, n)
+    if (current) saveAdvantage(current.id, advantage)
   }
   let bonus = $state<Bonus>(emptyBonus())
   const setBonus = (b: Bonus) => {
@@ -149,6 +158,8 @@
       character={c}
       {spent}
       {bonus}
+      {advantage}
+      onadvantage={setAdvantage}
       {pay}
       onscar={(a) => (scarFor = a)}
     />{/key}
