@@ -52,7 +52,7 @@ export async function packMessage(text: string): Promise<Uint8Array> {
 /** Opak `packMessage`. */
 export async function unpackMessage(bytes: Uint8Array): Promise<string> {
   const kind = bytes[0]
-  let d = bytes.slice(1)
+  let d: Uint8Array = bytes.slice(1)
   if (kind & 2) d = await inflate(d)
   return kind & 1 ? PREFIX + toB64(d) : new TextDecoder().decode(d)
 }
