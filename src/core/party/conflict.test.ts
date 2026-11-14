@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { Creature } from '../content/schema'
 import {
+  addParticipant,
   addToConflict,
+  cycleStatus,
   clampThreat,
   emptyConflict,
   fromCreature,
@@ -127,5 +129,29 @@ describe('iniciativa a kolo', () => {
     expect(s.deferred.map((p) => p.name)).toEqual(['B'])
     c = nextRound(c)
     expect(c.participants.every((p) => statusOf(p) === 'ready')).toBe(true)
+  })
+})
+
+describe('společná Sudba a stavy', () => {
+  const creature = (name: string, fate: number) => ({ ...hero(name), kind: 'bytost' as const, fate })
+  it('nejsilnější bytost přinese celou Sudbu, ostatní po jednom', () => {
+    let c = emptyConflict()
+    c = addParticipant(c, creature('pes', 3))
+    expect(c.fate).toBe(3)
+    c = addParticipant(c, creature('hajný', 8)) // hajný přinese 8, pes už jen 1
+    expect(c.fate).toBe(3 + 8 - 3 + 1)
+    c = addParticipant(c, creature('kostlivec', 2)) // posila: 1
+    expect(c.fate).toBe(10)
+    c = addParticipant(c, hero('Jarik')) // hrdina nepřispívá
+    expect(c.fate).toBe(10)
+  })
+  it('stav se přepíná dokola', () => {
+    let p = hero('A')
+    const seen: string[] = []
+    for (let i = 0; i < 4; i++) {
+      p = { ...p, ...cycleStatus(p) }
+      seen.push(statusOf(p))
+    }
+    expect(seen).toEqual(['acted', 'deferred', 'out', 'ready'])
   })
 })

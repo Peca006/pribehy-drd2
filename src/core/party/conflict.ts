@@ -33,6 +33,11 @@ export interface Participant {
 export interface Conflict {
   round: number
   participants: Participant[]
+  /** příprava (iniciativy) skončila, probíhají kola */
+  started?: boolean
+  /** společná Sudba bytostí (jedna zásoba pro celou stranu vypravěče) a nejvyšší Sudba, kterou přinesla jedna bytost */
+  fate?: number
+  fateTop?: number
 }
 
 export const MIN_THREAT = 1
@@ -89,6 +94,38 @@ export function ordered(c: Conflict): Participant[] {
       (x, y) => Number(x.p.out) - Number(y.p.out) || y.p.initiative - x.p.initiative || x.i - y.i,
     )
     .map((x) => x.p)
+}
+
+/**
+ * Přidá účastníka. Bytost přispěje do společné Sudby: ta s nejvyšší Sudbou celou, každá další jedním bodem
+ * (stejně posily, které přijdou později). Hodnotu si vypravěč může kdykoli přepsat.
+ */
+export function addParticipant(c: Conflict, p: Participant): Conflict {
+  let { fate = 0, fateTop = 0 } = c
+  if (p.kind === 'bytost' && p.fate !== undefined) {
+    if (!fateTop) fate += p.fate
+    else if (p.fate > fateTop) fate += p.fate - fateTop + 1
+    else fate += 1
+    fateTop = Math.max(fateTop, p.fate)
+  }
+  return { ...c, fate, fateTop, participants: [...c.participants, p] }
+}
+
+/** Změna společné Sudby (nejméně 0). */
+export const setFate = (c: Conflict, n: number): Conflict => ({ ...c, fate: Math.max(0, Math.floor(n)) })
+
+/** Přepnutí stavu klepnutím: čeká → jednal → odložil → vyřazen → čeká. */
+export function cycleStatus(p: Participant): Partial<Participant> {
+  switch (statusOf(p)) {
+    case 'ready':
+      return { acted: true, deferred: false, out: false }
+    case 'acted':
+      return { acted: false, deferred: true, out: false }
+    case 'deferred':
+      return { acted: false, deferred: false, out: true }
+    default:
+      return { acted: false, deferred: false, out: false }
+  }
 }
 
 /** Další kolo: číslo se zvýší a všichni mohou znovu jednat z iniciativy. */
@@ -181,5 +218,5 @@ export function saveConflict(partyId: string, c: Conflict) {
 /** Přidá účastníka do uloženého konfliktu družiny (např. z karty bytosti). */
 export function addToConflict(partyId: string, p: Participant) {
   const c = loadConflict(partyId)
-  saveConflict(partyId, { ...c, participants: [...c.participants, p] })
+  saveConflict(partyId, addParticipant(c, p))
 }
