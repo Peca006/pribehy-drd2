@@ -7,11 +7,15 @@ import {
   fromCreature,
   hero,
   loadConflict,
+  moveInTie,
   nextRound,
   ordered,
   overLimit,
+  roundState,
   saveConflict,
+  statusOf,
   summary,
+  tiedWith,
   update,
 } from './conflict'
 
@@ -88,5 +92,40 @@ describe('konflikt', () => {
     expect(loadConflict('p').participants.map((x) => x.name)).toEqual(['A', 'Vlk'])
     saveConflict('p', emptyConflict())
     expect(store.has('drd2-conflict:p')).toBe(false)
+  })
+})
+
+describe('iniciativa a kolo', () => {
+  const mk = (names: [string, number][]) => ({
+    round: 1,
+    participants: names.map(([n, i]) => ({ ...hero(n), initiative: i })),
+  })
+  it('posouvá jen mezi stejnými iniciativami', () => {
+    const c = mk([
+      ['A', 8],
+      ['B', 8],
+      ['C', 5],
+    ])
+    const id = (n: string) => c.participants.find((p) => p.name === n)!.id
+    expect(ordered(moveInTie(c, id('B'), -1)).map((p) => p.name)).toEqual(['B', 'A', 'C'])
+    expect(moveInTie(c, id('B'), 1)).toBe(c)
+    expect(moveInTie(c, id('A'), -1)).toBe(c)
+    expect(tiedWith(c, id('A'))).toEqual({ up: false, down: true })
+    expect(tiedWith(c, id('C'))).toEqual({ up: false, down: false })
+  })
+  it('sleduje, kdo může jednat, a kdy je kolo hotové', () => {
+    let c = mk([
+      ['A', 9],
+      ['B', 7],
+    ])
+    expect(roundState(c).next?.name).toBe('A')
+    c = update(c, c.participants[0].id, { acted: true })
+    expect(roundState(c).next?.name).toBe('B')
+    c = update(c, c.participants[1].id, { deferred: true })
+    const s = roundState(c)
+    expect(s.done).toBe(true)
+    expect(s.deferred.map((p) => p.name)).toEqual(['B'])
+    c = nextRound(c)
+    expect(c.participants.every((p) => statusOf(p) === 'ready')).toBe(true)
   })
 })

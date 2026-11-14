@@ -39,3 +39,21 @@ describe('střet', () => {
     expect(clash(r([4, 4], 0), r([4, 3], 1))).toEqual({ winner: 'a', reason: 'součet' })
   })
 })
+
+describe('lepší a horší hod', () => {
+  it('vybere dvě nejvyšší nebo nejnižší ze tří kostek', async () => {
+    const { counted, describeRoll, rollInitiative, rollMode } = await import('./roll')
+    expect(counted([2, 6, 4], 'best')).toEqual([6, 4])
+    expect(counted([2, 6, 4], 'worst')).toEqual([2, 4])
+    expect(counted([3, 5], 'normal')).toEqual([3, 5])
+    expect(describeRoll([2, 6, 4], 'best')).toBe('2, 6, 4 → 6 + 4 = 10')
+    expect(describeRoll([3, 5], 'normal')).toBe('3 + 5 = 8')
+    expect(rollMode('best')).toHaveLength(3)
+    expect(rollMode('normal')).toHaveLength(2)
+    const seq = [0.5, 0.99, 0.0] // 4, 6, 1
+    let i = 0
+    const r = rollInitiative('worst', () => seq[i++])
+    expect(r.dice).toEqual([4, 6, 1])
+    expect(r.total).toBe(5)
+  })
+})

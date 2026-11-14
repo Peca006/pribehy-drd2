@@ -61,3 +61,37 @@ export function clash(
     return { winner: sum(a.dice) > sum(b.dice) ? 'a' : 'b', reason: 'součet' }
   return { winner: 'los', reason: 'los' }
 }
+
+/** Způsob hodu: běžně 2k6; lepší = 3k6 a počítají se dvě nejvyšší; horší = 3k6 a počítají se dvě nejnižší. */
+export type Mode = 'normal' | 'best' | 'worst'
+
+/** Z hozených kostek vybere dvě započítané (u 2 kostek obě). */
+export function counted(dice: number[], mode: Mode): Dice {
+  if (mode === 'normal' || dice.length < 3) return [dice[0] ?? 0, dice[1] ?? 0]
+  const s = [...dice].sort((a, b) => (mode === 'best' ? b - a : a - b))
+  return [s[0], s[1]]
+}
+
+/** Hod bez dovednosti: 2 kostky, u lepšího a horšího hodu 3. */
+export function rollMode(mode: Mode, rng: () => number = Math.random): number[] {
+  const n = mode === 'normal' ? 2 : 3
+  return Array.from({ length: n }, () => rollDie(rng))
+}
+
+/** Iniciativa: hod bez dovednosti (bez úrovně). Přístup „rychle“/„pomalu“ stojí 1 Duši (postava) nebo 1 Sudbu (bytost). */
+export function rollInitiative(
+  mode: Mode,
+  rng: () => number = Math.random,
+): { dice: number[]; used: Dice; total: number } {
+  const dice = rollMode(mode, rng)
+  const used = counted(dice, mode)
+  return { dice, used, total: used[0] + used[1] }
+}
+
+/** Výpis hodu: „6, 4, 2 → 6 + 4 = 10“; u běžného hodu „3 + 5 = 8“. */
+export function describeRoll(dice: number[], mode: Mode): string {
+  const u = counted(dice, mode)
+  return dice.length < 3
+    ? `${u[0]} + ${u[1]} = ${u[0] + u[1]}`
+    : `${dice.join(', ')} → ${u[0]} + ${u[1]} = ${u[0] + u[1]}`
+}

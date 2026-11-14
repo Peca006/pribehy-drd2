@@ -12,27 +12,21 @@
   } from '../../core/character/play'
   import {
     clash,
+    counted,
+    describeRoll,
     evaluateRoll,
     levelOf,
     rollDice,
+    rollDie,
+    rollInitiative,
+    type Mode,
     SUCCESS_AT,
     type Dice,
     type Side,
   } from '../../core/character/roll'
   import { bestTwo, MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
   import { professions } from '../../core/library.svelte'
-
-  // Odkazy do kapitoly Složitější situace (jen názvy a kotvy, text pravidel je v příručce).
-  const SITUATIONS = [
-    { title: 'Zkouška více postav', anchor: 'zkouska-vice-postav' },
-    { title: 'Zkouška působící na více cílů', anchor: 'zkouska-pusobici-na-vice-cilu' },
-    { title: 'Vyčerpání se kvůli jiné postavě', anchor: 'vycerpani-se-kvuli-jine-postave' },
-    { title: 'Přípravné akce', anchor: 'pripravne-akce' },
-    { title: 'Spolupráce', anchor: 'spoluprace' },
-    { title: 'Ukrývání a odhalování', anchor: 'ukryvani-a-odhalovani' },
-    { title: 'Následná akce a akce prostředí', anchor: 'nasledna-akce-a-akce-prostredi' },
-    { title: 'Hrstka a houf', anchor: 'hrstka-a-houf' },
-  ]
+  import Guide from './Guide.svelte'
 
   // Vyhodnocení akce: zkouška nebo výzva. Hod (2k6 + úroveň povolání), vyčerpání, následky, Ohrožení a Výhody.
   // Kostky lze hodit tady, nebo zadat z fyzických kostek.
@@ -75,6 +69,7 @@
   let manPaid = $state(false)
   let manMsg = $state('')
   let extra = $state(0)
+  let inaccurate = $state(false)
   // střet: soupeř (úroveň a kostky), kdo byl aktér, výsledek losu při úplné shodě
   let oppLevel = $state(0)
   let oppDice = $state<Dice>([0, 0])
@@ -91,16 +86,18 @@
       })),
   )
   const level = $derived(levelOf(character, used))
-  const rolled = $derived(dice[0] > 0 && dice[1] > 0 && (man !== 'presne' || extra > 0))
-  const result = $derived(
-    rolled ? evaluateRoll(man === 'presne' ? bestTwo([...dice, extra]) : dice, level) : undefined,
-  )
+  // Přesně = 3 kostky, dvě nejvyšší; postih nepřesně = 3 kostky, dvě nejnižší (přesně pak nejde)
+  const mode: Mode = $derived(man === 'presne' ? 'best' : inaccurate ? 'worst' : 'normal')
+  const three = $derived(mode !== 'normal')
+  const pair = $derived(counted(three ? [...dice, extra] : dice, mode))
+  const rolled = $derived(dice[0] > 0 && dice[1] > 0 && (!three || extra > 0))
+  const result = $derived(rolled ? evaluateRoll(pair, level) : undefined)
   const oppRolled = $derived(oppDice[0] > 0 && oppDice[1] > 0)
   const opp = $derived(oppRolled ? evaluateRoll(oppDice, oppLevel) : undefined)
   const clashRes = $derived(
     result && opp
       ? clash(
-          { dice, total: result.total },
+          { dice: pair, total: result.total },
           { dice: oppDice, total: opp.total },
           actor === 'me' ? ('a' as Side) : actor === 'opp' ? ('b' as Side) : undefined,
         )
@@ -154,7 +151,8 @@
   function pickMan(id: ManeuverId) {
     if (manPaid) return
     man = man === id ? undefined : id
-    if (man !== 'presne') extra = 0
+    if (man === 'presne') inaccurate = false
+    if (man !== 'presne' && !inaccurate) extra = 0
     manMsg = ''
   }
   function setDie(i: 0 | 1, v: number) {
@@ -166,11 +164,27 @@
     const m = maneuver(man)
     if (m?.when === 'pred' && !payManeuver()) return
     dice = rollDice()
-    if (man === 'presne') extra = rollDice()[0]
+    if (three) extra = rollDie()
   }
   function rollOpp() {
     oppDice = rollDice()
     reset()
+  }
+  // iniciativa: hod bez dovednosti; přístup rychle/pomalu stojí 1 Duši (platí se hned při hodu)
+  let initMode = $state<Mode>('normal')
+  let initText = $state('')
+  let initFlash = $state('')
+  function rollInit() {
+    if (initMode !== 'normal') {
+      if (!pay('Duše', 1)) {
+        initFlash = 'Chybí Duše na přístup.'
+        return
+      }
+      initFlash = '−1 Duše'
+      setTimeout(() => (initFlash = ''), 2500)
+    } else initFlash = ''
+    const r = rollInitiative(initMode)
+    initText = `Iniciativa ${r.total} (${describeRoll(r.dice, initMode)})`
   }
   function setKind(k: Kind) {
     kind = k
@@ -249,12 +263,27 @@
       <button
         class:primary={man === m.id}
         onclick={() => pickMan(m.id)}
-        disabled={manPaid && man !== m.id}
+        disabled={(manPaid && man !== m.id) || (m.id === 'presne' && inaccurate)}
       >
         {m.name}
       </button>
     {/each}
   </div>
+  <p class="chips">
+    <button
+      class:primary={inaccurate}
+      disabled={manPaid && man === 'presne'}
+      onclick={() => {
+        inaccurate = !inaccurate
+        if (inaccurate && man === 'presne') man = undefined
+        if (!inaccurate && man !== 'presne') extra = 0
+        reset()
+      }}>Nepřesně (postih)</button
+    >
+  </p>
+  {#if inaccurate}
+    <p class="muted">Postih: 3 kostky, počítají se dvě nejnižší. Manévr přesně nelze.</p>
+  {/if}
   {#if man}
     <p class="muted">
       {maneuver(man)?.hint}. Platí se 1 {payAttr}
@@ -285,7 +314,7 @@
         </select>
         {#if i === 0}<span>+</span>{/if}
       {/each}
-      {#if man === 'presne'}
+      {#if three}
         <span>+</span>
         <select
           value={extra}
@@ -293,7 +322,7 @@
             extra = Number(e.currentTarget.value)
             reset()
           }}
-          aria-label="Třetí kostka (přesně)"
+          aria-label="Třetí kostka"
         >
           <option value={0}>?</option>
           {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
@@ -308,6 +337,9 @@
         {result ? result.total : '–'}
       </strong>
     </div>
+    {#if three && rolled}
+      <p class="muted">Hozeno {describeRoll([...dice, extra], mode)}</p>
+    {/if}
     {#if kind === 'stret'}
       <div class="opp">
         <strong>Soupeř</strong>
@@ -445,14 +477,22 @@
   {/if}
 
   <details class="situations">
-    <summary>Složitější situace</summary>
-    <p class="muted">Podle situace si otevřete příslušné místo v příručce:</p>
-    <ul>
-      {#each SITUATIONS as s (s.anchor)}
-        <li><a href={`#/ctenar/32-slozitejsi-situace/${s.anchor}`}>{s.title}</a></li>
+    <summary>Iniciativa</summary>
+    <div class="chips" role="group" aria-label="Přístup k iniciativě">
+      {#each [['normal', 'Normálně'], ['best', 'Rychle'], ['worst', 'Pomalu']] as [m, label]}
+        <button class:primary={initMode === m} onclick={() => (initMode = m as Mode)}
+          >{label}</button
+        >
       {/each}
-    </ul>
+      <button onclick={rollInit}>Hodit</button>
+    </div>
+    {#if initMode !== 'normal'}<small class="muted">1 Duše</small>{/if}
+    {#if initFlash}<small role="status" class="bad">{initFlash}</small>{/if}
+    {#if initText}<p role="status"><strong>{initText}</strong></p>{/if}
+    <p class="muted">Hod bez dovednosti. Hlásí se od nejvyšší iniciativy.</p>
   </details>
+
+  <Guide />
 
   <div class="threat">
     <span>Ohrožení</span>
@@ -531,10 +571,6 @@
   }
   .situations {
     margin-top: 0.75rem;
-  }
-  .situations ul {
-    margin: 0.25rem 0 0;
-    padding-left: 1.2rem;
   }
   .threat span:first-child {
     flex: 1;

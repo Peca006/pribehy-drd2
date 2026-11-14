@@ -1,16 +1,20 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { ATTRIBUTES } from '../../core/character/model'
-  import { rollDice } from '../../core/character/roll'
+  import { describeRoll, rollInitiative, type Mode } from '../../core/character/roll'
   import {
     clampThreat,
     hero,
     loadConflict,
+    moveInTie,
     nextRound,
     ordered,
     overLimit,
+    roundState,
     saveConflict,
+    statusOf,
     summary,
+    tiedWith,
     update,
     type Conflict,
     type Participant,
@@ -35,6 +39,42 @@
   })
 
   const rows = $derived(ordered(conflict))
+  const rs = $derived(roundState(conflict))
+  // přístup k iniciativě a krátká zpráva o ceně (jen v tomto zobrazení)
+  let approach = $state<Record<string, Mode>>({})
+  let flash = $state<Record<string, string>>({})
+  const APPROACHES: [Mode, string][] = [
+    ['normal', 'Normálně'],
+    ['best', 'Rychle'],
+    ['worst', 'Pomalu'],
+  ]
+  function say(pid: string, text: string) {
+    flash = { ...flash, [pid]: text }
+    setTimeout(() => {
+      const { [pid]: _, ...rest } = flash
+      flash = rest
+    }, 2500)
+  }
+  /** Hod iniciativy bez dovednosti. Rychle a pomalu stojí bytost 1 Sudbu (u hrdiny to platí hráč na své postavě). */
+  function rollInit(p: Participant, mode: Mode) {
+    let fate = p.fate
+    if (mode !== 'normal' && p.kind === 'bytost' && fate !== undefined) {
+      if (fate < 1) return say(p.id, 'Chybí Sudba na přístup.')
+      fate -= 1
+      say(p.id, '−1 Sudba')
+    }
+    const r = rollInitiative(mode)
+    patch(p, { initiative: r.total, fate, initRoll: describeRoll(r.dice, mode) })
+  }
+  const setStatus = (p: Participant, s: 'acted' | 'deferred' | 'out') =>
+    patch(
+      p,
+      s === 'out'
+        ? { out: !p.out }
+        : s === 'acted'
+          ? { acted: !p.acted, deferred: false }
+          : { deferred: !p.deferred, acted: false },
+    )
   const free = $derived(
     party?.members.filter((m) => !conflict.participants.some((p) => p.name === m.name)) ?? [],
   )
@@ -88,14 +128,32 @@
       Konec + do žurnálu
     </button>
   </div>
+  {#if conflict.participants.length}
+    <p role="status" class="round">
+      {#if rs.done}
+        <strong>Kolo je hotové.</strong>
+        {#if rs.deferred.length}
+          Odložili: {rs.deferred.map((p) => p.name).join(', ')}. Pokud nikdo nereagoval, o akci
+          přicházejí.
+        {/if}
+        Na konci kola se vyhodnotí akce prostředí. Pak další kolo, nebo konec konfliktu.
+      {:else}
+        Na řadě: <strong>{rs.next?.name}</strong>
+        {#if rs.deferred.length}<span class="muted">
+            (odložili: {rs.deferred.map((p) => p.name).join(', ')})</span
+          >{/if}
+      {/if}
+    </p>
+  {/if}
   <p class="muted">
-    Iniciativa se určí podle situace v příběhu, nebo hodem bez dovednosti (tlačítko 2k6 u
-    účastníka). Hlásí se od nejvyšší iniciativy. V konfliktu Ohrožení neklesne pod 1. Trvá {conflict.round}
-    {kola(conflict.round)}.
+    Iniciativa podle příběhu, nebo hodem bez dovednosti. Stejné hodnoty jsou současné akce, pořadí
+    mezi nimi upravíte šipkami. Hrdinové hlásí své hodnoty. V konfliktu Ohrožení neklesne pod 1.
   </p>
 
   {#each rows as p (p.id)}
     {@const over = overLimit(p)}
+    {@const tie = tiedWith(conflict, p.id)}
+    {@const st = statusOf(p)}
     <article class="panel" class:out={p.out}>
       <div class="top">
         <strong>{p.name}</strong>
@@ -115,28 +173,50 @@
             onchange={(e) => patch(p, { initiative: Number(e.currentTarget.value) || 0 })}
           />
         </label>
-        <button
-          onclick={() => {
-            const [a, b] = rollDice()
-            patch(p, { initiative: a + b })
-          }}>2k6</button
+        {#if tie.up || tie.down}
+          <span class="muted">současně</span>
+          <button
+            onclick={() => set(moveInTie(conflict, p.id, -1))}
+            disabled={!tie.up}
+            aria-label={`Posunout ${p.name} výš`}>↑</button
+          >
+          <button
+            onclick={() => set(moveInTie(conflict, p.id, 1))}
+            disabled={!tie.down}
+            aria-label={`Posunout ${p.name} níž`}>↓</button
+          >
+        {/if}
+      </div>
+      <div class="line">
+        {#if p.kind === 'bytost'}
+          {#each APPROACHES as [m, label]}
+            <button
+              class:primary={(approach[p.id] ?? 'normal') === m}
+              onclick={() => (approach = { ...approach, [p.id]: m })}>{label}</button
+            >
+          {/each}
+          <button onclick={() => rollInit(p, approach[p.id] ?? 'normal')}>Hodit</button>
+          {#if (approach[p.id] ?? 'normal') !== 'normal' && p.fate !== undefined}
+            <small class="muted">1 Sudba</small>
+          {/if}
+        {:else}
+          <button onclick={() => rollInit(p, 'normal')}>Hodit 2k6</button>
+        {/if}
+        {#if flash[p.id]}<small role="status" class="flash">{flash[p.id]}</small>{/if}
+        {#if p.initRoll}<small class="muted">{p.initRoll}</small>{/if}
+      </div>
+      <div class="line">
+        <button class:primary={st === 'acted'} onclick={() => setStatus(p, 'acted')} disabled={p.out}
+          >Jednal</button
         >
-        <label class="check">
-          <input
-            type="checkbox"
-            checked={p.acted}
-            onchange={(e) => patch(p, { acted: e.currentTarget.checked })}
-          />
-          Jednal
-        </label>
-        <label class="check">
-          <input
-            type="checkbox"
-            checked={p.out}
-            onchange={(e) => patch(p, { out: e.currentTarget.checked })}
-          />
-          Vyřazen
-        </label>
+        <button
+          class:primary={st === 'deferred'}
+          onclick={() => setStatus(p, 'deferred')}
+          disabled={p.out}>Odložil</button
+        >
+        <button class:primary={st === 'out'} onclick={() => setStatus(p, 'out')}>Vyřazen</button>
+        {#if st === 'acted'}<small class="muted">zbývá jen obrana</small>{/if}
+        {#if st === 'deferred'}<small class="muted">může jen reagovat</small>{/if}
       </div>
       <div class="line">
         <span>Ohrožení</span>
@@ -278,10 +358,11 @@
   .line select {
     flex: 1;
   }
-  .check {
-    display: flex;
-    gap: 0.3rem;
-    align-items: center;
+  .flash {
+    color: #e8c070;
+  }
+  .round {
+    margin: 0.4rem 0;
   }
   .out {
     opacity: 0.55;

@@ -22,6 +22,10 @@ export interface Participant {
   initiative: number
   /** už v tomto kole jednal z iniciativy */
   acted: boolean
+  /** odložil iniciativu: už nejedná jako první, jen reaguje protiakcí na kohokoli; nezareaguje-li, o akci přijde */
+  deferred?: boolean
+  /** výpis posledního hodu iniciativy (pro kontrolu a rozhodování remíz) */
+  initRoll?: string
   out: boolean
   note: string
 }
@@ -90,8 +94,47 @@ export function ordered(c: Conflict): Participant[] {
 /** Další kolo: číslo se zvýší a všichni mohou znovu jednat z iniciativy. */
 export const nextRound = (c: Conflict): Conflict => ({
   round: c.round + 1,
-  participants: c.participants.map((p) => ({ ...p, acted: false })),
+  participants: c.participants.map((p) => ({ ...p, acted: false, deferred: false })),
 })
+
+export type Status = 'out' | 'acted' | 'deferred' | 'ready'
+
+/** Stav účastníka v kole: vyřazen, jednal (zbývá mu jen obrana), odložil, nebo ještě může jednat. */
+export const statusOf = (p: Participant): Status =>
+  p.out ? 'out' : p.acted ? 'acted' : p.deferred ? 'deferred' : 'ready'
+
+/** Kdo je v kole na řadě (první, kdo ještě nejednal ani neodložil) a kdo odložil. Kolo je hotové, když není nikdo `ready`. */
+export function roundState(c: Conflict): { next?: Participant; deferred: Participant[]; done: boolean } {
+  const list = ordered(c)
+  return {
+    next: list.find((p) => statusOf(p) === 'ready'),
+    deferred: list.filter((p) => statusOf(p) === 'deferred'),
+    done: !list.some((p) => statusOf(p) === 'ready'),
+  }
+}
+
+/** Posune účastníka v pořadí o jedno nahoru (-1) nebo dolů (+1), ale jen mezi stejnými iniciativami. */
+export function moveInTie(c: Conflict, id: string, dir: -1 | 1): Conflict {
+  const list = ordered(c)
+  const i = list.findIndex((p) => p.id === id)
+  const a = list[i]
+  const b = list[i + dir]
+  if (!a || !b || a.out || b.out || a.initiative !== b.initiative) return c
+  const parts = [...c.participants]
+  const ia = parts.findIndex((p) => p.id === a.id)
+  const ib = parts.findIndex((p) => p.id === b.id)
+  ;[parts[ia], parts[ib]] = [parts[ib], parts[ia]]
+  return { ...c, participants: parts }
+}
+
+/** Má stejnou iniciativu jako soused v pořadí (akce se odehrávají současně, pořadí lze upravit šipkami). */
+export function tiedWith(c: Conflict, id: string): { up: boolean; down: boolean } {
+  const list = ordered(c)
+  const i = list.findIndex((p) => p.id === id)
+  const p = list[i]
+  const same = (q?: Participant) => !!q && !q.out && !p.out && q.initiative === p.initiative
+  return { up: same(list[i - 1]), down: same(list[i + 1]) }
+}
 
 export const update = (c: Conflict, id: string, patch: Partial<Participant>): Conflict => ({
   ...c,
