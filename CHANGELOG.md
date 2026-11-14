@@ -1,5 +1,19 @@
 # Změny
 
+## 0.2.2 (14. 11. 2026)
+
+**Ukázková data**
+- Tři ukázkové postavy (Brokan Rudovous, Lístek Podhorní, Eliška z Mlžných hájů) a ukázková družina. Nainstalují se při prvním spuštění do prázdné aplikace, dají se upravit i smazat a ve Více je tlačítko „Obnovit ukázková data“.
+
+**Konflikt**
+- Tracker konfliktu: příprava (iniciativy a pořadí, šipky ↑↓ jen mezi shodnými hodnotami, současné akce) a průběh kol (stav Čeká / Jednal / Odložil / Vyřazen jedním tlačítkem, Ohrožení v řádku, „Na řadě“, akce prostředí, Další kolo, Konec konfliktu).
+- Společná Sudba bytostí (základ podle nejsilnější bytosti, ostatní po 1, upravitelná) a dialog účastníka s hodem bytosti, Ohrožením a Jizvami.
+
+**Hody**
+- Iniciativa s přístupem rychle / pomalu (3k6, dvě nejvyšší / nejnižší; stojí 1 Duši, bytost 1 Sudbu, cena se strhne automaticky).
+- Postih „nepřesně“ vedle manévru přesně, výpis všech hozených kostek.
+- Panel „Postup vyhodnocení“: heslovité kroky zkoušky, střetu, výzvy, kola konfliktu a složitějších situací s odkazy do příručky.
+
 ## 0.2.1 (14. 11. 2026)
 
 - Opravy: typ v radiogramu (kontrola typů v CI), mistrovská povolání z balíčku Hry mocných se dají načíst (validace bez dovedností) a v Postupu se zatím nenabízejí.

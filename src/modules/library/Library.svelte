@@ -1,5 +1,6 @@
 <script lang="ts">
   import { installPack, removePack } from '../../core/content/store'
+  import { restoreDemo } from '../../core/demo'
   import { library, refreshLibrary } from '../../core/library.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
@@ -18,6 +19,22 @@
     }
     input.value = ''
     await refreshLibrary()
+  }
+
+  let demoMsg = $state('')
+  async function demo() {
+    if (
+      !confirm(
+        'Obnovit ukázkové postavy a družinu? Pokud je máte upravené, vrátí se do původního stavu. Ostatní data se nemění.',
+      )
+    )
+      return
+    try {
+      await restoreDemo(settings.author)
+      demoMsg = 'Ukázková data jsou obnovená (3 postavy a družina).'
+    } catch (err) {
+      demoMsg = err instanceof Error ? err.message : String(err)
+    }
   }
 
   async function remove(id: string) {
@@ -60,6 +77,14 @@
 {/each}
 
 <SrdImport />
+
+<h2>Ukázková data</h2>
+<p class="muted">
+  Ukázkové postavy a družina k vyzkoušení aplikace. Dají se upravit i smazat, tady je znovu
+  nahrajete.
+</p>
+<p><button onclick={demo}>Obnovit ukázková data</button></p>
+{#if demoMsg}<p role="status" class="muted">{demoMsg}</p>{/if}
 
 <h2>Nastavení</h2>
 <div class="panel settings">
