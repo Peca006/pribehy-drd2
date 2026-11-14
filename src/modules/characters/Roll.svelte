@@ -22,6 +22,18 @@
   import { bestTwo, MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
   import { professions } from '../../core/library.svelte'
 
+  // Odkazy do kapitoly Složitější situace (jen názvy a kotvy, text pravidel je v příručce).
+  const SITUATIONS = [
+    { title: 'Zkouška více postav', anchor: 'zkouska-vice-postav' },
+    { title: 'Zkouška působící na více cílů', anchor: 'zkouska-pusobici-na-vice-cilu' },
+    { title: 'Vyčerpání se kvůli jiné postavě', anchor: 'vycerpani-se-kvuli-jine-postave' },
+    { title: 'Přípravné akce', anchor: 'pripravne-akce' },
+    { title: 'Spolupráce', anchor: 'spoluprace' },
+    { title: 'Ukrývání a odhalování', anchor: 'ukryvani-a-odhalovani' },
+    { title: 'Následná akce a akce prostředí', anchor: 'nasledna-akce-a-akce-prostredi' },
+    { title: 'Hrstka a houf', anchor: 'hrstka-a-houf' },
+  ]
+
   // Vyhodnocení akce: zkouška nebo výzva. Hod (2k6 + úroveň povolání), vyčerpání, následky, Ohrožení a Výhody.
   // Kostky lze hodit tady, nebo zadat z fyzických kostek.
   let {
@@ -432,6 +444,16 @@
     {/if}
   {/if}
 
+  <details class="situations">
+    <summary>Složitější situace</summary>
+    <p class="muted">Podle situace si otevřete příslušné místo v příručce:</p>
+    <ul>
+      {#each SITUATIONS as s (s.anchor)}
+        <li><a href={`#/ctenar/32-slozitejsi-situace/${s.anchor}`}>{s.title}</a></li>
+      {/each}
+    </ul>
+  </details>
+
   <div class="threat">
     <span>Ohrožení</span>
     <button
@@ -506,6 +528,13 @@
   }
   .threat {
     margin-top: 0.5rem;
+  }
+  .situations {
+    margin-top: 0.75rem;
+  }
+  .situations ul {
+    margin: 0.25rem 0 0;
+    padding-left: 1.2rem;
   }
   .threat span:first-child {
     flex: 1;

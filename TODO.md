@@ -86,7 +86,7 @@ Postup v krocích (každý krok použitelný sám; pomůcky nahrazují papír a 
    uloženo u družiny nebo sezení, shrnutí se zapíše do žurnálu.
 9. **Bytosti v konfliktu**: Sudba a hranice bytostí (charakteristika jako úroveň, Jizvy bytostí jen jako náročnost a součet
    proti hranici), tlačítka přímo v kartě bytosti z Bestiáře.
-10. **Složitější situace**: zkouška více postav nebo cílů, spolupráce, přípravné akce, ukrývání a odhalování, následné akce
+10. **Složitější situace** (nápověda hotová: sbalený blok s odkazy do příručky v panelu Hod; pomůcky zbývají): zkouška více postav nebo cílů, spolupráce, přípravné akce, ukrývání a odhalování, následné akce
     a akce prostředí, hrstka a houf; nejdřív jen nápověda s odkazem do příručky, potom pomůcky.
 11. **Navazující pomůcky**: výroba a opravy (Suroviny), léčení Jizev, kouzla a nástrahy (cena Zdrojů), kořist a trofeje.
 
