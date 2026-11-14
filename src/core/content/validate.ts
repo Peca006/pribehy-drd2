@@ -16,7 +16,8 @@ export function validatePack(pack: ContentPack): string[] {
   for (const p of pack.professions ?? []) {
     unique(p.id)
     if (!p.name) errors.push(`${p.id}: chybí název`)
-    if (!p.skills.length) errors.push(`${p.id}: žádné dovednosti`)
+    // mistrovská povolání (Hry mocných) nemají vlastní dovednosti, jen zvláštní schopnosti nad dovednostmi pokročilých
+    if (!p.skills.length && p.kind !== 'mistrovske') errors.push(`${p.id}: žádné dovednosti`)
     if (!p.abilities.length) errors.push(`${p.id}: žádné zvláštní schopnosti`)
     for (const s of p.skills) {
       unique(s.id)

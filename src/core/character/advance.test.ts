@@ -6,6 +6,7 @@ import {
   attributePool,
   describeAdvance,
   forgettable,
+  levelChoices,
   levelProblems,
   XP_PER_ADVANCEMENT,
 } from './advance'
@@ -176,5 +177,21 @@ describe('kontrola: pokročilé povolání, zkušenosti a jizvy', () => {
     expect(
       problems({ ...hero, scars: [{ id: 'j', attribute: 'Tělo', severity: 2, note: 'x' }] }),
     ).toEqual([])
+  })
+})
+
+describe('mistrovská povolání v postupu', () => {
+  it('se mezi povoláními k zlepšení zatím nenabízejí', () => {
+    const ctx: CheckContext = {
+      rules,
+      professions: [
+        prof('povolani:a', 'zakladni'),
+        prof('povolani:m', 'mistrovske', ['povolani:a']),
+      ],
+      races: [race],
+      commonAbilities: [],
+    }
+    const names = levelChoices(emptyCharacter('x'), ctx).map((x) => x.profession.id)
+    expect(names).toEqual(['povolani:a'])
   })
 })

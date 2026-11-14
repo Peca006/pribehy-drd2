@@ -42,9 +42,14 @@ export function levelProblems(c: Character, ctx: CheckContext, professionId: str
   return out
 }
 
-/** Povolání, ve kterých může postava získat úroveň, a důvod u těch, kde ne. */
+/**
+ * Povolání, ve kterých může postava získat úroveň, a důvod u těch, kde ne. Mistrovská povolání (Hry mocných) se zatím nenabízejí:
+ * mají jiná pravidla (součet 6 úrovní v podmiňujících povoláních, schopnost k úrovni nebo k hranici zdroje).
+ */
 export function levelChoices(c: Character, ctx: CheckContext) {
-  return ctx.professions.map((p) => ({ profession: p, problems: levelProblems(c, ctx, p.id) }))
+  return ctx.professions
+    .filter((p) => p.kind !== 'mistrovske')
+    .map((p) => ({ profession: p, problems: levelProblems(c, ctx, p.id) }))
 }
 
 /** Schopnosti rasy postavy (včetně společných, např. Rodové zbraně), které ještě nemá. */
