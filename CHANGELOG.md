@@ -1,5 +1,10 @@
 # Změny
 
+## 0.2.1 (14. 11. 2026)
+
+- Opravy: typ v radiogramu (kontrola typů v CI), mistrovská povolání z balíčku Hry mocných se dají načíst (validace bez dovedností) a v Postupu se zatím nenabízejí.
+- Beze změny funkcí oproti 0.2.0; balíček Her mocných zůstává jen lokální (nedistribuuje se).
+
 ## 0.2.0 (14. 11. 2026)
 
 **Navigace a stránky**
