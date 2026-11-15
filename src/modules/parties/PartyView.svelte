@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { appendEvents, getLog, listLogs } from '../../core/character/store'
@@ -74,7 +75,14 @@
     await save()
   }
   async function removeMember(m: Member) {
-    if (!party || !confirm(`Odebrat „${m.name}“ z družiny? Postava ani žurnál se nemažou.`)) return
+    if (!party) return
+    if (
+      !(await ask('Postava ani žurnál se nemažou.', {
+        title: `Odebrat „${m.name}“ z družiny?`,
+        ok: 'Odebrat',
+      }))
+    )
+      return
     party.members = party.members.filter((x) => x.id !== m.id)
     await save()
   }
@@ -99,7 +107,9 @@
   /** Hráč smí měnit a mazat jen vlastní návrhy; Průvodce všechno. */
   const mine = (e: JournalEntry) => gm || e.status === 'navrh' || e.status === 'zamitnuto'
   async function removeEntry(e: JournalEntry) {
-    if (!party || !mine(e) || !confirm(`Smazat zápis „${e.title}“?`)) return
+    if (!party || !mine(e)) return
+    if (!(await ask(`Smazat zápis „${e.title}“?`, { title: 'Smazat zápis', ok: 'Smazat' })))
+      return
     party.journal = party.journal.filter((x) => x.id !== e.id)
     await save()
   }
@@ -116,7 +126,13 @@
     await save()
   }
   async function reject(e: JournalEntry) {
-    if (!party || !confirm(`Zamítnout návrh „${e.title}“? Zápis se odstraní a hráč se to dozví.`))
+    if (!party) return
+    if (
+      !(await ask('Zápis se odstraní a hráč se to dozví.', {
+        title: `Zamítnout návrh „${e.title}“?`,
+        ok: 'Zamítnout',
+      }))
+    )
       return
     party = rejectEntry($state.snapshot(party) as Party, e.id)
     await save()
@@ -148,7 +164,14 @@
   }
 
   async function removeParty() {
-    if (!party || !confirm(`Smazat družinu „${party.name}“ i s žurnálem? Postavy zůstanou.`)) return
+    if (!party) return
+    if (
+      !(await ask('Smaže se i žurnál. Postavy zůstanou.', {
+        title: `Smazat družinu „${party.name}“?`,
+        ok: 'Smazat',
+      }))
+    )
+      return
     await deleteParty(party.id)
     go('druziny')
   }

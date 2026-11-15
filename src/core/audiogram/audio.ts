@@ -1,10 +1,10 @@
 // Tenká vrstva nad Web Audio: přehrání zvuku a nahrávání z mikrofonu, a na ní běh odesílatele a příjemce.
 // Vyžaduje https nebo localhost a povolení mikrofonu. Nahrávání jde přes ScriptProcessor (zastaralý, ale
-// funguje všude a nepotřebuje samostatný soubor pro AudioWorklet); případný přechod na AudioWorklet viz RADIOGRAM.md.
+// funguje všude a nepotřebuje samostatný soubor pro AudioWorklet); případný přechod na AudioWorklet viz AUDIOGRAM.md.
 // Echo cancellation, potlačení šumu a automatické ovládání zesílení se vypínají: kazí tóny.
-import { RadioReceiver, RadioSender, type Tx } from './protocol'
+import { AudioReceiver, AudioSender, type Tx } from './protocol'
 
-export interface RadioStatus {
+export interface AudioStatus {
   /** krátký popis stavu pro rozhraní */
   text: string
   /** režim přenosu, až je znám */
@@ -35,6 +35,8 @@ export class AudioSession {
   private sink?: GainNode
   private chunks: Float32Array[] = []
   private listening = false
+  /** odposlech všech příchozích bloků zvuku (pro zkoušku zvuku a ukazatel hlasitosti) */
+  tap?: (block: Float32Array) => void
 
   constructor() {
     this.ctx = new AudioContext()
@@ -55,11 +57,24 @@ export class AudioSession {
     this.sink = this.ctx.createGain()
     this.sink.gain.value = 0
     this.proc.onaudioprocess = (e) => {
-      if (this.listening) this.chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)))
+      const block = e.inputBuffer.getChannelData(0)
+      this.tap?.(block)
+      if (this.listening) this.chunks.push(new Float32Array(block))
     }
     this.source.connect(this.proc)
     this.proc.connect(this.sink)
     this.sink.connect(this.ctx.destination)
+  }
+
+  /** Co mikrofon skutečně dělá: prohlížeč může požadavek na vypnutí úprav zvuku ignorovat. */
+  inputInfo() {
+    const t = this.stream?.getAudioTracks()[0]?.getSettings() as MediaTrackSettings | undefined
+    return {
+      fs: this.ctx.sampleRate,
+      echoCancellation: t?.echoCancellation,
+      noiseSuppression: t?.noiseSuppression,
+      autoGainControl: t?.autoGainControl,
+    }
   }
 
   close() {
@@ -163,7 +178,7 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
 /** Vysílá zprávu zvukem, dokud ji příjemce nepotvrdí nebo se pokus nevzdá. Vrací true při úspěchu. */
 export async function sendByAudio(
   message: Uint8Array,
-  onStatus: (s: RadioStatus) => void,
+  onStatus: (s: AudioStatus) => void,
   signal?: AbortSignal,
   /** vynucený režim (index do tabulky), jinak automaticky podle handshake */
   mode?: number,
@@ -171,7 +186,7 @@ export async function sendByAudio(
   const s = new AudioSession()
   try {
     await s.open()
-    const sender = new RadioSender(message, { fs: s.fs, mode })
+    const sender = new AudioSender(message, { fs: s.fs, mode })
     for (;;) {
       const tx: Tx | undefined = sender.tx()
       if (!tx) break
@@ -205,13 +220,13 @@ export async function sendByAudio(
  * chvíli nic neděje (odesílatel mohl potvrzení přeslechnout a poslal by dávku znovu), nebo po zrušení.
  */
 export async function receiveByAudio(
-  onStatus: (s: RadioStatus) => void,
+  onStatus: (s: AudioStatus) => void,
   signal?: AbortSignal,
 ): Promise<Uint8Array | undefined> {
   const s = new AudioSession()
   try {
     await s.open()
-    const rx = new RadioReceiver({ fs: s.fs })
+    const rx = new AudioReceiver({ fs: s.fs })
     let idle = 0
     onStatus({ text: 'Čekám na volání…' })
     for (;;) {
@@ -225,7 +240,7 @@ export async function receiveByAudio(
       }
       idle = 0
       rx.rx(rec)
-      const st = (text: string): RadioStatus => ({
+      const st = (text: string): AudioStatus => ({
         text,
         mode: rx.state === 'idle' ? undefined : rx.mode.name,
         forced: rx.forced,

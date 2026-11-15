@@ -57,7 +57,7 @@ export interface SenderOptions {
   maxStalls?: number
 }
 
-export class RadioSender {
+export class AudioSender {
   state: SenderState = 'call'
   mode: Mode = HANDSHAKE_MODE
   /** naměřený odstup signálu u příjemce (dB), až po odpovědi READY */
@@ -172,7 +172,7 @@ export interface ReceiverOptions {
   fs?: number
 }
 
-export class RadioReceiver {
+export class AudioReceiver {
   state: ReceiverState = 'idle'
   mode: Mode = HANDSHAKE_MODE
   /** naměřený odstup signálu při volání (dB) */

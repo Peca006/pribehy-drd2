@@ -23,7 +23,7 @@
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import QrScanner from '../../ui/QrScanner.svelte'
-  import RadioReceive from '../../ui/RadioReceive.svelte'
+  import AudioReceive from '../../ui/AudioReceive.svelte'
   import QrView from '../../ui/QrView.svelte'
   import CheckList from './CheckList.svelte'
   import { describeChange, pathLabel } from './describe'
@@ -33,7 +33,7 @@
   // `part`: kód nebo díl kódu z adresy (QR s odkazem otevřený systémovou čtečkou)
   let { part }: { part?: string } = $props()
   let text = $state('')
-  let showRadio = $state(false)
+  let showAudio = $state(false)
   let errors = $state<string[]>([])
   let bundle = $state.raw<Bundle | undefined>(undefined)
   let log = $state.raw<CharacterLog | undefined>(undefined)
@@ -242,13 +242,13 @@
   <input type="file" accept=".txt,.json,text/plain,application/json" onchange={onfile} hidden />
 </label>
 <QrScanner bind:this={scanner} {onscan} />
-<button onclick={() => (showRadio = !showRadio)}
-  >{showRadio ? 'Skrýt zvuk' : 'Přijímat zvukem'}</button
+<button onclick={() => (showAudio = !showAudio)}
+  >{showAudio ? 'Skrýt zvuk' : 'Přijímat zvukem'}</button
 >
-{#if showRadio}<RadioReceive
+{#if showAudio}<AudioReceive
     onresult={async (t) => {
       text = t
-      showRadio = false
+      showAudio = false
       await check()
     }}
   />{/if}

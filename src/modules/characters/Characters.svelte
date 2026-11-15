@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { hasCharacterDraft } from '../../core/character/drafts'
@@ -117,7 +118,14 @@
   }
 
   async function remove() {
-    if (!current || !confirm('Opravdu smazat tuto postavu i s historií změn?')) return
+    if (!current) return
+    if (
+      !(await ask('Smaže se i historie změn. Nelze vrátit zpět.', {
+        title: 'Smazat postavu?',
+        ok: 'Smazat',
+      }))
+    )
+      return
     await deleteLog(current.id)
     go('postavy')
   }

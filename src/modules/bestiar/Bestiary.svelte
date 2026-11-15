@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { addToConflict, fromCreature } from '../../core/party/conflict'
@@ -65,7 +66,10 @@
   const hasPackData = $derived(library.packs.some((p) => p.creatures?.length))
 
   async function remove() {
-    if (creature && confirm(`Smazat bytost „${creature.name}“?`)) {
+    if (
+      creature &&
+      (await ask(`Smazat bytost „${creature.name}“?`, { title: 'Smazat bytost', ok: 'Smazat' }))
+    ) {
       await removeCreature(creature.id)
       go('bestiar')
     }

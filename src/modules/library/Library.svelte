@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import { installPack, removePack } from '../../core/content/store'
   import { removeDemo, restoreDemo } from '../../core/demo'
   import { library, refreshLibrary } from '../../core/library.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
+  import AudioTest from '../../ui/AudioTest.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
   import AppInfo from './AppInfo.svelte'
   import SrdImport from './SrdImport.svelte'
@@ -24,9 +26,10 @@
   let demoMsg = $state('')
   async function demo() {
     if (
-      !confirm(
-        'Obnovit ukázkové postavy a družinu? Pokud je máte upravené, vrátí se do původního stavu. Ostatní data se nemění.',
-      )
+      !(await ask(
+        'Pokud máte ukázkové postavy a družinu upravené, vrátí se do původního stavu. Ostatní data se nemění.',
+        { title: 'Obnovit ukázková data?', ok: 'Obnovit' },
+      ))
     )
       return
     try {
@@ -38,7 +41,13 @@
   }
 
   async function undemo() {
-    if (!confirm('Odstranit ukázkové postavy a družinu? Ostatní data se nemění.')) return
+    if (
+      !(await ask('Ukázkové postavy a družina se odstraní. Ostatní data se nemění.', {
+        title: 'Odstranit ukázková data?',
+        ok: 'Odstranit',
+      }))
+    )
+      return
     try {
       await removeDemo()
       demoMsg = 'Ukázková data jsou odstraněná.'
@@ -49,7 +58,12 @@
 
   async function remove(id: string) {
     const name = library.packs.find((p) => p.manifest.id === id)?.manifest.name ?? id
-    if (!confirm(`Odebrat balíček „${name}“? Postavy a zápisy se nemažou, jen texty z balíčku.`))
+    if (
+      !(await ask('Postavy a zápisy se nemažou, jen texty z balíčku.', {
+        title: `Odebrat balíček „${name}“?`,
+        ok: 'Odebrat',
+      }))
+    )
       return
     await removePack(id)
     await refreshLibrary()
@@ -98,6 +112,12 @@
   <button onclick={undemo}>Odstranit</button>
 </p>
 {#if demoMsg}<p role="status" class="muted">{demoMsg}</p>{/if}
+
+<h2>Zkouška zvuku</h2>
+<details>
+  <summary>Přenos zvukem mezi zařízeními (audiogram)</summary>
+  <AudioTest />
+</details>
 
 <h2>Nastavení</h2>
 <div class="panel settings">

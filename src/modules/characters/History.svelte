@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import type { ChangeEvent, CharacterLog } from '../../core/character/model'
   import type { ReviewStatus } from '../../core/character/reviews'
   import { groupRevisions, revertEvents, revisionChanges } from '../../core/character/revisions'
@@ -25,14 +26,15 @@
   const revisions = $derived(groupRevisions(log.events).reverse())
   const when = (iso: string) => new Date(iso).toLocaleString('cs-CZ')
 
-  function revert(i: number) {
+  async function revert(i: number) {
     const rev = revisions[i]
     const undo = revertEvents(log, rev, settings.author, `Vrácení: ${rev.note || 'změna'}`)
     if (!undo.length) return
     if (
-      confirm(
-        `Vrátit změnu „${rev.note || 'bez popisu'}“? Vznikne nová revize s původními hodnotami.`,
-      )
+      await ask('Vznikne nová revize s původními hodnotami.', {
+        title: `Vrátit změnu „${rev.note || 'bez popisu'}“?`,
+        ok: 'Vrátit',
+      })
     )
       onrevert(undo)
   }

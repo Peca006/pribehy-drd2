@@ -1,5 +1,12 @@
 # Změny
 
+## 0.2.4 (15. 11. 2026)
+
+- Potvrzení (smazat, odebrat, zahodit, vrátit změnu, obnovit a odstranit ukázková data …) je dialog ve stylu aplikace, celý česky, místo systémového okna prohlížeče. Esc nebo klepnutí mimo dialog je Zrušit.
+- „Radiogram“ se jmenuje **audiogram** (přenos kódu zvukem). Stejná funkce, nový název v aplikaci, kódu a dokumentaci (`AUDIOGRAM.md`).
+- Více: **Zkouška zvuku**. Jedno zařízení přehraje řadu tónů (500 Hz až 8 kHz), druhé ukáže úroveň každého, hlasitost vstupu, vzorkování a zda je potlačení ozvěny, šumu a automatická hlasitost opravdu vypnutá. Pomáhá zjistit, proč se přenos zvukem mezi zařízeními nedaří.
+- Audiogram: analýza využitého pásma (všechny režimy jsou v hovorovém až středním pásmu, handshake v 1 až 2,3 kHz) a srovnání s HF modemy je v `AUDIOGRAM.md`. Samotný přenos beze změny.
+
 ## 0.2.3 (15. 11. 2026)
 
 - Ukázková data ve Více: tlačítka „Obnovit“ a „Odstranit“. Odstranění smaže jedním krokem všechna ukázková data (postavy, družinu i rozpracovaný konflikt) a nic jiného; po něm se ukázková data už sama nenabízejí.

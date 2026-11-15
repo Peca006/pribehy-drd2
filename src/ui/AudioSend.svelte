@@ -1,16 +1,16 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, sendByAudio, type RadioStatus } from '../core/radiogram/audio'
-  import { MODES } from '../core/radiogram/modes'
-  import { packMessage } from '../core/radiogram/payload'
+  import { audioSupported, sendByAudio, type AudioStatus } from '../core/audiogram/audio'
+  import { MODES } from '../core/audiogram/modes'
+  import { packMessage } from '../core/audiogram/payload'
 
-  // Vysílání kódu zvukem (experiment „radiogram“): handshake, volba režimu podle kvality kanálu
+  // Vysílání kódu zvukem (experiment „audiogram“): handshake, volba režimu podle kvality kanálu
   // (nebo ručně vybraný režim), dávky rámců s potvrzením. Druhé zařízení musí mít zapnuté
   // „Přijímat zvukem“ dřív, než tady začnete.
   let { code, onsent }: { code: string; onsent?: () => void } = $props()
 
   let running = $state(false)
-  let status = $state<RadioStatus | undefined>(undefined)
+  let status = $state<AudioStatus | undefined>(undefined)
   let result = $state<'ok' | 'fail' | ''>('')
   let error = $state('')
   /** 'auto' nebo index režimu v tabulce */

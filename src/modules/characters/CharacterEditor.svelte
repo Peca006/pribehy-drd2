@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import {
@@ -125,8 +126,14 @@
     clearCharacterDraft(id)
     go('postavy', id)
   }
-  function discard() {
-    if (!confirm('Zahodit rozpracované úpravy? Postava zůstane, jak je.')) return
+  async function discard() {
+    if (
+      !(await ask('Postava zůstane, jak je.', {
+        title: 'Zahodit rozpracované úpravy?',
+        ok: 'Zahodit',
+      }))
+    )
+      return
     clearCharacterDraft(id)
     go('postavy', id)
   }

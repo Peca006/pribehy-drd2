@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { SAMPLE_RATE } from './afsk'
 import { makeChannel, rng, type Channel } from './channel'
 import { MODES } from './modes'
-import { RadioReceiver, RadioSender } from './protocol'
+import { AudioReceiver, AudioSender } from './protocol'
 
 const bytesOf = (n: number, seed = 5) => {
   const r = rng(seed)
@@ -10,8 +10,8 @@ const bytesOf = (n: number, seed = 5) => {
 }
 
 interface Result {
-  sender: RadioSender
-  receiver: RadioReceiver
+  sender: AudioSender
+  receiver: AudioReceiver
   /** celková doba vysílání obou stran (s) */
   seconds: number
   turns: number
@@ -20,8 +20,8 @@ interface Result {
 
 /** Poloduplexní běh obou stran přes dva simulované kanály. */
 function run(msg: Uint8Array, ab: Channel, ba: Channel, opt: { maxMode?: number; mode?: number; maxTurns?: number } = {}): Result {
-  const sender = new RadioSender(msg, { session: 42, maxMode: opt.maxMode, mode: opt.mode })
-  const receiver = new RadioReceiver()
+  const sender = new AudioSender(msg, { session: 42, maxMode: opt.maxMode, mode: opt.mode })
+  const receiver = new AudioReceiver()
   let seconds = 0
   let turns = 0
   const labels: string[] = []

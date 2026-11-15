@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import { onMount } from 'svelte'
   import {
     addParticipant,
@@ -67,8 +68,14 @@
     if (!n.trim()) return
     set(addParticipant(conflict, hero(n.trim())))
   }
-  function remove(p: Participant) {
-    if (!confirm(`Odebrat „${p.name}“ z konfliktu?`)) return
+  async function remove(p: Participant) {
+    if (
+      !(await ask(`Odebrat „${p.name}“ z konfliktu?`, {
+        title: 'Odebrat z konfliktu',
+        ok: 'Odebrat',
+      }))
+    )
+      return
     openId = undefined
     set({ ...conflict, participants: conflict.participants.filter((x) => x.id !== p.id) })
   }
@@ -77,7 +84,13 @@
     set(nextRound(conflict))
   }
   async function finish(toJournal: boolean) {
-    if (!confirm('Ukončit konflikt? Ohrožení, Výhody, Sudba a pořadí se smažou.')) return
+    if (
+      !(await ask('Ohrožení, Výhody, Sudba a pořadí se smažou.', {
+        title: 'Ukončit konflikt?',
+        ok: 'Ukončit',
+      }))
+    )
+      return
     if (toJournal && party) {
       party.journal = [
         {

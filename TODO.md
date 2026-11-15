@@ -7,11 +7,11 @@ tlačítka a šipky, **výbava bez balíčku** (sady Obyčejná / Ceněná / Dra
 text; ceník odkazem do SRD; v kostře jsou jen krátké názvy položek) a **generátor jmen** (markovský, z příkladů jmen rasy
 v balíčku, tlačítko v kroku Shrnutí; bez balíčku nic nenabízí).
 
-**Větev `radiogram` (pushnutá, nesloučená, mimo vydávanou aplikaci):** zvukový přenos kódu. Hotové jádro AFSK 300/600/1200,
+**Větev `audiogram` (pushnutá, nesloučená, mimo vydávanou aplikaci):** zvukový přenos kódu. Hotové jádro AFSK 300/600/1200,
 rámce s CRC, handshake (CALL / READY podle změřeného odstupu signálu), dávky s ACK a opakováním, Web Audio vrstva a tlačítka
 Vysílat / Přijímat zvukem; testy se simulovaným kanálem. **Nedodělané:** skutečný zvuk mezi telefony nezkoušen (ladit
 hlasitost, předzvuk, odstup), PSK / QAM / OFDM nejsou (jen AFSK; rozhraní režimů je připravené), chybí oprava chyb (FEC).
-Podrobně v `RADIOGRAM.md` ve větvi. Další krok: zkouška na dvou telefonech, potom PSK a OFDM.
+Podrobně v `AUDIOGRAM.md` ve větvi. Další krok: zkouška na dvou telefonech, potom PSK a OFDM.
 
 **Přenosy (pořadí):** ruční slučování konfliktů při importu revizí postavy → Wi-Fi / WebRTC → QR na celou obrazovku a tisk
 (hlavně počítač) → NFC (čtení a zápis tagů, jen Chrome na Androidu; úplně nakonec).

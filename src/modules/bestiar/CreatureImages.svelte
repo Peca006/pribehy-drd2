@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import { onDestroy } from 'svelte'
   import { addImage, deleteImage, listImages } from '../../core/creatures/images'
 
@@ -31,7 +32,10 @@
     await load(creatureId)
   }
   async function remove(id: string) {
-    if (!confirm('Odebrat obrázek?')) return
+    if (
+      !(await ask('Obrázek se odebere z bytosti.', { title: 'Odebrat obrázek?', ok: 'Odebrat' }))
+    )
+      return
     await deleteImage(id)
     await load(creatureId)
   }

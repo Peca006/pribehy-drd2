@@ -1,11 +1,11 @@
-# Radiogram: přenos kódu zvukem (experiment)
+# Audiogram: přenos kódu zvukem (experiment)
 
-Větev `radiogram` (z `develop`, nesměřuje do `develop` ani `main`). Přenos kódu `DRD2:…` postavy nebo družiny
+Větev `audiogram` (z `develop`, nesměřuje do `develop` ani `main`). Přenos kódu `DRD2:…` postavy nebo družiny
 mezi dvěma zařízeními reproduktorem a mikrofonem, bez serveru. Texty v kódu jsou česky, `TODO.md` se nemění.
 
 ## Stav (co funguje)
 
-Čisté DSP a protokol (`src/core/radiogram/`, vše ve vitestu se simulovaným kanálem):
+Čisté DSP a protokol (`src/core/audiogram/`, vše ve vitestu se simulovaným kanálem):
 
 | soubor | obsah |
 | --- | --- |
@@ -18,12 +18,12 @@ mezi dvěma zařízeními reproduktorem a mikrofonem, bez serveru. Texty v kódu
 | `ofdm.ts` | OFDM: FFT 512, prefix 64, 36 podnosných (6 pilotních), ekvalizace z trénovacích symbolů + pilotní doladění fáze |
 | `modes.ts` | tabulka 9 režimů, `chooseMode`, `esn0` |
 | `payload.ts` | příprava textu k vysílání (base64url → bajty, volitelně deflate) |
-| `protocol.ts` | `RadioSender` a `RadioReceiver`: handshake, dávky, ACK, opakování, zpomalení, vynucený režim |
+| `protocol.ts` | `AudioSender` a `AudioReceiver`: handshake, dávky, ACK, opakování, zpomalení, vynucený režim |
 | `channel.ts` | simulovaný kanál: bílý šum, zpoždění, zesílení, výpadky; generátor řízený semínkem |
 | `audio.ts` | Web Audio: přehrání, nahrávání (ScriptProcessor), detekce začátku/konce vysílání, `sendByAudio`, `receiveByAudio` |
 
-UI: `src/ui/RadioSend.svelte` (tlačítko „Vysílat zvukem“ v `SharePanel` a `PartyShare`, výběr režimu) a
-`src/ui/RadioReceive.svelte` (tlačítko „Přijímat zvukem“ v `ImportPanel`; hotový text se vloží do pole importu
+UI: `src/ui/AudioSend.svelte` (tlačítko „Vysílat zvukem“ v `SharePanel` a `PartyShare`, výběr režimu) a
+`src/ui/AudioReceive.svelte` (tlačítko „Přijímat zvukem“ v `ImportPanel`; hotový text se vloží do pole importu
 a zkontroluje stejně jako vložený kód).
 
 ### Protokol (poloduplex, střídavě vysílá a poslouchá jedna strana)
@@ -165,3 +165,38 @@ Volba se přenese ve volání, příjemce ji převezme (nezpomaluje a při volá
 - Společné rámcování a RS pro všechny modemy (`FrameAssembler` čte bity po jednom a sám pozná konec), takže nový režim je jen mapování bitů na zvuk.
 - Nosná jednonosných režimů je násobek baud/2, aby se člen dvojnásobné frekvence při integraci symbolu přesně vyrušil.
 - Práh režimu je vyjádřen jako odstup naměřený v režimu 0 (ne jako vlastní odstup režimu): jedna veličina z handshake stačí k volbě a zahrnuje rozdíly výkonu (OFDM) i konstelace.
+
+## Využité pásmo a zkouška zvuku (listopad 2026)
+
+Důvod: první pokus mezi mobilem a notebookem selhal (notebook slyšel, mobil ne). Změřené spektrum vysílaného signálu
+(300 B, 48 kHz; energie 1 % až 99 %, a pásmo do −20 dB od špičky):
+
+| režim | pásmo do −20 dB | 99 % energie |
+| --- | --- | --- |
+| AFSK 300 (volání, odpovědi) | 1,1 až 2,2 kHz | 1,0 až 2,3 kHz |
+| AFSK 600 / 1200 | 1,2 až 2,4 kHz | 0,8 až 3,0 kHz |
+| BPSK 800 | 1,8 až 5,9 kHz | 2,0 až 12,6 kHz |
+| QPSK / 8-PSK / 16-QAM 1200 | do asi 6 až 7 kHz | 1,0 až 12 kHz |
+| OFDM | 1,3 až 6,2 kHz | 1,5 až 13 kHz |
+
+Závěry:
+- Všechny režimy leží **uvnitř hovorového až středního pásma, ne v plném rozsahu 100 Hz až 15 kHz**. Handshake (AFSK 300) je celý
+  v pásmu 1 až 2,3 kHz, tedy i v úzkém telefonním pásmu 300 až 3 400 Hz.
+- Jednonosné režimy a OFDM mají bez tvarování impulzů široké okraje (obdélníkové symboly): menší část energie (jednotky %) je
+  nad 6 kHz. Je to neužitečná energie, která zabírá rozsah reproduktoru. Zužování (tvarované impulzy, např. kořen ze zvýšeného
+  kosinu) by ušetřilo rozsah, ale bez zkoušky na skutečných zařízeních se do DSP nezasahuje.
+- Rádiové modemy pro HF (Mercury, VARA, ARDOP, FreeDV) pracují v pásmu SSB kanálu asi 300 až 2 700 Hz (jeden kanál asi 2,3 kHz)
+  a mají pevný standard rychlostí podle odstupu signálu. Vlastní hlavní princip (adaptace režimu podle odstupu, opravné kódy)
+  tu už je. Jejich pásmo je užší než naše vyšší režimy; to je ale pro vzduchovou cestu telefon–notebook volba, ne nutnost.
+- Mobil pravděpodobně netrefil spíš **zpracování zvuku** než pásmo: telefony často ignorují vypnutí potlačení šumu a ozvěny
+  a automatické hlasitosti (`getUserMedia` jen žádá), a stálé tóny pak považují za šum a tlumí je. Malé reproduktory
+  telefonů navíc potlačují hluboké tóny, takže nejbezpečnější je ponechat nosné nad 1 kHz (jak to teď je).
+
+Přidáno: **Zkouška zvuku** ve Více (`ui/AudioTest.svelte`, `audiogram/probe.ts`). Jedno zařízení přehraje osm čistých tónů
+(500 Hz až 8 kHz), druhé u každého ukáže naměřenou úroveň a hlasitost na vstupu, vzorkovací kmitočet a zda je potlačení
+ozvěny, šumu a automatická hlasitost skutečně vypnutá. Podle toho se pozná, které pásmo zařízení propustí, a pro spolehlivý
+přenos se pak zvolí vhodný režim. Změny DSP se zatím nedělají; potřebují naměřená data z reálných zařízení.
+
+Zdroje k inspiraci: Mercury (Rhizomatica, OFDM a LDPC, <https://github.com/Rhizomatica/mercury>), amodem (zvuková karta,
+OFDM, kalibrace hlasitosti, <https://github.com/romanz/amodem>), ggwave (FSK a Reed–Solomon přes vzduch). Projekty xara, data2G a
+varderFM jsem při hledání nenašel, takže z nich nic nepřebírám.

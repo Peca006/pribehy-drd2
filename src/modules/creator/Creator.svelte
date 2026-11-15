@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { emptyCharacter, eventsFor } from '../../core/character/model'
   import { saveLog } from '../../core/character/store'
@@ -32,8 +33,12 @@
   $effect(() => {
     if (draft) saveDraft(draft.snapshot(), step.id)
   })
-  function restart() {
-    if (!data || !confirm('Zahodit rozpracovanou postavu a začít znovu?')) return
+  async function restart() {
+    if (!data) return
+    if (
+      !(await ask('Rozpracovaná postava se zahodí.', { title: 'Začít znovu?', ok: 'Zahodit' }))
+    )
+      return
     clearDraft()
     resumed = undefined
     draft = new Draft(data.rules)

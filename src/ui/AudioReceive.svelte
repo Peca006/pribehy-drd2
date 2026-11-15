@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, receiveByAudio, type RadioStatus } from '../core/radiogram/audio'
-  import { unpackMessage } from '../core/radiogram/payload'
+  import { audioSupported, receiveByAudio, type AudioStatus } from '../core/audiogram/audio'
+  import { unpackMessage } from '../core/audiogram/payload'
 
-  // Příjem kódu zvukem (experiment „radiogram“). Po dokončení předá text funkci `onresult`.
+  // Příjem kódu zvukem (experiment „audiogram“). Po dokončení předá text funkci `onresult`.
   let { onresult }: { onresult: (text: string) => void } = $props()
 
   let running = $state(false)
-  let status = $state<RadioStatus | undefined>(undefined)
+  let status = $state<AudioStatus | undefined>(undefined)
   let error = $state('')
   let abort: AbortController | undefined
 

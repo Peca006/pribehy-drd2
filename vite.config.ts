@@ -48,6 +48,6 @@ export default defineConfig({
       },
     }),
   ],
-  // radiogramové testy měří chybovost simulací (v CI trvají déle než výchozích 5 s)
+  // audiogramové testy měří chybovost simulací (v CI trvají déle než výchozích 5 s)
   test: { include: ['src/**/*.test.ts', 'tools/**/*.test.ts'], testTimeout: 60000 },
 })
