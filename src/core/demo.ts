@@ -1,9 +1,30 @@
 // Instalace ukázkových dat: při prvním spuštění do prázdné aplikace a na požádání ve Více (obnoví jen ukázková data).
 import { DEMO_CHARACTERS, demoLog, demoParty } from '../data/demo'
-import { listLogs, saveLog } from './character/store'
-import { listParties, saveParty } from './party/store'
+import { deleteLog, listLogs, saveLog } from './character/store'
+import { deleteParty, listParties, saveParty } from './party/store'
 
 const FLAG = 'drd2-demo-seeded'
+/** Všechna ukázková data mají ID s touto předponou, takže jdou odstranit najednou (i ta, která přibudou). */
+export const DEMO_PREFIX = 'demo-'
+
+/** Odstraní všechna ukázková data (postavy, družiny a jejich rozpracovaný konflikt). Ostatní data se nedotkne. */
+export async function removeDemo() {
+  for (const l of await listLogs()) if (l.id.startsWith(DEMO_PREFIX)) await deleteLog(l.id)
+  for (const p of await listParties())
+    if (p.id.startsWith(DEMO_PREFIX)) {
+      await deleteParty(p.id)
+      try {
+        localStorage.removeItem(`drd2-conflict:${p.id}`)
+      } catch {
+        /* nic dalšího k uklizení */
+      }
+    }
+  try {
+    localStorage.setItem(FLAG, '1')
+  } catch {
+    /* bez úložiště se jen může nabídnout znovu */
+  }
+}
 
 /** Přepíše (obnoví) ukázkové postavy a družinu; ostatní data se nedotkne. */
 export async function restoreDemo(author: string) {

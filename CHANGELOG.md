@@ -1,5 +1,9 @@
 # Změny
 
+## 0.2.3 (15. 11. 2026)
+
+- Ukázková data ve Více: tlačítka „Obnovit“ a „Odstranit“. Odstranění smaže jedním krokem všechna ukázková data (postavy, družinu i rozpracovaný konflikt) a nic jiného; po něm se ukázková data už sama nenabízejí.
+
 ## 0.2.2 (14. 11. 2026)
 
 **Ukázková data**

@@ -3,12 +3,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const logs: unknown[] = []
 const parties: unknown[] = []
 vi.mock('./character/store', () => ({
-  listLogs: async () => logs,
+  listLogs: async () => [...logs],
   saveLog: async (l: unknown) => void logs.push(l),
+  deleteLog: async (id: string) => {
+    const i = logs.findIndex((l) => (l as { id: string }).id === id)
+    if (i >= 0) logs.splice(i, 1)
+  },
 }))
 vi.mock('./party/store', () => ({
-  listParties: async () => parties,
+  listParties: async () => [...parties],
   saveParty: async (p: unknown) => void parties.push(p),
+  deleteParty: async (id: string) => {
+    const i = parties.findIndex((p) => (p as { id: string }).id === id)
+    if (i >= 0) parties.splice(i, 1)
+  },
 }))
 
 const store = new Map<string, string>()
@@ -18,7 +26,7 @@ globalThis.localStorage = {
   removeItem: (k: string) => void store.delete(k),
 } as Storage
 
-const { restoreDemo, seedDemoOnce } = await import('./demo')
+const { removeDemo, restoreDemo, seedDemoOnce } = await import('./demo')
 
 beforeEach(() => {
   logs.length = 0
@@ -44,5 +52,16 @@ describe('ukázková data', () => {
     await restoreDemo('Test')
     expect(logs).toHaveLength(3)
     expect(parties).toHaveLength(1)
+  })
+  it('odstranění smaže jen ukázková data a po něm se už nenabízejí samy', async () => {
+    await restoreDemo('Test')
+    logs.push({ id: 'moje-postava', events: [] })
+    parties.push({ id: 'moje-druzina' })
+    await removeDemo()
+    expect(logs).toEqual([{ id: 'moje-postava', events: [] }])
+    expect(parties).toEqual([{ id: 'moje-druzina' }])
+    logs.length = 0
+    parties.length = 0
+    expect(await seedDemoOnce('Test')).toBe(false)
   })
 })

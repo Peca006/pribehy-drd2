@@ -1,6 +1,6 @@
 <script lang="ts">
   import { installPack, removePack } from '../../core/content/store'
-  import { restoreDemo } from '../../core/demo'
+  import { removeDemo, restoreDemo } from '../../core/demo'
   import { library, refreshLibrary } from '../../core/library.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
@@ -32,6 +32,16 @@
     try {
       await restoreDemo(settings.author)
       demoMsg = 'Ukázková data jsou obnovená (3 postavy a družina).'
+    } catch (err) {
+      demoMsg = err instanceof Error ? err.message : String(err)
+    }
+  }
+
+  async function undemo() {
+    if (!confirm('Odstranit ukázkové postavy a družinu? Ostatní data se nemění.')) return
+    try {
+      await removeDemo()
+      demoMsg = 'Ukázková data jsou odstraněná.'
     } catch (err) {
       demoMsg = err instanceof Error ? err.message : String(err)
     }
@@ -83,7 +93,10 @@
   Ukázkové postavy a družina k vyzkoušení aplikace. Dají se upravit i smazat, tady je znovu
   nahrajete.
 </p>
-<p><button onclick={demo}>Obnovit ukázková data</button></p>
+<p>
+  <button onclick={demo}>Obnovit</button>
+  <button onclick={undemo}>Odstranit</button>
+</p>
 {#if demoMsg}<p role="status" class="muted">{demoMsg}</p>{/if}
 
 <h2>Nastavení</h2>
