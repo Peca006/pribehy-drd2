@@ -32,12 +32,12 @@
   import { go } from '../../core/router.svelte'
   import type { Attribute } from '../../core/content/schema'
   import Md from '../../ui/Md.svelte'
-  import { formatMoney } from '../creator/rules'
   import Advance from './Advance.svelte'
   import CharacterEditor from './CharacterEditor.svelte'
   import CheckList from './CheckList.svelte'
   import HealDialog from './HealDialog.svelte'
   import History from './History.svelte'
+  import Cash from './Cash.svelte'
   import RawMaterials from './RawMaterials.svelte'
   import Roll from './Roll.svelte'
   import ScarDialog from './ScarDialog.svelte'
@@ -89,7 +89,7 @@
     setSpent(nextSpent)
     healFor = undefined
   }
-  /** Změna Surovin (±, druhy) jako samostatná revize v deníku. */
+  /** Rychlá změna Surovin nebo Hotovosti (±, druhy) jako samostatná revize v deníku. */
   async function rawChange(next: Character, note: string) {
     if (!current || !c) return
     const events = eventsFor(c, next, settings.author, note)
@@ -260,7 +260,7 @@
   <ul>
     {#each c.equipment as e}<li>{e}</li>{/each}
   </ul>
-  <p>Hotovost: {formatMoney(c.cash)}</p>
+  {#key current.id}<Cash character={c} onchange={rawChange} />{/key}
   {#key current.id}<RawMaterials character={c} onchange={rawChange} />{/key}
 
   {#if c.notes}<h2>Poznámky</h2>

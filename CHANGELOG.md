@@ -1,5 +1,9 @@
 # Změny
 
+## 0.3.2 (16. 11. 2026)
+
+- Postava: **Hotovost** v přehledu po dukátech, grošech a haléřích, každé s ±. Plus na 9 přeteče do vyššího řádu, mínus na 0 si půjčí z vyššího, změna vyššího řádu nemění nižší. Půjčka z dukátu (rozměnění) se zeptá. Rychlá klepání se zapíšou jako jedna revize („Hotovost: +1 dukát 1 groš“). Uložená hodnota zůstává jedno číslo v haléřích, formát se nemění; v editoru postavy je dál pole v haléřích.
+
 ## 0.3.1 (16. 11. 2026)
 
 - Postava: tlačítko **Zmírnit** u Jizvy (dřív „Zmírnit o 1“) otevře dialog léčení: Jizva je rovnou o 1 nižší, jde upravit její **popis** a závažnost (nejníž na 1, nejvýš o 1 méně než dosud; úplné odstranění je „Zahojeno“). Ukáže celkové snížení (k porovnání se silou magického okamžiku) a cenu 5 Zdrojů za stupeň. **Zdroje z lektvaru** nebo masti (nejvýš cena) se odečtou a zbytek si hráč rozdělí mezi Tělo, Duše a Vliv (nabídne se výchozí rozdělení, jde upravit). Výhodou ani dočasnými Zdroji z jizvy se neplatí. Uložit zapíše jednu revizi (nová závažnost a popis) a čerpání Zdrojů; Zrušit nic nezmění.

@@ -101,7 +101,7 @@ panel Kořist pro hráče nepotřebujeme. Smysl má až jako **podpora vypravě�
 s druhem, výbava). Tohle patří k milníku **Výpravy** (sekce pro vypravěče, ukázkové dobrodružství), proto 11e počká na něj.
 - Trofeje: jen název a poznámka. Zpracování těla na Suroviny jako ruční zadání (množství určuje Průvodce).
 
-### 11f: Hotovost (nový malý krok, plyne z rozhodnutí o cenách)
+### 11f: Hotovost: HOTOVO ve verzi 0.3.2
 
 **Rozhodnutí uživatele:** Hotovost zůstává zvlášť v **dukátech, grošech a haléřích**, ale ovládání úsporně, ideálně v jednom až dvou řádcích:
 
