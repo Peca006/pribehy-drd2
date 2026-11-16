@@ -4,6 +4,7 @@
 
 - Postava: **Výroba a opravy…** (tlačítko pod Surovinami). Druh (výroba, oprava, nouzový předmět), název, cena předmětu v groších (návrh: Surovin zhruba polovina, oprava 5 za stupeň závažnosti; cena jde přepsat) a **odečet Surovin po druzích** (nabídne se výchozí rozdělení: nejdřív bez druhu, pak druhy). Mezi výpravami bez hodu, na výpravě se zapíše výsledek (podařilo se / nepodařilo, Suroviny propadly / přerušeno, nic se nespotřebuje). Vyrobený předmět se může přidat do výbavy; nouzový je zdarma a označený. Zapíše se jedna revize.
 - Postup vyhodnocení: karta Výroba a opravy.
+- Více, Aplikace: nabídka „Je připravená nová verze [Načíst]“ se neopakuje, dokud je dole lišta s novou verzí; ukáže se tam až po „Později“. Starý text „Nová verze je připravená“ po kontrole zmizel.
 
 ## 0.3.2 (16. 11. 2026)
 

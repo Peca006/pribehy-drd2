@@ -33,10 +33,13 @@
   </p>
 
   {#if pwa.needRefresh}
-    <p>
-      Je připravená nová verze.
-      <button class="primary" onclick={applyUpdate}>Načíst</button>
-    </p>
+    <!-- dokud je dole lišta s novou verzí, nabídka se neopakuje; po „Později“ se ukáže tady -->
+    {#if pwa.updateDismissed}
+      <p>
+        Je připravená nová verze.
+        <button class="primary" onclick={applyUpdate}>Načíst</button>
+      </p>
+    {/if}
   {:else}
     <p>
       <button onclick={check} disabled={pwa.checking}>
@@ -44,7 +47,7 @@
       </button>
     </p>
   {/if}
-  {#if result}<p role="status">{result}</p>{/if}
+  {#if result && !pwa.needRefresh}<p role="status">{result}</p>{/if}
 </div>
 
 <div class="panel">

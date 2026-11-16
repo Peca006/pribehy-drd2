@@ -2,7 +2,6 @@
   import { applyUpdate, install, pwa } from '../core/pwa.svelte'
 
   // Pruhy nad navigací: nová verze ke stažení a nabídka instalace aplikace na plochu.
-  let hideUpdate = $state(false)
   let hideInstall = $state(false)
   let busy = $state(false)
   const showInstall = $derived(pwa.installable && !pwa.installed && !hideInstall)
@@ -13,11 +12,11 @@
   }
 </script>
 
-{#if pwa.needRefresh && !hideUpdate}
+{#if pwa.needRefresh && !pwa.updateDismissed}
   <div class="bar" role="status">
     <span>Je dostupná nová verze aplikace. Rozepsané úpravy zůstanou uložené.</span>
     <button class="primary" disabled={busy} onclick={update}>Obnovit</button>
-    <button onclick={() => (hideUpdate = true)} aria-label="Skrýt">Později</button>
+    <button onclick={() => (pwa.updateDismissed = true)} aria-label="Skrýt">Později</button>
   </div>
 {:else if showInstall}
   <div class="bar" role="status">

@@ -11,6 +11,8 @@ import { registerSW } from 'virtual:pwa-register'
 export const pwa = $state({
   /** čeká nová verze, stačí obnovit */
   needRefresh: false,
+  /** uživatel skryl lištu s novou verzí („Později“); nabídka se pak ukáže ve Více */
+  updateDismissed: false,
   /** aplikace je připravená pro práci offline (první nainstalování service workeru) */
   offlineReady: false,
   /** právě se kontroluje nová verze */
