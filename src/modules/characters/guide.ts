@@ -68,6 +68,17 @@ export const BASIC: Card[] = [
     ],
     link: '36-kouzla-nastrahy-leceni',
   },
+  {
+    id: 'vyroba',
+    title: 'Výroba a opravy',
+    steps: [
+      'Vhodné podmínky (místo, čas, pomůcky) posuzuje Průvodce. Bez Surovin jen nouzový předmět.',
+      'Cena v Surovinách: nástroj nebo ochranný předmět zhruba polovina ceny, spotřební předmět pevně daná, oprava 5 za stupeň závažnosti.',
+      'Mezi výpravami se spotřebují jen Suroviny. Na výpravě zkouška: neúspěch obvykle propálí Suroviny, přerušení je střet.',
+      'Výrobou nelze zasadit Jizvu. Kvalitní předměty jen s bravurní dovedností.',
+    ],
+    link: '35-pouzivani-dovednosti',
+  },
 ]
 
 export const SITUATIONS: Card[] = [

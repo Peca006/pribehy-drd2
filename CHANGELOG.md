@@ -1,5 +1,10 @@
 # Změny
 
+## 0.3.3 (16. 11. 2026)
+
+- Postava: **Výroba a opravy…** (tlačítko pod Surovinami). Druh (výroba, oprava, nouzový předmět), název, cena předmětu v groších (návrh: Surovin zhruba polovina, oprava 5 za stupeň závažnosti; cena jde přepsat) a **odečet Surovin po druzích** (nabídne se výchozí rozdělení: nejdřív bez druhu, pak druhy). Mezi výpravami bez hodu, na výpravě se zapíše výsledek (podařilo se / nepodařilo, Suroviny propadly / přerušeno, nic se nespotřebuje). Vyrobený předmět se může přidat do výbavy; nouzový je zdarma a označený. Zapíše se jedna revize.
+- Postup vyhodnocení: karta Výroba a opravy.
+
 ## 0.3.2 (16. 11. 2026)
 
 - Postava: **Hotovost** se ukládá a ovládá jako **tři samostatné hodnoty** (dukáty, groše, haléře), každá s ±. Nic se samo nepřevádí do vyššího řádu (haléřů může být i víc než 9). Při čerpání pod nulu se rozmění jedna mince shora (groš na 10 haléřů, dukát na 10 grošů); rozměnění dukátu se zeptá. Rychlá klepání se sloučí do jedné revize („Hotovost: 1 dukát → 9 grošů 9 haléřů“). V editoru postavy jsou tři pole.

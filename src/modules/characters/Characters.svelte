@@ -38,6 +38,7 @@
   import HealDialog from './HealDialog.svelte'
   import History from './History.svelte'
   import Cash from './Cash.svelte'
+  import CraftDialog from './CraftDialog.svelte'
   import RawMaterials from './RawMaterials.svelte'
   import Roll from './Roll.svelte'
   import ScarDialog from './ScarDialog.svelte'
@@ -80,6 +81,11 @@
     if (!s) return
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
     current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
+  }
+  let craftOpen = $state(false)
+  async function crafted(next: Character, note: string) {
+    await rawChange(next, note)
+    craftOpen = false
   }
   let healFor = $state<string | undefined>(undefined)
   /** Léčení v magickém okamžiku: revize deníku (snížení Jizvy) a čerpání Zdrojů v zařízení. */
@@ -262,6 +268,10 @@
   </ul>
   {#key current.id}<Cash character={c} onchange={rawChange} />{/key}
   {#key current.id}<RawMaterials character={c} onchange={rawChange} />{/key}
+  <p><button onclick={() => (craftOpen = true)}>Výroba a opravy…</button></p>
+  {#if craftOpen}
+    <CraftDialog character={c} onsave={crafted} onclose={() => (craftOpen = false)} />
+  {/if}
 
   {#if c.notes}<h2>Poznámky</h2>
     <p class="notes">{c.notes}</p>{/if}
