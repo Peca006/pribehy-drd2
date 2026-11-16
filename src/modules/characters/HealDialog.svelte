@@ -91,12 +91,11 @@
       <strong>{cost}</strong> ({COST_PER_STEP} × {steps}).
     </p>
     <div class="row">
-      <span>Zdroje z lektvaru, masti</span>
+      <span>Lektvary a masti (max. {cost})</span>
       <button onclick={() => setPotion(potion - 1)} disabled={potion <= 0} aria-label="Méně z lektvaru">−</button>
       <strong>{potion}</strong>
       <button onclick={() => setPotion(potion + 1)} disabled={potion >= cost} aria-label="Více z lektvaru">+</button>
     </div>
-    <p class="muted">Nejvýš {cost}. Lektvar může být i z cizí zásoby; odepište si ho v jejím deníku.</p>
 
     <p>Ostatní zaplatí ošetřovaný ze svých Zdrojů (<strong>{check.own}</strong>), rozdělte je:</p>
     {#each ATTRIBUTES as a}
