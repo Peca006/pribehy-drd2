@@ -73,7 +73,10 @@ postavy, dialog druhů, testy (staré postavy bez polí, přenos, smazání druh
   (názvy z balíčku, jinak odkaz).
 - Zápis: odečet Surovin jako revize s poznámkou „výroba: …“; volitelně přidat předmět do výbavy.
 
-### 11c: Léčení Jizev
+### 11c: Léčení Jizev — HOTOVO ve verzi 0.3.1 (bez evidence lektvarů)
+
+Rozhodnutí: lektvary se neevidují, v dialogu se zadají jen jako „Zdroje navíc“ (0 až 5 za stupeň). Pomocníci (Pouto, Platba) v aplikaci zatím nejsou, Jizvy na Poutu se neřeší. Léčení bytostí je jen informace.
+
 - Dialog „Léčit v magickém okamžiku“ u Jizvy: síla okamžiku (zadá hráč nebo Průvodce), kontrola „síla ≥ závažnost“, ošetřující (jiná
   postava, nebo sám = upozornění na vyčerpání i Zdroje), zkouška (odkaz do panelu Hod), platba **5 Zdrojů za snížení o 1** s volbou vlastností
   (nejdřív vlastnost Jizvy), možnost započíst Suroviny z lektvaru, **ne** Výhodu ani Jizvu. Výsledek zapíše snížení či zahojení.

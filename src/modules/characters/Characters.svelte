@@ -36,6 +36,7 @@
   import Advance from './Advance.svelte'
   import CharacterEditor from './CharacterEditor.svelte'
   import CheckList from './CheckList.svelte'
+  import HealDialog from './HealDialog.svelte'
   import History from './History.svelte'
   import RawMaterials from './RawMaterials.svelte'
   import Roll from './Roll.svelte'
@@ -79,6 +80,14 @@
     if (!s) return
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
     current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
+  }
+  let healFor = $state<string | undefined>(undefined)
+  /** Léčení v magickém okamžiku: revize deníku (snížení Jizvy) a čerpání Zdrojů v zařízení. */
+  async function healed(next: Character, nextSpent: Spent, note: string) {
+    if (!current || !c) return
+    current = await appendEvents(current.id, eventsFor(c, next, settings.author, note))
+    setSpent(nextSpent)
+    healFor = undefined
   }
   /** Změna Surovin (±, druhy) jako samostatná revize v deníku. */
   async function rawChange(next: Character, note: string) {
@@ -195,6 +204,7 @@
         <li>
           {s.attribute}
           {s.severity}{s.note ? `: ${s.note}` : ''}
+          <button onclick={() => (healFor = s.id)}>Léčit…</button>
           {#if s.severity > 1}
             <button onclick={() => healing(c, s.id, easeScar, 'Zmírnění')}>Zmírnit o 1</button>
           {/if}
@@ -204,8 +214,18 @@
     </ul>
     <p class="muted">
       Jizvy se hojí mezi výpravami (dobu odhadne Průvodce, závažnější ubývají postupně); na výpravě
-      je léčí dovednosti. Hojení se zapíše do deníku jako revize.
+      je léčí dovednosti. <em>Léčit…</em> vyhodnotí léčení v magickém okamžiku (cena Zdrojů, lektvar), ostatní
+      tlačítka zapíšou výsledek ručně. Vše se zapíše do deníku jako revize.
     </p>
+    {#if healFor}
+      <HealDialog
+        character={c}
+        {spent}
+        scarId={healFor}
+        onsave={healed}
+        onclose={() => (healFor = undefined)}
+      />
+    {/if}
   {/if}
 
   <h2>Povolání</h2>

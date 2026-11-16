@@ -1,5 +1,10 @@
 # Změny
 
+## 0.3.1 (16. 11. 2026)
+
+- Postava: **Léčit…** u Jizvy (dialog léčení v magickém okamžiku): síla okamžiku (léčit lze Jizvu do této závažnosti), o kolik stupňů se sníží, **Zdroje navíc z lektvaru nebo masti** (snižují platbu, lektvar může být z cizí zásoby), ošetřující, zkouška. Cena 5 Zdrojů za stupeň: nejdřív Zdroje vlastnosti Jizvy, doplatek z ostatních; Výhodou ani dočasnými Zdroji z jizvy se neplatí. Zapíše se jedna revize (snížení Jizvy) a čerpání Zdrojů.
+- Postup vyhodnocení: karta Léčení Jizvy. Ruční tlačítka Zmírnit o 1 a Zahojeno zůstávají (Průvodce, mezi výpravami).
+
 ## 0.3.0 (16. 11. 2026)
 
 - Postava: **Suroviny** v přehledu (řádek `✎ Suroviny − ## +`). Volitelně **druhy** (značka 1 až 2 znaky, i emotikona, a název; ✎ otevře dialog): přehled pak ukazuje součet a řádek za každý druh s ±. Druh s nenulovým počtem nejde smazat. Rychlá klepání se zapíšou jako jedna revize.

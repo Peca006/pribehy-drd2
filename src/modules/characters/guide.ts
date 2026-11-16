@@ -56,6 +56,18 @@ export const BASIC: Card[] = [
     ],
     link: '31-zakladni-pravidla',
   },
+  {
+    id: 'leceni',
+    title: 'Léčení Jizvy',
+    steps: [
+      'Jen v magickém okamžiku; jeho síla musí být aspoň závažnost léčené Jizvy.',
+      'Jeden ošetřující, jedna Jizva, jeden ošetřovaný. Ošetřující dělá zkoušku (hodem, nebo vyčerpáním).',
+      'Ošetřovaný platí 5 Zdrojů za snížení o 1: nejdřív Zdroje vlastnosti Jizvy, zbytek z ostatních.',
+      'Lektvar nebo mast ušetří Zdroje (1 Surovina = 1 Zdroj). Výhodou ani další Jizvou platit nejde.',
+      'Léčit se lze i samotnému, ale při neúspěchu platí vyčerpání i Zdroje.',
+    ],
+    link: '36-kouzla-nastrahy-leceni',
+  },
 ]
 
 export const SITUATIONS: Card[] = [
