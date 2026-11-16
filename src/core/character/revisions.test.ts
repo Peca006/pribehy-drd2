@@ -5,6 +5,7 @@ import {
   sanitizeCharacter,
   saveCharacterDraft,
 } from './drafts'
+import { fromHeller } from './cash'
 import { characterOf, emptyCharacter, eventsFor, type CharacterLog } from './model'
 import { changesBetween, groupRevisions, revertEvents, revisionChanges } from './revisions'
 
@@ -12,7 +13,7 @@ const base = {
   ...emptyCharacter('a'),
   name: 'Jarik',
   attributes: { Tělo: 6, Duše: 5, Vliv: 4 },
-  cash: 600,
+  cash: fromHeller(600),
 }
 
 function logWith(...steps: [Partial<typeof base>, string][]): CharacterLog {
@@ -29,11 +30,11 @@ function logWith(...steps: [Partial<typeof base>, string][]): CharacterLog {
 
 describe('revize', () => {
   it('změny zveřejněné společně tvoří jednu revizi', () => {
-    const log = logWith([base, 'Tvorba'], [{ cash: 240, equipment: ['Meč'] }, 'Nákup'])
+    const log = logWith([base, 'Tvorba'], [{ cash: fromHeller(240), equipment: ['Meč'] }, 'Nákup'])
     const revs = groupRevisions(log.events)
     expect(revs.map((r) => [r.note, r.events.length])).toEqual([
       ['Tvorba', 5],
-      ['Nákup', 2],
+      ['Nákup', 3],
     ])
   })
 
@@ -44,28 +45,29 @@ describe('revize', () => {
   })
 
   it('revisionChanges ukáže před → po', () => {
-    const log = logWith([base, 'Tvorba'], [{ cash: 240, equipment: ['Meč'] }, 'Nákup'])
+    const log = logWith([base, 'Tvorba'], [{ cash: fromHeller(240), equipment: ['Meč'] }, 'Nákup'])
     const ch = revisionChanges(log, groupRevisions(log.events)[1])
-    expect(ch).toContainEqual({ path: 'cash', before: 600, after: 240 })
+    expect(ch).toContainEqual({ path: 'cash.dukaty', before: 6, after: 2 })
+    expect(ch).toContainEqual({ path: 'cash.grose', before: 0, after: 4 })
     expect(ch).toContainEqual({ path: 'equipment', before: [], after: ['Meč'] })
   })
 
   it('revertEvents vrátí původní hodnoty a historii nemaže', () => {
-    const log = logWith([base, 'Tvorba'], [{ cash: 240, equipment: ['Meč'] }, 'Nákup'])
+    const log = logWith([base, 'Tvorba'], [{ cash: fromHeller(240), equipment: ['Meč'] }, 'Nákup'])
     const rev = groupRevisions(log.events)[1]
     const undo = revertEvents(log, rev, 'Vypravěč', 'Vrácení: Nákup')
     const after = characterOf({ id: 'a', events: [...log.events, ...undo] })
-    expect(after.cash).toBe(600)
+    expect(after.cash).toEqual(fromHeller(600))
     expect(after.equipment).toEqual([])
     expect(after.name).toBe('Jarik')
     expect(new Set(undo.map((e) => e.rev)).size).toBe(1)
-    expect(log.events).toHaveLength(7)
+    expect(log.events).toHaveLength(8)
   })
 
   it('vrácení nezasáhne pole, která pozdější revize už změnila jinak, jen je přepíše', () => {
-    const log = logWith([base, 'Tvorba'], [{ cash: 240 }, 'Nákup'], [{ cash: 100 }, 'Další nákup'])
+    const log = logWith([base, 'Tvorba'], [{ cash: fromHeller(240) }, 'Nákup'], [{ cash: fromHeller(100) }, 'Další nákup'])
     const undo = revertEvents(log, groupRevisions(log.events)[1], 'V', 'x')
-    expect(characterOf({ id: 'a', events: [...log.events, ...undo] }).cash).toBe(600)
+    expect(characterOf({ id: 'a', events: [...log.events, ...undo] }).cash).toEqual(fromHeller(600))
   })
 
   it('vrácení smaže položku v mapě, která v revizi vznikla', () => {
@@ -75,8 +77,9 @@ describe('revize', () => {
   })
 
   it('changesBetween popíše rozdíl dvou postav', () => {
-    expect(changesBetween(base, { ...base, cash: 1 })).toEqual([
-      { path: 'cash', before: 600, after: 1 },
+    expect(changesBetween(base, { ...base, cash: fromHeller(1) })).toEqual([
+      { path: 'cash.dukaty', before: 6, after: 0 },
+      { path: 'cash.halere', before: 0, after: 1 },
     ])
   })
 })
@@ -92,10 +95,10 @@ describe('návrh úpravy postavy', () => {
   beforeEach(() => store.clear())
 
   it('uloží, načte a smaže', () => {
-    saveCharacterDraft('a', 7, { ...base, cash: 5 })
+    saveCharacterDraft('a', 7, { ...base, cash: fromHeller(5) })
     const d = loadCharacterDraft('a')
     expect(d?.base).toBe(7)
-    expect(d?.character.cash).toBe(5)
+    expect(d?.character.cash).toEqual(fromHeller(5))
     clearCharacterDraft('a')
     expect(loadCharacterDraft('a')).toBeUndefined()
   })
@@ -106,7 +109,7 @@ describe('návrh úpravy postavy', () => {
       emptyCharacter('a'),
     )
     expect(c.name).toBe('')
-    expect(c.cash).toBe(0)
+    expect(c.cash).toEqual(fromHeller(0))
     expect(c.equipment).toEqual(['a'])
     expect(c.professions).toEqual({ x: 2 })
     expect('evil' in c).toBe(false)

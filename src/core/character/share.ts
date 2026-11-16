@@ -11,6 +11,7 @@ import {
 } from './model'
 import { sanitizePartyBundle, type PartyBundle } from '../party/share'
 import { scarsOf } from './drafts'
+import { cashFrom, UNIT_ORDER, type CashUnit } from './cash'
 import { cleanCount, kindFrom } from './rawMaterials'
 import { groupRevisions, type Revision } from './revisions'
 
@@ -194,8 +195,14 @@ export function sanitizeEvent(raw: unknown): SharedEvent | undefined {
     return { id, path, value: scarsOf(v) }
   }
   if (path === 'cash') {
+    // starý formát (jedno číslo v haléřích) i nový (objekt se třemi počty)
+    if (typeof v === 'number') return v < 0 || !Number.isFinite(v) ? undefined : { id, path, value: cashFrom(v) }
+    return typeof v === 'object' && v !== null ? { id, path, value: cashFrom(v) } : undefined
+  }
+  if (path.startsWith('cash.') && UNIT_ORDER.includes(path.slice(5) as CashUnit)) {
     const n = num(v)
-    return n === undefined || n < 0 ? undefined : { id, path, value: n }
+    const unit = path.slice(5) as CashUnit
+    return n === undefined || n < 0 ? undefined : { id, path, value: cashFrom({ [unit]: n })[unit] }
   }
   if (path === 'rawMaterials') {
     const n = num(v)

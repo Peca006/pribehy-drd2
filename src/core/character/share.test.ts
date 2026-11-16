@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { fromHeller } from './cash'
 import { characterOf, emptyCharacter, eventsFor, type CharacterLog } from './model'
 import { loadReviews, markSent, recordResponse } from './reviews'
 import {
@@ -17,7 +18,7 @@ const base = {
   ...emptyCharacter('a'),
   name: 'Jarik',
   attributes: { Tělo: 6, Duše: 5, Vliv: 4 },
-  cash: 600,
+  cash: fromHeller(600),
 }
 
 function logWith(...steps: [Partial<typeof base>, string][]): CharacterLog {
@@ -42,7 +43,7 @@ beforeEach(() => store.clear())
 
 describe('balíček revizí a kód', () => {
   it('celá postava přežije kód (stlačení) i očištění', async () => {
-    const log = logWith([base, 'Tvorba'], [{ cash: 240, equipment: ['Meč'] }, 'Nákup'])
+    const log = logWith([base, 'Tvorba'], [{ cash: fromHeller(240), equipment: ['Meč'] }, 'Nákup'])
     const code = await encodeBundle(buildRevisionBundle(log, 'Jarik'))
     expect(code.startsWith('DRD2:')).toBe(true)
     const { bundle, errors } = await decodeBundle(code)
@@ -56,7 +57,7 @@ describe('balíček revizí a kód', () => {
   })
 
   it('jen revize po zvolené revizi; základ je ID předchozí revize', () => {
-    const log = logWith([base, 'Tvorba'], [{ cash: 240 }, 'Nákup'], [{ cash: 100 }, 'Další'])
+    const log = logWith([base, 'Tvorba'], [{ cash: fromHeller(240) }, 'Nákup'], [{ cash: fromHeller(100) }, 'Další'])
     const revs = groupRevisions(log.events)
     const b = buildRevisionBundle(log, 'J', revs[0].id)
     expect(b.base).toBe(revs[0].id)
@@ -74,11 +75,16 @@ describe('balíček revizí a kód', () => {
   })
 
   it('sanitizeEvent pustí jen známé cesty a správné typy', () => {
-    expect(sanitizeEvent({ id: '1', path: 'cash', value: 5 })).toEqual({
+    // starý formát (celá hotovost jedním číslem v haléřích) se převede na tři počty
+    expect(sanitizeEvent({ id: '1', path: 'cash', value: 235 })).toEqual({
       id: '1',
       path: 'cash',
-      value: 5,
+      value: { dukaty: 2, grose: 3, halere: 5 },
     })
+    expect(sanitizeEvent({ id: '1', path: 'cash.grose', value: 12 })).toEqual({ id: '1', path: 'cash.grose', value: 12 })
+    expect(sanitizeEvent({ id: '1', path: 'cash.grose', value: -1 })).toBeUndefined()
+    expect(sanitizeEvent({ id: '1', path: 'cash.grose', value: '5' })).toBeUndefined()
+    expect(sanitizeEvent({ id: '1', path: 'cash.zlato', value: 5 })).toBeUndefined()
     expect(sanitizeEvent({ id: '1', path: 'cash', value: -5 })).toBeUndefined()
     expect(sanitizeEvent({ id: '1', path: 'cash', value: '5' })).toBeUndefined()
     expect(sanitizeEvent({ id: '1', path: '__proto__.x', value: 1 })).toBeUndefined()
@@ -108,7 +114,7 @@ describe('balíček revizí a kód', () => {
 })
 
 describe('analýza importu', () => {
-  const player = logWith([base, 'Tvorba'], [{ cash: 240, equipment: ['Meč'] }, 'Nákup'])
+  const player = logWith([base, 'Tvorba'], [{ cash: fromHeller(240), equipment: ['Meč'] }, 'Nákup'])
   const revs = groupRevisions(player.events)
 
   it('postava, kterou příjemce nemá, je nová postava', () => {
@@ -138,11 +144,11 @@ describe('analýza importu', () => {
     // vypravěč přidal po společném základu vlastní změnu hotovosti
     const gmEvents = [
       ...player.events.filter((e) => e.rev === revs[0].id),
-      ...eventsFor({ ...base }, { ...base, cash: 1 }, 'GM', 'Odměna'),
+      ...eventsFor({ ...base }, { ...base, cash: fromHeller(1) }, 'GM', 'Odměna'),
     ]
     const a = analyzeImport({ id: 'a', events: gmEvents }, bundle)
     expect(a.kind).toBe('jiny-stav')
-    expect(a.conflicts).toEqual(['cash'])
+    expect(a.conflicts).toEqual(['cash.dukaty'])
   })
 
   it('přijetí přidá jen vybrané revize a nezdvojí je při opakování', () => {

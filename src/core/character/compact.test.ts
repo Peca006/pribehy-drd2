@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { fromHeller, totalHeller } from './cash'
 import { buildCompactBundle, fitForQr } from './compact'
 import { characterOf, emptyCharacter, eventsFor, type CharacterLog } from './model'
 import { QR_CHUNK } from './qr'
@@ -16,13 +17,13 @@ function longLog(revisions = 12): CharacterLog {
     ...emptyCharacter('c'),
     name: 'Dlouhá',
     attributes: { Tělo: 6, Duše: 5, Vliv: 4 },
-    cash: 600,
+    cash: fromHeller(600),
   }
   const events = [
     ...eventsFor(emptyCharacter('c'), cur, 'Pavel', 'Tvorba', new Date(2026, 0, 1).toISOString()),
   ]
   for (let i = 1; i < revisions; i++) {
-    const next = { ...cur, notes: rnd(250), cash: cur.cash - 10 }
+    const next = { ...cur, notes: rnd(250), cash: fromHeller(totalHeller(cur.cash) - 10) }
     events.push(
       ...eventsFor(cur, next, 'Pavel', `Revize ${i}`, new Date(2026, 0, 1, 0, i).toISOString()),
     )
@@ -92,7 +93,7 @@ describe('zhuštění historie', () => {
           : o
     const shuffled = reverse(c) as typeof c
     expect(stateHash(shuffled)).toBe(stateHash(c))
-    expect(stateHash({ ...c, cash: c.cash + 1 })).not.toBe(stateHash(c))
+    expect(stateHash({ ...c, cash: { ...c.cash, halere: c.cash.halere + 1 } })).not.toBe(stateHash(c))
   })
 
   it('fitForQr zhustí jen tolik, kolik je potřeba', async () => {
@@ -126,7 +127,7 @@ describe('zhuštění historie', () => {
       id: 'b',
       events: eventsFor(
         emptyCharacter('b'),
-        { ...emptyCharacter('b'), name: 'Velká', cash: 10, notes: rnd(3000), heroStory: rnd(3000) },
+        { ...emptyCharacter('b'), name: 'Velká', cash: fromHeller(10), notes: rnd(3000), heroStory: rnd(3000) },
         'P',
         'Tvorba',
       ),

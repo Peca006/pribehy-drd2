@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { fromHeller } from './cash'
 import type { Ability, CreationRules, Profession, Race } from '../content/schema'
 import { checkCharacter, type CheckContext } from './check'
 import { emptyCharacter, type Character } from './model'
@@ -43,7 +44,7 @@ const ok: Character = {
   attributes: { Tělo: 6, Duše: 5, Vliv: 4 },
   professions: { 'p:lovec': 2, 'p:bojovnik': 1 },
   abilities: ['rasa:lide/a', 'p:lovec/s1', 'p:lovec/s2', 'p:bojovnik/s1'],
-  cash: 100,
+  cash: fromHeller(100),
 }
 const texts = (c: Character) => checkCharacter(c, ctx).map((x) => x.text)
 const joined = (c: Character) => texts(c).join('|')
@@ -99,7 +100,7 @@ describe('checkCharacter', () => {
     expect(joined({ ...ok, attributes: { Tělo: 5.5, Duše: 5, Vliv: 4 } })).toMatch(
       /není celé číslo/,
     )
-    expect(joined({ ...ok, cash: -5 })).toMatch(/Hotovost/)
+    expect(joined({ ...ok, cash: { dukaty: 0, grose: 0, halere: -5 } })).toMatch(/Hotovost/)
     expect(joined({ ...ok, equipment: ['Meč', 'meč ', ''] })).toMatch(/opakuje: meč/)
     expect(texts({ ...ok, name: '' })).toEqual(['Postava nemá jméno.'])
   })

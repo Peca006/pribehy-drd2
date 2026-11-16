@@ -1,5 +1,6 @@
 // Ukázková data: tři postavy a družina. Vymyšlené postavy z vestavěného přehledu (jen ID ras, povolání a schopností,
 // žádné texty pravidel). Slouží k vyzkoušení aplikace a k testům; jdou smazat a ve Více se dají obnovit.
+import { fromHeller } from '../core/character/cash'
 import { emptyCharacter, eventsFor, type Character, type CharacterLog } from '../core/character/model'
 import { emptyParty, type Party } from '../core/party/model'
 
@@ -25,7 +26,7 @@ export const DEMO_CHARACTERS: Character[] = [
     heroStory:
       'Roky doprovázel karavany přes horské průsmyky a přísahal, že nikoho z nich nenechá napospas lavinám ani lupičům.',
     equipment: ['zbroj', 'dvě zbraně', 'torna', 'křesadlo', 'lano', 'lucerna', 'pokrývka', 'jídlo na týden'],
-    cash: 300,
+    cash: fromHeller(300),
   }),
   base('demo-listek', {
     name: 'Lístek Podhorní',
@@ -44,7 +45,7 @@ export const DEMO_CHARACTERS: Character[] = [
     heroStory:
       'Vyrostl na pouti za pouťovými stánky, kde se naučil žonglovat, odhadovat lidi a včas zmizet, když se věci zvrtly.',
     equipment: ['zbraň', 'oblečení', 'torna', 'křesadlo', 'měch na vodu', 'jídlo na tři dny'],
-    cash: 120,
+    cash: fromHeller(120),
   }),
   base('demo-eliska', {
     name: 'Eliška z Mlžných hájů',
@@ -63,7 +64,7 @@ export const DEMO_CHARACTERS: Character[] = [
     heroStory:
       'Do světa ji vyhnala zvědavost: chtěla zjistit, odkud se v osadě bere mlha, o které nikdo nechce mluvit.',
     equipment: ['zbraň', 'oblečení', 'torna', 'křesadlo', 'měch na vodu', 'jídlo na tři dny'],
-    cash: 120,
+    cash: fromHeller(120),
   }),
 ]
 

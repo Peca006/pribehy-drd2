@@ -2,6 +2,7 @@
 // na úrovni povolání, chybějící jméno, …). Upozornění nic neblokují: vypravěč může udělit výjimku.
 import type { Ability, CreationRules, Profession, Race } from '../content/schema'
 import { ATTRIBUTES, type Character } from './model'
+import { UNIT_LABEL, UNIT_ORDER } from './cash'
 import { kindsOf, MAX_RAW } from './rawMaterials'
 
 export interface CharacterCheck {
@@ -147,8 +148,8 @@ export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[
   }
 
   // výbava a peníze
-  if (!Number.isInteger(c.cash) || c.cash < 0)
-    err('Hotovost musí být nezáporné celé číslo (v haléřích).')
+  for (const u of UNIT_ORDER)
+    if (!Number.isInteger(c.cash[u]) || c.cash[u] < 0) err(`Hotovost (${UNIT_LABEL[u].toLowerCase()}) musí být nezáporné celé číslo.`)
   if (!Number.isInteger(c.rawMaterials) || c.rawMaterials < 0 || c.rawMaterials > MAX_RAW)
     err('Suroviny bez druhu musí být nezáporné celé číslo.')
   for (const { kind } of kindsOf(c)) {

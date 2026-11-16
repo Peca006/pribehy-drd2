@@ -1,6 +1,7 @@
 // Model postavy jako deník změn (event log): stav postavy se vždy odvodí z posloupnosti změn.
 // Díky tomu jde ukázat historii, porovnat dva deníky před sloučením a schvalovat změny.
 import type { Attribute, ContentId } from '../content/schema'
+import { emptyCash, fromHeller, type Cash } from './cash'
 
 export const ATTRIBUTES: Attribute[] = ['Tělo', 'Duše', 'Vliv']
 
@@ -44,8 +45,8 @@ export interface Character {
   heroStory: string
   /** výzbroj a výstroj po řádcích */
   equipment: string[]
-  /** hotovost v haléřích */
-  cash: number
+  /** hotovost: dukáty, groše a haléře zvlášť (nic se samo nepřevádí) */
+  cash: Cash
   /** Suroviny bez druhu (celkem = tohle + součet druhů) */
   rawMaterials: number
   /** druhy Surovin podle ID druhu (ID se při přenosu zachovává, i když se druh přejmenuje) */
@@ -67,7 +68,7 @@ export const emptyCharacter = (id: string): Character => ({
   trait: '',
   heroStory: '',
   equipment: [],
-  cash: 0,
+  cash: emptyCash(),
   rawMaterials: 0,
   rawMaterialKinds: {},
   xp: 0,
@@ -99,6 +100,8 @@ const clone = <T>(v: T): T => (v === undefined ? v : JSON.parse(JSON.stringify(v
 
 /** Nastaví hodnotu na cestě; vrací novou postavu (původní se nemění). */
 export function applyChange(c: Character, e: ChangeEvent): Character {
+  // starý formát: celá hotovost jedním číslem v haléřích
+  if (e.path === 'cash' && typeof e.value === 'number') e = { ...e, value: fromHeller(e.value) }
   const next = clone(c) as unknown as Record<string, unknown>
   const keys = e.path.split('.')
   let node = next
@@ -138,7 +141,7 @@ export function diffCharacter(
       const mb = (b ?? {}) as Record<string, RawMaterialKind>
       for (const k of Object.keys(mb)) if (!same(ma[k], mb[k])) out.push({ path: `${key}.${k}`, value: mb[k] })
       for (const k of Object.keys(ma)) if (!(k in mb)) out.push({ path: `${key}.${k}`, value: undefined })
-    } else if (key === 'attributes' || key === 'professions') {
+    } else if (key === 'attributes' || key === 'professions' || key === 'cash') {
       const ma = a as Record<string, number>
       const mb = b as Record<string, number>
       for (const k of Object.keys(mb))

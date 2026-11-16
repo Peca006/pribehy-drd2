@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { fromHeller } from '../character/cash'
 import { emptyCharacter, eventsFor, type CharacterLog } from '../character/model'
 import { buildRevisionBundle, encodeBundle } from '../character/share'
 import { packMessage, unpackMessage } from './payload'
@@ -10,7 +11,7 @@ function sampleLog(): CharacterLog {
     name: 'Jarik Zelený',
     concept: 'Zvědavý švec, který hledá ztracenou botu své babičky',
     attributes: { Tělo: 6, Duše: 5, Vliv: 4 },
-    cash: 600,
+    cash: fromHeller(600),
     notes: 'Poznámky z hraní: potkali jsme trpaslíka u mostu, dluží nám pivo. '.repeat(3),
   }
   return { id: 'a', events: eventsFor(a, b, 'Petr', 'Vytvoření', '2026-01-01T00:00:00.000Z') }

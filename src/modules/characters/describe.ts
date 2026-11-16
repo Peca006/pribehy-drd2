@@ -1,9 +1,9 @@
 // Čitelný popis změn postavy (pro historii a náhled před zveřejněním).
 import type { RawMaterialKind, Scar } from '../../core/character/model'
 import { kindFull } from '../../core/character/rawMaterials'
+import { cashFrom, formatCash, UNIT_LABEL, type CashUnit } from '../../core/character/cash'
 import type { RevisionChange } from '../../core/character/revisions'
 import { findAbility, professions, races } from '../../core/library.svelte'
-import { formatMoney } from '../creator/rules'
 
 const LABELS: Record<string, string> = {
   name: 'Jméno',
@@ -38,6 +38,7 @@ export function pathLabel(path: string): string {
   if (path.startsWith('attributes.')) return `Zdatnost: ${path.slice(11)}`
   if (path.startsWith('professions.')) return `Povolání: ${nameOf(path.slice(12))}`
   if (path.startsWith('rawMaterialKinds.')) return 'Druh Surovin'
+  if (path.startsWith('cash.')) return `Hotovost: ${UNIT_LABEL[path.slice(5) as CashUnit]?.toLowerCase() ?? path.slice(5)}`
   return LABELS[path] ?? path
 }
 
@@ -45,7 +46,7 @@ const short = (s: string, n = 90) => (s.length > n ? s.slice(0, n - 1) + '…' :
 
 function scalar(path: string, v: unknown): string {
   if (v === undefined || v === null || v === '') return '—'
-  if (path === 'cash') return formatMoney(Number(v))
+  if (path === 'cash') return formatCash(cashFrom(v))
   if (path === 'raceId' || path === 'cultureId') return nameOf(String(v))
   if (path === 'trait') return short(String(v).replace(/^rys:/, ''))
   return short(String(v))

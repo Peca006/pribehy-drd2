@@ -2,7 +2,8 @@
 
 ## 0.3.2 (16. 11. 2026)
 
-- Postava: **Hotovost** v přehledu po dukátech, grošech a haléřích, každé s ±. Plus na 9 přeteče do vyššího řádu, mínus na 0 si půjčí z vyššího, změna vyššího řádu nemění nižší. Půjčka z dukátu (rozměnění) se zeptá. Rychlá klepání se zapíšou jako jedna revize („Hotovost: +1 dukát 1 groš“). Uložená hodnota zůstává jedno číslo v haléřích, formát se nemění; v editoru postavy je dál pole v haléřích.
+- Postava: **Hotovost** se ukládá a ovládá jako **tři samostatné hodnoty** (dukáty, groše, haléře), každá s ±. Nic se samo nepřevádí do vyššího řádu (haléřů může být i víc než 9). Při čerpání pod nulu se rozmění jedna mince shora (groš na 10 haléřů, dukát na 10 grošů); rozměnění dukátu se zeptá. Rychlá klepání se sloučí do jedné revize („Hotovost: 1 dukát → 9 grošů 9 haléřů“). V editoru postavy jsou tři pole.
+- **Změna formátu dat (pole `cash`)**: z čísla v haléřích na objekt `{dukaty, grose, halere}`; v deníku revizí cesty `cash.dukaty`, `cash.grose`, `cash.halere`. Starší záznamy s číslem (v deníku, přenosu, konceptech) se načtou a převedou na nejkratší zápis. Ukázková data jsou upravená.
 
 ## 0.3.1 (16. 11. 2026)
 

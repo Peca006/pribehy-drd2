@@ -1,3 +1,4 @@
+import { fromHeller } from '../../core/character/cash'
 import { emptyCharacter, newId, type Character } from '../../core/character/model'
 import type { Attribute, CreationRules } from '../../core/content/schema'
 import type { DraftData } from './draftData'
@@ -73,7 +74,7 @@ export class Draft {
       trait: this.trait,
       heroStory: this.heroStory.trim(),
       equipment: [...this.equipment],
-      cash: this.cash,
+      cash: fromHeller(this.cash),
     }
   }
 }

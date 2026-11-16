@@ -1,6 +1,7 @@
 // Návrh úpravy postavy (koncept před „Zveřejnit“): úplná kopie postavy, uložená jen v tomto zařízení.
 // Do deníku se zapíše až při zveřejnění, a to jen rozdíl proti postavě – jako jedna revize.
 import { emptyCharacter, type Character, type Scar } from './model'
+import { cashFrom } from './cash'
 import { cleanCount, kindsFrom } from './rawMaterials'
 
 const KEY = (id: string) => `drd2-char-draft:${id}`
@@ -75,7 +76,7 @@ export function sanitizeCharacter(raw: unknown, fallback: Character): Character 
     trait: str(r.trait, 1000) ?? '',
     heroStory: str(r.heroStory) ?? '',
     equipment: strs(r.equipment, 500).map((x) => x.slice(0, 500)),
-    cash: Math.max(0, num(r.cash) ?? 0),
+    cash: cashFrom(r.cash),
     rawMaterials: cleanCount(r.rawMaterials),
     rawMaterialKinds: kindsFrom(r.rawMaterialKinds),
     xp: Math.max(0, num(r.xp) ?? 0),

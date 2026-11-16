@@ -21,7 +21,7 @@
   import { commonRaceAbilities, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
-  import { formatMoney } from '../creator/rules'
+  import { UNIT_LABEL, UNIT_ORDER } from '../../core/character/cash'
   import CheckList from './CheckList.svelte'
   import { describeChange, nameOf, pathLabel } from './describe'
 
@@ -244,10 +244,14 @@
     />
     <button disabled={!newItem.trim()} onclick={addItem}>Přidat</button>
   </div>
-  <label>
-    Hotovost v haléřích <input type="number" min="0" bind:value={draft.cash} />
-    <span class="muted">= {formatMoney(draft.cash || 0)}</span>
-  </label>
+  <div class="cash-edit">
+    <span>Hotovost</span>
+    {#each UNIT_ORDER as u}
+      <label>
+        {UNIT_LABEL[u]} <input type="number" min="0" step="1" bind:value={draft.cash[u]} />
+      </label>
+    {/each}
+  </div>
 
   <h2>Zkušenosti</h2>
   <label>
@@ -320,6 +324,15 @@
 {/if}
 
 <style>
+  .cash-edit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+  }
+  .cash-edit input {
+    width: 6rem;
+  }
   nav {
     margin-bottom: var(--drd-gap);
   }
