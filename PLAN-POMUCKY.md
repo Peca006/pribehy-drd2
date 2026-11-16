@@ -46,8 +46,8 @@ Souhrnný řádek při evidenci druhů ukazuje součet a řádek „·“ je po�
 
 **Rozhodnutí uživatele:**
 - Suroviny se evidují jako **číslo**. Volitelně **druhy** (značka 1 až 2 znaky unicode včetně emotikon + název, vše v jednom řádku),
-  protože v příběhu je třeba umět vysvětlit, kde postava k Surovinám přišla (bylinky z cest, hřebíky z kovárny).
-- Druhy jsou **u každé postavy zvlášť**. Při přenosu hráč ↔ vypravěč se přenese i seznam druhů s názvy, konflikty přepisuje vypravěč.
+  protože v příběhu může být potřeba umět vysvětlit, kde postava k Surovinám přišla (bylinky z cest, hřebíky z kovárny).
+- Druhy jsou **u každé postavy zvlášť**. Při přenosu hráč ↔ vypravěč se přenese i seznam druhů s názvy, kolize přepisuje vypravěč.
 - Druh s **nenulovým zůstatkem nejde smazat**.
 - Bez druhů: jeden řádek `✎ Suroviny [−] ## [+]`. S druhy: souhrnný řádek ukazuje **součet bez ±**, pod ním řádek za každý druh se značkou,
   číslem a ±. Značka místo celého názvu, aby se řádek vešel (název v dialogu).
