@@ -12,6 +12,7 @@
     applyHeal,
     type Pay,
   } from '../../core/character/healing'
+  import { potionLabel, potionsFor } from '../../core/character/potions'
   import type { Spent } from '../../core/character/play'
 
   // Zmírnění Jizvy léčením: Jizva se rovnou sníží o 1, dá se upravit popis a závažnost (nejníž na 1, nejvýš o 1 méně než dosud).
@@ -34,7 +35,10 @@
   const scar = untrack(() => character.scars.find((s) => s.id === scarId))
   const limit = scar ? maxSteps(scar.severity) : 0
   let steps = $state(1)
+  /** Zdroje z cizího lektvaru (mimo evidenci postavy) */
   let potion = $state(0)
+  /** Suroviny z vlastních evidovaných lektvarů (ID → kolik) */
+  let use = $state<Record<string, number>>({})
   let note = $state(scar?.note ?? '')
   let healer = $state('')
   let pay = $state<Pay>(untrack(() => autoPay(character, spent, scarId, healCost(1))))
@@ -44,20 +48,39 @@
     dialog.showModal()
   })
 
-  const input = $derived({ steps, potion, pay, note })
+  const mine = $derived(scar ? potionsFor(character, scar.attribute) : [])
+  const usedSum = $derived(Object.values(use).reduce((n, v) => n + v, 0))
+  const input = $derived({ steps, potion, potionUse: use, pay, note })
   const check = $derived(checkHeal(character, spent, scarId, input))
   const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n))
   const cost = $derived(healCost(steps))
 
   /** Po změně ceny nebo lektvaru se platba navrhne znovu (hráč ji pak může upravit). */
-  const reflow = () => (pay = autoPay(character, spent, scarId, healCost(steps) - Math.min(potion, healCost(steps))))
+  const reflow = () => (pay = autoPay(character, spent, scarId, Math.max(0, healCost(steps) - potion - usedSum)))
+  /** Sníží lektvary (nejdřív cizí, pak vlastní), aby jich nebylo víc, než je cena. */
+  function trimPotions() {
+    const max = healCost(steps)
+    potion = Math.min(potion, max)
+    let over = potion + usedSum - max
+    for (const id of Object.keys(use)) {
+      if (over <= 0) break
+      const cut = Math.min(use[id], over)
+      use[id] -= cut
+      over -= cut
+    }
+  }
   const setSteps = (n: number) => {
     steps = clamp(n, 1, limit)
-    potion = Math.min(potion, healCost(steps))
+    trimPotions()
     reflow()
   }
   const setPotion = (n: number) => {
-    potion = clamp(n, 0, cost)
+    potion = clamp(n, 0, Math.max(0, cost - usedSum))
+    reflow()
+  }
+  const setUse = (id: string, n: number) => {
+    const have = character.potions[id]?.count ?? 0
+    use = { ...use, [id]: clamp(n, 0, Math.min(have, Math.max(0, cost - potion - usedSum + (use[id] ?? 0)))) }
     reflow()
   }
   const setPay = (a: keyof Pay, n: number) => (pay = { ...pay, [a]: clamp(n, 0, ownLeft(character, spent, a)) })
@@ -90,11 +113,23 @@
       Celkové snížení: <strong>{steps}</strong> (k porovnání se silou magického okamžiku). Potřeba Zdrojů:
       <strong>{cost}</strong> ({COST_PER_STEP} × {steps}).
     </p>
+    {#each mine as { id, potion: p } (id)}
+      <div class="row">
+        <span>{potionLabel(p)} <small class="muted">(má {p.count})</small></span>
+        <button onclick={() => setUse(id, (use[id] ?? 0) - 1)} disabled={(use[id] ?? 0) <= 0} aria-label={`Méně: ${potionLabel(p)}`}>−</button>
+        <strong>{use[id] ?? 0}</strong>
+        <button
+          onclick={() => setUse(id, (use[id] ?? 0) + 1)}
+          disabled={(use[id] ?? 0) >= p.count || potion + usedSum >= cost}
+          aria-label={`Více: ${potionLabel(p)}`}>+</button
+        >
+      </div>
+    {/each}
     <div class="row">
-      <span>Lektvary a masti (max. {cost})</span>
+      <span>{mine.length ? 'Cizí lektvar nebo mast' : 'Lektvary a masti'} (max. {cost})</span>
       <button onclick={() => setPotion(potion - 1)} disabled={potion <= 0} aria-label="Méně z lektvaru">−</button>
       <strong>{potion}</strong>
-      <button onclick={() => setPotion(potion + 1)} disabled={potion >= cost} aria-label="Více z lektvaru">+</button>
+      <button onclick={() => setPotion(potion + 1)} disabled={potion + usedSum >= cost} aria-label="Více z lektvaru">+</button>
     </div>
 
     <p>Ostatní zaplatí ošetřovaný ze svých Zdrojů (<strong>{check.own}</strong>), rozdělte je:</p>

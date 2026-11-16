@@ -102,3 +102,38 @@ describe('výroba a opravy: provedení', () => {
     expect(craftNote(c, input({ kind: 'nouzovy', name: 'luk', cost: 0, alloc: {} }), label)).toBe('Nouzový předmět: luk')
   })
 })
+
+describe('výroba lektvaru', () => {
+  const lektvar = (p: Partial<CraftInput> = {}): CraftInput => ({
+    kind: 'lektvar',
+    name: '',
+    cost: 3,
+    alloc: { '': 3 },
+    result: 'uspech',
+    addToEquipment: false,
+    potion: { attribute: 'Tělo', scar: 'popálenina' },
+    ...p,
+  })
+
+  it('úspěch spotřebuje Suroviny a vytvoří lektvar s tolika Surovinami, kolik se vložilo', () => {
+    expect(suggestCost('lektvar', 0, 1)).toBe(3)
+    const r = applyCraft(stocked(), lektvar())
+    expect(r.rawMaterials).toBe(0)
+    const made = Object.values(r.potions)
+    expect(made).toEqual([{ attribute: 'Tělo', scar: 'popálenina', count: 3, note: '' }])
+    expect(r.equipment).toEqual([])
+  })
+
+  it('neúspěch Suroviny spotřebuje bez lektvaru, přerušení nic; chybí-li druh Jizvy, je to chyba', () => {
+    expect(Object.keys(applyCraft(stocked(), lektvar({ result: 'neuspech' })).potions)).toHaveLength(0)
+    expect(applyCraft(stocked(), lektvar({ result: 'neuspech' })).rawMaterials).toBe(0)
+    expect(applyCraft(stocked(), lektvar({ result: 'preruseno', alloc: {} })).rawMaterials).toBe(3)
+    expect(checkCraft(stocked(), lektvar({ potion: { attribute: 'Tělo', scar: ' ' } })).error).toMatch(/Jizvu/)
+    expect(checkCraft(stocked(), lektvar({ cost: 0, alloc: {} })).error).toMatch(/aspoň 1/)
+  })
+
+  it('poznámka k revizi uvede, na co lektvar je', () => {
+    const label = (k: string) => (k === '' ? 'bez druhu' : k)
+    expect(craftNote(stocked(), lektvar(), label)).toBe('Lektvar: popálenina (Tělo) (3 Surovin: bez druhu 3)')
+  })
+})

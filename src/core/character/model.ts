@@ -25,6 +25,19 @@ export interface RawMaterialKind {
   count: number
 }
 
+/**
+ * Lektvar, mast, odvar nebo nektar: zásobník Surovin pro léčení určitého druhu Jizvy. Každá Surovina ušetří při léčení
+ * 1 Zdroj. Eviduje se jen, na co je (vlastnost a druh Jizvy), kolik Surovin v něm je a krátká poznámka.
+ */
+export interface Potion {
+  attribute: Attribute
+  /** druh Jizvy, na který působí (popálenina, sečné poranění, fobie, …) */
+  scar: string
+  /** Suroviny v zásobníku */
+  count: number
+  note: string
+}
+
 export interface Character {
   id: string
   name: string
@@ -51,6 +64,8 @@ export interface Character {
   rawMaterials: number
   /** druhy Surovin podle ID druhu (ID se při přenosu zachovává, i když se druh přejmenuje) */
   rawMaterialKinds: Record<string, RawMaterialKind>
+  /** lektvary a masti podle ID (zásobníky Surovin pro léčení) */
+  potions: Record<string, Potion>
   /** nespotřebované body zkušeností (12 = jedno zlepšení postavy) */
   xp: number
   scars: Scar[]
@@ -71,6 +86,7 @@ export const emptyCharacter = (id: string): Character => ({
   cash: emptyCash(),
   rawMaterials: 0,
   rawMaterialKinds: {},
+  potions: {},
   xp: 0,
   scars: [],
   notes: '',
@@ -135,10 +151,10 @@ export function diffCharacter(
     const a = before[key]
     const b = after[key]
     if (same(a, b)) continue
-    if (key === 'rawMaterialKinds') {
-      // druhy po jednom (každý druh = jedna cesta), aby se úpravy různých druhů nepřebíjely
-      const ma = (a ?? {}) as Record<string, RawMaterialKind>
-      const mb = (b ?? {}) as Record<string, RawMaterialKind>
+    if (key === 'rawMaterialKinds' || key === 'potions') {
+      // položky po jedné (každá = jedna cesta), aby se úpravy různých položek nepřebíjely
+      const ma = (a ?? {}) as Record<string, unknown>
+      const mb = (b ?? {}) as Record<string, unknown>
       for (const k of Object.keys(mb)) if (!same(ma[k], mb[k])) out.push({ path: `${key}.${k}`, value: mb[k] })
       for (const k of Object.keys(ma)) if (!(k in mb)) out.push({ path: `${key}.${k}`, value: undefined })
     } else if (key === 'attributes' || key === 'professions' || key === 'cash') {

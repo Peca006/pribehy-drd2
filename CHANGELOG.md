@@ -1,5 +1,12 @@
 # Změny
 
+## 0.3.4 (16. 11. 2026)
+
+- Postava: **Lektvary a masti** (stručná evidence): na co jsou (vlastnost a druh Jizvy), kolik Surovin v nich je (±), poznámka (např. do slunovratu); přidat a upravit přes dialog. Každý lektvar je samostatná změna v deníku revizí a přenáší se při sdílení (pole `potions`, jen přidání).
+- Léčení Jizvy: nabídne **vlastní lektvary** shodné vlastnosti (Suroviny z nich se po uložení odečtou, vyčerpaný lektvar zmizí) a zvlášť „Cizí lektvar nebo mast“ pro lektvar mimo evidenci.
+- Výroba: nový druh **Lektvar** (vlastnost, druh Jizvy, počet vložených Surovin). Při úspěchu se lektvar zapíše do evidence.
+- Zahrnuje vše od 0.3.2: Výroba a opravy (0.3.3) a oprava duplicitní nabídky nové verze ve Více.
+
 ## 0.3.3 (16. 11. 2026)
 
 - Postava: **Výroba a opravy…** (tlačítko pod Surovinami). Druh (výroba, oprava, nouzový předmět), název, cena předmětu v groších (návrh: Surovin zhruba polovina, oprava 5 za stupeň závažnosti; cena jde přepsat) a **odečet Surovin po druzích** (nabídne se výchozí rozdělení: nejdřív bez druhu, pak druhy). Mezi výpravami bez hodu, na výpravě se zapíše výsledek (podařilo se / nepodařilo, Suroviny propadly / přerušeno, nic se nespotřebuje). Vyrobený předmět se může přidat do výbavy; nouzový je zdarma a označený. Zapíše se jedna revize.

@@ -42,6 +42,12 @@
     return shown(ref) - rawCount(character, ref)
   }
 
+  /** Otevře dialog druhů až po zapsání čekajících ± (dialog pak pracuje s aktuální postavou). */
+  async function openKinds() {
+    await flush()
+    editing = true
+  }
+
   function bump(ref: KindRef, by: number) {
     if (shown(ref) + by < 0) return
     pending = { ...pending, [keyOf(ref)]: delta(ref) + by }
@@ -73,7 +79,7 @@
 
 <div class="raw">
   <div class="line">
-    <button class="icon" onclick={() => (editing = true)} aria-label="Upravit druhy Surovin" title="Druhy Surovin">✎</button>
+    <button class="icon" onclick={openKinds} aria-label="Upravit druhy Surovin" title="Druhy Surovin">✎</button>
     <strong>Suroviny</strong>
     {#if grouped}
       <span class="total" aria-label="Suroviny celkem">{total}</span>
@@ -107,7 +113,6 @@
   <RawMaterialKindsDialog
     {character}
     onsave={async (next, note) => {
-      await flush()
       editing = false
       await onchange(next, note)
     }}

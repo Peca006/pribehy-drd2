@@ -96,3 +96,35 @@ describe('zmírnění Jizvy léčením', () => {
     expect(r.spent).toBe(none)
   })
 })
+
+describe('léčení s evidovaným lektvarem', () => {
+  const potionChar = () => {
+    const c = {
+      ...emptyCharacter('x'),
+      attributes: { Tělo: 8, Duše: 4, Vliv: 6 },
+      scars: [{ id: 'a', attribute: 'Tělo' as const, severity: 3, note: 'ruka' }],
+      potions: { p1: { attribute: 'Tělo' as const, scar: 'zlomenina', count: 4, note: '' } },
+    }
+    return c
+  }
+  const none = { Tělo: 0, Duše: 0, Vliv: 0 }
+
+  it('Suroviny z lektvaru snižují platbu a po uložení se z lektvaru odečtou', () => {
+    const c = potionChar()
+    // 1 stupeň = 5 Zdrojů; z lektvaru 3, ostatních 2 zaplatí Tělo
+    const input = { steps: 1, potion: 0, potionUse: { p1: 3 }, pay: { Tělo: 2, Duše: 0, Vliv: 0 } }
+    expect(checkHeal(c, none, 'a', input).error).toBe('')
+    const r = applyHeal(c, none, 'a', input)
+    expect(r.character.potions.p1.count).toBe(1)
+    expect(r.spent.Tělo).toBe(2)
+  })
+
+  it('vyčerpaný lektvar zmizí; víc než má nebo víc než cena je chyba; cizí lektvar se sčítá', () => {
+    const c = potionChar()
+    const all = applyHeal(c, none, 'a', { steps: 1, potion: 1, potionUse: { p1: 4 }, pay: none })
+    expect('p1' in all.character.potions).toBe(false)
+    expect(checkHeal(c, none, 'a', { steps: 1, potion: 0, potionUse: { p1: 5 }, pay: none }).error).toMatch(/nemá tolik/)
+    expect(checkHeal(c, none, 'a', { steps: 1, potion: 0, potionUse: { p1: 4 }, pay: { Tělo: 1, Duše: 0, Vliv: 0 } }).error).toBe('')
+    expect(checkHeal(c, none, 'a', { steps: 2, potion: 0, potionUse: { p1: 4 }, pay: none }).error).toMatch(/Zbývá rozdělit 6/)
+  })
+})

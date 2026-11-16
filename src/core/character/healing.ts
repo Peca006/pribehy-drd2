@@ -2,6 +2,7 @@
 // vyléčí vhodná dovednost. Aplikace jen zapíše výsledek: snížení závažnosti o 1, nebo úplné zahojení.
 import type { Attribute } from '../content/schema'
 import { ATTRIBUTES, type Character } from './model'
+import { consumePotions } from './potions'
 import { effectiveAttributes, type Spent } from './play'
 
 /** Zmírní jizvu o jeden stupeň závažnosti; jizva se závažností 1 se zahojí úplně. Neznámé ID nic nezmění. */
@@ -88,8 +89,10 @@ export function autoPay(c: Character, spent: Spent, scarId: string, own: number)
 export interface HealInput {
   /** o kolik stupňů se závažnost sníží (1 až závažnost − 1) */
   steps: number
-  /** Zdroje dodané lektvarem, mastí a podobně: snižují platbu (nejvýš cena) */
+  /** Zdroje dodané cizím lektvarem, mastí a podobně (mimo evidenci postavy): snižují platbu (nejvýš cena) */
   potion: number
+  /** Suroviny z vlastních evidovaných lektvarů (ID → kolik); po uložení se z nich odečtou */
+  potionUse?: Record<string, number>
   /** rozdělení vlastní platby mezi vlastnosti (součet musí být cena − lektvar) */
   pay: Pay
   /** nový popis Jizvy (prázdný = beze změny) */
@@ -118,7 +121,15 @@ export function checkHeal(c: Character, spent: Spent, scarId: string, input: Hea
   const steps = Math.floor(input.steps)
   if (steps < 1 || steps > limit) return bad(`Snížit lze o 1 až ${limit}.`)
   const cost = healCost(steps)
-  const potion = Math.min(cost, Math.max(0, Math.floor(input.potion)))
+  let used = 0
+  for (const [id, n] of Object.entries(input.potionUse ?? {})) {
+    if (!(n > 0)) continue
+    const have = c.potions?.[id]?.count ?? 0
+    if (!Number.isInteger(n) || n > have) return bad('Lektvar nemá tolik Surovin.')
+    used += n
+  }
+  if (used > cost) return bad(`Z lektvarů je ${used} Zdrojů, ale cena je jen ${cost}.`)
+  const potion = Math.min(cost, used + Math.max(0, Math.floor(input.potion)))
   const own = cost - potion
   const assigned = ATTRIBUTES.reduce((n, a) => n + input.pay[a], 0)
   const toAssign = own - assigned
@@ -151,5 +162,5 @@ export function applyHeal(
   }
   const next = { ...spent }
   for (const a of ATTRIBUTES) next[a] = spent[a] + input.pay[a]
-  return { character, spent: next }
+  return { character: input.potionUse ? consumePotions(character, input.potionUse) : character, spent: next }
 }

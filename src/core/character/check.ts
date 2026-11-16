@@ -3,6 +3,7 @@
 import type { Ability, CreationRules, Profession, Race } from '../content/schema'
 import { ATTRIBUTES, type Character } from './model'
 import { UNIT_LABEL, UNIT_ORDER } from './cash'
+import { potionList } from './potions'
 import { kindsOf, MAX_RAW } from './rawMaterials'
 
 export interface CharacterCheck {
@@ -157,6 +158,9 @@ export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[
       err(`Suroviny „${kind.name || kind.mark}“: počet musí být nezáporné celé číslo.`)
     if (!kind.mark && !kind.name) warn('Druh Surovin nemá značku ani název.')
   }
+  for (const { potion } of potionList(c))
+    if (!Number.isInteger(potion.count) || potion.count < 0 || potion.count > MAX_RAW)
+      err(`Lektvar „${potion.scar}“: počet Surovin musí být nezáporné celé číslo.`)
   const items = c.equipment.map((e) => e.trim().toLowerCase())
   if (items.some((e) => !e)) warn('Ve výbavě je prázdná položka.')
   const dupItems = items.filter((e, i) => e && items.indexOf(e) !== i)

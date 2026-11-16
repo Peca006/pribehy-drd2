@@ -131,7 +131,7 @@ s druhem, výbava). Tohle patří k milníku **Výpravy** (sekce pro vypravěče
 
 Doporučené pořadí: **11c-2, 11f, 11b, 11c2, 11d1**, pak podle Výprav 11e a podle rozhodnutí 11d2. Každý krok = jedna verze (0.3.x), s testy a záznamem v `CHANGELOG.md`.
 
-### 11c2: Lektvary (stručná evidence): rozhodnuto, že ano, jen stručně
+### 11c2: Lektvary (stručná evidence): HOTOVO ve verzi 0.3.4
 
 Opravuje dřívější závěr „lektvary se neevidují“. Postava má seznam lektvarů, mastí, odvarů a nektarů; u každého se eviduje **na co je**:
 - **vlastnost (zdroj)**: Tělo, Duše, Vliv (podle druhu: masti Tělo, odvary Duše, nektary Vliv, lektvary obecně),

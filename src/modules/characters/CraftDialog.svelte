@@ -1,6 +1,8 @@
 <script lang="ts">
   import { untrack } from 'svelte'
-  import type { Character } from '../../core/character/model'
+  import { ATTRIBUTES, type Character } from '../../core/character/model'
+  import type { Attribute } from '../../core/content/schema'
+  import { MAX_SCAR_TEXT } from '../../core/character/potions'
   import {
     applyCraft,
     autoAlloc,
@@ -32,6 +34,8 @@
   let name = $state('')
   let price = $state(2) // cena předmětu v groších
   let severity = $state(1)
+  let potAttr = $state<Attribute>('Tělo')
+  let potScar = $state('')
   let cost = $state(1)
   let alloc = $state<Alloc>({})
   let onTrip = $state(false)
@@ -57,6 +61,7 @@
     alloc,
     result: onTrip ? result : ('uspech' as CraftResult),
     addToEquipment,
+    potion: kind === 'lektvar' ? { attribute: potAttr, scar: potScar } : undefined,
   })
   const check = $derived(checkCraft(character, input))
   const free = $derived(kind === 'nouzovy' || (onTrip && result === 'preruseno'))
@@ -68,7 +73,7 @@
   }
   const setKind = (k: CraftKind) => {
     kind = k
-    addToEquipment = k !== 'oprava'
+    addToEquipment = k === 'vyroba' || k === 'nouzovy'
     suggest()
   }
   const setPrice = (n: number) => ((price = clamp(n, 0, 999)), suggest())
@@ -97,15 +102,31 @@
   <div class="seg" role="group" aria-label="Druh">
     <button class:primary={kind === 'vyroba'} onclick={() => setKind('vyroba')}>Výroba</button>
     <button class:primary={kind === 'oprava'} onclick={() => setKind('oprava')}>Oprava</button>
+    <button class:primary={kind === 'lektvar'} onclick={() => setKind('lektvar')}>Lektvar</button>
     <button class:primary={kind === 'nouzovy'} onclick={() => setKind('nouzovy')}>Nouzový předmět</button>
   </div>
-  <input
-    type="text"
-    bind:value={name}
-    maxlength="200"
-    placeholder={kind === 'oprava' ? 'Co se opravuje (nepovinné)' : 'Název předmětu'}
-    aria-label="Název předmětu"
-  />
+  {#if kind === 'lektvar'}
+    <div class="seg" role="group" aria-label="Vlastnost lektvaru">
+      {#each ATTRIBUTES as a}
+        <button class:primary={potAttr === a} onclick={() => (potAttr = a)}>{a}</button>
+      {/each}
+    </div>
+    <input
+      type="text"
+      bind:value={potScar}
+      maxlength={MAX_SCAR_TEXT}
+      placeholder="Na jakou Jizvu (popálenina, fobie…)"
+      aria-label="Druh Jizvy"
+    />
+  {:else}
+    <input
+      type="text"
+      bind:value={name}
+      maxlength="200"
+      placeholder={kind === 'oprava' ? 'Co se opravuje (nepovinné)' : 'Název předmětu'}
+      aria-label="Název předmětu"
+    />
+  {/if}
 
   {#if kind === 'vyroba'}
     <div class="row">
@@ -125,7 +146,7 @@
 
   {#if kind !== 'nouzovy'}
     <div class="row">
-      <span>Cena v Surovinách</span>
+      <span>{kind === 'lektvar' ? 'Suroviny v lektvaru' : 'Cena v Surovinách'}</span>
       <button onclick={() => setCost(cost - 1)} disabled={cost <= 0} aria-label="Méně Surovin">−</button>
       <strong>{cost}</strong>
       <button onclick={() => setCost(cost + 1)} aria-label="Více Surovin">+</button>
@@ -160,7 +181,7 @@
     {/if}
   {/if}
 
-  {#if kind !== 'oprava'}
+  {#if kind === 'vyroba' || kind === 'nouzovy'}
     <label class="check">
       <input type="checkbox" bind:checked={addToEquipment} />
       Přidat do výbavy{onTrip && result !== 'uspech' && kind === 'vyroba' ? ' (jen při úspěchu)' : ''}
