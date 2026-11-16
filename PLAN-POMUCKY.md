@@ -39,14 +39,27 @@ v `TODO.md` (kroky 1 až 10 hotové).
 
 ## Navrhované kroky (každý jde sám nasadit)
 
-### 11a: Suroviny (malý krok, základ pro ostatní)
-- Pole `materials` (celé číslo ≥ 0) u postavy vedle `cash`; tlačítka ±, úprava v editoru, `check.ts`, `share.ts` (pole `materials`),
-  QR a komprimovaný formát (`compact.ts`), deník revizí.
-- **Riziko:** nové pole mění formát sdílení. Staré postavy a staré QR musí zůstat čitelné (chybí-li pole, bere se 0). Nový formát musí
-  starší aplikace bez chyby ignorovat nebo odmítnout srozumitelnou hláškou. Pokrýt testy.
-- Směna Surovina ↔ groš 1:1 jako jedno tlačítko (odečte z jednoho, přičte druhému).
-- **Rozhodnutí:** do deníku revizí (sdílí se, jako Peníze), nebo jen do stavu hry v zařízení (jako čerpání Zdrojů)? Doporučení: deník revizí,
-  protože Suroviny přecházejí mezi výpravami stejně jako Peníze.
+### 11a: Suroviny (malý až střední krok, základ pro ostatní) — rozhodnuto
+
+**Rozhodnutí uživatele:**
+- Suroviny se evidují jako **číslo**. Volitelně **druhy** (značka 1 až 2 znaky unicode včetně emotikon + název, vše v jednom řádku),
+  protože v příběhu je třeba umět vysvětlit, kde postava k Surovinám přišla (bylinky z cest, hřebíky z kovárny).
+- Druhy jsou **u každé postavy zvlášť**. Při přenosu hráč ↔ vypravěč se přenese i seznam druhů s názvy, konflikty přepisuje vypravěč.
+- Druh s **nenulovým zůstatkem nejde smazat**.
+- Bez druhů: jeden řádek `✎ Suroviny [−] ## [+]`. S druhy: souhrnný řádek ukazuje **součet bez ±**, pod ním řádek za každý druh se značkou,
+  číslem a ±. Značka místo celého názvu, aby se řádek vešel (název v dialogu).
+- Ťapnutí na ✎ otevře dialog: seznam druhů, přidat, přejmenovat, smazat (jen s nulou).
+- Evidují-li hráči druhy, **ctí se i při spotřebě** (léčivý čaj z hřebíků neuvaříš): výroba a léčení nabídnou, z jakého druhu se odečítá.
+  Pravidla sama druhy nerozlišují, takže jde o volbu skupiny, ne o pravidlo (platí jen u postav, které druhy mají).
+
+**Navržený model (k potvrzení):**
+- `materials: number` (Suroviny bez druhu) a `materialKinds: { id, mark, name, count }[]`. Celkem = `materials` + součet druhů.
+- Je-li seznam druhů prázdný, chová se vše jako dosud jedno číslo. Řádek „bez druhu“ zůstává i po zavedení druhů (nálezy, které si
+  hráč netřídí); šlo by ho skrýt, když je 0.
+- Revize deníku: změny jdou po polích (`materials`, `materialKinds`), jako `cash`; přidání a smazání druhu je revize s poznámkou.
+
+**Úkoly:** model, `drafts.ts` (normalizace chybějících polí), `check.ts`, `share.ts` a `compact.ts` (pole v přenosu a QR), editor a výpis
+postavy, dialog druhů, testy (staré postavy bez polí, přenos, smazání druhu s nenulovým počtem, součet).
 
 ### 11b: Výroba a opravy
 - Dialog „Vyrobit / opravit“ u postavy: druh (nástroj, ochranný, spotřební, nástraha, **oprava**, nouzový), cena předmětu v groších
@@ -97,7 +110,7 @@ Doporučené pořadí: **11a, 11c, 11b, 11e, 11d1, 11c2, 11d2**. Každý krok = 
 
 ## Otevřené otázky k rozhodnutí
 
-1. Suroviny do deníku revizí (sdílejí se), nebo jen do zařízení? Doporučuji deník revizí.
+1. ~~Suroviny do deníku revizí~~ Rozhodnuto: ano, i s druhy (viz 11a).
 2. Ceny: zadávat v groších (1 groš = 10 haléřů) a Suroviny po jedné, hotovost zůstává v haléřích. Souhlasí to?
 3. Kdo léčí: stačí ošetřující zvolený z postav družiny, nebo i volný text („vesnický léčitel“)? Doporučuji obojí.
 4. Lektvary: potřebujete evidovat zásobníky, nebo stačí odečet Surovin při léčení? (Evidence je větší práce.)
@@ -105,3 +118,20 @@ Doporučené pořadí: **11a, 11c, 11b, 11e, 11d1, 11c2, 11d2**. Každý krok = 
 6. Kořist: bude hlavně u Průvodce (družina, sezení), nebo i u hráče (rychlé přidání nálezu do vlastní postavy)?
 7. Mají se pomůcky zobrazit jen s nainstalovaným balíčkem pravidel (kvůli názvům dovedností), nebo i bez něj s odkazy do SRD? Doporučuji
    bez balíčku holý postup a odkaz do SRD, s balíčkem navíc názvy dovedností.
+
+## Formát dat a migrace (průřezově, pohlídat od 11a)
+
+Zjištěný stav: postavy a družiny jsou v IndexedDB (`drd2-data`, `src/core/db.ts`) jako objekty bez vlastního čísla verze. Chybějící pole se
+při čtení doplní výchozí hodnotou (`drafts.ts`: např. `cash: num(r.cash) ?? 0`), takže přidání pole starým datům neublíží a verzi databáze
+není třeba zvyšovat (ta se mění jen při novém úložišti). Přenosové formáty mají vlastní `v` (`SHARE_VERSION`, `PARTY_SHARE_VERSION`) a při
+nesouhlasu odmítnou import. V JSON chybí pole, v IndexedDB je `undefined` (ne `null`); kód to bere stejně.
+
+Zásady, které navrhuji držet:
+1. **Přidání volitelného pole** (jako `materialKinds`): bez zvýšení verze, chybějící = výchozí hodnota; starší aplikace nové pole ignoruje.
+2. **Změna významu nebo odstranění pole**: zvýšit číslo formátu a napsat převodní funkci stará → nová.
+3. **Před první beta verzí** přidat k uloženým postavám a družinám pole `schema` (číslo formátu dat) a řetězec funkcí `migrate(n → n+1)`
+   spouštěný při čtení; zavést zálohu: export všech dat do jednoho `.json` s číslem formátu a import, který data převede. Výhoda JSON:
+   čitelný, převoditelný, bez vazby na prohlížeč.
+4. **Dokument `FORMAT.md`** (formát postavy, družiny, přenosu, ukázky, tabulka verzí a změn) založit před první beta verzí a od té chvíle
+   každou změnu formátu zapisovat sem i do `CHANGELOG.md`.
+5. Do té doby („čert vem data“) lze formát měnit volně; já budu u každé změny formátu upozorňovat, zda jde o 1. nebo 2.
