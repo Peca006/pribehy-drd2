@@ -200,3 +200,27 @@ přenos se pak zvolí vhodný režim. Změny DSP se zatím nedělají; potřebuj
 Zdroje k inspiraci: Mercury (Rhizomatica, OFDM a LDPC, <https://github.com/Rhizomatica/mercury>), amodem (zvuková karta,
 OFDM, kalibrace hlasitosti, <https://github.com/romanz/amodem>), ggwave (FSK a Reed–Solomon přes vzduch). Projekty xara, data2G a
 varderFM jsem při hledání nenašel, takže z nich nic nepřebírám.
+
+## Srovnání s HF modemy (listopad 2026)
+
+Projekty projité podle odkazů z dokumentace v jejich repozitářích (jen to, co tam stojí; zdrojové kódy se nečetly).
+
+| projekt | modulace | pásmo (Hz) | zajímavé pro nás |
+| --- | --- | --- | --- |
+| [Data2G](https://github.com/arodland/Data2G) | OFDM, FSK, CPM | 200 / 500 / 1200 / 2400; 350 až 2700, úzký kanál 1250 až 1800 | HARQ s přírůstkem parity, volba režimu neuronovou sítí, impulzní blanker, ukazatel přebuzení |
+| [vardeFM](https://github.com/notepid/vardeFM) | OFDM BPSK až 64QAM | narrow 422 až 2672, wide 281 až 6000 | 48 kHz, FFT 1024 a 512, LDPC, vyslání v −6 dBFS, měření úrovně, TX RMS 0,25 až 0,5 |
+| [Aether HF](https://github.com/KK4ODA/aether-hf) | OFDM a 16-FSK | 2300 (kolem 360 až 2640), 500 (1260 až 1740); střed 1500 | selektivní ARQ, HARQ, ukazatel „slabé / dobré / přebuzené“ |
+| [Ion HF](https://github.com/jesseforkum/ion-hf) | 32-MFSK a OFDM | asi 300 až 2700, střed 1500 | `docs/acoustic-test.md`: zkouška dvou počítačů reproduktorem a mikrofonem |
+| [xara](https://github.com/anelson/xara) | neuvedeno (kompatibilní s VARA) | `--hf 500 / 2300 / 2750` | v README nic o zvuku přes vzduch |
+
+Zjištění:
+- Všechny HF modemy se vejdou do pásma SSB kanálu (asi 300 až 2700 Hz, střed 1500 Hz) a pracují s 48 kHz. Úzké režimy mají
+  500 Hz kolem středu. Náš AFSK 300 (1,1 až 2,3 kHz) je ve stejné oblasti. Vyšší režimy (PSK, QAM, OFDM) sahají do 6 kHz a víc;
+  kdyby se ukázalo, že telefon vyšší pásma netlumí, nevadí. Pokud ano, je to další důvod zkusit je zúžit.
+- Nejdůležitější je **hlasitost vstupu**: Data2G, Aether i vardeFM mají ukazatel a hlídají přebuzení; vardeFM cílí na špičky kolem −6 dBFS.
+  V aplikaci je teď ukazatel „slabé / v pořádku / přebuzené“ při vysílání i příjmu.
+- Ion HF jako jediný popisuje zkoušku přes vzduch (dva počítače, 1 až 2 m): vypnout vylepšování zvuku (jinak „treats Ion's tones as noise“),
+  na Macu režim mikrofonu Standardní, vstup asi 60 %, výstup asi polovina. Přidáno do Zkoušky zvuku. Ion výslovně uvádí, že na vzduchu nic neměřil.
+- Žádný z projektů neřeší telefon a mikrofon telefonu. Nic z nich proto neříká, jak se mobil chová.
+- Opravné kódy: všechny novější používají LDPC s HARQ (přírůstky parity). U nás je Reed–Solomon po rámcích s opakováním chybějících; LDPC by
+  dalo několik dB, ale je to velká změna a ověřit ji lze až na reálném kanálu.

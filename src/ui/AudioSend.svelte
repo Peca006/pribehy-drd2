@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, sendByAudio, type AudioStatus } from '../core/audiogram/audio'
+  import { audioSupported, sendByAudio, type AudioStatus, type InputLevel } from '../core/audiogram/audio'
   import { MODES } from '../core/audiogram/modes'
+  import LevelMeter from './LevelMeter.svelte'
   import { packMessage } from '../core/audiogram/payload'
 
   // Vysílání kódu zvukem (experiment „audiogram“): handshake, volba režimu podle kvality kanálu
@@ -13,6 +14,7 @@
   let status = $state<AudioStatus | undefined>(undefined)
   let result = $state<'ok' | 'fail' | ''>('')
   let error = $state('')
+  let level = $state<InputLevel | undefined>(undefined)
   /** 'auto' nebo index režimu v tabulce */
   let mode = $state<string>('auto')
   let size = $state(0)
@@ -28,6 +30,7 @@
     error = ''
     result = ''
     status = undefined
+    level = undefined
     abort = new AbortController()
     running = true
     try {
@@ -37,6 +40,7 @@
         (s) => (status = s),
         abort.signal,
         mode === 'auto' ? undefined : Number(mode),
+        (l) => (level = l),
       )
       result = ok ? 'ok' : 'fail'
       if (ok) onsent?.()

@@ -1,5 +1,11 @@
 # Změny
 
+## 0.2.5 (16. 11. 2026)
+
+- Audiogram: ukazatel hlasitosti vstupu při vysílání i příjmu („slabé“ / „v pořádku“ / „přebuzené“), aby bylo hned vidět, jestli mikrofon vůbec něco slyší.
+- Zkouška zvuku: rady k nastavení zařízení před přenosem (vypnout vylepšování zvuku, hlasitost vstupu a výstupu, vzdálenost).
+- `AUDIOGRAM.md`: srovnání s HF modemy (Data2G, vardeFM, Aether HF, Ion HF, xara). Přenos samotný beze změny.
+
 ## 0.2.4 (15. 11. 2026)
 
 - Potvrzení (smazat, odebrat, zahodit, vrátit změnu, obnovit a odstranit ukázková data …) je dialog ve stylu aplikace, celý česky, místo systémového okna prohlížeče. Esc nebo klepnutí mimo dialog je Zrušit.

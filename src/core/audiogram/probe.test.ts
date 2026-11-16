@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { levelVerdict } from './audio'
 import { PROBE_TONES, probeSignal, toneAmplitude, toneBurst, toDb } from './probe'
 
 describe('zkouška zvuku', () => {
@@ -19,5 +20,13 @@ describe('zkouška zvuku', () => {
       const part = sig.subarray(i * slot + 0.1 * fs, i * slot + 0.6 * fs)
       expect(toneAmplitude(part, f, fs)).toBeGreaterThan(0.4)
     })
+  })
+})
+
+describe('ukazatel hlasitosti', () => {
+  it('rozliší slabý, dobrý a přebuzený vstup podle špičky', () => {
+    expect(levelVerdict(0.005)).toBe('slabe')
+    expect(levelVerdict(0.3)).toBe('dobre')
+    expect(levelVerdict(0.99)).toBe('prebuzene')
   })
 })

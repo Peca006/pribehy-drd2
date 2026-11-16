@@ -76,6 +76,19 @@
     Na jednom zařízení stiskněte <em>Přehrát tóny</em>, na druhém předtím <em>Poslouchat</em>.
     Uvidíte, které tóny druhé zařízení slyší a jak silně. Funguje v obou směrech.
   </p>
+  <details>
+    <summary>Nastavení zařízení před přenosem</summary>
+    <ul>
+      <li>
+        Vypněte vylepšování zvuku: ve Windows Nastavení, Systém, Zvuk, u mikrofonu i reproduktorů
+        „Vylepšení zvuku“ vypnout (a Jasný hlas). Jinak systém tóny bere za šum a maže je. Na Macu
+        v ovládacím centru zvolte u mikrofonu režim Standardní (ne Izolace hlasu). V telefonu vypněte
+        potlačení šumu a hlasové funkce, pokud je nabízí.
+      </li>
+      <li>Hlasitost vstupu nastavte asi na 60 %, hlasitost výstupu asi na polovinu a zvyšujte podle ukazatele.</li>
+      <li>Zařízení dejte 1 až 2 m od sebe nebo blíž, v klidu, bez hudby a ventilátoru.</li>
+    </ul>
+  </details>
   <p class="actions">
     <button onclick={play} disabled={playing}>{playing ? 'Přehrávám…' : 'Přehrát tóny'}</button>
     {#if listening}

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, receiveByAudio, type AudioStatus } from '../core/audiogram/audio'
+  import { audioSupported, receiveByAudio, type AudioStatus, type InputLevel } from '../core/audiogram/audio'
+  import LevelMeter from './LevelMeter.svelte'
   import { unpackMessage } from '../core/audiogram/payload'
 
   // Příjem kódu zvukem (experiment „audiogram“). Po dokončení předá text funkci `onresult`.
@@ -9,15 +10,17 @@
   let running = $state(false)
   let status = $state<AudioStatus | undefined>(undefined)
   let error = $state('')
+  let level = $state<InputLevel | undefined>(undefined)
   let abort: AbortController | undefined
 
   async function start() {
     error = ''
     status = undefined
+    level = undefined
     abort = new AbortController()
     running = true
     try {
-      const data = await receiveByAudio((s) => (status = s), abort.signal)
+      const data = await receiveByAudio((s) => (status = s), abort.signal, (l) => (level = l))
       if (data) onresult(await unpackMessage(data))
     } catch (e) {
       if ((e as Error).name !== 'AbortError')
@@ -46,6 +49,7 @@
       <button class="primary" onclick={start}>Začít poslouchat</button>
     {/if}
   </p>
+  {#if running}<LevelMeter {level} />{/if}
   {#if status}
     <p role="status">
       {status.text}

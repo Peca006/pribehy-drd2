@@ -26,6 +26,32 @@ export function audioSupported(): boolean {
   )
 }
 
+/** Úroveň vstupu: špička a efektivní hodnota bloku (0 až 1, 1 = plná úroveň). */
+export interface InputLevel {
+  peak: number
+  rms: number
+}
+
+/** Posouzení úrovně vstupu podle špičky: příliš slabé, v pořádku, nebo přebuzené (zkreslené). */
+export function levelVerdict(peak: number): 'slabe' | 'dobre' | 'prebuzene' {
+  return peak < 0.03 ? 'slabe' : peak > 0.95 ? 'prebuzene' : 'dobre'
+}
+
+/** Přihlásí odběr úrovně vstupu na relaci (hlášení asi desetkrát za sekundu, špička drží mezi hlášeními). */
+function watchLevel(s: AudioSession, onLevel?: (l: InputLevel) => void) {
+  if (!onLevel) return
+  s.tap = (block) => {
+    let peak = 0
+    let e = 0
+    for (let i = 0; i < block.length; i++) {
+      const v = Math.abs(block[i])
+      if (v > peak) peak = v
+      e += v * v
+    }
+    onLevel({ peak, rms: Math.sqrt(e / (block.length || 1)) })
+  }
+}
+
 /** Zvuková relace: jeden AudioContext a mikrofon po celou dobu přenosu. */
 export class AudioSession {
   ctx: AudioContext
@@ -182,10 +208,12 @@ export async function sendByAudio(
   signal?: AbortSignal,
   /** vynucený režim (index do tabulky), jinak automaticky podle handshake */
   mode?: number,
+  onLevel?: (l: InputLevel) => void,
 ): Promise<boolean> {
   const s = new AudioSession()
   try {
     await s.open()
+    watchLevel(s, onLevel)
     const sender = new AudioSender(message, { fs: s.fs, mode })
     for (;;) {
       const tx: Tx | undefined = sender.tx()
@@ -222,10 +250,12 @@ export async function sendByAudio(
 export async function receiveByAudio(
   onStatus: (s: AudioStatus) => void,
   signal?: AbortSignal,
+  onLevel?: (l: InputLevel) => void,
 ): Promise<Uint8Array | undefined> {
   const s = new AudioSession()
   try {
     await s.open()
+    watchLevel(s, onLevel)
     const rx = new AudioReceiver({ fs: s.fs })
     let idle = 0
     onStatus({ text: 'Čekám na volání…' })
