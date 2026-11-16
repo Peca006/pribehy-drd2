@@ -1,7 +1,20 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
   import { audioSupported, AudioSession } from '../core/audiogram/audio'
-  import { PROBE_TONES, probeSignal, rms, toDb, toneAmplitude } from '../core/audiogram/probe'
+  import LogView from './LogView.svelte'
+  import { deviceText } from '../core/audiogram/audio'
+  import {
+    analyseModeTest,
+    MODE_TEST_FRAMES,
+    modeTestSeconds,
+    modeTestSignal,
+    PROBE_TONES,
+    probeSignal,
+    rms,
+    toDb,
+    toneAmplitude,
+    type ModeTestResult,
+  } from '../core/audiogram/probe'
 
   // Zkouška zvuku mezi dvěma zařízeními: jedno přehraje tóny, druhé ukáže, jaké úrovně u nich slyší. Pomůže zjistit,
   // které frekvence reproduktor a mikrofon propustí (a jestli telefon zvuk neupravuje).
@@ -13,6 +26,60 @@
   let level = $state(-120)
   let info = $state<ReturnType<AudioSession['inputInfo']> | undefined>(undefined)
   let session: AudioSession | undefined
+  let testBusy = $state<'' | 'send' | 'recv' | 'eval'>('')
+  let modeResults = $state<ModeTestResult[]>([])
+  let abort: AbortController | undefined
+
+  // Zkouška režimů: odesílatel po odpočtu přehraje několik rámců v každém režimu, příjemce je zaznamená a vyhodnotí.
+  async function modeSend() {
+    error = ''
+    testBusy = 'send'
+    const s = new AudioSession()
+    try {
+      await s.ctx.resume()
+      await new Promise((r) => setTimeout(r, 3000))
+      await s.play(modeTestSignal(s.fs))
+    } catch {
+      error = 'Zvuk se nepodařilo přehrát.'
+    } finally {
+      s.close()
+      testBusy = ''
+    }
+  }
+
+  async function modeRecv() {
+    error = ''
+    modeResults = []
+    testBusy = 'recv'
+    abort = new AbortController()
+    const s = new AudioSession()
+    try {
+      await s.open()
+      info = s.inputInfo()
+      // zaznamenat celé vysílání (odpočet 3 s + zkouška + rezerva), pak vyhodnotit
+      const rec = await s.record(modeTestSeconds() + 12, abort.signal)
+      testBusy = 'eval'
+      await new Promise((r) => setTimeout(r, 30))
+      modeResults = analyseModeTest(rec, s.fs)
+    } catch (e) {
+      if ((e as Error).name !== 'AbortError') error = 'Mikrofon se nepodařilo spustit (zkontrolujte povolení; potřebný je https).'
+    } finally {
+      s.close()
+      testBusy = ''
+    }
+  }
+
+  /** Souhrn všech výsledků zkoušek pro zkopírování. */
+  const report = $derived.by(() => {
+    const out: string[] = [deviceText(info)]
+    if (hold.some((h) => h > -120))
+      out.push('Tóny (nejvyšší úroveň): ' + PROBE_TONES.map((f, i) => `${f} Hz ${hold[i] > -120 ? Math.round(hold[i]) + ' dB' : '–'}`).join(', '))
+    if (modeResults.length)
+      out.push(
+        `Režimy (zkušebních rámců ${MODE_TEST_FRAMES}): ` + modeResults.map((r) => `${r.mode} ${r.ok}/${MODE_TEST_FRAMES}`).join(', '),
+      )
+    return out
+  })
 
   async function play() {
     error = ''
@@ -116,6 +183,33 @@
       pásmo tlumené.
     </p>
   {/if}
+  <h4>Zkouška režimů</h4>
+  <p class="muted">
+    Ukáže, které režimy přenosu mezi zařízeními projdou. Na příjemci stiskněte <em>Přijmout a vyhodnotit</em>,
+    na vysílači hned potom <em>Vysílat režimy</em> (za 3 s začne zvuk, trvá asi půl minuty). Výsledek se objeví na příjemci;
+    pro druhý směr role prohoďte.
+  </p>
+  <p class="actions">
+    <button onclick={modeSend} disabled={testBusy !== ''}>{testBusy === 'send' ? 'Vysílám…' : 'Vysílat režimy'}</button>
+    {#if testBusy === 'recv'}
+      <button onclick={() => abort?.abort()}>Zrušit</button>
+    {:else}
+      <button onclick={modeRecv} disabled={testBusy !== ''}>
+        {testBusy === 'eval' ? 'Vyhodnocuji…' : 'Přijmout a vyhodnotit'}
+      </button>
+    {/if}
+  </p>
+  {#if modeResults.length}
+    <table class="probe" aria-label="Výsledky zkoušky režimů">
+      <thead><tr><th>Režim</th><th>Prošlo</th></tr></thead>
+      <tbody>
+        {#each modeResults as r}
+          <tr><td>{r.mode}</td><td>{r.ok} z {MODE_TEST_FRAMES}</td></tr>
+        {/each}
+      </tbody>
+    </table>
+  {/if}
+  <LogView lines={report} title="Protokol zkoušek" />
   {#if info}
     <p class="muted">
       Vzorkování {info.fs} Hz · potlačení ozvěny: {yesNo(info.echoCancellation)} · potlačení šumu: {yesNo(

@@ -1,5 +1,12 @@
 # Změny
 
+## 0.2.6 (16. 11. 2026)
+
+- Audiogram: odesílatel po každé dávce poslouchá až do odpovědi (ne jen pevné okno), protože pomalejší telefon potvrzení vyhodnocuje a odesílá se zpožděním. Příjemce čeká na konec vysílání 0,6 s.
+- Audiogram: kopírovatelný **protokol** přenosu (časy, úrovně zvuku, doba vyhodnocení, počty rámců, režim, odstup, nastavení mikrofonu) při vysílání i příjmu.
+- Více: **Zkouška režimů** (vysílač pošle zkušební rámce ve všech režimech, příjemce ukáže, které prošly) a kopírovatelný protokol zkoušek.
+- Audiogram: ukazatel hlasitosti je vidět i při vysílání.
+
 ## 0.2.5 (16. 11. 2026)
 
 - Audiogram: ukazatel hlasitosti vstupu při vysílání i příjmu („slabé“ / „v pořádku“ / „přebuzené“), aby bylo hned vidět, jestli mikrofon vůbec něco slyší.

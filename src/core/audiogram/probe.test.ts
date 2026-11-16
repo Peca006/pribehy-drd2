@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { levelVerdict } from './audio'
-import { PROBE_TONES, probeSignal, toneAmplitude, toneBurst, toDb } from './probe'
+import { analyseModeTest, MODE_TEST_FRAMES, modeTestSignal, PROBE_TONES, probeSignal, toneAmplitude, toneBurst, toDb } from './probe'
 
 describe('zkouška zvuku', () => {
   it('změří amplitudu čistého tónu a rozliší ostatní frekvence', () => {
@@ -29,4 +29,12 @@ describe('ukazatel hlasitosti', () => {
     expect(levelVerdict(0.3)).toBe('dobre')
     expect(levelVerdict(0.99)).toBe('prebuzene')
   })
+})
+
+describe('zkouška režimů', () => {
+  it('bez rušení projdou všechny režimy všemi rámci', () => {
+    const fs = 48000
+    const res = analyseModeTest(modeTestSignal(fs), fs)
+    for (const r of res) expect(r.ok, r.mode).toBe(MODE_TEST_FRAMES)
+  }, 60000)
 })

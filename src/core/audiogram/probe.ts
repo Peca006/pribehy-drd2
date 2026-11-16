@@ -1,3 +1,6 @@
+import { decodeMsg, encodeMsg, Type } from './frame'
+import { MODES } from './modes'
+
 // Zkouška zvukové cesty mezi dvěma zařízeními: jedno přehraje řadu čistých tónů, druhé u každého změří úroveň
 // (Goertzelův filtr). Ukáže, která pásma reproduktor a mikrofon (a zpracování zvuku v telefonu) propustí.
 
@@ -54,4 +57,61 @@ export function rms(x: ArrayLike<number>): number {
   let e = 0
   for (let i = 0; i < x.length; i++) e += x[i] * x[i]
   return Math.sqrt(e / (x.length || 1))
+}
+
+// ---- Zkouška režimů: odesílatel pošle několik rámců v každém režimu, příjemce zjistí, které režimy prošly. ----
+/** Počet zkušebních rámců v každém režimu a označení zkoušky (číslo relace). */
+export const MODE_TEST_FRAMES = 3
+const MODE_TEST_SESSION = 0xee
+/** Pauza mezi režimy (s). */
+const MODE_TEST_GAP_S = 0.8
+
+const testFrames = () =>
+  Array.from({ length: MODE_TEST_FRAMES }, (_, seq) =>
+    encodeMsg({
+      type: Type.Data,
+      session: MODE_TEST_SESSION,
+      seq,
+      data: Uint8Array.from({ length: 48 }, (_, i) => (i * 37 + seq * 11 + 5) & 255),
+    }),
+  )
+
+/** Zvuk celé zkoušky: všechny režimy za sebou. */
+export function modeTestSignal(fs: number): Float32Array {
+  const gap = Math.round(MODE_TEST_GAP_S * fs)
+  const parts = MODES.map((m) => m.modem.modulate(testFrames(), fs))
+  const out = new Float32Array(parts.reduce((s, p) => s + p.length + gap, 0))
+  let at = 0
+  for (const p of parts) {
+    out.set(p, at)
+    at += p.length + gap
+  }
+  return out
+}
+
+/** Doba zvuku celé zkoušky (s). */
+export const modeTestSeconds = () =>
+  MODES.reduce((s, m) => s + m.modem.airtime(48 + 4) * MODE_TEST_FRAMES + MODE_TEST_GAP_S + 0.3, 0)
+
+export interface ModeTestResult {
+  mode: string
+  bitrate: number
+  /** kolik zkušebních rámců prošlo (z MODE_TEST_FRAMES) */
+  ok: number
+}
+
+/** Ve zvukovém záznamu spočítá, kolik zkušebních rámců prošlo v každém režimu. */
+export function analyseModeTest(rec: Float32Array, fs: number): ModeTestResult[] {
+  return MODES.map((m) => {
+    const seen = new Set<number>()
+    try {
+      for (const f of m.modem.demodulate(rec, fs).frames) {
+        const msg = decodeMsg(f)
+        if (msg?.type === Type.Data && msg.session === MODE_TEST_SESSION && msg.seq < MODE_TEST_FRAMES) seen.add(msg.seq)
+      }
+    } catch {
+      /* režim nic nenašel */
+    }
+    return { mode: m.name, bitrate: m.bitrate, ok: seen.size }
+  })
 }

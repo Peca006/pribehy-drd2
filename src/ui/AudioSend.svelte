@@ -3,6 +3,7 @@
   import { audioSupported, sendByAudio, type AudioStatus, type InputLevel } from '../core/audiogram/audio'
   import { MODES } from '../core/audiogram/modes'
   import LevelMeter from './LevelMeter.svelte'
+  import LogView from './LogView.svelte'
   import { packMessage } from '../core/audiogram/payload'
 
   // Vysílání kódu zvukem (experiment „audiogram“): handshake, volba režimu podle kvality kanálu
@@ -18,6 +19,7 @@
   /** 'auto' nebo index režimu v tabulce */
   let mode = $state<string>('auto')
   let size = $state(0)
+  let log = $state<string[]>([])
   let abort: AbortController | undefined
 
   // kód DRD2: se vysílá jako bajty (o čtvrtinu méně než text)
@@ -31,6 +33,7 @@
     result = ''
     status = undefined
     level = undefined
+    log = []
     abort = new AbortController()
     running = true
     try {
@@ -41,6 +44,7 @@
         abort.signal,
         mode === 'auto' ? undefined : Number(mode),
         (l) => (level = l),
+        (line) => (log = [...log, line]),
       )
       result = ok ? 'ok' : 'fail'
       if (ok) onsent?.()
@@ -80,6 +84,7 @@
       <button class="primary" onclick={start}>Začít vysílat</button>
     {/if}
   </p>
+  {#if running}<LevelMeter {level} />{/if}
   {#if status}
     <p role="status">
       {status.text}
@@ -97,4 +102,5 @@
       režim.
     </p>{/if}
   {#if error}<p class="error" role="alert">{error}</p>{/if}
+  <LogView lines={log} />
 {/if}

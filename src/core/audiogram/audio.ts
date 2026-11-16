@@ -52,6 +52,42 @@ function watchLevel(s: AudioSession, onLevel?: (l: InputLevel) => void) {
   }
 }
 
+/** Zapisovač protokolu přenosu: řádky s časem od začátku (s). */
+export type LogFn = (line: string) => void
+
+/** Úroveň záznamu: špička a efektivní hodnota v dB vůči plné amplitudě. */
+function levelText(x: Float32Array): string {
+  let peak = 0
+  let e = 0
+  for (let i = 0; i < x.length; i++) {
+    const v = Math.abs(x[i])
+    if (v > peak) peak = v
+    e += v * v
+  }
+  const db = (a: number) => (a > 1e-6 ? Math.round(20 * Math.log10(a)) : -120)
+  return `špička ${db(peak)} dB, efektivní ${db(Math.sqrt(e / (x.length || 1)))} dB`
+}
+
+/** Časovač protokolu: každý řádek dostane čas od vytvoření. */
+function stamped(log?: LogFn): LogFn {
+  const t0 = performance.now()
+  return (line) => log?.(`${((performance.now() - t0) / 1000).toFixed(1).padStart(6)} s  ${line}`)
+}
+
+/** Popis zařízení a nastavení mikrofonu pro hlavičku protokolu. */
+export function deviceText(info?: ReturnType<AudioSession['inputInfo']>): string {
+  const f = (v: boolean | string | undefined) => (v === undefined ? '?' : v && v !== 'false' ? 'ano' : 'ne')
+  return [
+    `Verze ${__APP_VERSION__} · ${new Date().toLocaleString('cs-CZ')}`,
+    navigator.userAgent,
+    info
+      ? `Vzorkování ${info.fs} Hz · potlačení ozvěny ${f(info.echoCancellation)} · potlačení šumu ${f(info.noiseSuppression)} · AGC ${f(info.autoGainControl)}`
+      : '',
+  ]
+    .filter(Boolean)
+    .join('\n')
+}
+
 /** Zvuková relace: jeden AudioContext a mikrofon po celou dobu přenosu. */
 export class AudioSession {
   ctx: AudioContext
@@ -136,7 +172,7 @@ export class AudioSession {
    * Poslouchá, dokud nezačne a pak neskončí vysílání (úsek hluku následovaný tichem), nebo do `maxSeconds`.
    * Vrátí nahrávku nebo undefined (nic neslyšel). Nahrávka se při samém poslechu ořezává, ať neroste donekonečna.
    */
-  async listenForBurst(maxSeconds: number, signal?: AbortSignal, quiet = 0.9): Promise<Float32Array | undefined> {
+  async listenForBurst(maxSeconds: number, signal?: AbortSignal, quiet = 0.6): Promise<Float32Array | undefined> {
     this.chunks = []
     this.listening = true
     const t0 = performance.now()
@@ -209,12 +245,16 @@ export async function sendByAudio(
   /** vynucený režim (index do tabulky), jinak automaticky podle handshake */
   mode?: number,
   onLevel?: (l: InputLevel) => void,
+  onLog?: LogFn,
 ): Promise<boolean> {
   const s = new AudioSession()
+  const log = stamped(onLog)
   try {
     await s.open()
     watchLevel(s, onLevel)
+    onLog?.(deviceText(s.inputInfo()))
     const sender = new AudioSender(message, { fs: s.fs, mode })
+    log(`Vysílač: zpráva ${message.length} B, ${sender.frames} rámců, ${mode === undefined ? 'režim automaticky' : 'režim vynucen'}`)
     for (;;) {
       const tx: Tx | undefined = sender.tx()
       if (!tx) break
@@ -226,8 +266,19 @@ export async function sendByAudio(
         done: sender.confirmed,
         total: sender.frames,
       })
+      const t0 = performance.now()
       await s.play(tx.audio)
-      sender.rx(await s.record(tx.listen, signal))
+      log(`Odvysíláno: ${tx.label} (${(tx.audio.length / s.fs).toFixed(1)} s zvuku, přehráno za ${((performance.now() - t0) / 1000).toFixed(1)} s)`)
+      // poslech do první odpovědi (ne pevné okno): příjemce může s vyhodnocením chvíli otálet
+      const rec = (await s.listenForBurst(tx.listen + 6, signal, 0.5)) ?? new Float32Array(0)
+      const before = sender.confirmed
+      const t1 = performance.now()
+      sender.rx(rec)
+      log(
+        `Poslech: ${(rec.length / s.fs).toFixed(1)} s, ${rec.length ? levelText(rec) : 'nic neslyšel'}; ` +
+          `vyhodnoceno za ${Math.round(performance.now() - t1)} ms; potvrzeno ${before} → ${sender.confirmed}/${sender.frames}, ` +
+          `stav ${sender.state}, režim ${sender.mode.name}${sender.remoteSnr !== undefined ? `, odstup ${sender.remoteSnr} dB` : ''}`,
+      )
     }
     onStatus({
       text: sender.state === 'done' ? 'Příjemce potvrdil přijetí.' : 'Příjemce neodpovídá, přenos se nezdařil.',
@@ -237,6 +288,7 @@ export async function sendByAudio(
       done: sender.confirmed,
       total: sender.frames,
     })
+    log(`Konec: ${sender.state}`)
     return sender.state === 'done'
   } finally {
     s.close()
@@ -251,11 +303,15 @@ export async function receiveByAudio(
   onStatus: (s: AudioStatus) => void,
   signal?: AbortSignal,
   onLevel?: (l: InputLevel) => void,
+  onLog?: LogFn,
 ): Promise<Uint8Array | undefined> {
   const s = new AudioSession()
+  const log = stamped(onLog)
   try {
     await s.open()
     watchLevel(s, onLevel)
+    onLog?.(deviceText(s.inputInfo()))
+    log('Příjemce: čekám na volání')
     const rx = new AudioReceiver({ fs: s.fs })
     let idle = 0
     onStatus({ text: 'Čekám na volání…' })
@@ -269,7 +325,13 @@ export async function receiveByAudio(
         continue
       }
       idle = 0
+      const before = rx.received
+      const t1 = performance.now()
       rx.rx(rec)
+      log(
+        `Zachyceno ${(rec.length / s.fs).toFixed(1)} s, ${levelText(rec)}; vyhodnoceno za ${Math.round(performance.now() - t1)} ms; ` +
+          `rámců ${before} → ${rx.received}/${rx.frames}, stav ${rx.state}, režim ${rx.mode.name}${rx.snr !== undefined ? `, odstup ${Math.round(rx.snr)} dB` : ''}`,
+      )
       const st = (text: string): AudioStatus => ({
         text,
         mode: rx.state === 'idle' ? undefined : rx.mode.name,
@@ -281,10 +343,13 @@ export async function receiveByAudio(
       const tx = rx.tx()
       if (tx) {
         onStatus(st(tx.label))
+        const t2 = performance.now()
         await s.play(tx.audio)
+        log(`Odvysíláno: ${tx.label} (přehráno za ${((performance.now() - t2) / 1000).toFixed(1)} s)`)
       }
       if (rx.state === 'complete') onStatus(st('Přijato celé, ověřeno.'))
     }
+    log(`Konec: ${rx.state}`)
     return rx.result
   } finally {
     s.close()
