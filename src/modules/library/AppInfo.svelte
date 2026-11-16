@@ -28,19 +28,19 @@
   </p>
   <p class="muted">
     {offline
-      ? 'Aplikace se uložila do zařízení a funguje i bez internetu.'
+      ? 'Aplikace je uložená v zařízení a funguje i bez internetu.'
       : 'Aplikace zatím není uložená pro práci offline (po prvním načtení z internetu se uloží).'}
   </p>
 
   {#if pwa.needRefresh}
     <p>
-      Nová verze je připravená.
-      <button class="primary" onclick={applyUpdate}>Obnovit</button>
+      Je připravená nová verze.
+      <button class="primary" onclick={applyUpdate}>Načíst</button>
     </p>
   {:else}
     <p>
       <button onclick={check} disabled={pwa.checking}>
-        {pwa.checking ? 'Kontroluji…' : 'Zkontrolovat aktualizaci'}
+        {pwa.checking ? 'Ověřuji…' : 'Ověřit'}
       </button>
     </p>
   {/if}
@@ -50,10 +50,10 @@
 <div class="panel">
   <strong>Instalace na plochu</strong>
   {#if pwa.installed}
-    <p>Aplikace je nainstalovaná a běží jako samostatná aplikace.</p>
+    <p>Aplikace již je nainstalovaná a běží jako samostatná aplikace.</p>
   {:else if pwa.installable}
-    <p class="muted">Přidá ikonu na plochu a aplikace se otevře bez adresního řádku, i offline.</p>
-    <button class="primary" onclick={install}>Nainstalovat aplikaci</button>
+    <p class="muted">Přidá ikonu na plochu. Aplikace se otevře bez adresního řádku i offline.</p>
+    <button class="primary" onclick={install}>Nainstalovat</button>
   {:else if pwa.ios}
     <ol>
       <li>V Safari klepněte na <strong>Sdílet</strong> (čtverec se šipkou nahoru).</li>
@@ -64,8 +64,8 @@
   {:else}
     <p class="muted">
       Prohlížeč instalaci tlačítkem nenabídl. V Chrome na telefonu otevřete menu (⋮) a zvolte
-      <strong>Nainstalovat aplikaci</strong> nebo <strong>Přidat na plochu</strong>; na počítači
-      ikona instalace v adresním řádku. Instalovat lze jen z adresy s <code>https</code>.
+      <strong>Nainstalovat aplikaci</strong> nebo <strong>Přidat na plochu</strong>. Na počítači
+      je ikona instalace v adresním řádku. Instalovat lze jen z adresy s <code>https</code>.
     </p>
   {/if}
 </div>

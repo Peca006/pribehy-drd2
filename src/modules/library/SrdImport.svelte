@@ -20,8 +20,8 @@
   }
 </script>
 
-<h2>Převod SRD z webu</h2>
-<div class="panel">
+<details>
+  <summary>Vytvořit na webu SRD</summary>
   <p>
     Balíčky pravidel a bestiáře si můžete sestavit sami z veřejného SRD, aniž byste cokoli stahovali
     z cizích zdrojů. Převod proběhne ve vašem prohlížeči a texty zůstanou jen u vás. Převodník se
@@ -55,10 +55,9 @@
       </li>
       <li>
         Otevřete <a href={userscript}>instalaci skriptu</a> (nebo
-        <button onclick={() => copy(userscript, 'skript')}>zkopírujte adresu</button
-        >{#if copied === 'skript'}
-          ✓{/if} a vložte ji do Firefoxu) a potvrďte ji. Skript jen přidá na stránce SRD tlačítko; nic
-        jiného nedělá.
+        <button onclick={() => copy(userscript, 'skript')}>zkopírujte adresu</button>
+        {#if copied === 'skript'}✓{/if}
+        a vložte ji do Firefoxu) a potvrďte ji. Skript jen přidá na stránce SRD tlačítko; nic jiného nedělá.
       </li>
       <li>
         Otevřete SRD (adresu vložte do prohlížeče) a klepněte na tlačítko <em>Převést SRD</em> vpravo
@@ -93,4 +92,4 @@
           : 'Ukázat postup pro telefon'}
     </button>
   </p>
-</div>
+</details>
