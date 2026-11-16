@@ -9,7 +9,7 @@
   import { getParty, saveParty } from '../../core/party/store'
   import { settings } from '../../core/settings.svelte'
   import QrView from '../../ui/QrView.svelte'
-  import AudioSend from '../../ui/AudioSend.svelte'
+  import AudioSend from '../../ui/audiogram/AudioSend.svelte'
 
   // Sdílení družiny. Průvodce posílá hráčům družinu a schválené zápisy; hráč posílá Průvodci své návrhy zápisů.
   let { id }: { id: string } = $props()

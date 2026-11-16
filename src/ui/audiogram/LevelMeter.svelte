@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { levelVerdict, type InputLevel } from '../core/audiogram/audio'
+  import { levelVerdict, type InputLevel } from '../../core/audiogram/audio'
 
   // Ukazatel hlasitosti vstupu (mikrofonu): ukáže, jestli zařízení vůbec něco slyší a zda není signál přebuzený.
   let { level }: { level?: InputLevel } = $props()

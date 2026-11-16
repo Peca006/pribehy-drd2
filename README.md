@@ -65,11 +65,15 @@ Každá funkce je samostatný **modul** (`src/modules/<id>/`), který se zaregis
 modul sám, seznam modulů je v `src/modules/index.ts`. Moduly se nevolají napřímo, ale přes směrovač
 (`go('postavy', id)`), takže je lze snadno přeskládat nebo otevřít z jiného místa.
 
-- `src/core/` – logika bez uživatelského rozhraní: obsahové balíčky, model postavy (deník změn),
-  směrovač, odkazy mezi pojmy a kapitolami.
-- `src/modules/` – funkce: `characters` (deníky postav), `creator` (průvodce tvorbou postavy,
-  kroky v `steps/` se řadí v `steps.ts`), `reader` (příručka), `library` (balíčky).
-- `bestiar` – bestiář pro vypravěče: bytosti z balíčku (jen ke čtení) a vlastní bytosti (editor,
-  import/export JSON). Vlastní bytosti jsou v oddělené části úložiště. Bestiář vychází ze SRD (viz Právní upozornění). Ke každé bytosti si lze přidat vlastní obrázky (ukládají se jen v zařízení).
-- `src/ui/` – sdílené komponenty (zobrazení textů v mini-markdownu, bloky kapitol).
+- `src/core/` – logika bez uživatelského rozhraní: obsahové balíčky (`content/`), model postavy a deník změn
+  (`character/`), družina a tracker konfliktu (`party/`), bytosti (`creatures/`), přenos zvukem (`audiogram/`),
+  ukázková data (`demo.ts`), směrovač, odkazy mezi pojmy a kapitolami a potvrzovací dialog.
+- `src/modules/` – funkce: `characters` (deníky postav, hody, sdílení), `creator` (průvodce tvorbou postavy,
+  kroky v `steps/` se řadí v `steps.ts`), `reader` (příručka), `parties` (družiny, zápisy ze sezení, tracker
+  konfliktu), `bestiar` (bestiář pro vypravěče: bytosti z balíčku jen ke čtení a vlastní bytosti s editorem,
+  importem/exportem JSON a vlastními obrázky uloženými jen v zařízení; vychází ze SRD, viz Právní upozornění),
+  `library` (Více: nastavení, balíčky, ukázková data, zkouška zvuku, informace o aplikaci).
+- `src/ui/` – sdílené komponenty (mini-markdown, bloky kapitol, potvrzovací dialog, QR) a `src/ui/audiogram/`
+  (odesílání, příjem a zkouška zvuku).
+- Data ukázkových postav jsou v `src/data/demo.ts`.
 - Odkazy `chapter:ID#kotva` a `term:ID` v textech se otevírají z kteréhokoli modulu.

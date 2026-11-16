@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, AudioSession } from '../core/audiogram/audio'
+  import { audioSupported, AudioSession } from '../../core/audiogram/audio'
   import LogView from './LogView.svelte'
-  import { deviceText } from '../core/audiogram/audio'
+  import { deviceText } from '../../core/audiogram/audio'
   import {
     analyseModeTest,
     MODE_TEST_FRAMES,
@@ -14,7 +14,7 @@
     toDb,
     toneAmplitude,
     type ModeTestResult,
-  } from '../core/audiogram/probe'
+  } from '../../core/audiogram/probe'
 
   // Zkouška zvuku mezi dvěma zařízeními: jedno přehraje tóny, druhé ukáže, jaké úrovně u nich slyší. Pomůže zjistit,
   // které frekvence reproduktor a mikrofon propustí (a jestli telefon zvuk neupravuje).

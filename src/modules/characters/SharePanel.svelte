@@ -10,7 +10,7 @@
   import { buildRevisionBundle, encodeBundle } from '../../core/character/share'
   import { getLog } from '../../core/character/store'
   import QrView from '../../ui/QrView.svelte'
-  import AudioSend from '../../ui/AudioSend.svelte'
+  import AudioSend from '../../ui/audiogram/AudioSend.svelte'
 
   // Sdílení revizí postavy (hráč → vypravěč): kód k vložení, soubor nebo systémové sdílení
   // (AirDrop, Quick Share, zprávy). Odeslané revize se označí a příště se posílají jen novější.

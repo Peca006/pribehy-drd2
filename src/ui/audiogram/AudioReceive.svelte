@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, receiveByAudio, type AudioStatus, type InputLevel } from '../core/audiogram/audio'
+  import { audioSupported, receiveByAudio, type AudioStatus, type InputLevel } from '../../core/audiogram/audio'
   import LevelMeter from './LevelMeter.svelte'
   import LogView from './LogView.svelte'
-  import { unpackMessage } from '../core/audiogram/payload'
+  import { unpackMessage } from '../../core/audiogram/payload'
 
   // Příjem kódu zvukem (experiment „audiogram“). Po dokončení předá text funkci `onresult`.
   let { onresult }: { onresult: (text: string) => void } = $props()

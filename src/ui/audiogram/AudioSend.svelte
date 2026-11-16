@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, sendByAudio, type AudioStatus, type InputLevel } from '../core/audiogram/audio'
-  import { MODES } from '../core/audiogram/modes'
+  import { audioSupported, sendByAudio, type AudioStatus, type InputLevel } from '../../core/audiogram/audio'
+  import { MODES } from '../../core/audiogram/modes'
   import LevelMeter from './LevelMeter.svelte'
   import LogView from './LogView.svelte'
-  import { packMessage } from '../core/audiogram/payload'
+  import { packMessage } from '../../core/audiogram/payload'
 
   // Vysílání kódu zvukem (experiment „audiogram“): handshake, volba režimu podle kvality kanálu
   // (nebo ručně vybraný režim), dávky rámců s potvrzením. Druhé zařízení musí mít zapnuté

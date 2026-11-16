@@ -23,7 +23,7 @@
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import QrScanner from '../../ui/QrScanner.svelte'
-  import AudioReceive from '../../ui/AudioReceive.svelte'
+  import AudioReceive from '../../ui/audiogram/AudioReceive.svelte'
   import QrView from '../../ui/QrView.svelte'
   import CheckList from './CheckList.svelte'
   import { describeChange, pathLabel } from './describe'
