@@ -29,6 +29,8 @@
   let testBusy = $state<'' | 'send' | 'recv' | 'eval'>('')
   let modeResults = $state<ModeTestResult[]>([])
   let abort: AbortController | undefined
+  /** nejvyšší špička vstupu při zkoušce režimů (0 až 1) */
+  let modePeak = $state(0)
 
   // Zkouška režimů: odesílatel po odpočtu přehraje několik rámců v každém režimu, příjemce je zaznamená a vyhodnotí.
   async function modeSend() {
@@ -50,12 +52,17 @@
   async function modeRecv() {
     error = ''
     modeResults = []
+    modePeak = 0
     testBusy = 'recv'
     abort = new AbortController()
     const s = new AudioSession()
     try {
       await s.open()
       info = s.inputInfo()
+      modePeak = 0
+      s.tap = (block) => {
+        for (let i = 0; i < block.length; i++) modePeak = Math.max(modePeak, Math.abs(block[i]))
+      }
       // zaznamenat celé vysílání (odpočet 3 s + zkouška + rezerva), pak vyhodnotit
       const rec = await s.record(modeTestSeconds() + 12, abort.signal)
       testBusy = 'eval'
@@ -74,6 +81,8 @@
     const out: string[] = [deviceText(info)]
     if (hold.some((h) => h > -120))
       out.push('Tóny (nejvyšší úroveň): ' + PROBE_TONES.map((f, i) => `${f} Hz ${hold[i] > -120 ? Math.round(hold[i]) + ' dB' : '–'}`).join(', '))
+    if (modeResults.length)
+      out.push(`Špička vstupu při zkoušce režimů: ${Math.round(toDb(modePeak))} dB${modePeak > 0.95 ? ' (PŘEBUZENO)' : ''}`)
     if (modeResults.length)
       out.push(
         `Režimy (zkušebních rámců ${MODE_TEST_FRAMES}): ` + modeResults.map((r) => `${r.mode} ${r.ok}/${MODE_TEST_FRAMES}`).join(', '),
@@ -200,6 +209,10 @@
     {/if}
   </p>
   {#if modeResults.length}
+    <p class={modePeak > 0.95 ? 'error' : 'muted'} role={modePeak > 0.95 ? 'alert' : undefined}>
+      Špička vstupu: {Math.round(toDb(modePeak))} dB.
+      {#if modePeak > 0.95}Vstup je přebuzený, výsledky rychlých režimů jsou zkreslené. Snižte hlasitost vysílače nebo citlivost mikrofonu a zopakujte.{/if}
+    </p>
     <table class="probe" aria-label="Výsledky zkoušky režimů">
       <thead><tr><th>Režim</th><th>Prošlo</th></tr></thead>
       <tbody>
