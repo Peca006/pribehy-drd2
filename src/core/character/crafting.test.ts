@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { applyCraft, autoAlloc, checkCraft, craftNote, suggestCost, type CraftInput } from './crafting'
+import { applyCraft, autoAlloc, checkCraft, craftNote, suggestCost, trapBatchCost, type CraftInput } from './crafting'
 import { emptyCharacter } from './model'
 import { addKind, adjustRaw } from './rawMaterials'
 
@@ -135,5 +135,41 @@ describe('výroba lektvaru', () => {
   it('poznámka k revizi uvede, na co lektvar je', () => {
     const label = (k: string) => (k === '' ? 'bez druhu' : k)
     expect(craftNote(stocked(), lektvar(), label)).toBe('Lektvar: popálenina (Tělo) (3 Surovin: bez druhu 3)')
+  })
+})
+
+describe('výroba nástrahy', () => {
+  const nastraha = (p: Partial<CraftInput> = {}): CraftInput => ({
+    kind: 'nastraha',
+    name: '',
+    cost: 4,
+    alloc: { '': 3, k2: 1 },
+    result: 'uspech',
+    addToEquipment: false,
+    trap: { name: 'Jáma s kůly', attribute: 'Tělo', type: 'jednoducha', effect: 'vyrazeni', count: 1 },
+    ...p,
+  })
+
+  it('cena dávky je cena kusu krát počet kusů', () => {
+    expect(trapBatchCost({ type: 'jednoducha', effect: 'vyrazeni', maneuver: '', extra: 0 }, 1)).toBe(4)
+    expect(trapBatchCost({ type: 'jednoducha', effect: 'vyrazeni', maneuver: '', extra: 0 }, 3)).toBe(12)
+  })
+
+  it('úspěch spotřebuje Suroviny a zapíše nástrahu s počtem kusů; neúspěch jen propálí Suroviny', () => {
+    const r = applyCraft(stocked(), nastraha({ trap: { ...nastraha().trap, count: 2 } }))
+    expect(r.rawMaterials).toBe(0)
+    expect(Object.values(r.traps)).toHaveLength(1)
+    expect(Object.values(r.traps)[0]).toMatchObject({ name: 'Jáma s kůly', count: 2, effect: 'vyrazeni' })
+    const fail = applyCraft(stocked(), nastraha({ result: 'neuspech' }))
+    expect(fail.rawMaterials).toBe(0)
+    expect(Object.keys(fail.traps)).toHaveLength(0)
+    expect(checkCraft(stocked(), nastraha({ trap: { name: ' ', attribute: 'Tělo' } })).error).toMatch(/název/)
+  })
+
+  it('poznámka k revizi uvede nástrahu a počet kusů', () => {
+    const label = (k: string) => (k === '' ? 'bez druhu' : k)
+    expect(craftNote(stocked(), nastraha({ alloc: { '': 3, k2: 1 }, trap: { ...nastraha().trap, count: 2 } }), label)).toBe(
+      'Nástraha: Jáma s kůly ×2 (4 Surovin: bez druhu 3, k2 1)',
+    )
   })
 })

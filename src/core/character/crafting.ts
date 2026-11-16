@@ -1,11 +1,12 @@
 // Výroba a opravy: cena v Surovinách, rozdělení spotřeby mezi druhy Surovin a zápis výsledku. Aplikace jen počítá a zapisuje,
 // o podmínkách (místo, čas, pomůcky) a o výsledku rozhoduje hra. Čísla z pravidel jsou návrh, který jde přepsat.
 import type { Attribute } from '../content/schema'
-import type { Character } from './model'
+import type { Character, Trap } from './model'
 import { potionFrom, savePotion } from './potions'
+import { saveTrap, trapFrom, trapCost } from './traps'
 import { cleanCount, kindsOf, MAX_RAW, rawCount, type KindRef } from './rawMaterials'
 
-export type CraftKind = 'vyroba' | 'oprava' | 'nouzovy' | 'lektvar'
+export type CraftKind = 'vyroba' | 'oprava' | 'nouzovy' | 'lektvar' | 'nastraha'
 
 /** Výsledek: úspěch (Suroviny se spotřebují, předmět vznikne), neúspěch (Suroviny propadnou), přerušeno (nic se nespotřebuje). */
 export type CraftResult = 'uspech' | 'neuspech' | 'preruseno'
@@ -15,9 +16,14 @@ export const REPAIR_PER_SEVERITY = 5
 export const MAX_SEVERITY = 5
 
 /** Návrh ceny v Surovinách: výroba zhruba polovina ceny předmětu v groších (nahoru), oprava 5 za stupeň, nouzový předmět nic. */
+/** Návrh ceny nástrahy: cena jednoho kusu krát počet kusů (dávek). */
+export const trapBatchCost = (t: Pick<Trap, 'type' | 'effect' | 'maneuver' | 'extra'>, doses: number): number =>
+  trapCost(t) * Math.max(1, Math.floor(doses))
+
 export function suggestCost(kind: CraftKind, priceGroschen: number, severity: number): number {
   if (kind === 'nouzovy') return 0
   if (kind === 'lektvar') return 3
+  if (kind === 'nastraha') return 3
   if (kind === 'oprava') return REPAIR_PER_SEVERITY * Math.min(MAX_SEVERITY, Math.max(1, Math.floor(severity)))
   return Math.ceil(Math.max(0, Math.floor(priceGroschen)) / 2)
 }
@@ -57,6 +63,8 @@ export interface CraftInput {
   addToEquipment: boolean
   /** lektvar: na co je (vlastnost a druh Jizvy); počet Surovin v něm je cena */
   potion?: { attribute: Attribute; scar: string; note?: string }
+  /** nástraha: popis (název, druh, vlastnost, účinek, manévr…); `count` je počet vyrobených kusů (dávek) */
+  trap?: Partial<Trap>
 }
 
 export interface CraftCheck {
@@ -77,6 +85,8 @@ export function checkCraft(c: Character, input: CraftInput): CraftCheck {
     if (!potionFrom({ ...input.potion, count: 1 })) return { spend: 0, toAssign: 0, error: 'Zadejte, na jakou Jizvu lektvar působí.' }
     if (cost < 1 && input.result !== 'preruseno') return { spend: 0, toAssign: 0, error: 'Lektvar potřebuje aspoň 1 Surovinu.' }
   }
+  if (input.kind === 'nastraha' && !trapFrom({ ...input.trap, count: 1 }))
+    return { spend: 0, toAssign: 0, error: 'Zadejte název nástrahy a cílovou vlastnost.' }
   if (!consumes(input)) return { spend: 0, toAssign: 0, error: '' }
   let assigned = 0
   for (const [key, n] of Object.entries(input.alloc)) {
@@ -109,6 +119,10 @@ export function applyCraft(c: Character, input: CraftInput): Character {
     const r = savePotion(next, { ...input.potion, count: Math.floor(input.cost) })
     if ('character' in r) next = r.character
   }
+  if (input.kind === 'nastraha' && input.result === 'uspech') {
+    const r = saveTrap(next, { ...input.trap, count: Math.max(1, Math.floor(input.trap?.count ?? 1)) })
+    if ('character' in r) next = r.character
+  }
   const made = input.kind === 'vyroba' && input.addToEquipment && input.name.trim() && input.result === 'uspech'
   if (made || (input.kind === 'nouzovy' && input.addToEquipment && input.name.trim())) {
     const label = input.kind === 'nouzovy' ? `${input.name.trim()} (nouzový)` : input.name.trim()
@@ -122,6 +136,7 @@ const KIND_TEXT: Record<CraftKind, string> = {
   oprava: 'Oprava',
   nouzovy: 'Nouzový předmět',
   lektvar: 'Lektvar',
+  nastraha: 'Nástraha',
 }
 const RESULT_TEXT: Record<CraftResult, string> = {
   uspech: 'podařilo se',
@@ -139,7 +154,9 @@ export function craftNote(c: Character, input: CraftInput, labelOf: (key: string
   const what =
     input.kind === 'lektvar' && input.potion
       ? `: ${input.potion.scar} (${input.potion.attribute})`
-      : input.name.trim()
+      : input.kind === 'nastraha' && input.trap?.name
+        ? `: ${input.trap.name}${(input.trap.count ?? 1) > 1 ? ` ×${input.trap.count}` : ''}`
+        : input.name.trim()
         ? `: ${input.name.trim()}`
         : ''
   const cost = input.kind === 'nouzovy' ? '' : ` (${spend} Surovin${used ? `: ${used}` : ''})`

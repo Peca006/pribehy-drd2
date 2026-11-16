@@ -79,6 +79,17 @@ export const BASIC: Card[] = [
     ],
     link: '35-pouzivani-dovednosti',
   },
+  {
+    id: 'nastrahy',
+    title: 'Nástrahy',
+    steps: [
+      'Cena v Surovinách: základ 3, +1 vyřazení (zabít), +1 vložený manévr, +1 pokročilý druh, +1 za každou další vlastnost.',
+      'Spuštěná nástraha míří na cílovou vlastnost a vyhodnocuje se jako výzva (hodí cíl; vyčerpání jen zmírní).',
+      'Ukrytá nástraha: bez šance si všimnout se spustí hned, při šanci je odhalení výzva, při cíleném hledání zkouška.',
+      'Přímo ovládaná nástraha je nástroj vlastní akce (hodí ovládající s dovedností, kterou nástrahu vyrobil), jed se do protiakce hodí zřídka.',
+    ],
+    link: '36-kouzla-nastrahy-leceni',
+  },
 ]
 
 export const SITUATIONS: Card[] = [

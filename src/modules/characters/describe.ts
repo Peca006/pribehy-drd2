@@ -1,7 +1,8 @@
 // Čitelný popis změn postavy (pro historii a náhled před zveřejněním).
 import type { RawMaterialKind, Scar } from '../../core/character/model'
 import { kindFull } from '../../core/character/rawMaterials'
-import type { Potion } from '../../core/character/model'
+import type { Potion, Trap } from '../../core/character/model'
+import { trapSummary } from '../../core/character/traps'
 import { potionLabel } from '../../core/character/potions'
 import { cashFrom, formatCash, UNIT_LABEL, type CashUnit } from '../../core/character/cash'
 import type { RevisionChange } from '../../core/character/revisions'
@@ -41,6 +42,7 @@ export function pathLabel(path: string): string {
   if (path.startsWith('professions.')) return `Povolání: ${nameOf(path.slice(12))}`
   if (path.startsWith('rawMaterialKinds.')) return 'Druh Surovin'
   if (path.startsWith('potions.')) return 'Lektvar'
+  if (path.startsWith('traps.')) return 'Nástraha'
   if (path.startsWith('cash.')) return `Hotovost: ${UNIT_LABEL[path.slice(5) as CashUnit]?.toLowerCase() ?? path.slice(5)}`
   return LABELS[path] ?? path
 }
@@ -70,6 +72,18 @@ export function describeChange(c: RevisionChange): string[] {
         .map((s) => `~ ${fmt(s)}`),
     ]
     return lines.length ? lines : ['(beze změny)']
+  }
+  if (c.path.startsWith('traps.')) {
+    const b = c.before as Trap | undefined
+    const a = c.after as Trap | undefined
+    if (!b && a) return [`+ ${trapSummary(a)} (${a.count})`]
+    if (b && !a) return [`− ${trapSummary(b)} (${b.count})`]
+    if (b && a) {
+      const lines: string[] = []
+      if (trapSummary(b) !== trapSummary(a)) lines.push(`${trapSummary(b)} → ${trapSummary(a)}`)
+      if (b.count !== a.count) lines.push(`${a.name}: ${b.count} → ${a.count} ks`)
+      return lines.length ? lines : ['(beze změny)']
+    }
   }
   if (c.path.startsWith('potions.')) {
     const b = c.before as Potion | undefined

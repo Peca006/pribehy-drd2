@@ -38,6 +38,25 @@ export interface Potion {
   note: string
 }
 
+/**
+ * Připravená nástraha (past, třaskavina, jed…): druh, cílová vlastnost, zamýšlený účinek (Ohrožení, Jizva, vyřazení),
+ * případně vložený manévr, slabina a počet kusů. Cena v Surovinách se počítá (`trapCost`), neukládá se.
+ */
+export interface Trap {
+  name: string
+  type: 'jednoducha' | 'mechanicka' | 'trask' | 'jed' | 'kontaktni' | 'plynny' | 'omamna' | 'jina'
+  attribute: Attribute
+  effect: 'ohrozeni' | 'jizva' | 'vyrazeni'
+  maneuver: '' | 'rozsahle' | 'presne' | 'mocne' | 'lstive'
+  /** další pokročilé vlastnosti nebo posílení zvláštní schopností (každá +1 Surovina) */
+  extra: number
+  /** čím jde nástrahu včas zaznamenat (drát přes chodbu, výrazná chuť…) */
+  weakness: string
+  note: string
+  /** kolik kusů (dávek) je připraveno */
+  count: number
+}
+
 export interface Character {
   id: string
   name: string
@@ -66,6 +85,8 @@ export interface Character {
   rawMaterialKinds: Record<string, RawMaterialKind>
   /** lektvary a masti podle ID (zásobníky Surovin pro léčení) */
   potions: Record<string, Potion>
+  /** připravené nástrahy podle ID */
+  traps: Record<string, Trap>
   /** nespotřebované body zkušeností (12 = jedno zlepšení postavy) */
   xp: number
   scars: Scar[]
@@ -87,6 +108,7 @@ export const emptyCharacter = (id: string): Character => ({
   rawMaterials: 0,
   rawMaterialKinds: {},
   potions: {},
+  traps: {},
   xp: 0,
   scars: [],
   notes: '',
@@ -151,7 +173,7 @@ export function diffCharacter(
     const a = before[key]
     const b = after[key]
     if (same(a, b)) continue
-    if (key === 'rawMaterialKinds' || key === 'potions') {
+    if (key === 'rawMaterialKinds' || key === 'potions' || key === 'traps') {
       // položky po jedné (každá = jedna cesta), aby se úpravy různých položek nepřebíjely
       const ma = (a ?? {}) as Record<string, unknown>
       const mb = (b ?? {}) as Record<string, unknown>

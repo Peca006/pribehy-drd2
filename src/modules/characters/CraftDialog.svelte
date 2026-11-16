@@ -1,6 +1,8 @@
 <script lang="ts">
   import { untrack } from 'svelte'
-  import { ATTRIBUTES, type Character } from '../../core/character/model'
+  import { ATTRIBUTES, type Character, type Trap } from '../../core/character/model'
+  import { trapCost, trapCostLines } from '../../core/character/traps'
+  import TrapFields from './TrapFields.svelte'
   import type { Attribute } from '../../core/content/schema'
   import { MAX_SCAR_TEXT } from '../../core/character/potions'
   import {
@@ -11,6 +13,7 @@
     MAX_SEVERITY,
     sources,
     suggestCost,
+    trapBatchCost,
     type Alloc,
     type CraftKind,
     type CraftResult,
@@ -36,6 +39,16 @@
   let severity = $state(1)
   let potAttr = $state<Attribute>('Tělo')
   let potScar = $state('')
+  let trapSpec = $state<Partial<Trap>>({
+    name: '',
+    type: 'jednoducha',
+    attribute: 'Tělo',
+    effect: 'ohrozeni',
+    maneuver: '',
+    extra: 0,
+    weakness: '',
+  })
+  let doses = $state(1)
   let cost = $state(1)
   let alloc = $state<Alloc>({})
   let onTrip = $state(false)
@@ -62,6 +75,23 @@
     result: onTrip ? result : ('uspech' as CraftResult),
     addToEquipment,
     potion: kind === 'lektvar' ? { attribute: potAttr, scar: potScar } : undefined,
+    trap: kind === 'nastraha' ? { ...trapSpec, count: doses } : undefined,
+  })
+  const trapPriced = $derived({
+    type: trapSpec.type ?? 'jina',
+    effect: trapSpec.effect ?? 'ohrozeni',
+    maneuver: trapSpec.maneuver ?? '',
+    extra: trapSpec.extra ?? 0,
+  } as const)
+
+  // cena nástrahy se přepočítá při každé změně jejích vlastností nebo počtu kusů (potom jde ručně přepsat)
+  $effect(() => {
+    if (kind !== 'nastraha') return
+    const c = trapBatchCost(trapPriced, doses)
+    untrack(() => {
+      cost = c
+      alloc = autoAlloc(character, c)
+    })
   })
   const check = $derived(checkCraft(character, input))
   const free = $derived(kind === 'nouzovy' || (onTrip && result === 'preruseno'))
@@ -103,6 +133,7 @@
     <button class:primary={kind === 'vyroba'} onclick={() => setKind('vyroba')}>Výroba</button>
     <button class:primary={kind === 'oprava'} onclick={() => setKind('oprava')}>Oprava</button>
     <button class:primary={kind === 'lektvar'} onclick={() => setKind('lektvar')}>Lektvar</button>
+    <button class:primary={kind === 'nastraha'} onclick={() => setKind('nastraha')}>Nástraha</button>
     <button class:primary={kind === 'nouzovy'} onclick={() => setKind('nouzovy')}>Nouzový předmět</button>
   </div>
   {#if kind === 'lektvar'}
@@ -118,6 +149,17 @@
       placeholder="Na jakou Jizvu (popálenina, fobie…)"
       aria-label="Druh Jizvy"
     />
+  {:else if kind === 'nastraha'}
+    <TrapFields bind:spec={trapSpec} />
+    <p class="muted">
+      Cena kusu: {trapCost(trapPriced)} ({trapCostLines(trapPriced).join(', ')}). Víc kusů najednou jde manévrem rozsáhle při výrobě.
+    </p>
+    <div class="row">
+      <span>Kusů (dávek)</span>
+      <button onclick={() => (doses = Math.max(1, doses - 1))} disabled={doses <= 1} aria-label="Méně kusů">−</button>
+      <strong>{doses}</strong>
+      <button onclick={() => (doses = Math.min(99, doses + 1))} aria-label="Více kusů">+</button>
+    </div>
   {:else}
     <input
       type="text"

@@ -40,6 +40,7 @@
   import Cash from './Cash.svelte'
   import CraftDialog from './CraftDialog.svelte'
   import Potions from './Potions.svelte'
+  import Traps from './Traps.svelte'
   import RawMaterials from './RawMaterials.svelte'
   import Roll from './Roll.svelte'
   import ScarDialog from './ScarDialog.svelte'
@@ -270,6 +271,7 @@
   {#key current.id}<Cash character={c} onchange={rawChange} />{/key}
   {#key current.id}<RawMaterials character={c} onchange={rawChange} />{/key}
   {#key current.id}<Potions character={c} onchange={rawChange} />{/key}
+  {#key current.id}<Traps character={c} onchange={rawChange} />{/key}
   <p><button onclick={() => (craftOpen = true)}>Výroba a opravy…</button></p>
   {#if craftOpen}
     <CraftDialog character={c} onsave={crafted} onclose={() => (craftOpen = false)} />

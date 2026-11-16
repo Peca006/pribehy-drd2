@@ -86,7 +86,7 @@ Pomocníci (Pouto, Platba) v aplikaci zatím nejsou, Jizvy na Poutu se neřeší
 - Ošetřující zůstává nepovinný (jméno jako volný text); potvrzení „zkouška se podařila“ platí i pro automatický úspěch vypravěče.
 
 ### 11d: Kouzla a nástrahy (největší, dělit)
-- **11d1 Nástrahy:** kalkulátor ceny (základ 3 Suroviny a příplatky podle výtahu výše), seznam připravených nástrah u postavy (druh, cena,
+- **11d1 Nástrahy (HOTOVO ve verzi 0.3.5, bez předvyplnění panelu Hod):** kalkulátor ceny (základ 3 Suroviny a příplatky podle výtahu výše), seznam připravených nástrah u postavy (druh, cena,
   vložené manévry), „spustit“ jako výzva s předvyplněným panelem Hod; opakované spuštění a nouzové nástrahy jako poznámky v kartě Postup.
 - **11d2 Kouzla:** jen pomůcka u zkoušky: kontrolní seznam rituálu (zvuky, gesta, substance, dosah, rozsah, trvání), cena (náročné = 1 Zdroj,
   aktivace schopnosti, substance v Surovinách), rychlá nápověda k obraně a k propadnutí Zdrojů při zmaření. Názvy oborů magie z balíčku.

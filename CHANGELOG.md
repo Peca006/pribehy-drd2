@@ -1,5 +1,12 @@
 # Změny
 
+## 0.3.5 (16. 11. 2026)
+
+- Postava: **Nástrahy** (pasti, třaskaviny, jedy). Připravené nástrahy se evidují ve stylu pravidel („Jáma s kůly (Jednoduchá past > Tělo, mocně / Vyřazení; slabina: …)“): název, druh, cílová vlastnost, zamýšlený účinek (Ohrožení, Jizva, Vyřazení), vložený manévr, další vlastnosti, slabina a počet kusů. Počet se mění ±, **Použít** ubere kus (poslední kus zmizí) a zapíše revizi. Každá nástraha je samostatná změna v deníku revizí a přenáší se při sdílení (pole `traps`, jen přidání).
+- **Kalkulátor ceny** v Surovinách podle pravidel: základ 3, +1 vyřazení, +1 manévr, +1 pokročilý druh, +1 za každou další vlastnost; rozpis ceny je vidět v dialogu.
+- Výroba a opravy: nový druh **Nástraha** (cena kusu krát počet kusů, odečet Surovin po druzích, při úspěchu se nástraha zapíše).
+- Postup vyhodnocení: karta Nástrahy.
+
 ## 0.3.4 (16. 11. 2026)
 
 - Postava: **Lektvary a masti** (stručná evidence): na co jsou (vlastnost a druh Jizvy), kolik Surovin v nich je (±), poznámka (např. do slunovratu); přidat a upravit přes dialog. Každý lektvar je samostatná změna v deníku revizí a přenáší se při sdílení (pole `potions`, jen přidání).
