@@ -39,7 +39,10 @@ v `TODO.md` (kroky 1 až 10 hotové).
 
 ## Navrhované kroky (každý jde sám nasadit)
 
-### 11a: Suroviny (malý až střední krok, základ pro ostatní) — rozhodnuto
+### 11a: Suroviny (malý až střední krok, základ pro ostatní) — HOTOVO ve verzi 0.3.0
+
+Implementováno s názvy `rawMaterials` a `rawMaterialKinds` (druh = `{mark, name, count}` podle ID); `materials` v textu níže čti jako `rawMaterials`.
+Souhrnný řádek při evidenci druhů ukazuje součet a řádek „·“ je počet bez druhu.
 
 **Rozhodnutí uživatele:**
 - Suroviny se evidují jako **číslo**. Volitelně **druhy** (značka 1 až 2 znaky unicode včetně emotikon + název, vše v jednom řádku),

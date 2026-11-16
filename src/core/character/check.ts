@@ -2,6 +2,7 @@
 // na úrovni povolání, chybějící jméno, …). Upozornění nic neblokují: vypravěč může udělit výjimku.
 import type { Ability, CreationRules, Profession, Race } from '../content/schema'
 import { ATTRIBUTES, type Character } from './model'
+import { kindsOf, MAX_RAW } from './rawMaterials'
 
 export interface CharacterCheck {
   /** `chyba` = skoro jistě omyl, `upozornění` = zkontrolovat */
@@ -148,6 +149,13 @@ export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[
   // výbava a peníze
   if (!Number.isInteger(c.cash) || c.cash < 0)
     err('Hotovost musí být nezáporné celé číslo (v haléřích).')
+  if (!Number.isInteger(c.rawMaterials) || c.rawMaterials < 0 || c.rawMaterials > MAX_RAW)
+    err('Suroviny bez druhu musí být nezáporné celé číslo.')
+  for (const { kind } of kindsOf(c)) {
+    if (!Number.isInteger(kind.count) || kind.count < 0 || kind.count > MAX_RAW)
+      err(`Suroviny „${kind.name || kind.mark}“: počet musí být nezáporné celé číslo.`)
+    if (!kind.mark && !kind.name) warn('Druh Surovin nemá značku ani název.')
+  }
   const items = c.equipment.map((e) => e.trim().toLowerCase())
   if (items.some((e) => !e)) warn('Ve výbavě je prázdná položka.')
   const dupItems = items.filter((e, i) => e && items.indexOf(e) !== i)

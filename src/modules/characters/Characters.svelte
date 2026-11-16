@@ -37,6 +37,7 @@
   import CharacterEditor from './CharacterEditor.svelte'
   import CheckList from './CheckList.svelte'
   import History from './History.svelte'
+  import RawMaterials from './RawMaterials.svelte'
   import Roll from './Roll.svelte'
   import ScarDialog from './ScarDialog.svelte'
   import Resources from './Resources.svelte'
@@ -78,6 +79,12 @@
     if (!s) return
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
     current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
+  }
+  /** Změna Surovin (±, druhy) jako samostatná revize v deníku. */
+  async function rawChange(next: Character, note: string) {
+    if (!current || !c) return
+    const events = eventsFor(c, next, settings.author, note)
+    if (events.length) current = await appendEvents(current.id, events)
   }
   let spent = $state<Spent>({ Tělo: 0, Duše: 0, Vliv: 0 })
   const setSpent = (s: Spent) => {
@@ -235,6 +242,7 @@
     {#each c.equipment as e}<li>{e}</li>{/each}
   </ul>
   <p>Hotovost: {formatMoney(c.cash)}</p>
+  {#key current.id}<RawMaterials character={c} onchange={rawChange} />{/key}
 
   {#if c.notes}<h2>Poznámky</h2>
     <p class="notes">{c.notes}</p>{/if}

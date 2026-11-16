@@ -14,6 +14,16 @@ export interface Scar {
   note: string
 }
 
+/**
+ * Druh Surovin (např. byliny, kov): značka (1 až 2 znaky unicode, i emotikona) a název. Druhy si vede každá postava
+ * zvlášť; slouží jen k tomu, aby šlo v příběhu vysvětlit, odkud Suroviny jsou.
+ */
+export interface RawMaterialKind {
+  mark: string
+  name: string
+  count: number
+}
+
 export interface Character {
   id: string
   name: string
@@ -36,6 +46,10 @@ export interface Character {
   equipment: string[]
   /** hotovost v haléřích */
   cash: number
+  /** Suroviny bez druhu (celkem = tohle + součet druhů) */
+  rawMaterials: number
+  /** druhy Surovin podle ID druhu (ID se při přenosu zachovává, i když se druh přejmenuje) */
+  rawMaterialKinds: Record<string, RawMaterialKind>
   /** nespotřebované body zkušeností (12 = jedno zlepšení postavy) */
   xp: number
   scars: Scar[]
@@ -54,6 +68,8 @@ export const emptyCharacter = (id: string): Character => ({
   heroStory: '',
   equipment: [],
   cash: 0,
+  rawMaterials: 0,
+  rawMaterialKinds: {},
   xp: 0,
   scars: [],
   notes: '',
@@ -116,7 +132,13 @@ export function diffCharacter(
     const a = before[key]
     const b = after[key]
     if (same(a, b)) continue
-    if (key === 'attributes' || key === 'professions') {
+    if (key === 'rawMaterialKinds') {
+      // druhy po jednom (každý druh = jedna cesta), aby se úpravy různých druhů nepřebíjely
+      const ma = (a ?? {}) as Record<string, RawMaterialKind>
+      const mb = (b ?? {}) as Record<string, RawMaterialKind>
+      for (const k of Object.keys(mb)) if (!same(ma[k], mb[k])) out.push({ path: `${key}.${k}`, value: mb[k] })
+      for (const k of Object.keys(ma)) if (!(k in mb)) out.push({ path: `${key}.${k}`, value: undefined })
+    } else if (key === 'attributes' || key === 'professions') {
       const ma = a as Record<string, number>
       const mb = b as Record<string, number>
       for (const k of Object.keys(mb))

@@ -1,5 +1,6 @@
 // Čitelný popis změn postavy (pro historii a náhled před zveřejněním).
-import type { Scar } from '../../core/character/model'
+import type { RawMaterialKind, Scar } from '../../core/character/model'
+import { kindFull } from '../../core/character/rawMaterials'
 import type { RevisionChange } from '../../core/character/revisions'
 import { findAbility, professions, races } from '../../core/library.svelte'
 import { formatMoney } from '../creator/rules'
@@ -10,6 +11,7 @@ const LABELS: Record<string, string> = {
   concept: 'Koncept',
   equipment: 'Výbava',
   cash: 'Hotovost',
+  rawMaterials: 'Suroviny (bez druhu)',
   xp: 'Zkušenosti',
   scars: 'Jizvy',
   abilities: 'Schopnosti',
@@ -35,6 +37,7 @@ export function nameOf(id: string): string {
 export function pathLabel(path: string): string {
   if (path.startsWith('attributes.')) return `Zdatnost: ${path.slice(11)}`
   if (path.startsWith('professions.')) return `Povolání: ${nameOf(path.slice(12))}`
+  if (path.startsWith('rawMaterialKinds.')) return 'Druh Surovin'
   return LABELS[path] ?? path
 }
 
@@ -63,6 +66,19 @@ export function describeChange(c: RevisionChange): string[] {
         .map((s) => `~ ${fmt(s)}`),
     ]
     return lines.length ? lines : ['(beze změny)']
+  }
+  if (c.path.startsWith('rawMaterialKinds.')) {
+    const b = c.before as RawMaterialKind | undefined
+    const a = c.after as RawMaterialKind | undefined
+    if (!b && a) return [`+ ${kindFull(a)} (${a.count})`]
+    if (b && !a) return [`− ${kindFull(b)} (${b.count})`]
+    if (b && a) {
+      const label = kindFull(a)
+      const lines: string[] = []
+      if (kindFull(b) !== label) lines.push(`${kindFull(b)} → ${label}`)
+      if (b.count !== a.count) lines.push(`${label}: ${b.count} → ${a.count}`)
+      return lines.length ? lines : ['(beze změny)']
+    }
   }
   if (Array.isArray(c.before) || Array.isArray(c.after)) {
     const before = (Array.isArray(c.before) ? c.before : []) as string[]

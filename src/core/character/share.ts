@@ -11,6 +11,7 @@ import {
 } from './model'
 import { sanitizePartyBundle, type PartyBundle } from '../party/share'
 import { scarsOf } from './drafts'
+import { cleanCount, kindFrom } from './rawMaterials'
 import { groupRevisions, type Revision } from './revisions'
 
 export const SHARE_VERSION = 1
@@ -195,6 +196,15 @@ export function sanitizeEvent(raw: unknown): SharedEvent | undefined {
   if (path === 'cash') {
     const n = num(v)
     return n === undefined || n < 0 ? undefined : { id, path, value: n }
+  }
+  if (path === 'rawMaterials') {
+    const n = num(v)
+    return n === undefined || n < 0 ? undefined : { id, path, value: cleanCount(n) }
+  }
+  if (path.startsWith('rawMaterialKinds.') && path.length > 17 && !path.slice(17).includes('.')) {
+    if (v === undefined || v === null) return { id, path }
+    const k = kindFrom(v)
+    return k ? { id, path, value: k } : undefined
   }
   if (path.startsWith('attributes.')) {
     const n = num(v)

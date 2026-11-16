@@ -1,5 +1,11 @@
 # Změny
 
+## 0.3.0 (16. 11. 2026)
+
+- Postava: **Suroviny** v přehledu (řádek `✎ Suroviny − ## +`). Volitelně **druhy** (značka 1 až 2 znaky, i emotikona, a název; ✎ otevře dialog): přehled pak ukazuje součet a řádek za každý druh s ±. Druh s nenulovým počtem nejde smazat. Rychlá klepání se zapíšou jako jedna revize.
+- Druhy a počty jsou v deníku revizí a přenášejí se při sdílení postavy (každý druh je samostatná cesta, takže se úpravy různých druhů nepřebíjejí). Formát: jen přidání polí `rawMaterials` a `rawMaterialKinds`; starší postavy bez nich mají 0 a žádné druhy.
+- `PLAN-POMUCKY.md`: krok 11a hotový, zásady migrace dat.
+
 ## 0.2.7 (16. 11. 2026)
 
 - Audiogram: **zrychlování za běhu**. Když dávka dat projde celá, odesílatel zkusí malou dávkou nejbližší rychlejší režim; při nezdaru se vrátí a ten režim už nezkouší. Automatický výběr z handshake byl opatrný (skutečný kanál unese víc).
