@@ -151,4 +151,19 @@ describe('protokol: volání, odpověď, data, potvrzení', () => {
     const auto = run(bytesOf(200), noisy(), makeChannel())
     expect(auto.sender.state).toBe('done')
   })
+
+  it('zrychlování: po úspěšné dávce zkusí rychlejší režim, při nezdaru se vrátí a zpráva dojde', () => {
+    const msg = bytesOf(2400)
+    const r = run(msg, makeChannel({ sigma: 0.8, seed: 3 }), makeChannel({ sigma: 0.8, seed: 4 }))
+    expect(r.receiver.result).toEqual(msg)
+    expect(r.sender.state).toBe('done')
+    expect(r.labels.some((l) => l.includes('zkouška rychlejšího'))).toBe(true)
+    console.log('zrychlování při šumu:\n' + r.labels.join('\n'))
+  }, 120000)
+
+  it('zrychlování se nepouští u vynuceného režimu', () => {
+    const r = run(bytesOf(1200), makeChannel(), makeChannel(), { mode: 3 })
+    expect(r.sender.mode.id).toBe(3)
+    expect(r.labels.some((l) => l.includes('zkouška'))).toBe(false)
+  })
 })

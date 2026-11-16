@@ -39,6 +39,10 @@ export type ReceiverState = 'idle' | 'receiving' | 'complete'
 
 /** Kolik rámců DATA se pošle v jedné dávce, než se čeká na ACK. */
 export const BURST = 12
+/** Počet rámců v dávce, kterou odesílatel zkouší rychlejší režim (malá, ať se při nezdaru neztratí moc času). */
+export const PROBE_BURST = 4
+/** Kolik rychlejších režimů se smí zkusit a neprojít, než se odesílatel s zrychlováním smíří. */
+const MAX_BAD = 2
 /** Rezerva na zpoždění zařízení a ticho kolem vysílání (s). */
 const MARGIN = 1.2
 
@@ -72,6 +76,12 @@ export class AudioSender {
   private fs: number
   private maxMode: number
   private forced?: number
+  /** režimy, které při zkoušce nebo po zpomalení neobstály (znovu se nezkouší) */
+  private bad = new Set<number>()
+  /** probíhá zkouška rychlejšího režimu; při nezdaru se vrátí `from` */
+  private probe?: { from: Mode; to: Mode }
+  /** počet rámců v poslední odeslané dávce */
+  private lastSent = 0
   private opt: Required<Pick<SenderOptions, 'maxCalls' | 'maxStalls'>>
 
   constructor(
@@ -120,11 +130,13 @@ export class AudioSender {
     }
     // dávka dalších nepotvrzených rámců
     const todo: number[] = []
-    for (let i = 0; i < this.frames && todo.length < BURST; i++) if (!hasBit(this.acked, i)) todo.push(i)
+    const limit = this.probe ? PROBE_BURST : BURST
+    for (let i = 0; i < this.frames && todo.length < limit; i++) if (!hasBit(this.acked, i)) todo.push(i)
+    this.lastSent = todo.length
     const msgs = todo.map((seq) => encodeMsg({ type: Type.Data, session: this.session, seq, data: this.chunks[seq] }))
     const audio = this.mode.modem.modulate(msgs, this.fs)
     const ack = frameAir(2 + mapBytes(this.frames), HANDSHAKE_MODE)
-    return { audio, listen: ack + MARGIN, label: `Data ${this.confirmed}/${this.frames} (${this.mode.name})` }
+    return { audio, listen: ack + MARGIN, label: `Data ${this.confirmed}/${this.frames} (${this.mode.name}${this.probe ? ', zkouška rychlejšího' : ''})` }
   }
 
   /** Nahrávka z okna poslechu po posledním `tx()`. */
@@ -157,12 +169,35 @@ export class AudioSender {
       this.state = 'done'
       return
     }
+    const full = got && this.lastSent > 0 && n - this.lastCount >= this.lastSent
+    // zkouška rychlejšího režimu: prošla celá dávka? jinak zpět na předchozí a tenhle už nezkoušet
+    if (this.probe) {
+      if (!full) {
+        this.bad.add(this.probe.to.id)
+        this.mode = this.probe.from
+      }
+      this.probe = undefined
+      if (full) this.stalls = 0
+      this.lastCount = n
+      return
+    }
     // pokrok? jinak zpomalit; po několika marných kolech se vzdát
     if (got && n > this.lastCount) this.stalls = 0
     else {
       this.stalls++
-      if (this.stalls % 2 === 0 && this.forced === undefined) this.mode = slower(this.mode)
+      if (this.stalls % 2 === 0 && this.forced === undefined) {
+        this.bad.add(this.mode.id)
+        this.mode = slower(this.mode)
+      }
       if (this.stalls >= this.opt.maxStalls) this.state = 'failed'
+    }
+    // dávka prošla celá: zkusit nejbližší rychlejší režim (kanál obvykle unese víc, než říká odhad z handshake)
+    if (full && this.forced === undefined && this.state === 'data' && this.bad.size < MAX_BAD) {
+      const next = MODES.find((m) => m.id > this.mode.id && m.id <= this.maxMode && !this.bad.has(m.id))
+      if (next) {
+        this.probe = { from: this.mode, to: next }
+        this.mode = next
+      }
     }
     this.lastCount = n
   }

@@ -1,5 +1,11 @@
 # Změny
 
+## 0.2.7 (16. 11. 2026)
+
+- Audiogram: **zrychlování za běhu**. Když dávka dat projde celá, odesílatel zkusí malou dávkou nejbližší rychlejší režim; při nezdaru se vrátí a ten režim už nezkouší. Automatický výběr z handshake byl opatrný (skutečný kanál unese víc).
+- Audiogram: kratší čekání na konec vysílání (0,35 s) ve smyčce vysílač/příjemce, tedy menší ztráta v každém kole.
+- Více: Zkouška režimů ukazuje špičku vstupu a varuje při přebuzení (ořez kazí rychlé režimy).
+
 ## 0.2.6 (16. 11. 2026)
 
 - Audiogram: odesílatel po každé dávce poslouchá až do odpovědi (ne jen pevné okno), protože pomalejší telefon potvrzení vyhodnocuje a odesílá se zpožděním. Příjemce čeká na konec vysílání 0,6 s.

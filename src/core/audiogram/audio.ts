@@ -172,7 +172,7 @@ export class AudioSession {
    * Poslouchá, dokud nezačne a pak neskončí vysílání (úsek hluku následovaný tichem), nebo do `maxSeconds`.
    * Vrátí nahrávku nebo undefined (nic neslyšel). Nahrávka se při samém poslechu ořezává, ať neroste donekonečna.
    */
-  async listenForBurst(maxSeconds: number, signal?: AbortSignal, quiet = 0.6): Promise<Float32Array | undefined> {
+  async listenForBurst(maxSeconds: number, signal?: AbortSignal, quiet = 0.35): Promise<Float32Array | undefined> {
     this.chunks = []
     this.listening = true
     const t0 = performance.now()
@@ -270,7 +270,7 @@ export async function sendByAudio(
       await s.play(tx.audio)
       log(`Odvysíláno: ${tx.label} (${(tx.audio.length / s.fs).toFixed(1)} s zvuku, přehráno za ${((performance.now() - t0) / 1000).toFixed(1)} s)`)
       // poslech do první odpovědi (ne pevné okno): příjemce může s vyhodnocením chvíli otálet
-      const rec = (await s.listenForBurst(tx.listen + 6, signal, 0.5)) ?? new Float32Array(0)
+      const rec = (await s.listenForBurst(tx.listen + 6, signal, 0.35)) ?? new Float32Array(0)
       const before = sender.confirmed
       const t1 = performance.now()
       sender.rx(rec)
