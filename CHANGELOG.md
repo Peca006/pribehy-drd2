@@ -2,8 +2,8 @@
 
 ## 0.3.1 (16. 11. 2026)
 
-- Postava: **Léčit…** u Jizvy (dialog léčení v magickém okamžiku): síla okamžiku (léčit lze Jizvu do této závažnosti), o kolik stupňů se sníží, **Zdroje navíc z lektvaru nebo masti** (snižují platbu, lektvar může být z cizí zásoby), ošetřující, zkouška. Cena 5 Zdrojů za stupeň: nejdřív Zdroje vlastnosti Jizvy, doplatek z ostatních; Výhodou ani dočasnými Zdroji z jizvy se neplatí. Zapíše se jedna revize (snížení Jizvy) a čerpání Zdrojů.
-- Postup vyhodnocení: karta Léčení Jizvy. Ruční tlačítka Zmírnit o 1 a Zahojeno zůstávají (Průvodce, mezi výpravami).
+- Postava: tlačítko **Zmírnit** u Jizvy (dřív „Zmírnit o 1“) otevře dialog léčení: Jizva je rovnou o 1 nižší, jde upravit její **popis** a závažnost (nejníž na 1, nejvýš o 1 méně než dosud; úplné odstranění je „Zahojeno“). Ukáže celkové snížení (k porovnání se silou magického okamžiku) a cenu 5 Zdrojů za stupeň. **Zdroje z lektvaru** nebo masti (nejvýš cena) se odečtou a zbytek si hráč rozdělí mezi Tělo, Duše a Vliv (nabídne se výchozí rozdělení, jde upravit). Výhodou ani dočasnými Zdroji z jizvy se neplatí. Uložit zapíše jednu revizi (nová závažnost a popis) a čerpání Zdrojů; Zrušit nic nezmění.
+- Postup vyhodnocení: karta Léčení Jizvy.
 
 ## 0.3.0 (16. 11. 2026)
 

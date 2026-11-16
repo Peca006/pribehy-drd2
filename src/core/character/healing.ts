@@ -46,57 +46,33 @@ export function inflictScar(
   }
 }
 
-// --- léčení v magickém okamžiku (dialog „Léčit“): cena, omezení a zápis ---
+// --- zmírnění Jizvy léčením (dialog „Zmírnit“): cena, platba po vlastnostech a zápis ---
 
 /** Cena léčení: Zdrojů za každé snížení závažnosti Jizvy o 1. */
 export const COST_PER_STEP = 5
-/** Nejvyšší síla magického okamžiku, kterou dialog nabízí. */
-export const MAX_STRENGTH = 5
 
-export interface HealInput {
-  /** síla magického okamžiku (léčit lze Jizvy do této závažnosti) */
-  strength: number
-  /** o kolik stupňů se závažnost sníží (rovná-li se závažnosti, Jizva se zahojí) */
-  steps: number
-  /** Zdroje dodané lektvarem, mastí a podobně (z cizí nebo vlastní zásoby): snižují platbu ošetřovaného */
-  potion: number
-}
+/** O kolik stupňů lze Jizvu zmírnit: 1 až (závažnost − 1); úplné zahojení je samostatná akce („Zahojeno“). */
+export const maxSteps = (severity: number): number => Math.max(0, severity - 1)
 
-export interface HealPlan {
-  steps: number
-  cost: number
-  potion: number
-  /** kolik Zdrojů platí ošetřovaný ze svých */
-  own: number
-  /** rozdělení vlastní platby mezi vlastnosti (Zdroje vlastnosti Jizvy první, zbytek z ostatních) */
-  pay: Record<Attribute, number>
-  /** nová závažnost Jizvy (0 = zahojena) */
-  after: number
-}
-
-export type Planned = { plan: HealPlan } | { error: string }
+/** Cena zmírnění o `steps` stupňů ve Zdrojích. */
+export const healCost = (steps: number): number => steps * COST_PER_STEP
 
 /** Kolik Zdrojů má vlastnost k dispozici pro léčení: jen vlastní nevyčerpané (ne Výhoda ani dočasné ze sebezasazené Jizvy). */
 export const ownLeft = (c: Character, spent: Spent, a: Attribute): number =>
   Math.max(0, effectiveAttributes(c)[a] - spent[a])
 
+export type Pay = Record<Attribute, number>
+export const noPay = (): Pay => ({ Tělo: 0, Duše: 0, Vliv: 0 })
+
 /**
- * Vyhodnotí léčení Jizvy: omezení síly okamžiku, cenu 5 Zdrojů za stupeň, odečet lektvaru a rozdělení vlastní platby.
- * Zdroje se berou z vlastnosti Jizvy, doplatek z ostatních (nejdřív z té, které zbývá víc). Výhodou ani další Jizvou platit nejde.
+ * Výchozí rozdělení vlastní platby `own` Zdrojů: nejdřív Zdroje vlastnosti Jizvy, doplatek z ostatních (nejdřív z té,
+ * které zbývá víc). Nestačí-li Zdroje, vrátí, co se dalo rozdělit (zbytek zůstane nezaplacený).
  */
-export function planHeal(c: Character, spent: Spent, scarId: string, input: HealInput): Planned {
+export function autoPay(c: Character, spent: Spent, scarId: string, own: number): Pay {
+  const pay = noPay()
   const scar = c.scars.find((s) => s.id === scarId)
-  if (!scar) return { error: 'Jizva neexistuje.' }
-  if (scar.severity > input.strength)
-    return {
-      error: `Magický okamžik síly ${input.strength} uzdraví nejvýš Jizvu závažnosti ${input.strength} (tahle má ${scar.severity}).`,
-    }
-  const steps = Math.floor(input.steps)
-  if (steps < 1 || steps > scar.severity) return { error: `Snížit lze o 1 až ${scar.severity}.` }
-  const cost = steps * COST_PER_STEP
-  const potion = Math.min(cost, Math.max(0, Math.floor(input.potion)))
-  let rest = cost - potion
-  const pay: Record<Attribute, number> = { Tělo: 0, Duše: 0, Vliv: 0 }
+  if (!scar) return pay
+  let rest = own
   const order = [
     scar.attribute,
     ...ATTRIBUTES.filter((a) => a !== scar.attribute).sort((a, b) => ownLeft(c, spent, b) - ownLeft(c, spent, a)),
@@ -106,20 +82,74 @@ export function planHeal(c: Character, spent: Spent, scarId: string, input: Heal
     pay[a] = take
     rest -= take
   }
-  if (rest > 0) return { error: `Ošetřovanému chybí ${rest} Zdrojů (vlastní Zdroje celkem nestačí).` }
-  return { plan: { steps, cost, potion, own: cost - potion, pay, after: scar.severity - steps } }
+  return pay
 }
 
-/** Provede léčení: sníží závažnost Jizvy o `steps` (na 0 = zahojení) a zvýší čerpání Zdrojů o platbu. */
+export interface HealInput {
+  /** o kolik stupňů se závažnost sníží (1 až závažnost − 1) */
+  steps: number
+  /** Zdroje dodané lektvarem, mastí a podobně: snižují platbu (nejvýš cena) */
+  potion: number
+  /** rozdělení vlastní platby mezi vlastnosti (součet musí být cena − lektvar) */
+  pay: Pay
+  /** nový popis Jizvy (prázdný = beze změny) */
+  note?: string
+}
+
+export interface HealCheck {
+  cost: number
+  potion: number
+  /** kolik Zdrojů má zaplatit ošetřovaný ze svých */
+  own: number
+  /** kolik z toho je ještě třeba rozdělit mezi vlastnosti (kladné = chybí, záporné = přebývá) */
+  toAssign: number
+  /** nová závažnost Jizvy */
+  after: number
+  error: string
+}
+
+/** Zkontroluje zadané zmírnění (meze, rozdělení platby, dostatek Zdrojů); `error` je prázdná, když je vše v pořádku. */
+export function checkHeal(c: Character, spent: Spent, scarId: string, input: HealInput): HealCheck {
+  const scar = c.scars.find((s) => s.id === scarId)
+  const bad = (error: string): HealCheck => ({ cost: 0, potion: 0, own: 0, toAssign: 0, after: 0, error })
+  if (!scar) return bad('Jizva neexistuje.')
+  const limit = maxSteps(scar.severity)
+  if (limit < 1) return bad('Jizvu se závažností 1 lze už jen zahojit.')
+  const steps = Math.floor(input.steps)
+  if (steps < 1 || steps > limit) return bad(`Snížit lze o 1 až ${limit}.`)
+  const cost = healCost(steps)
+  const potion = Math.min(cost, Math.max(0, Math.floor(input.potion)))
+  const own = cost - potion
+  const assigned = ATTRIBUTES.reduce((n, a) => n + input.pay[a], 0)
+  const toAssign = own - assigned
+  let error = ''
+  for (const a of ATTRIBUTES)
+    if (input.pay[a] < 0 || input.pay[a] > ownLeft(c, spent, a)) {
+      error = `${a}: nelze zaplatit ${input.pay[a]} (zbývá ${ownLeft(c, spent, a)}).`
+      break
+    }
+  if (!error && toAssign > 0) error = `Zbývá rozdělit ${toAssign} Zdrojů mezi vlastnosti.`
+  if (!error && toAssign < 0) error = `Rozděleno o ${-toAssign} Zdrojů víc, než je třeba.`
+  return { cost, potion, own, toAssign, after: scar.severity - steps, error }
+}
+
+/** Provede zmírnění: sníží závažnost, případně změní popis Jizvy a zvýší čerpání Zdrojů o platbu. Neplatný vstup nic nezmění. */
 export function applyHeal(
   c: Character,
   spent: Spent,
   scarId: string,
-  plan: HealPlan,
+  input: HealInput,
 ): { character: Character; spent: Spent } {
-  let character = c
-  for (let i = 0; i < plan.steps; i++) character = easeScar(character, scarId)
+  const check = checkHeal(c, spent, scarId, input)
+  if (check.error) return { character: c, spent }
+  const note = input.note?.trim().slice(0, 300)
+  const character = {
+    ...c,
+    scars: c.scars.map((s) =>
+      s.id !== scarId ? s : { ...s, severity: check.after, note: note === undefined ? s.note : note },
+    ),
+  }
   const next = { ...spent }
-  for (const a of ATTRIBUTES) next[a] = spent[a] + plan.pay[a]
+  for (const a of ATTRIBUTES) next[a] = spent[a] + input.pay[a]
   return { character, spent: next }
 }

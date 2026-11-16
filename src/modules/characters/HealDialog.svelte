@@ -3,16 +3,20 @@
   import type { Character } from '../../core/character/model'
   import { ATTRIBUTES } from '../../core/character/model'
   import {
-    applyHeal,
+    autoPay,
+    checkHeal,
     COST_PER_STEP,
-    MAX_STRENGTH,
+    healCost,
+    maxSteps,
     ownLeft,
-    planHeal,
+    applyHeal,
+    type Pay,
   } from '../../core/character/healing'
   import type { Spent } from '../../core/character/play'
 
-  // Léčení Jizvy v magickém okamžiku: ošetřující (zkouška), síla okamžiku, kolik stupňů se uzdraví a platba Zdroji.
-  // Lektvary a masti jen snižují platbu (zadají se jako „Zdroje navíc“), tedy mohou být i z cizí zásoby.
+  // Zmírnění Jizvy léčením: Jizva se rovnou sníží o 1, dá se upravit popis a závažnost (nejníž na 1, nejvýš o 1 méně než dosud).
+  // Ukáže celkové snížení (k porovnání se silou magického okamžiku) a cenu 5 Zdrojů za stupeň. Zdroje z lektvaru se odečtou
+  // a zbytek si hráč rozdělí mezi své Zdroje. Úplné zahojení je samostatné tlačítko „Zahojeno“.
   let {
     character,
     spent,
@@ -28,98 +32,94 @@
   } = $props()
 
   const scar = untrack(() => character.scars.find((s) => s.id === scarId))
-  let strength = $state(Math.min(MAX_STRENGTH, scar?.severity ?? 1))
-  let steps = $state(scar?.severity ?? 1)
+  const limit = scar ? maxSteps(scar.severity) : 0
+  let steps = $state(1)
   let potion = $state(0)
+  let note = $state(scar?.note ?? '')
   let healer = $state('')
-  let self = $state(false)
-  let success = $state(false)
+  let pay = $state<Pay>(untrack(() => autoPay(character, spent, scarId, healCost(1))))
   let dialog: HTMLDialogElement
 
   $effect(() => {
     dialog.showModal()
   })
 
-  const planned = $derived(planHeal(character, spent, scarId, { strength, steps, potion }))
-  const error = $derived('error' in planned ? planned.error : '')
-  const plan = $derived('plan' in planned ? planned.plan : undefined)
-  const maxPotion = $derived(steps * COST_PER_STEP)
+  const input = $derived({ steps, potion, pay, note })
+  const check = $derived(checkHeal(character, spent, scarId, input))
   const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n))
+  const cost = $derived(healCost(steps))
 
-  const label = $derived(scar ? `${scar.attribute} ${scar.severity}${scar.note ? `: ${scar.note}` : ''}` : '')
+  /** Po změně ceny nebo lektvaru se platba navrhne znovu (hráč ji pak může upravit). */
+  const reflow = () => (pay = autoPay(character, spent, scarId, healCost(steps) - Math.min(potion, healCost(steps))))
+  const setSteps = (n: number) => {
+    steps = clamp(n, 1, limit)
+    potion = Math.min(potion, healCost(steps))
+    reflow()
+  }
+  const setPotion = (n: number) => {
+    potion = clamp(n, 0, cost)
+    reflow()
+  }
+  const setPay = (a: keyof Pay, n: number) => (pay = { ...pay, [a]: clamp(n, 0, ownLeft(character, spent, a)) })
 
   function save() {
-    if (!plan || !scar || !success) return
-    const r = applyHeal(character, spent, scarId, plan)
-    const who = self ? 'léčí se sám/sama' : healer.trim() ? `ošetřuje ${healer.trim()}` : ''
+    if (!scar || check.error) return
+    const r = applyHeal(character, spent, scarId, input)
+    const text = note.trim()
     const parts = [
-      `Léčení jizvy (${scar.attribute} ${scar.severity} → ${plan.after ? plan.after : 'zahojena'}${scar.note ? `: ${scar.note}` : ''})`,
-      who,
-      `okamžik síly ${strength}`,
-      `${plan.cost} Zdrojů${plan.potion ? ` (z toho ${plan.potion} lektvar)` : ''}`,
+      `Zmírnění jizvy (${scar.attribute} ${scar.severity} → ${check.after}${text ? `: ${text}` : ''})`,
+      healer.trim() ? `ošetřuje ${healer.trim()}` : '',
+      `${check.cost} Zdrojů${check.potion ? ` (z toho ${check.potion} z lektvaru)` : ''}`,
     ].filter(Boolean)
     void onsave(r.character, r.spent, parts.join(', '))
   }
 </script>
 
-<dialog bind:this={dialog} {onclose} aria-label="Léčení Jizvy">
-  <h2>Léčení Jizvy</h2>
-  {#if scar}
-    <p><strong>{label}</strong></p>
+<dialog bind:this={dialog} {onclose} aria-label="Zmírnění Jizvy">
+  <h2>Zmírnit Jizvu</h2>
+  {#if scar && limit >= 1}
+    <p><strong>{scar.attribute}</strong>, dosud závažnost {scar.severity}</p>
+    <input type="text" bind:value={note} maxlength="300" placeholder="Popis Jizvy" aria-label="Popis Jizvy" />
     <div class="row">
-      <span>Síla magického okamžiku</span>
-      <button onclick={() => (strength = clamp(strength - 1, 1, MAX_STRENGTH))} aria-label="Slabší">−</button>
-      <strong>{strength}</strong>
-      <button onclick={() => (strength = clamp(strength + 1, 1, MAX_STRENGTH))} aria-label="Silnější">+</button>
+      <span>Závažnost po léčení</span>
+      <button onclick={() => setSteps(steps + 1)} disabled={steps >= limit} aria-label="Zmírnit víc">−</button>
+      <strong>{scar.severity - steps}</strong>
+      <button onclick={() => setSteps(steps - 1)} disabled={steps <= 1} aria-label="Zmírnit míň">+</button>
     </div>
-    <p class="muted">Léčit lze jen Jizvu této závažnosti nebo slabší (např. úplněk, zřídlo síly).</p>
-    <div class="row">
-      <span>Snížit o</span>
-      <button onclick={() => ((steps = clamp(steps - 1, 1, scar.severity)), (potion = Math.min(potion, steps * COST_PER_STEP)))} aria-label="Méně">−</button>
-      <strong>{steps}</strong>
-      <button onclick={() => (steps = clamp(steps + 1, 1, scar.severity))} aria-label="Více">+</button>
-    </div>
-    <p class="muted">
-      {#if steps >= scar.severity}Jizva se zahojí úplně.{:else}Jizva klesne na závažnost {scar.severity - steps}.{/if}
-      Cena je {COST_PER_STEP} Zdrojů za stupeň, tedy {steps * COST_PER_STEP}.
+    <p>
+      Celkové snížení: <strong>{steps}</strong> (k porovnání se silou magického okamžiku). Potřeba Zdrojů:
+      <strong>{cost}</strong> ({COST_PER_STEP} × {steps}).
     </p>
     <div class="row">
-      <span>Zdroje navíc (lektvar, mast)</span>
-      <button onclick={() => (potion = clamp(potion - 1, 0, maxPotion))} aria-label="Méně z lektvaru">−</button>
+      <span>Zdroje z lektvaru, masti</span>
+      <button onclick={() => setPotion(potion - 1)} disabled={potion <= 0} aria-label="Méně z lektvaru">−</button>
       <strong>{potion}</strong>
-      <button onclick={() => (potion = clamp(potion + 1, 0, maxPotion))} aria-label="Více z lektvaru">+</button>
+      <button onclick={() => setPotion(potion + 1)} disabled={potion >= cost} aria-label="Více z lektvaru">+</button>
     </div>
-    <p class="muted">
-      Každá Surovina z lektvaru ušetří 1 Zdroj, nejvýš {maxPotion}. Lektvar může být i u jiné postavy; odepište si ho
-      v jejím deníku (Suroviny, Hotovost).
-    </p>
+    <p class="muted">Nejvýš {cost}. Lektvar může být i z cizí zásoby; odepište si ho v jejím deníku.</p>
 
-    <label class="check">
-      <input type="checkbox" bind:checked={self} />
-      Léčím se sám/sama (komplikace: při neúspěchu platí vyčerpání i Zdroje)
-    </label>
-    {#if !self}
-      <input type="text" bind:value={healer} placeholder="Ošetřující (jméno, nepovinné)" aria-label="Ošetřující" />
-    {/if}
-    <label class="check">
-      <input type="checkbox" bind:checked={success} />
-      Zkouška ošetřujícího se podařila (hodem, nebo za cenu vyčerpání)
-    </label>
-
-    {#if plan}
-      <p>
-        Ošetřovaný platí <strong>{plan.own}</strong> Zdrojů:
-        {#each ATTRIBUTES.filter((a) => plan.pay[a]) as a, i}{i ? ', ' : ''}{a} {plan.pay[a]} (zbývá {ownLeft(character, spent, a) - plan.pay[a]}){/each}{#if !plan.own}žádné{/if}.
-      </p>
-      <p class="muted">Výhodou ani zasazením jiné Jizvy se léčení platit nedá.</p>
-    {/if}
-    {#if error}<p class="error" role="alert">{error}</p>{/if}
+    <p>Ostatní zaplatí ošetřovaný ze svých Zdrojů (<strong>{check.own}</strong>), rozdělte je:</p>
+    {#each ATTRIBUTES as a}
+      <div class="row">
+        <span>{a} <small class="muted">(zbývá {ownLeft(character, spent, a)})</small></span>
+        <button onclick={() => setPay(a, pay[a] - 1)} disabled={pay[a] <= 0} aria-label={`Méně: ${a}`}>−</button>
+        <strong>{pay[a]}</strong>
+        <button
+          onclick={() => setPay(a, pay[a] + 1)}
+          disabled={pay[a] >= ownLeft(character, spent, a)}
+          aria-label={`Více: ${a}`}>+</button
+        >
+      </div>
+    {/each}
+    <p class="muted">Výhodou ani zasazením jiné Jizvy se léčení platit nedá.</p>
+    <input type="text" bind:value={healer} placeholder="Ošetřující (nepovinné)" aria-label="Ošetřující" />
+    {#if check.error}<p class="error" role="alert">{check.error}</p>{/if}
     <p class="actions">
-      <button class="primary" onclick={save} disabled={!plan || !success}>Uzdravit</button>
+      <button class="primary" onclick={save} disabled={!!check.error}>Uložit</button>
       <button onclick={() => dialog.close()}>Zrušit</button>
     </p>
   {:else}
-    <p class="muted">Jizva už neexistuje.</p>
+    <p class="muted">Jizvu se závažností 1 už lze jen zahojit.</p>
     <p class="actions"><button onclick={() => dialog.close()}>Zavřít</button></p>
   {/if}
 </dialog>
@@ -147,10 +147,13 @@
   .row span {
     flex: 1;
   }
-  .check {
-    display: flex;
-    gap: 0.5rem;
-    margin: 0.75rem 0;
+  .row strong {
+    min-width: 2ch;
+    text-align: center;
+  }
+  input[type='text'] {
+    width: 100%;
+    margin: 0.4rem 0;
   }
   .actions {
     display: flex;

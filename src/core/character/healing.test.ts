@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { emptyCharacter } from './model'
-import { applyHeal, easeScar, healScar, inflictScar, planHeal } from './healing'
+import { applyHeal, autoPay, checkHeal, easeScar, healCost, healScar, inflictScar, maxSteps } from './healing'
 
 const c = {
   ...emptyCharacter('x'),
@@ -39,8 +39,8 @@ describe('zasazení jizvy', () => {
   })
 })
 
-describe('léčení v magickém okamžiku', () => {
-  // Tělo 8 s Jizvou 3 (zbývá 5), Duše 4, Vliv 6
+describe('zmírnění Jizvy léčením', () => {
+  // Tělo 8 s Jizvou 3 (zbývá 5), Duše 4 s Jizvou 1 (zbývá 3), Vliv 6
   const ch = {
     ...emptyCharacter('x'),
     attributes: { Tělo: 8, Duše: 4, Vliv: 6 },
@@ -50,50 +50,49 @@ describe('léčení v magickém okamžiku', () => {
     ],
   }
   const none = { Tělo: 0, Duše: 0, Vliv: 0 }
-  const plan = (r: ReturnType<typeof planHeal>) => {
-    if ('error' in r) throw new Error(r.error)
-    return r.plan
-  }
 
-  it('cena je 5 Zdrojů za stupeň, nejdřív ze Zdrojů vlastnosti Jizvy', () => {
-    const p = plan(planHeal(ch, none, 'b', { strength: 3, steps: 1, potion: 0 }))
-    expect(p.cost).toBe(5)
-    expect(p.pay).toEqual({ Tělo: 0, Duše: 3, Vliv: 2 })
-    expect(p.after).toBe(0)
+  it('cena je 5 Zdrojů za stupeň a nejvíc se zmírní na závažnost 1', () => {
+    expect(maxSteps(3)).toBe(2)
+    expect(maxSteps(1)).toBe(0)
+    expect(healCost(2)).toBe(10)
+    const r = checkHeal(ch, none, 'b', { steps: 1, potion: 0, pay: none })
+    expect(r.error).toMatch(/zahojit/)
+    expect(checkHeal(ch, none, 'a', { steps: 3, potion: 0, pay: none }).error).toMatch(/1 až 2/)
+    expect(checkHeal(ch, none, 'a', { steps: 0, potion: 0, pay: none }).error).toMatch(/1 až 2/)
   })
 
-  it('doplatek jde z vlastnosti, které zbývá víc', () => {
-    // Tělo Jizva 3 => zbývá 5; léčím 2 stupně = 10: Tělo 5, pak Vliv (6 - 0) před Duše (3 po Jizvě)
-    const p = plan(planHeal(ch, none, 'a', { strength: 3, steps: 2, potion: 0 }))
-    expect(p.pay).toEqual({ Tělo: 5, Duše: 0, Vliv: 5 })
-    expect(p.after).toBe(1)
+  it('výchozí platba bere nejdřív Zdroje vlastnosti Jizvy, doplatek z té, které zbývá víc', () => {
+    // Tělo 5 po Jizvě; 2 stupně = 10: Tělo 5, pak Vliv (6) před Duší (3)
+    expect(autoPay(ch, none, 'a', 10)).toEqual({ Tělo: 5, Duše: 0, Vliv: 5 })
+    expect(autoPay(ch, none, 'a', 3)).toEqual({ Tělo: 3, Duše: 0, Vliv: 0 })
   })
 
-  it('lektvar snižuje platbu, nejvýš na nulu', () => {
-    expect(plan(planHeal(ch, none, 'a', { strength: 3, steps: 1, potion: 2 })).own).toBe(3)
-    expect(plan(planHeal(ch, none, 'a', { strength: 3, steps: 1, potion: 99 })).own).toBe(0)
+  it('platba se musí rovnat ceně po odečtu lektvaru a nepřekročit Zdroje', () => {
+    const ok = checkHeal(ch, none, 'a', { steps: 1, potion: 2, pay: { Tělo: 3, Duše: 0, Vliv: 0 } })
+    expect(ok.error).toBe('')
+    expect(ok.own).toBe(3)
+    expect(checkHeal(ch, none, 'a', { steps: 1, potion: 0, pay: { Tělo: 3, Duše: 0, Vliv: 0 } }).error).toMatch(/Zbývá rozdělit 2/)
+    expect(checkHeal(ch, none, 'a', { steps: 1, potion: 4, pay: { Tělo: 3, Duše: 0, Vliv: 0 } }).error).toMatch(/o 2 Zdrojů víc/)
+    // lektvar nejvýš cena
+    expect(checkHeal(ch, none, 'a', { steps: 1, potion: 99, pay: none }).own).toBe(0)
+    // vlastnost nemá dost
+    const tired = { Tělo: 4, Duše: 0, Vliv: 0 }
+    expect(checkHeal(ch, tired, 'a', { steps: 1, potion: 0, pay: { Tělo: 5, Duše: 0, Vliv: 0 } }).error).toMatch(/Tělo/)
   })
 
-  it('slabý magický okamžik Jizvu neléčí a mezní hodnoty se hlídají', () => {
-    expect('error' in planHeal(ch, none, 'a', { strength: 2, steps: 1, potion: 0 })).toBe(true)
-    expect('error' in planHeal(ch, none, 'a', { strength: 3, steps: 0, potion: 0 })).toBe(true)
-    expect('error' in planHeal(ch, none, 'a', { strength: 3, steps: 4, potion: 0 })).toBe(true)
-    expect('error' in planHeal(ch, none, 'zzz', { strength: 3, steps: 1, potion: 0 })).toBe(true)
+  it('provedení sníží závažnost, změní popis a zvýší čerpání', () => {
+    const input = { steps: 2, potion: 5, pay: { Tělo: 5, Duše: 0, Vliv: 0 }, note: ' hojící se strup ' }
+    const r = applyHeal(ch, none, 'a', input)
+    expect(r.character.scars.find((s) => s.id === 'a')).toEqual({ id: 'a', attribute: 'Tělo', severity: 1, note: 'hojící se strup' })
+    expect(r.character.scars.find((s) => s.id === 'b')?.severity).toBe(1)
+    expect(r.spent).toEqual({ Tělo: 5, Duše: 0, Vliv: 0 })
+    // bez popisu zůstane původní
+    expect(applyHeal(ch, none, 'a', { ...input, note: undefined }).character.scars[0].note).toBe('ruka')
   })
 
-  it('nestačí-li vlastní Zdroje, léčení se nepovolí a lektvar to zachrání', () => {
-    const tired = { Tělo: 5, Duše: 3, Vliv: 6 }
-    const r = planHeal(ch, tired, 'a', { strength: 3, steps: 3, potion: 0 })
-    expect('error' in r && r.error).toMatch(/chybí/)
-    expect('error' in planHeal(ch, tired, 'a', { strength: 3, steps: 3, potion: 15 })).toBe(false)
-  })
-
-  it('provedení sníží závažnost a zvýší čerpání', () => {
-    const p = plan(planHeal(ch, none, 'a', { strength: 3, steps: 3, potion: 5 }))
-    const r = applyHeal(ch, none, 'a', p)
-    expect(r.character.scars.map((s) => s.id)).toEqual(['b'])
-    expect(r.spent.Tělo + r.spent.Duše + r.spent.Vliv).toBe(10)
-    const half = applyHeal(ch, none, 'a', plan(planHeal(ch, none, 'a', { strength: 3, steps: 2, potion: 0 })))
-    expect(half.character.scars.find((s) => s.id === 'a')?.severity).toBe(1)
+  it('neplatný vstup nic nezmění', () => {
+    const r = applyHeal(ch, none, 'a', { steps: 1, potion: 0, pay: none })
+    expect(r.character).toBe(ch)
+    expect(r.spent).toBe(none)
   })
 })

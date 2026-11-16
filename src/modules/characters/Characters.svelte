@@ -12,7 +12,7 @@
     eventsFor,
     type CharacterLog,
   } from '../../core/character/model'
-  import { easeScar, healScar } from '../../core/character/healing'
+  import { healScar } from '../../core/character/healing'
   import { settings } from '../../core/settings.svelte'
   import {
     type Bonus,
@@ -73,8 +73,8 @@
   const race = $derived(races().find((r) => r.id === c?.raceId))
   const culture = $derived(race?.cultures.find((x) => x.id === c?.cultureId))
 
-  /** Hojení jizvy jako samostatná revize v deníku (s poznámkou, kterou jizvu a jak). */
-  async function healing(c: Character, scarId: string, fn: typeof easeScar, what: string) {
+  /** Zahojení jizvy jako samostatná revize v deníku (s poznámkou, kterou jizvu). */
+  async function healing(c: Character, scarId: string, fn: typeof healScar, what: string) {
     if (!current) return
     const s = c.scars.find((x) => x.id === scarId)
     if (!s) return
@@ -204,9 +204,8 @@
         <li>
           {s.attribute}
           {s.severity}{s.note ? `: ${s.note}` : ''}
-          <button onclick={() => (healFor = s.id)}>Léčit…</button>
           {#if s.severity > 1}
-            <button onclick={() => healing(c, s.id, easeScar, 'Zmírnění')}>Zmírnit o 1</button>
+            <button onclick={() => (healFor = s.id)}>Zmírnit</button>
           {/if}
           <button onclick={() => healing(c, s.id, healScar, 'Zahojení')}>Zahojeno</button>
         </li>
@@ -214,8 +213,8 @@
     </ul>
     <p class="muted">
       Jizvy se hojí mezi výpravami (dobu odhadne Průvodce, závažnější ubývají postupně); na výpravě
-      je léčí dovednosti. <em>Léčit…</em> vyhodnotí léčení v magickém okamžiku (cena Zdrojů, lektvar), ostatní
-      tlačítka zapíšou výsledek ručně. Vše se zapíše do deníku jako revize.
+      je léčí dovednosti. <em>Zmírnit</em> zapíše léčení v magickém okamžiku (nový popis, cena Zdrojů, lektvar),
+      <em>Zahojeno</em> Jizvu odstraní bez platby. Vše se zapíše do deníku jako revize.
     </p>
     {#if healFor}
       <HealDialog
