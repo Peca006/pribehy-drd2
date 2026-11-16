@@ -73,18 +73,17 @@ postavy, dialog druhů, testy (staré postavy bez polí, přenos, smazání druh
   (názvy z balíčku, jinak odkaz).
 - Zápis: odečet Surovin jako revize s poznámkou „výroba: …“; volitelně přidat předmět do výbavy.
 
-### 11c: Léčení Jizev — HOTOVO ve verzi 0.3.1 (bez evidence lektvarů)
+### 11c: Léčení Jizev — HOTOVO ve verzi 0.3.1, doplnit podle rozhodnutí níže
 
-Rozhodnutí: lektvary se neevidují, v dialogu se zadají jen jako „Zdroje navíc“ (0 až 5 za stupeň). Pomocníci (Pouto, Platba) v aplikaci zatím nejsou, Jizvy na Poutu se neřeší. Léčení bytostí je jen informace.
+Hotovo: dialog „Léčit…“ u Jizvy (síla okamžiku, počet stupňů, „Zdroje navíc“ z lektvaru, ošetřující, zkouška, platba 5 Zdrojů za stupeň, revize).
+Pomocníci (Pouto, Platba) v aplikaci zatím nejsou, Jizvy na Poutu se neřeší. Léčení bytostí je jen informace.
 
-- Dialog „Léčit v magickém okamžiku“ u Jizvy: síla okamžiku (zadá hráč nebo Průvodce), kontrola „síla ≥ závažnost“, ošetřující (jiná
-  postava, nebo sám = upozornění na vyčerpání i Zdroje), zkouška (odkaz do panelu Hod), platba **5 Zdrojů za snížení o 1** s volbou vlastností
-  (nejdřív vlastnost Jizvy), možnost započíst Suroviny z lektvaru, **ne** Výhodu ani Jizvu. Výsledek zapíše snížení či zahojení.
-- **Jizvy na Poutu:** platba pětinásobku Platby (pomocníci jsou v aplikaci, pole Platba ověřit).
-- **Lektvary** (volitelná část 11c2): seznam zásobníků u postavy (druh Jizvy, počet Surovin, platnost do slunovratu nebo rovnodennosti jako
-  poznámka), výroba lektvaru jako speciální případ 11b, čerpání při léčení. Nouzové lektvary bez Surovin.
-- Léčení bytostí (Průvodce): jen informace (bez Sudby, snížit Sudbu v následném konfliktu), tlačítko u bytosti v konfliktu.
-- Navazuje na stávající tlačítka „Zmírnit o 1“ a „Zahojeno“ (zůstanou jako ruční zkratka Průvodce).
+**Rozhodnutí uživatele (k doplnění v 11c-2, malá úprava):**
+- Hod řeší **ošetřující** svou dovedností, často jiný člen družiny; u cizí postavy hod řeší vypravěč, nebo v odůvodněném případě připustí
+  automatický úspěch. Ošetřovaný si v aplikaci jen sníží Jizvu a **upraví její text** (např. „otevřená rána“ → „hojící se strup“), případně
+  i způsobení. Do dialogu proto přibude pole „Nový popis Jizvy“ (předvyplněné stávajícím, skryté při úplném zahojení). Léčí-li se postava
+  sama, je to jasné (komplikace, vyčerpání i Zdroje).
+- Ošetřující zůstává nepovinný (jméno jako volný text); potvrzení „zkouška se podařila“ platí i pro automatický úspěch vypravěče.
 
 ### 11d: Kouzla a nástrahy (největší, dělit)
 - **11d1 Nástrahy:** kalkulátor ceny (základ 3 Suroviny a příplatky podle výtahu výše), seznam připravených nástrah u postavy (druh, cena,
@@ -94,36 +93,63 @@ Rozhodnutí: lektvary se neevidují, v dialogu se zadají jen jako „Zdroje nav
   **Bez seznamu příkladových kouzel.**
 - Karty „Postup“ (heslovité) pro Kouzla, Nástrahy a Léčení v `guide.ts` s odkazy do kapitol 36 a 35 příručky.
 
-### 11e: Kořist
-- Panel „Kořist“ u družiny nebo sezení (Průvodce): položky (Vybavení, Peníze, Suroviny, trofeje), rozdělení mezi postavy družiny jedním
-  tlačítkem do deníků (Peníze, Suroviny, výbava), poznámka ke zdroji (z které bytosti, kde nalezeno).
-- Evidence trofejí (jen název a poznámka; schopnosti využívající trofeje řeší hráč). Zpracování těla na Suroviny jako ruční zadání
-  (množství určuje Průvodce, aplikace jen zapíše a připomene, že tělo i trofej se přitom zničí).
+### 11e: Kořist (odloženo až k modulu dobrodružství / Výpravy)
+
+**Rozhodnutí uživatele:** u hráče stačí zápis kořisti v dobrodružství jako celku a jednotlivé položky (Suroviny, Peníze, výbava) u postav; zvláštní
+panel Kořist pro hráče nepotřebujeme. Smysl má až jako **podpora vypravěče**: kořist si **předdefinuje** v dobrodružství, při odhalení ji
+**upřesní a zafixuje hodnoty** (tedy náhodné nebo předběžné hodnoty se uzamknou) a **rozdělí** postavám podle dohody (do deníků: Peníze, Suroviny
+s druhem, výbava). Tohle patří k milníku **Výpravy** (sekce pro vypravěče, ukázkové dobrodružství), proto 11e počká na něj.
+- Trofeje: jen název a poznámka. Zpracování těla na Suroviny jako ruční zadání (množství určuje Průvodce).
+
+### 11f: Hotovost (nový malý krok, plyne z rozhodnutí o cenách)
+
+**Rozhodnutí uživatele:** Hotovost zůstává zvlášť v **dukátech, grošech a haléřích**, ale ovládání úsporně, ideálně v jednom až dvou řádcích:
+
+| Dukáty | Groše | Haléře |
+|---|---|---|
+| [−] ## [+] | [−] ## [+] | [−] ## [+] |
+
+- **Plus** na hodnotě 9 přeteče do vyššího řádu (haléře → groše → dukáty), **mínus** na 0 si „půjčí“ z vyššího řádu (opačně ne: změna vyššího řádu nemění
+  nižší). Ukládá se dál jedno číslo v haléřích (`cash`), mění se jen zobrazení a ovládání, **formát se nemění**.
+- Volitelně dotaz, když přetečení nebo půjčka zasáhne **dukáty** (fikčně nemusí být snadné dukát rozměnit).
+- Stejné ovládání použít u cen ve výrobě a opravách (11b) a u placení řemeslníka.
+- Jednotky: 1 groš = 10 haléřů, 1 dukát = 10 grošů.
 
 ## Pořadí a odhad
 
 | Krok | Rozsah | Závisí na | Poznámka |
 |---|---|---|---|
-| 11a Suroviny | malý | nic | formát sdílení, testy zpětné kompatibility |
-| 11c Léčení (bez lektvarů) | střední | 11a (Suroviny) volitelně | využije stávající ScarDialog a healing.ts |
-| 11b Výroba a opravy | střední | 11a | panel Hod předvyplnit |
-| 11c2 Lektvary | malý až střední | 11b, 11c | zásobník Surovin u postavy |
+| 11a Suroviny | malý | nic | HOTOVO 0.3.0 |
+| 11c Léčení | střední | 11a | HOTOVO 0.3.1 |
+| 11c-2 Úprava dialogu léčení | malý | 11c | nový popis Jizvy, výběr vlastního lektvaru až po 11c2 |
+| 11f Hotovost (dukáty, groše, haléře) | malý | nic | jen zobrazení, formát beze změny |
+| 11b Výroba a opravy | střední | 11a, 11f | panel Hod předvyplnit; výroba lektvaru vytvoří záznam lektvaru |
+| 11c2 Lektvary (stručná evidence) | malý až střední | 11b, 11c | viz níže |
 | 11d1 Nástrahy | střední | 11a, 11b | kalkulátor + výzva |
-| 11e Kořist | malý až střední | 11a, družiny | po sezení se hodí nejvíc |
-| 11d2 Kouzla | střední | | nejméně přínosné pro aplikaci (hraje se u stolu) |
+| 11e Kořist | střední | milník Výpravy | podpora vypravěče, odloženo |
+| 11d2 Kouzla | střední | | **odloženo** (uživatel si pravidla nejdřív načte) |
 
-Doporučené pořadí: **11a, 11c, 11b, 11e, 11d1, 11c2, 11d2**. Každý krok = jedna verze (0.3.x), s testy a záznamem v `CHANGELOG.md`.
+Doporučené pořadí: **11c-2, 11f, 11b, 11c2, 11d1**, pak podle Výprav 11e a podle rozhodnutí 11d2. Každý krok = jedna verze (0.3.x), s testy a záznamem v `CHANGELOG.md`.
 
-## Otevřené otázky k rozhodnutí
+### 11c2: Lektvary (stručná evidence): rozhodnuto, že ano, jen stručně
 
-1. ~~Suroviny do deníku revizí~~ Rozhodnuto: ano, i s druhy (viz 11a).
-2. Ceny: zadávat v groších (1 groš = 10 haléřů) a Suroviny po jedné, hotovost zůstává v haléřích. Souhlasí to?
-3. Kdo léčí: stačí ošetřující zvolený z postav družiny, nebo i volný text („vesnický léčitel“)? Doporučuji obojí.
-4. Lektvary: potřebujete evidovat zásobníky, nebo stačí odečet Surovin při léčení? (Evidence je větší práce.)
-5. Kouzla: stačí kontrolní seznam a cena, nebo chcete evidovat vlastní kouzla postavy (rituály jako vlastní poznámky)?
-6. Kořist: bude hlavně u Průvodce (družina, sezení), nebo i u hráče (rychlé přidání nálezu do vlastní postavy)?
-7. Mají se pomůcky zobrazit jen s nainstalovaným balíčkem pravidel (kvůli názvům dovedností), nebo i bez něj s odkazy do SRD? Doporučuji
-   bez balíčku holý postup a odkaz do SRD, s balíčkem navíc názvy dovedností.
+Opravuje dřívější závěr „lektvary se neevidují“. Postava má seznam lektvarů, mastí, odvarů a nektarů; u každého se eviduje **na co je**:
+- **vlastnost (zdroj)**: Tělo, Duše, Vliv (podle druhu: masti Tělo, odvary Duše, nektary Vliv, lektvary obecně),
+- **druh Jizvy** jako krátký text (popálenina, sečné/bodné/drtivé poranění, fobie, panické ataky a podobně, jak uvádějí pravidla u lektvarů),
+- **počet Surovin** v zásobníku (Surovina ušetří 1 Zdroj při léčení) a volitelná poznámka (platnost do slunovratu nebo rovnodennosti).
+V dialogu Léčit se pak nabídnou lektvary shodné vlastnosti s předvyplněným počtem; „Zdroje navíc“ zůstává možné zadat i ručně (cizí lektvar).
+Výroba lektvaru v 11b vytvoří záznam. Nouzové lektvary (bez Surovin) se neevidují. Pozor na formát sdílení: nové pole `potions` (jen přidání pole).
+
+## Rozhodnutí k otázkám (16. 11. 2026)
+
+1. **Suroviny do deníku revizí:** ano, i s druhy (hotovo, 11a).
+2. **Ceny:** Hotovost zůstává zvlášť v dukátech, grošech a haléřích, úsporně v jednom až dvou řádcích, s přetékáním (viz 11f). Suroviny po jedné.
+3. **Kdo léčí:** volný text pro ošetřujícího (často jiný člen družiny); hod řeší ošetřující, u cizí postavy vypravěč nebo automatický úspěch. Ošetřovaný si
+   sníží Jizvu a upraví její text (viz 11c, doplnění).
+4. **Lektvary:** stručně evidovat, na co jsou (vlastnost + druh Jizvy + počet Surovin), viz 11c2.
+5. **Kouzla:** odloženo, uživatel si nejdřív pravidla načte (11d2).
+6. **Kořist:** hráč jen zápisem v dobrodružství a položkami u postav; panel Kořist až jako podpora vypravěče u modulu Výpravy (11e).
+7. **Názvy dovedností:** ano, holé názvy a vlastnost (zdroj) z balíčku, jinak odkaz do SRD. Bez balíčku holý postup a odkaz do SRD.
 
 ## Formát dat a migrace (průřezově, pohlídat od 11a)
 
