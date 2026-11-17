@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { untrack } from 'svelte'
+  import { onDestroy, untrack } from 'svelte'
   import { ATTRIBUTES, type Character } from '../../core/character/model'
   import type { Attribute } from '../../core/content/schema'
   import {
@@ -165,12 +165,23 @@
     dice = i === 0 ? [v, dice[1]] : [dice[0], v]
     reset()
   }
+  // po hodu je tlačítko na chvíli zablokované, aby si hráč omylem nehodil hned znovu
+  const LOCK_MS = 2000
+  let locked = $state(false)
+  let lockTimer: ReturnType<typeof setTimeout> | undefined
+  onDestroy(() => clearTimeout(lockTimer))
+  // ruční zadání z fyzických kostek: kostky se ukážou i před hodem
+  let manual = $state(false)
+  const showDice = $derived(manual || dice[0] > 0 || dice[1] > 0 || extra > 0)
   function roll() {
+    if (locked) return
     newAction()
     const m = maneuver(man)
     if (m?.when === 'pred' && !payManeuver()) return
     dice = rollDice()
     if (three) extra = rollDie()
+    locked = true
+    lockTimer = setTimeout(() => (locked = false), LOCK_MS)
   }
   function rollOpp() {
     oppDice = rollDice()
@@ -206,7 +217,7 @@
     setThreat(threat + 1)
     outcome = 'vycerpano'
   }
-    // žádost z výroby nebo nástrah: záměr a druh se předvyplní, Ohrožení zůstává podle trackeru
+  // žádost z výroby nebo nástrah: záměr a druh se předvyplní, Ohrožení zůstává podle trackeru
   let seenRequest = rollRequest.n
   $effect(() => {
     const n = rollRequest.n
@@ -222,6 +233,7 @@
   function endConflict() {
     setThreat(DEFAULT_THREAT)
     onadvantage(0)
+    manual = false
     dice = [0, 0]
     reset()
   }
@@ -230,7 +242,6 @@
 <section class="panel" id="roll-panel" aria-label="Hod">
   <div class="head">
     <strong>Hod</strong>
-    <button class="primary" onclick={roll}>Hodit</button>
   </div>
   <div class="chips" role="group" aria-label="Druh vyhodnocení">
     <button class:primary={kind === 'zkouska'} onclick={() => setKind('zkouska')}>Zkouška</button>
@@ -320,33 +331,39 @@
       pravidel.
     </p>
   {:else}
+    <div class="rollrow">
+      <button class="primary roll" onclick={roll} disabled={locked}>Hodit</button>
+      {#if !showDice}<button onclick={() => (manual = true)}>Zadat z kostek</button>{/if}
+    </div>
     <div class="dice">
-      {#each [0, 1] as i}
-        <select
-          value={dice[i as 0 | 1]}
-          onchange={(e) => setDie(i as 0 | 1, Number(e.currentTarget.value))}
-          aria-label={`Kostka ${i + 1}`}
-        >
-          <option value={0}>?</option>
-          {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
-        </select>
-        {#if i === 0}<span>+</span>{/if}
-      {/each}
-      {#if three}
-        <span>+</span>
-        <select
-          value={extra}
-          onchange={(e) => {
-            extra = Number(e.currentTarget.value)
-            reset()
-          }}
-          aria-label="Třetí kostka"
-        >
-          <option value={0}>?</option>
-          {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
-        </select>
+      {#if showDice}
+        {#each [0, 1] as i}
+          <select
+            value={dice[i as 0 | 1]}
+            onchange={(e) => setDie(i as 0 | 1, Number(e.currentTarget.value))}
+            aria-label={`Kostka ${i + 1}`}
+          >
+            <option value={0}>?</option>
+            {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
+          </select>
+          {#if i === 0}<span>+</span>{/if}
+        {/each}
+        {#if three}
+          <span>+</span>
+          <select
+            value={extra}
+            onchange={(e) => {
+              extra = Number(e.currentTarget.value)
+              reset()
+            }}
+            aria-label="Třetí kostka"
+          >
+            <option value={0}>?</option>
+            {#each [1, 2, 3, 4, 5, 6] as v}<option value={v}>{v}</option>{/each}
+          </select>
+        {/if}
       {/if}
-      <span>+ {level} =</span>
+      <span>{showDice ? '+' : ''} {level} =</span>
       <strong
         class="total"
         class:ok={won || outcome === 'vycerpano'}
@@ -593,6 +610,14 @@
   }
   .dice {
     margin: 0.5rem 0;
+  }
+  .rollrow {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .roll {
+    min-width: 7rem;
   }
   .dice select {
     width: 3.6rem;

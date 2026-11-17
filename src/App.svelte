@@ -3,7 +3,7 @@
   import { refreshLibrary } from './core/library.svelte'
   import { initPwa } from './core/pwa.svelte'
   import { allModules, getModule } from './core/modules'
-  import { router, startRouter, toHash } from './core/router.svelte'
+  import { markRestore, router, startRouter, tabHref, toHash } from './core/router.svelte'
   import { DEFAULT_MODULE } from './modules'
   import AppBanners from './ui/AppBanners.svelte'
   import ConfirmDialog from './ui/ConfirmDialog.svelte'
@@ -32,7 +32,11 @@
   <ConfirmDialog />
   <nav class="tabs" aria-label="Hlavní navigace">
     {#each tabs as m}
-      <a href={toHash(m.id)} aria-current={active?.id === m.id ? 'page' : undefined}>
+      <a
+        href={tabHref(m.id, active?.id)}
+        onclick={() => active?.id !== m.id && markRestore()}
+        aria-current={active?.id === m.id ? 'page' : undefined}
+      >
         <span class="icon" aria-hidden="true">{m.icon}</span>
         <span>{m.title}</span>
       </a>
