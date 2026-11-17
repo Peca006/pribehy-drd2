@@ -2,7 +2,8 @@
 // použít jak Node nástroj (`build.mjs`, `build-bestiar.mjs`), tak bookmarklet běžící na stránce SRD v prohlížeči.
 // Texty SRD tak nikdy neopouštějí zařízení uživatele.
 import { parseProfessions } from './parse-povolani.mjs'
-import { parseChapter } from './parse-chapter.mjs'
+import { parse } from 'node-html-parser'
+import { parseBlocks, parseChapter } from './parse-chapter.mjs'
 import { KINDS, parseCreatures } from './parse-bestiar.mjs'
 import {
   CREATION_RULES,
@@ -141,6 +142,53 @@ export function finishRulesPack({ professions, chapters }) {
   return { json, problems, pack }
 }
 
+/** Kapitoly Bestiáře: úvod rozdělený podle nadpisů druhé úrovně a úvodní texty jednotlivých druhů bytostí. */
+const KIND_CHAPTER_ORDER = ['21', '22', '23', '24', '25']
+
+/** Vrací { chapters, home }; `home`: ID nadpisu ze starého úvodu → { chapter, top } (top = nadpis se stal názvem kapitoly). */
+export function bestiarChapters(fixed, problems = []) {
+  const intro = parseChapter(fixed('01-uvod'), '01-uvod')
+  const chapters = []
+  const home = {}
+  let cur
+  for (const b of intro.blocks) {
+    if (b.type === 'heading' && b.level === 2) {
+      cur = { id: `1${chapters.length + 1}-${b.id}`, title: b.text, blocks: [] }
+      chapters.push(cur)
+      home[b.id] = { chapter: cur.id, top: true }
+    } else if (cur) {
+      cur.blocks.push(b)
+      if (b.type === 'heading') home[b.id] ??= { chapter: cur.id, top: false }
+    } else problems.push('Úvod Bestiáře má text před prvním nadpisem druhé úrovně')
+  }
+  Object.keys(KINDS).forEach((file, i) => {
+    // úvodní text druhu je vše před první bytostí (h3)
+    const content = parse(fixed(file)).querySelector('#content')
+    const kids = content.childNodes
+    const at = kids.findIndex((n) => n.rawTagName?.toLowerCase() === 'h3')
+    if (at >= 0) for (const n of kids.slice(at)) n.remove()
+    const page = { blocks: parseBlocks(content) }
+    if (!page.blocks.length) problems.push(`Druh ${file} nemá úvodní text`)
+    chapters.push({
+      id: `${KIND_CHAPTER_ORDER[i]}-${KINDS[file].id}`,
+      title: KINDS[file].name,
+      kind: KINDS[file].id,
+      blocks: page.blocks,
+    })
+  })
+  chapters.sort((x, y) => x.id.localeCompare(y.id))
+  return { chapters, home }
+}
+
+/** Odkazy na starou jedinou kapitolu úvodu se přesměrují do kapitol, kam oddíly přešly. */
+export function rewriteIntroLinks(json, home, firstChapter) {
+  return json.replace(/chapter:01-uvod(?:#([^)"\s]+))?/g, (_, anchor) => {
+    const h = anchor && home[anchor]
+    if (!h) return `chapter:${firstChapter}`
+    return h.top ? `chapter:${h.chapter}` : `chapter:${h.chapter}#${anchor}`
+  })
+}
+
 /** Bestiář: `pages` = { '01-uvod': html, '02-lide': html, … }. */
 export function buildBestiarPack(pages) {
   const ID = 'drd2-bestiar-2'
@@ -152,6 +200,7 @@ export function buildBestiarPack(pages) {
     if (ids.has(c.id)) problems.push(`Duplicitní ID bytosti: ${c.id}`)
     ids.add(c.id)
   }
+  const { chapters, home } = bestiarChapters(fixed, problems)
   const pack = {
     manifest: {
       format: 1,
@@ -160,11 +209,12 @@ export function buildBestiarPack(pages) {
       version: '2.0.0',
       source: { book: 'Dračí doupě 2: Bestiář (SRD, drd2srd.d20.cz)', edition: '2' },
     },
-    // úvod vysvětluje zvláštní schopnosti bytostí, na které karty odkazují
-    chapters: [parseChapter(fixed('01-uvod'), '01-uvod')],
+    chapters,
     professions: [],
     creatureKinds: Object.values(KINDS),
     creatures,
   }
-  return { json: JSON.stringify(pack, null, 1), problems, pack, id: ID }
+  // odkazy na starou jedinou kapitolu úvodu se přesměrují na kapitoly, do kterých oddíly přešly
+  const json = rewriteIntroLinks(JSON.stringify(pack, null, 1), home, chapters[0].id)
+  return { json, problems, pack: JSON.parse(json), id: ID }
 }

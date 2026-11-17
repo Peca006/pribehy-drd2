@@ -2,12 +2,15 @@
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
+  import type { Creature } from '../../core/content/schema'
   import { addToConflict, fromCreature } from '../../core/party/conflict'
   import { roleOf, type Party } from '../../core/party/model'
   import { listParties } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { library } from '../../core/library.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
+  import EnvIcon from '../../ui/EnvIcon.svelte'
+  import { ENVIRONMENTS } from '../../core/environments'
   import CreatureImages from './CreatureImages.svelte'
   import CreatureEditor from './CreatureEditor.svelte'
   import CreatureView from './CreatureView.svelte'
@@ -40,14 +43,32 @@
 
   let query = $state('')
   let kind = $state('')
+  // filtr prostředí: vybraná písmena značek (b–h, a = prastaří) a 'none' = bez uvedeného prostředí
+  let envs = $state<string[]>([])
+  let sortBy = $state<'abc' | 'kind'>('abc')
+  const ENV_LETTERS = 'bcdefgh'
+  const envOf = (c: Creature) => [...(c.glyphs ?? '')].filter((g) => ENV_LETTERS.includes(g))
+  const toggleEnv = (e: string) => (envs = envs.includes(e) ? envs.filter((x) => x !== e) : [...envs, e])
+  // odkaz z kapitoly druhu (#/bestiar/druh/ID) nastaví filtr druhu
+  $effect(() => {
+    if (params[0] === 'druh') kind = params[1] ?? ''
+  })
   const creature = $derived(
-    params[0] && params[0] !== 'uprav' ? findCreature(params[0]) : undefined,
+    params[0] && params[0] !== 'uprav' && params[0] !== 'druh' ? findCreature(params[0]) : undefined,
   )
   const editing = $derived(params[0] === 'uprav' ? findCreature(params[1] ?? '') : undefined)
 
   const list = $derived(
     allCreatures()
       .filter((c) => !kind || c.kind === kind)
+      .filter((c) => {
+        if (!envs.length) return true
+        const own = envOf(c)
+        return (
+          (envs.includes('none') && !own.length) ||
+          envs.some((e) => (e === 'a' ? c.glyphs?.includes('a') : own.includes(e)))
+        )
+      })
       .filter((c) => {
         const q = query.trim().toLowerCase()
         if (!q) return true
@@ -62,6 +83,13 @@
           .includes(q)
       })
       .sort((a, b) => a.name.localeCompare(b.name, 'cs')),
+  )
+  const groups = $derived(
+    sortBy === 'kind'
+      ? kinds()
+          .map((k) => ({ title: k.name, items: list.filter((c) => c.kind === k.id) }))
+          .filter((g) => g.items.length)
+      : [{ title: '', items: list }],
   )
   const hasPackData = $derived(library.packs.some((p) => p.creatures?.length))
 
@@ -111,7 +139,7 @@
       <button onclick={remove}>Smazat bytost…</button>
     </details>
   {/if}
-{:else if params[0]}
+{:else if params[0] && params[0] !== 'druh'}
   <p class="muted">Bytost nenalezena. <a href="#/bestiar">Zpět do bestiáře</a></p>
 {:else}
   <h1>Bestiář</h1>
@@ -132,6 +160,35 @@
       <button class:primary={kind === k.id} onclick={() => (kind = k.id)}>{k.name}</button>
     {/each}
   </div>
+  <div class="chips" role="group" aria-label="Prostředí">
+    {#each [...ENV_LETTERS, 'a'] as e}
+      <button
+        class="env"
+        class:primary={envs.includes(e)}
+        aria-pressed={envs.includes(e)}
+        title={ENVIRONMENTS[e]}
+        onclick={() => toggleEnv(e)}><EnvIcon letter={e} size="1.3em" /></button
+      >
+    {/each}
+    <button
+      class="env"
+      class:primary={envs.includes('none')}
+      aria-pressed={envs.includes('none')}
+      title="Bez uvedeného prostředí"
+      aria-label="Bez uvedeného prostředí"
+      onclick={() => toggleEnv('none')}
+    ></button>
+    {#if envs.length}<button onclick={() => (envs = [])}>Zrušit filtr</button>{/if}
+  </div>
+  <p>
+    <label
+      >Řazení
+      <select bind:value={sortBy}>
+        <option value="abc">abecedně</option>
+        <option value="kind">podle druhů</option>
+      </select></label
+    >
+  </p>
   <p class="actions">
     <a class="btn primary" href="#/bestiar/nova">Nová</a>
     <a class="btn" href="#/bestiar/vymena">Import / export</a>
@@ -141,22 +198,25 @@
       ? ` (z toho vlastních: ${bestiary.user.length})`
       : ''}
   </p>
-  <ul class="list">
-    {#each list as c (c.id)}
-      <li>
-        <a class="btn panel" href={'#/bestiar/' + encodeURIComponent(c.id)}>
-          <strong>{c.name}</strong>
-          <span class="muted">
-            {kindName(c.kind)}{c.variantOf ? ' · varianta' : ''}{isUser(c) && c.kind !== 'vlastni'
-              ? ' · vlastní'
-              : ''}{c.characteristic
-              ? ` · charakteristika ${c.characteristic.min === c.characteristic.max ? c.characteristic.min : c.characteristic.min + '–' + c.characteristic.max}`
-              : ''}{c.fate !== undefined ? ` · sudba ${c.fate}` : ''}
-          </span>
-        </a>
-      </li>
-    {/each}
-  </ul>
+  {#each groups as g}
+    {#if g.title}<h2>{g.title} <span class="muted">({g.items.length})</span></h2>{/if}
+    <ul class="list">
+      {#each g.items as c (c.id)}
+        <li>
+          <a class="btn panel" href={'#/bestiar/' + encodeURIComponent(c.id)}>
+            <strong>{c.name}</strong>
+            <span class="muted">
+              {kindName(c.kind)}{c.variantOf ? ' · varianta' : ''}{isUser(c) && c.kind !== 'vlastni'
+                ? ' · vlastní'
+                : ''}{c.characteristic
+                ? ` · charakteristika ${c.characteristic.min === c.characteristic.max ? c.characteristic.min : c.characteristic.min + '–' + c.characteristic.max}`
+                : ''}{c.fate !== undefined ? ` · sudba ${c.fate}` : ''}
+            </span>
+          </a>
+        </li>
+      {/each}
+    </ul>
+  {/each}
 {/if}
 
 <style>
@@ -177,6 +237,14 @@
     flex-wrap: wrap;
     gap: 0.4rem;
     margin: 0.75rem 0;
+  }
+  .env {
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .list {
     list-style: none;

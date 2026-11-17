@@ -17,6 +17,8 @@ export interface PackManifest {
   name: string
   version: string
   source: { book: string; edition: string }
+  /** pořadí knihy v příručce (menší první); bez něj pravidla (s povoláními) před ostatními */
+  order?: number
   /** balíčky, jejichž obsah tento balíček předpokládá */
   requires?: string[]
 }
@@ -83,6 +85,8 @@ export interface Chapter {
   /** např. `31-zakladni-pravidla` (pořadí podle čísla) */
   id: string
   title: string
+  /** kapitola popisuje druh bytostí (ID druhu z `creatureKinds`); čtenář k ní nabídne seznam bytostí */
+  kind?: string
   blocks: Block[]
 }
 
