@@ -1,5 +1,12 @@
 # Změny
 
+## 0.3.12 (17. 11. 2026)
+
+- **Hod:** tlačítko **Hodit** je přímo u kostek (místo políček s otazníky; „Zadat z kostek“ ukáže políčka pro fyzické kostky). Po hodu je na 2 sekundy zablokované proti omylem opakovanému hodu.
+- **Paměť sekcí:** záložky (Postava, Družina, Příručka, Bestiář, Více) vedou na poslední otevřenou stránku a vrací i místo, kde jste skončili (posun). Klepnutí na aktivní záložku vede na seznam sekce. Nová stránka se otevře nahoře. Paměť přežije zavření aplikace.
+- **Jizvy:** **Zahojit** (dříve Zahojeno) nejdřív ukáže popis Jizvy a nechá potvrdit nebo zrušit.
+- **Balíčky:** aplikace pozná balíček ze SRD ve starší podobě (číslo sestavení) a vyzve k novému převodu a načtení (pruh nad navigací a poznámka ve Více). Po této aktualizaci je potřeba balíčky Pravidla a Bestiář převést znovu.
+
 ## 0.3.11 (17. 11. 2026)
 
 - **Příručka:** nový rozcestník nahoře. Vedle Rejstříku je tlačítko pro každou další načtenou knihu (Bestiář, Hry mocných), které posune stránku na nadpis její sekce. Základní pravidla jsou hned nahoře, tlačítko nemají. Tlačítko Bestiář už neotevírá modul Bestiáře (ten zůstává na záložce Bestiář a v kapitolách druhů).
