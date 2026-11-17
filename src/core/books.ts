@@ -34,3 +34,10 @@ export function professionBooksOf(packs: ContentPack[]): ProfessionBook[] {
     .sort((a, b) => (a.manifest.order ?? 60) - (b.manifest.order ?? 60) || a.manifest.name.localeCompare(b.manifest.name, 'cs'))
     .map((p) => ({ id: p.manifest.id, name: p.manifest.name, professions: p.professions }))
 }
+
+/** Krátký název knihy pro tlačítko: bez předpony „Dračí doupě 2 – “ a bez závorky na konci. */
+export const shortBookName = (name: string) =>
+  name
+    .replace(/^Dračí doupě 2\s*[–-]\s*/, '')
+    .replace(/\s*\([^)]*\)\s*$/, '')
+    .trim() || name

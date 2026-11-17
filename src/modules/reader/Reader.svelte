@@ -15,6 +15,7 @@
   import { settings } from '../../core/settings.svelte'
   import BlockView from '../../ui/BlockView.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
+  import { shortBookName } from '../../core/books'
   import { buildIndex, search } from '../../core/search'
   import { readerSearch } from './state.svelte'
   import Rejstrik from './Rejstrik.svelte'
@@ -41,7 +42,13 @@
         }
       : undefined,
   )
-  const hasCreatures = $derived(library.packs.some((p) => p.creatures?.length))
+  // rozcestník: tlačítko pro každou sekci kromě první (ta je hned nahoře); posune stránku na nadpis sekce
+  const sections = $derived([
+    ...books().map((b) => ({ id: b.id, name: shortBookName(b.name) })),
+    ...professionBooks().map((b) => ({ id: b.id, name: shortBookName(b.name) })),
+  ])
+  const jump = (id: string) =>
+    document.getElementById('kniha-' + id)?.scrollIntoView({ block: 'start' })
   // počet odkazů z pojmů podle nastavení (výchozí: jen první výskyt v kapitole)
   const blocks = $derived.by(() => {
     if (!chapter) return []
@@ -106,7 +113,11 @@
     />
     <p class="actions">
       <a class="btn" href="#/ctenar/rejstrik">Rejstřík <Arrow dir="right" /></a>
-      {#if hasCreatures}<a class="btn" href="#/bestiar">Bestiář <Arrow dir="right" /></a>{/if}
+      {#if !searching}
+        {#each sections.slice(1) as sec (sec.id)}
+          <button onclick={() => jump(sec.id)}>{sec.name} <Arrow dir="down" /></button>
+        {/each}
+      {/if}
     </p>
   {/if}
   {#if searching}
@@ -131,7 +142,7 @@
   {:else}
     {#each books() as book (book.id)}
       <section class="book">
-        <h2>{book.name}</h2>
+        <h2 id={'kniha-' + book.id}>{book.name}</h2>
         <ul class="chapters">
           {#each book.chapters as c}
             <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
@@ -147,7 +158,7 @@
     {/each}
     {#each professionBooks() as book (book.id)}
       <section class="book">
-        <h2>{book.name}</h2>
+        <h2 id={'kniha-' + book.id}>{book.name}</h2>
         <ul class="chapters">
           {#each book.professions as p}
             <li><a class="btn" href={'#/ctenar/povolani/' + encodeURIComponent(p.id)}>{p.name}</a></li>

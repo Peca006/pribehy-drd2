@@ -1,6 +1,6 @@
 <script lang="ts">
   // Výrazná šipka do strany (tučná, přebírá barvu textu) místo tenkých znaků ← →.
-  let { dir }: { dir: 'left' | 'right' } = $props()
+  let { dir }: { dir: 'left' | 'right' | 'down' } = $props()
 </script>
 
 <svg viewBox="0 0 24 24" width="1.1em" height="1.1em" aria-hidden="true" class={dir}>
@@ -20,5 +20,8 @@
   }
   .right {
     transform: scaleX(-1);
+  }
+  .down {
+    transform: rotate(-90deg);
   }
 </style>

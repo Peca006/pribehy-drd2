@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { booksOf, professionBooksOf } from './books'
+import { booksOf, professionBooksOf, shortBookName } from './books'
 import type { ContentPack } from './content/schema'
 
 const pack = (id: string, chapters: string[], extra: Partial<ContentPack> = {}): ContentPack =>
@@ -36,5 +36,13 @@ describe('professionBooksOf', () => {
     expect(professionBooksOf([rules, power, empty]).map((b) => [b.id, b.professions.length])).toEqual([
       ['mocni', 1],
     ])
+  })
+})
+
+describe('shortBookName', () => {
+  it('zkrátí názvy balíčků na název knihy', () => {
+    expect(shortBookName('Dračí doupě 2 – Bestiář (SRD)')).toBe('Bestiář')
+    expect(shortBookName('Dračí doupě 2 – Hry mocných (mistrovská povolání, s Hotfixem)')).toBe('Hry mocných')
+    expect(shortBookName('Vlastní kniha')).toBe('Vlastní kniha')
   })
 })
