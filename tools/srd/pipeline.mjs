@@ -4,7 +4,7 @@
 import { parseProfessions } from './parse-povolani.mjs'
 import { parse } from 'node-html-parser'
 import { parseBlocks, parseChapter } from './parse-chapter.mjs'
-import { KINDS, parseCreatures } from './parse-bestiar.mjs'
+import { KINDS, parseCreatures, parseRulesCreatures } from './parse-bestiar.mjs'
 import {
   CREATION_RULES,
   deriveEquipment,
@@ -15,6 +15,8 @@ import {
   deriveTerms,
   deriveTraits,
 } from './derive.mjs'
+
+const RULES_ID = 'drd2-pravidla-2'
 
 /** Stránky Základní příručky a Bestiáře (název souboru bez `.html`), kdyby je nešlo zjistit z navigace. */
 export const RULES_PAGES = [
@@ -100,11 +102,13 @@ export function buildRulesChapters(pages) {
     ...parseProfessions(pages['26-pokrocila-povolani'], 'pokrocile'),
   ]
   const chapters = names.map((n) => parseChapter(pages[n], n))
-  return { professions, chapters }
+  // bytosti z kapitoly Bestiář (kratší popisy; prostředí u nich kniha neuvádí)
+  const creatures = pages['43-bestiar'] ? parseRulesCreatures(pages['43-bestiar'], RULES_ID) : []
+  return { professions, chapters, creatures }
 }
 
 /** Dokončí balíček pravidel (po vložení obrázků do `chapters`). Vrací { json, problems }. */
-export function finishRulesPack({ professions, chapters }) {
+export function finishRulesPack({ professions, chapters, creatures = [] }) {
   const problems = []
   const requirements = deriveRequirements(chapters, professions)
   for (const p of professions) if (requirements.has(p.id)) p.requires = requirements.get(p.id)
@@ -112,7 +116,7 @@ export function finishRulesPack({ professions, chapters }) {
   const pack = {
     manifest: {
       format: 1,
-      id: 'drd2-pravidla-2',
+      id: RULES_ID,
       name: 'Dračí doupě 2 – Pravidla (SRD)',
       version: '2.0.0',
       source: { book: 'Dračí doupě 2: Pravidla (SRD, drd2srd.d20.cz)', edition: '2' },
@@ -126,6 +130,7 @@ export function finishRulesPack({ professions, chapters }) {
     startingKits: deriveStartingKits(chapters),
     creation: CREATION_RULES,
     terms: [],
+    ...(creatures.length ? { creatureKinds: Object.values(KINDS), creatures } : {}),
   }
   pack.terms = deriveGlossary(pack, deriveTerms(chapters))
   let json = JSON.stringify(pack, null, 1)

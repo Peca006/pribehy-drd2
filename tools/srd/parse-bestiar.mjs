@@ -39,15 +39,35 @@ function stats(card) {
   for (const li of card.querySelectorAll('li')) {
     const m = inlineMd(li)
       .trim()
-      .match(/^\*\*([^*]+?):\*\*\s*([^]*)$/)
+      .match(/^\*\*([^*]+?):?\*\*:?\s*([^]*)$/)
     if (m) rows.push({ label: m[1].trim(), value: m[2].trim() })
   }
   return rows
 }
 
+/** Nadpisy druhé úrovně v kapitole Bestiář základních pravidel → druh bytostí. */
+const RULES_KINDS = {
+  Zvířata: 'zvirata',
+  Lidé: 'lide',
+  Nemrtví: 'nemrtvi',
+  Oživení: 'nemrtvi',
+  Běsi: 'besi',
+  Netvoři: 'netvori',
+}
+
 /** `kindFile` je např. `04-nemrtvi` (viz KINDS). */
 export function parseCreatures(html, kindFile, sourceId) {
-  const kind = KINDS[kindFile]
+  return parseList(html, () => KINDS[kindFile].id, sourceId)
+}
+
+/** Bytosti z kapitoly Bestiář základních pravidel: druh určuje nadpis h2, bytosti mimo druhy se přeskočí. */
+export function parseRulesCreatures(html, sourceId) {
+  let kind
+  return parseList(html, (h2) => (h2 === undefined ? kind : (kind = RULES_KINDS[h2])), sourceId)
+}
+
+/** `kindOf(h2?)`: bez argumentu vrátí aktuální druh, s názvem h2 ho přepne. */
+function parseList(html, kindOf, sourceId) {
   const content = parse(html).querySelector('#content')
   const creatures = []
   let cur, section, lastBase
@@ -55,7 +75,15 @@ export function parseCreatures(html, kindFile, sourceId) {
   for (const el of content.childNodes) {
     const tag = el.rawTagName?.toLowerCase()
     if (!tag) continue
-    if (tag === 'h3') {
+    if (tag === 'h2') {
+      kindOf(stripMd(inlineMd(el)).trim())
+      cur = undefined
+    } else if (tag === 'h3') {
+      const kindId = kindOf()
+      if (!kindId) {
+        cur = undefined
+        continue
+      }
       const glyph = el.querySelector('.drd2-font')
       const glyphs = glyph?.text.trim()
       glyph?.remove()
@@ -65,7 +93,7 @@ export function parseCreatures(html, kindFile, sourceId) {
       cur = {
         id: `bytost:${slug(name)}`,
         name,
-        kind: kind.id,
+        kind: kindId,
         ...(glyphs ? { glyphs } : {}),
         ...(variant && lastBase ? { variantOf: lastBase.id } : {}),
         stats: [],
@@ -77,9 +105,8 @@ export function parseCreatures(html, kindFile, sourceId) {
       creatures.push(cur)
       section = undefined
     } else if (!cur) continue
-    else if (tag === 'h2') cur = undefined
     else if (tag === 'h4') {
-      const title = stripMd(inlineMd(el)).trim()
+      const title = stripMd(inlineMd(el)).trim().replace(/:$/, '')
       const known = SECTIONS.find(([re]) => re.test(title))
       section = { id: known ? known[1] : slug(title), title, text: '' }
       cur.sections.push(section)
