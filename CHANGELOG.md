@@ -1,5 +1,9 @@
 # Změny
 
+## 0.3.6 (17. 11. 2026)
+
+- Bestiář a Příručka: místo písmen z písma knih (Lesy b, Pláně c, …) se ukazují **ikony prostředí** (strom, tráva, hory, vlny, klas, chaloupka, zřícená věž) v nadpisech kapitol i u bytostí. Značka „a“ je **prastará bytost** (lebka s korunou).
+
 ## 0.3.5 (16. 11. 2026)
 
 - Postava: **Nástrahy** (pasti, třaskaviny, jedy). Připravené nástrahy se evidují ve stylu pravidel („Jáma s kůly (Jednoduchá past > Tělo, mocně / Vyřazení; slabina: …)“): název, druh, cílová vlastnost, zamýšlený účinek (Ohrožení, Jizva, Vyřazení), vložený manévr, další vlastnosti, slabina a počet kusů. Počet se mění ±, **Použít** ubere kus (poslední kus zmizí) a zapíše revizi. Každá nástraha je samostatná změna v deníku revizí a přenáší se při sdílení (pole `traps`, jen přidání).
