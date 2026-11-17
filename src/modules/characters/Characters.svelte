@@ -20,6 +20,7 @@
     effectiveAttributes,
     emptyBonus,
     loadAdvantage,
+    MAX_ADVANTAGE,
     loadBonus,
     loadSpent,
     payResources,
@@ -120,7 +121,7 @@
   }
   let advantage = $state(0)
   const setAdvantage = (n: number) => {
-    advantage = Math.max(0, n)
+    advantage = Math.min(MAX_ADVANTAGE, Math.max(0, n))
     if (current) saveAdvantage(current.id, advantage)
   }
   let bonus = $state<Bonus>(emptyBonus())

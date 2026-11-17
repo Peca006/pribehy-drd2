@@ -81,23 +81,31 @@ export function saveBonus(id: string, bonus: Bonus) {
 
 /** Ohrožení postavy: okolnosti, v nichž se nachází (neodvíjí se od jejích vlastností). Jen ve hře, v tomto zařízení. */
 const THREAT_KEY = (id: string) => `drd2-char-threat:${id}`
-export const MAX_THREAT = 20
+/** Rozsah trackerů Ohrožení a Výhody: v deníku postavy 1 až 10, v aplikaci se vejdou dvě číslice. */
+export const MIN_THREAT = 1
+export const MAX_THREAT = 99
+export const MAX_ADVANTAGE = 99
 /** Výchozí Ohrožení, pokud vypravěč neurčí jinak; v konfliktu platí hodnota z trackeru Ohrožení. */
 export const DEFAULT_THREAT = 2
 
+export const clampThreat = (n: number) =>
+  Math.min(MAX_THREAT, Math.max(MIN_THREAT, Math.floor(Number.isFinite(n) ? n : DEFAULT_THREAT)))
+
 export function loadThreat(id: string): number {
   try {
-    const n = JSON.parse(localStorage.getItem(THREAT_KEY(id)) ?? '0')
-    return typeof n === 'number' && Number.isInteger(n) && n >= 0 && n <= MAX_THREAT ? n : 0
+    const n = JSON.parse(localStorage.getItem(THREAT_KEY(id)) ?? 'null')
+    return typeof n === 'number' && Number.isInteger(n) && n >= MIN_THREAT && n <= MAX_THREAT
+      ? n
+      : DEFAULT_THREAT
   } catch {
-    return 0
+    return DEFAULT_THREAT
   }
 }
 
 export function saveThreat(id: string, threat: number) {
   try {
-    const n = Math.min(MAX_THREAT, Math.max(0, Math.floor(threat)))
-    if (n > 0) localStorage.setItem(THREAT_KEY(id), String(n))
+    const n = clampThreat(threat)
+    if (n !== DEFAULT_THREAT) localStorage.setItem(THREAT_KEY(id), String(n))
     else localStorage.removeItem(THREAT_KEY(id))
   } catch {
     /* Ohrožení platí aspoň do zavření stránky */

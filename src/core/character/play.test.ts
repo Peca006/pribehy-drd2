@@ -7,6 +7,7 @@ import {
   emptyBonus,
   loadBonus,
   loadSpent,
+  clampThreat,
   loadThreat,
   payResources,
   saveBonus,
@@ -66,14 +67,22 @@ describe('dočasné Zdroje z jizvy', () => {
 })
 
 describe('Ohrožení', () => {
-  it('ukládá se v mezích a nula se odstraní', () => {
-    expect(loadThreat('t')).toBe(0)
+  it('výchozí je 2, ukládá se v mezích 1 až 99 a výchozí hodnota se neukládá', () => {
+    expect(loadThreat('t')).toBe(2)
     saveThreat('t', 3)
     expect(loadThreat('t')).toBe(3)
-    saveThreat('t', 99)
-    expect(loadThreat('t')).toBe(20)
+    saveThreat('t', 150)
+    expect(loadThreat('t')).toBe(99)
     saveThreat('t', 0)
+    expect(loadThreat('t')).toBe(1)
+    saveThreat('t', 2)
     expect(store.has('drd2-char-threat:t')).toBe(false)
+    expect(loadThreat('t')).toBe(2)
+  })
+  it('clampThreat zvládne nesmysly', () => {
+    expect(clampThreat(Number.NaN)).toBe(2)
+    expect(clampThreat(-5)).toBe(1)
+    expect(clampThreat(12.9)).toBe(12)
   })
 })
 

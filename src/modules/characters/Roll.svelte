@@ -5,9 +5,12 @@
   import {
     availableOf,
     effectiveAttributes,
+    clampThreat,
     DEFAULT_THREAT,
     loadThreat,
+    MAX_ADVANTAGE,
     MAX_THREAT,
+    MIN_THREAT,
     saveThreat,
     type Bonus,
     type Spent,
@@ -123,8 +126,8 @@
     los: 'úplná shoda, rozhodne los',
   }
   const maxes = $derived(effectiveAttributes(character))
-  // vyčerpání stojí tolik Zdrojů, kolik je Ohrožení (nejméně 1), a Ohrožení se tím zvýší o 1
-  const cost = $derived(Math.max(1, threat))
+  // vyčerpání stojí tolik Zdrojů, kolik je Ohrožení (podle trackeru), a Ohrožení se tím zvýší o 1
+  const cost = $derived(threat)
   const have = $derived(availableOf(spent, bonus, maxes, payAttr, advantage))
 
   const toggle = (pid: string) =>
@@ -194,17 +197,16 @@
     reset()
   }
   function setThreat(n: number) {
-    threat = Math.min(MAX_THREAT, Math.max(0, n))
+    threat = clampThreat(n)
     saveThreat(id, threat)
   }
   function exhaust() {
     if (!pay(payAttr, cost)) return
     paid = cost
-    setThreat(Math.max(1, threat) + 1)
+    setThreat(threat + 1)
     outcome = 'vycerpano'
   }
-  /** Konec konfliktu: Ohrožení zaniká a nespotřebovaná Výhoda propadá. */
-  // žádost z výroby nebo nástrah: záměr a druh se předvyplní; není-li Ohrožení nastavené, platí výchozí
+    // žádost z výroby nebo nástrah: záměr a druh se předvyplní, Ohrožení zůstává podle trackeru
   let seenRequest = rollRequest.n
   $effect(() => {
     const n = rollRequest.n
@@ -214,11 +216,11 @@
       setKind(rollRequest.kind)
       newAction()
       intent = rollRequest.intent
-      if (threat === 0) setThreat(DEFAULT_THREAT)
     })
   })
+  /** Konec konfliktu: Ohrožení se vrací na výchozí a nespotřebovaná Výhoda propadá. */
   function endConflict() {
-    setThreat(0)
+    setThreat(DEFAULT_THREAT)
     onadvantage(0)
     dice = [0, 0]
     reset()
@@ -444,7 +446,7 @@
         {@const step = man === 'lstive' && manPaid ? 2 : 1}
         <p class="muted">Následky úspěchu, které jste ohlásili:</p>
         <p class="actions">
-          <button onclick={() => setThreat(threat - step)} disabled={threat === 0}
+          <button onclick={() => setThreat(threat - step)} disabled={threat <= MIN_THREAT}
             >Ohrožení −{step}</button
           >
           <button onclick={() => onadvantage(advantage + step)}>Výhoda +{step}</button>
@@ -514,10 +516,22 @@
     <span>Ohrožení</span>
     <button
       onclick={() => setThreat(threat - 1)}
-      disabled={threat === 0}
+      disabled={threat <= MIN_THREAT}
       aria-label="Snížit Ohrožení">−</button
     >
-    <strong class="count">{threat}</strong>
+    <input
+      class="num"
+      type="number"
+      inputmode="numeric"
+      min={MIN_THREAT}
+      max={MAX_THREAT}
+      value={threat}
+      onchange={(e) => {
+        setThreat(e.currentTarget.valueAsNumber)
+        e.currentTarget.value = String(threat)
+      }}
+      aria-label="Ohrožení"
+    />
     <button
       onclick={() => setThreat(threat + 1)}
       disabled={threat >= MAX_THREAT}
@@ -531,12 +545,29 @@
       disabled={advantage === 0}
       aria-label="Ubrat Výhodu">−</button
     >
-    <strong class="count">{advantage}</strong>
-    <button onclick={() => onadvantage(advantage + 1)} aria-label="Přidat Výhodu">+</button>
+    <input
+      class="num"
+      type="number"
+      inputmode="numeric"
+      min="0"
+      max={MAX_ADVANTAGE}
+      value={advantage}
+      onchange={(e) => {
+        const n = e.currentTarget.valueAsNumber
+        onadvantage(Math.min(MAX_ADVANTAGE, Math.max(0, Number.isFinite(n) ? Math.floor(n) : 0)))
+        e.currentTarget.value = String(advantage)
+      }}
+      aria-label="Výhoda"
+    />
+    <button
+      onclick={() => onadvantage(advantage + 1)}
+      disabled={advantage >= MAX_ADVANTAGE}
+      aria-label="Přidat Výhodu">+</button
+    >
   </div>
-  {#if threat > 0 || advantage > 0}
+  {#if threat !== DEFAULT_THREAT || advantage > 0}
     <p class="muted">
-      Po skončení konfliktu Ohrožení zaniká a Výhoda propadá.
+      Po skončení konfliktu vraťte Ohrožení na {DEFAULT_THREAT}, Výhoda propadá.
       <button onclick={endConflict}>Konec konfliktu</button>
     </p>
   {/if}
@@ -594,5 +625,17 @@
   .count {
     min-width: 2rem;
     text-align: center;
+  }
+  .num {
+    width: 3.2rem;
+    text-align: center;
+    padding: 0.3rem 0.2rem;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .num::-webkit-inner-spin-button,
+  .num::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 </style>
