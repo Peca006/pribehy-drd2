@@ -1,5 +1,15 @@
 # Změny
 
+## 0.3.8 (17. 11. 2026)
+
+- **Knihy a kapitoly:** Příručka ukazuje knihy a pod nimi kapitoly; Předchozí a Další listuje v rámci jedné knihy.
+- **Bestiář (kniha):** kapitoly Bytosti v příbězích, Jak bytosti číst, hrát a tvořit a pět druhů bytostí s vlastními úvody (dřív chyběly). U úvodu druhu je tlačítko na jeho bytosti v Bestiáři.
+- **Bytosti ze Základních pravidel** (43 bytostí z kapitoly Bestiář) jsou v Bestiáři spolu s bytostmi z Bestiáře.
+- **Bestiář (seznam):** filtr prostředí (ikony, výběr více najednou, prázdný čtvereček = bez uvedeného prostředí) a řazení abecedně nebo podle druhů.
+- **Hledání v knihách:** fulltext přes kapitoly (po oddílech), bytosti a pojmy, bez diakritiky, s úryvky a skokem na oddíl.
+- **Rejstřík** pojmů: začátky knih, abecední seznam, další místa u pojmů v závorce (doplňují se ručně v `src/data/index-extra.json`).
+- Po aktualizaci je potřeba balíčky postavit znovu (`node tools/srd/build.mjs` a `node tools/srd/build-bestiar.mjs`) a načíst ve Více.
+
 ## 0.3.7 (17. 11. 2026)
 
 - Oprava: nadpis „Prastaří a“ v Bestiáři ukáže ikonu (lebka s korunou) místo písmene.
