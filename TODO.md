@@ -1,31 +1,32 @@
 # Nápady a dolaďování
 
-## Otevřené úkoly (stav k 13. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.3.5, 17. 11. 2026)
 
-**Nasazeno (main = develop):** pět záložek, dialog Jizva ze Zdrojů, dočasné Zdroje z jizvy, výběr rasy klepnutím, kratší
-tlačítka a šipky, **výbava bez balíčku** (sady Obyčejná / Ceněná / Drahá vloží holý výčet položek, jen když nepřepíše vlastní
-text; ceník odkazem do SRD; v kostře jsou jen krátké názvy položek) a **generátor jmen** (markovský, z příkladů jmen rasy
-v balíčku, tlačítko v kroku Shrnutí; bez balíčku nic nenabízí).
+**Nasazeno (main = develop, v0.3.5):** audiogram (sloučen, přenos funguje QPSK 1200 i BPSK 800, Zkouška režimů ve Více),
+Suroviny po druzích, léčení Jizvy, Hotovost (dukáty / groše / haléře), výroba a opravy, lektvary a masti, nástrahy.
+Podrobně v `CHANGELOG.md` a `PLAN-POMUCKY.md`.
 
-**Větev `audiogram` (pushnutá, nesloučená, mimo vydávanou aplikaci):** zvukový přenos kódu. Hotové jádro AFSK 300/600/1200,
-rámce s CRC, handshake (CALL / READY podle změřeného odstupu signálu), dávky s ACK a opakováním, Web Audio vrstva a tlačítka
-Vysílat / Přijímat zvukem; testy se simulovaným kanálem. **Nedodělané:** skutečný zvuk mezi telefony nezkoušen (ladit
-hlasitost, předzvuk, odstup), PSK / QAM / OFDM nejsou (jen AFSK; rozhraní režimů je připravené), chybí oprava chyb (FEC).
-Podrobně v `AUDIOGRAM.md` ve větvi. Další krok: zkouška na dvou telefonech, potom PSK a OFDM.
+**Odloženo (pomůcky):** Kouzla (11d2, po načtení pravidel magie), Kořist (11e, patří k Výpravám), předvyplnění panelu Hod
+u výroby a nástrah, názvy dovedností z balíčku a odkaz do SRD v pomůckách, nápověda „?“ k léčení.
 
-**Přenosy (pořadí):** ruční slučování konfliktů při importu revizí postavy → Wi-Fi / WebRTC → QR na celou obrazovku a tisk
-(hlavně počítač) → NFC (čtení a zápis tagů, jen Chrome na Androidu; úplně nakonec).
+**Audiogram:** DSP (zúžení pásma, LDPC) a další zkoušky čekají na testery a zařízení; viz `AUDIOGRAM.md`.
 
-**Postava:** Suroviny (viz níže), Povolání z Her mocných a mistrovská povolání (čeká na odpověď z Altaru), dovednosti bez balíčku
-jako odkaz do SRD (po odpovědi o textech pravidel).
+**Otevřené k rozhodnutí:** organizace balíčků, kapitol a bytostí (přehled „kapitoly, druhy, bytosti“, seskupení kapitol
+v Příručce podle knihy); postřeh k ikonkám prostředí v Bestiáři.
+
+**Před první beta verzí:** `schema` u uložených dat, řetězec `migrate`, celkový export a import `.json`, `FORMAT.md`.
+
+**Přenosy (pořadí):** ruční slučování konfliktů při importu revizí → Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC.
+
+**Postava:** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
 
 **Čeká na jiné:** Altar (texty pravidel), d20.cz (CORS pro SRD).
 
-**K ověření na telefonu:** share target, cyklus aktualizace PWA, QR díl 500 znaků na A52s, převodník SRD v Chromu, nové Zdroje a
-dialog Jizva na skutečném displeji.
+**K ověření na telefonu:** nové dialogy (léčení, výroba, lektvary, nástrahy), Hotovost, aktualizace PWA, přenos postavy
+s novými poli mezi zařízeními.
 
-**Další milník: Výpravy.** Sekce pro vypravěče s podklady pro tažení, výpravy a dobrodružství (aplikace je pro uživatele, který
-je Průvodcem i hráčem: spravuje postavy jako hráč a družiny jako vypravěč). Dořešit obsah a vazbu na družiny a žurnál.
+**Další milník: Výpravy.** Sekce pro vypravěče s podklady pro tažení, výpravy a dobrodružství, kořist, vazba na družiny
+a žurnál; ukázkové dobrodružství a skupiny bytostí do ukázkových dat.
 
 ### Suroviny (vysvětlení a návrh)
 
