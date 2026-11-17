@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { ATTRIBUTES, type Character } from '../../core/character/model'
   import type { Attribute } from '../../core/content/schema'
   import {
     availableOf,
     effectiveAttributes,
+    DEFAULT_THREAT,
     loadThreat,
     MAX_THREAT,
     saveThreat,
@@ -27,6 +29,7 @@
   import { bestTwo, MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
   import { professions } from '../../core/library.svelte'
   import Guide from './Guide.svelte'
+  import { rollRequest } from './rollRequest.svelte'
 
   // Vyhodnocení akce: zkouška nebo výzva. Hod (2k6 + úroveň povolání), vyčerpání, následky, Ohrožení a Výhody.
   // Kostky lze hodit tady, nebo zadat z fyzických kostek.
@@ -201,6 +204,19 @@
     outcome = 'vycerpano'
   }
   /** Konec konfliktu: Ohrožení zaniká a nespotřebovaná Výhoda propadá. */
+  // žádost z výroby nebo nástrah: záměr a druh se předvyplní; není-li Ohrožení nastavené, platí výchozí
+  let seenRequest = rollRequest.n
+  $effect(() => {
+    const n = rollRequest.n
+    if (n === seenRequest) return
+    seenRequest = n
+    untrack(() => {
+      setKind(rollRequest.kind)
+      newAction()
+      intent = rollRequest.intent
+      if (threat === 0) setThreat(DEFAULT_THREAT)
+    })
+  })
   function endConflict() {
     setThreat(0)
     onadvantage(0)
@@ -209,7 +225,7 @@
   }
 </script>
 
-<section class="panel" aria-label="Hod">
+<section class="panel" id="roll-panel" aria-label="Hod">
   <div class="head">
     <strong>Hod</strong>
     <button class="primary" onclick={roll}>Hodit</button>

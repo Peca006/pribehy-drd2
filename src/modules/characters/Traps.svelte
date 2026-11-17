@@ -3,6 +3,7 @@
   import type { Character } from '../../core/character/model'
   import { adjustTrap, trapList, trapSummary, useTrap } from '../../core/character/traps'
   import TrapDialog from './TrapDialog.svelte'
+  import { requestRoll } from './rollRequest.svelte'
 
   // Připravené nástrahy v přehledu postavy: souhrn ve stylu pravidel, počet kusů (±) a „Použít“ (ubere jeden kus). Rychlá klepání
   // na ± se sloučí do jedné revize.
@@ -46,12 +47,14 @@
     if (parts.length) await onchange(next, `Nástrahy: ${parts.join(', ')}`)
   }
 
-  /** Použije jeden kus (spuštění vyhodnoťte jako výzvu podle postupu v Hodu); zapíše se jako samostatná revize. */
+  /** Použije jeden kus (předvyplní výzvu v panelu Hod); zapíše se jako samostatná revize. */
   async function use(id: string) {
     await flush()
     const t = character.traps[id]
     if (!t) return
     await onchange(useTrap(character, id), `Nástraha použita: ${trapSummary(t)}`)
+    // spuštění se vyhodnotí jako výzva v panelu Hod
+    requestRoll('vyzva', `Nástraha: ${t.name} (cíl: ${t.attribute})`)
   }
 
   onDestroy(() => {

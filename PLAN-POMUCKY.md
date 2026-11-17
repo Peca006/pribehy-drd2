@@ -64,7 +64,7 @@ Souhrnný řádek při evidenci druhů ukazuje součet a řádek „·“ je po�
 **Úkoly:** model, `drafts.ts` (normalizace chybějících polí), `check.ts`, `share.ts` a `compact.ts` (pole v přenosu a QR), editor a výpis
 postavy, dialog druhů, testy (staré postavy bez polí, přenos, smazání druhu s nenulovým počtem, součet).
 
-### 11b: Výroba a opravy: HOTOVO ve verzi 0.3.3 (bez lektvarů a bez předvyplnění panelu Hod; výsledek se zapisuje ručně)
+### 11b: Výroba a opravy: HOTOVO ve verzi 0.3.3 (předvyplnění panelu Hod doplněno v 0.3.9: záměr, Ohrožení výchozí 2; výsledek se zapisuje ručně)
 - Dialog „Vyrobit / opravit“ u postavy: druh (nástroj, ochranný, spotřební, nástraha, **oprava**, nouzový), cena předmětu v groších
   (ručně nebo z ceníku balíčku, je-li), návrh ceny v Surovinách (půlka; u oprav 5 × závažnost, ručně přepsatelné), řemeslník (Peníze).
 - Dva režimy: **mezi výpravami** (odečte jen Suroviny, bez hodu) a **na výpravě** (předvyplní zkoušku v panelu Hod s doporučeným Ohrožením;

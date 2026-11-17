@@ -82,6 +82,8 @@ export function saveBonus(id: string, bonus: Bonus) {
 /** Ohrožení postavy: okolnosti, v nichž se nachází (neodvíjí se od jejích vlastností). Jen ve hře, v tomto zařízení. */
 const THREAT_KEY = (id: string) => `drd2-char-threat:${id}`
 export const MAX_THREAT = 20
+/** Výchozí Ohrožení, pokud vypravěč neurčí jinak; v konfliktu platí hodnota z trackeru Ohrožení. */
+export const DEFAULT_THREAT = 2
 
 export function loadThreat(id: string): number {
   try {

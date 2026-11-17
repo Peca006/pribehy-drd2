@@ -19,6 +19,7 @@
     type CraftResult,
   } from '../../core/character/crafting'
   import { kindLabel, kindsOf } from '../../core/character/rawMaterials'
+  import { requestRoll } from './rollRequest.svelte'
 
   // Výroba a opravy: cena v Surovinách (návrh podle pravidel, jde přepsat), odečet po druzích Surovin a výsledek.
   // Mezi výpravami se výroba vyhodnocuje bez hodu (spotřebují se jen Suroviny); na výpravě hodíte zkoušku v panelu Hod
@@ -55,6 +56,27 @@
   let result = $state<CraftResult>('uspech')
   let addToEquipment = $state(true)
   let dialog: HTMLDialogElement
+  // při hodu se dialog jen skryje (rozepsané hodnoty zůstanou) a vrátí se tlačítkem „Pokračovat ve výrobě“
+  let hidden = $state(false)
+  const ROLL_LABEL: Record<string, string> = {
+    vyroba: 'Výroba',
+    oprava: 'Oprava',
+    lektvar: 'Výroba lektvaru',
+    nastraha: 'Výroba nástrahy',
+  }
+  function rollNow() {
+    const nm = (kind === 'nastraha' ? trapSpec.name : name)?.trim()
+    hidden = true
+    dialog.close()
+    requestRoll('zkouska', `${ROLL_LABEL[kind] ?? 'Výroba'}${nm ? ': ' + nm : ''}`)
+  }
+  function resume() {
+    hidden = false
+    dialog.showModal()
+  }
+  const closed = () => {
+    if (!hidden) onclose()
+  }
 
   $effect(() => {
     dialog.showModal()
@@ -127,7 +149,7 @@
   }
 </script>
 
-<dialog bind:this={dialog} {onclose} aria-label="Výroba a opravy">
+<dialog bind:this={dialog} onclose={closed} aria-label="Výroba a opravy">
   <h2>Výroba a opravy</h2>
   <div class="seg" role="group" aria-label="Druh">
     <button class:primary={kind === 'vyroba'} onclick={() => setKind('vyroba')}>Výroba</button>
@@ -200,6 +222,10 @@
     Na výpravě (zkouška)
   </label>
   {#if onTrip && kind !== 'nouzovy'}
+    <p class="muted">
+      <button onclick={rollNow}>Hodit zkoušku v panelu Hod</button>
+      Dialog se skryje, po hodu se vrátíte tlačítkem dole a zapíšete výsledek.
+    </p>
     <div class="seg" role="group" aria-label="Výsledek">
       <button class:primary={result === 'uspech'} onclick={() => (result = 'uspech')}>Podařilo se</button>
       <button class:primary={result === 'neuspech'} onclick={() => (result = 'neuspech')}>Nepodařilo se</button>
@@ -236,8 +262,19 @@
     <button onclick={() => dialog.close()}>Zrušit</button>
   </p>
 </dialog>
+{#if hidden}
+  <button class="primary resume" onclick={resume}>Pokračovat ve výrobě</button>
+{/if}
 
 <style>
+  .resume {
+    position: fixed;
+    left: 50%;
+    bottom: 4.5rem;
+    transform: translateX(-50%);
+    z-index: 20;
+    box-shadow: 0 2px 12px rgb(0 0 0 / 0.5);
+  }
   dialog {
     background: var(--drd-surface);
     color: var(--drd-text);
