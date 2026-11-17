@@ -1,5 +1,9 @@
 # Změny
 
+## 0.3.7 (17. 11. 2026)
+
+- Oprava: nadpis „Prastaří a“ v Bestiáři ukáže ikonu (lebka s korunou) místo písmene.
+
 ## 0.3.6 (17. 11. 2026)
 
 - Bestiář a Příručka: místo písmen z písma knih (Lesy b, Pláně c, …) se ukazují **ikony prostředí** (strom, tráva, hory, vlny, klas, chaloupka, zřícená věž) v nadpisech kapitol i u bytostí. Značka „a“ je **prastará bytost** (lebka s korunou).
