@@ -85,6 +85,18 @@
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
     current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
   }
+  /** Úplné zahojení: nejdřív se ukáže popis Jizvy a hráč potvrdí (kdyby to byl omyl, dá Zrušit). */
+  async function cure(c: Character, scarId: string) {
+    const s = c.scars.find((x) => x.id === scarId)
+    if (!s) return
+    const ok = await ask(
+      `${s.attribute}, závažnost ${s.severity}${s.note ? `: ${s.note}` : ''}
+
+Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
+      { title: 'Zahojit Jizvu?', ok: 'Zahojit' },
+    )
+    if (ok) await healing(c, scarId, healScar, 'Zahojení')
+  }
   let craftOpen = $state(false)
   async function crafted(next: Character, note: string) {
     await rawChange(next, note)
@@ -216,14 +228,14 @@
           {#if s.severity > 1}
             <button onclick={() => (healFor = s.id)}>Zmírnit</button>
           {/if}
-          <button onclick={() => healing(c, s.id, healScar, 'Zahojení')}>Zahojeno</button>
+          <button onclick={() => cure(c, s.id)}>Zahojit</button>
         </li>
       {/each}
     </ul>
     <p class="muted">
       Jizvy se hojí mezi výpravami (dobu odhadne Průvodce, závažnější ubývají postupně); na výpravě
       je léčí dovednosti. <em>Zmírnit</em> zapíše léčení v magickém okamžiku (nový popis, cena Zdrojů, lektvar),
-      <em>Zahojeno</em> Jizvu odstraní bez platby. Vše se zapíše do deníku jako revize.
+      <em>Zahojit</em> po potvrzení Jizvu odstraní bez platby. Vše se zapíše do deníku jako revize.
     </p>
     {#if healFor}
       <HealDialog

@@ -1,9 +1,13 @@
 <script lang="ts">
+  import { outdatedPacks } from '../core/content/builds'
+  import { library } from '../core/library.svelte'
   import { applyUpdate, install, pwa } from '../core/pwa.svelte'
 
   // Pruhy nad navigací: nová verze ke stažení a nabídka instalace aplikace na plochu.
   let hideInstall = $state(false)
   let busy = $state(false)
+  let hideOutdated = $state(false)
+  const outdated = $derived(library.loaded ? outdatedPacks(library.packs) : [])
   const showInstall = $derived(pwa.installable && !pwa.installed && !hideInstall)
 
   async function update() {
@@ -17,6 +21,17 @@
     <span>Je dostupná nová verze aplikace. Rozepsané úpravy zůstanou uložené.</span>
     <button class="primary" disabled={busy} onclick={update}>Obnovit</button>
     <button onclick={() => (pwa.updateDismissed = true)} aria-label="Skrýt">Později</button>
+  </div>
+{:else if outdated.length && !hideOutdated}
+  <div class="bar" role="status">
+    <span>
+      {outdated.length === 1 ? 'Balíček' : 'Balíčky'}
+      {outdated.map((p) => `„${p.manifest.name}“`).join(', ')}
+      {outdated.length === 1 ? 'je' : 'jsou'} ve starší podobě, než aplikace potřebuje. Vytvořte
+      {outdated.length === 1 ? 'ho' : 'je'} znovu (Více, Převod ze SRD) a načtěte.
+    </span>
+    <a class="btn primary" href="#/knihovna">Více</a>
+    <button onclick={() => (hideOutdated = true)} aria-label="Skrýt">Později</button>
   </div>
 {:else if showInstall}
   <div class="bar" role="status">

@@ -19,6 +19,8 @@ export interface PackManifest {
   source: { book: string; edition: string }
   /** pořadí knihy v příručce (menší první); bez něj pravidla (s povoláními) před ostatními */
   order?: number
+  /** číslo sestavení balíčku z převodníku SRD (viz `builds.ts`); starší balíček aplikace nabídne převést znovu */
+  build?: number
   /** balíčky, jejichž obsah tento balíček předpokládá */
   requires?: string[]
 }

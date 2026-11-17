@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ask } from '../../core/confirm.svelte'
   import { installPack, removePack } from '../../core/content/store'
+  import { outdatedPacks } from '../../core/content/builds'
   import { library, refreshLibrary } from '../../core/library.svelte'
   import SrdImport from './SrdImport.svelte'
 
@@ -54,6 +55,12 @@
           · {p.races.length} ras{/if}{#if p.creatures?.length}
           · {p.creatures.length} bytostí{/if}
       </div>
+      {#if outdatedPacks([p]).length}
+        <div class="error">
+          Starší podoba balíčku: vytvořte ho znovu (Převod ze SRD) a načtěte, aby fungovaly nové
+          funkce.
+        </div>
+      {/if}
     </div>
     <button onclick={() => remove(p.manifest.id)}>Odebrat</button>
   </div>

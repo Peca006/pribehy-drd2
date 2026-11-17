@@ -50,6 +50,7 @@
   }
   p {
     margin: 0 0 1rem;
+    white-space: pre-line;
   }
   .actions {
     display: flex;

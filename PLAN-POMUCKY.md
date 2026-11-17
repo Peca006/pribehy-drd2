@@ -31,7 +31,7 @@ v `TODO.md` (kroky 1 až 10 hotové).
 
 - Hody a výsledek: `src/core/character/roll.ts`, panel `Roll.svelte` (zkouška, výzva, střet, manévry, iniciativa, Ohrožení, vyčerpání).
 - Zdroje a čerpání: `play.ts` (jen v zařízení), `Resources.svelte`; dočasné Zdroje ze sebezasazené Jizvy.
-- Jizvy: `healing.ts` (`easeScar`, `healScar`, `inflictScar`), `ScarDialog.svelte`, tlačítka „Zmírnit o 1“ a „Zahojeno“ v `Characters.svelte`
+- Jizvy: `healing.ts` (`easeScar`, `healScar`, `inflictScar`), `ScarDialog.svelte`, tlačítka „Zmírnit o 1“ a „Zahojit“ v `Characters.svelte`
   (rozhoduje Průvodce mezi výpravami).
 - Postup vyhodnocení: `guide.ts`, `Guide.svelte` (karty s odkazy do příručky).
 - Hotovost: pole `cash` v haléřích v modelu postavy (v deníku revizí, v QR a při sdílení).

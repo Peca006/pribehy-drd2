@@ -17,6 +17,8 @@ import {
 } from './derive.mjs'
 
 const RULES_ID = 'drd2-pravidla-2'
+/** Číslo sestavení balíčků; musí odpovídat `EXPECTED_BUILD` v `src/core/content/builds.ts` (hlídá test). */
+export const PACK_BUILD = 2
 
 /** Stránky Základní příručky a Bestiáře (název souboru bez `.html`), kdyby je nešlo zjistit z navigace. */
 export const RULES_PAGES = [
@@ -119,6 +121,7 @@ export function finishRulesPack({ professions, chapters, creatures = [] }) {
       id: RULES_ID,
       name: 'Dračí doupě 2 – Pravidla (SRD)',
       version: '2.0.0',
+      build: PACK_BUILD,
       source: { book: 'Dračí doupě 2: Pravidla (SRD, drd2srd.d20.cz)', edition: '2' },
     },
     chapters,
@@ -212,6 +215,7 @@ export function buildBestiarPack(pages) {
       id: ID,
       name: 'Dračí doupě 2 – Bestiář (SRD)',
       version: '2.0.0',
+      build: PACK_BUILD,
       source: { book: 'Dračí doupě 2: Bestiář (SRD, drd2srd.d20.cz)', edition: '2' },
     },
     chapters,

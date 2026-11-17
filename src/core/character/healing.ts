@@ -52,7 +52,7 @@ export function inflictScar(
 /** Cena léčení: Zdrojů za každé snížení závažnosti Jizvy o 1. */
 export const COST_PER_STEP = 5
 
-/** O kolik stupňů lze Jizvu zmírnit: 1 až (závažnost − 1); úplné zahojení je samostatná akce („Zahojeno“). */
+/** O kolik stupňů lze Jizvu zmírnit: 1 až (závažnost − 1); úplné zahojení je samostatná akce („Zahojit“). */
 export const maxSteps = (severity: number): number => Math.max(0, severity - 1)
 
 /** Cena zmírnění o `steps` stupňů ve Zdrojích. */

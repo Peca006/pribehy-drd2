@@ -19,7 +19,7 @@
 
   // Zmírnění Jizvy léčením: Jizva se rovnou sníží o 1, dá se upravit popis a závažnost (nejníž na 1, nejvýš o 1 méně než dosud).
   // Ukáže celkové snížení (k porovnání se silou magického okamžiku) a cenu 5 Zdrojů za stupeň. Zdroje z lektvaru se odečtou
-  // a zbytek si hráč rozdělí mezi své Zdroje. Úplné zahojení je samostatné tlačítko „Zahojeno“.
+  // a zbytek si hráč rozdělí mezi své Zdroje. Úplné zahojení je samostatné tlačítko „Zahojit“.
   let {
     character,
     spent,
