@@ -5,6 +5,8 @@ export interface Card {
   steps: string[]
   /** kotva v kapitole příručky `32-slozitejsi-situace` nebo celé ID kapitoly `kapitola#kotva` */
   link?: string
+  /** dovednosti související s kartou (ID bez `dovednost:`); názvy se berou z balíčku, bez něj se odkáže do SRD */
+  skills?: string[]
 }
 
 export const BASIC: Card[] = [
@@ -67,6 +69,7 @@ export const BASIC: Card[] = [
       'Léčit se lze i samotnému, ale při neúspěchu platí vyčerpání i Zdroje.',
     ],
     link: '36-kouzla-nastrahy-leceni',
+    skills: ['mastickar/masti-a-bezne-jedy', 'alchymista/vyroba-elixiru', 'alchymista/pouzivani-elixiru'],
   },
   {
     id: 'vyroba',
@@ -78,6 +81,7 @@ export const BASIC: Card[] = [
       'Výrobou nelze zasadit Jizvu. Kvalitní předměty jen s bravurní dovedností.',
     ],
     link: '35-pouzivani-dovednosti',
+    skills: ['alchymista/vyroba-elixiru', 'mastickar/masti-a-bezne-jedy', 'saman/vyroba-omamnych-latek-a-odvaru', 'alchymista/vyroba-traskavin-ziravin-a-plynnych-jedu', 'lupic/vyroba-kontaktnich-jedu'],
   },
   {
     id: 'nastrahy',
@@ -89,6 +93,7 @@ export const BASIC: Card[] = [
       'Přímo ovládaná nástraha je nástroj vlastní akce (hodí ovládající s dovedností, kterou nástrahu vyrobil), jed se do protiakce hodí zřídka.',
     ],
     link: '36-kouzla-nastrahy-leceni',
+    skills: ['alchymista/vyroba-traskavin-ziravin-a-plynnych-jedu', 'alchymista/pouzivani-traskavin-ziravin-a-plynnych-jedu', 'lupic/vyroba-kontaktnich-jedu', 'lupic/pouziti-kontaktnich-jedu'],
   },
 ]
 
@@ -169,3 +174,33 @@ export const linkOf = (c: Card) =>
     : c.link
       ? `#/ctenar/32-slozitejsi-situace/${c.link}`
       : undefined
+
+/** Odkaz na stejné místo v SRD (použije se, když není nainstalován balíček s příručkou). */
+export const srdOf = (c: Card) => {
+  const l = linkOf(c)
+  if (!l) return undefined
+  const [, chapter, anchor] = /^#\/ctenar\/([^/]+)(?:\/(.+))?$/.exec(l) ?? []
+  return chapter ? `https://drd2srd.d20.cz/zakladni-prirucka/${chapter}.html${anchor ? '#' + anchor : ''}` : undefined
+}
+
+export interface SkillRef {
+  id: string
+  name: string
+  attribute?: string
+  profession: string
+}
+
+/** Názvy dovedností karty z nainstalovaného balíčku (pořadí podle karty); nenalezené se vynechají. */
+export function skillsOf(
+  c: Card,
+  professions: { name: string; skills: { id: string; name: string; attribute?: string; attributeNote?: string }[] }[],
+): SkillRef[] {
+  const out: SkillRef[] = []
+  for (const sid of c.skills ?? []) {
+    for (const p of professions) {
+      const sk = p.skills.find((x) => x.id === `dovednost:${sid}`)
+      if (sk) out.push({ id: sk.id, name: sk.name, attribute: sk.attribute ?? sk.attributeNote, profession: p.name })
+    }
+  }
+  return out
+}

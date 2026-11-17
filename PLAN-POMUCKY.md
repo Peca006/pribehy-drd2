@@ -149,7 +149,7 @@ Výroba lektvaru v 11b vytvoří záznam. Nouzové lektvary (bez Surovin) se nee
 4. **Lektvary:** stručně evidovat, na co jsou (vlastnost + druh Jizvy + počet Surovin), viz 11c2.
 5. **Kouzla:** odloženo, uživatel si nejdřív pravidla načte (11d2).
 6. **Kořist:** hráč jen zápisem v dobrodružství a položkami u postav; panel Kořist až jako podpora vypravěče u modulu Výpravy (11e).
-7. **Názvy dovedností:** ano, holé názvy a vlastnost (zdroj) z balíčku, jinak odkaz do SRD. Bez balíčku holý postup a odkaz do SRD.
+7. **Názvy dovedností (hotovo ve verzi 0.3.9, v kartách Postupu vyhodnocení):** ano, holé názvy a vlastnost (zdroj) z balíčku, jinak odkaz do SRD. Bez balíčku holý postup a odkaz do SRD.
 
 ## Formát dat a migrace (průřezově, pohlídat od 11a)
 
