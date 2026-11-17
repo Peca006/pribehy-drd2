@@ -16,6 +16,7 @@
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
   import { buildIndex, search } from '../../core/search'
   import { readerSearch } from './state.svelte'
+  import Rejstrik from './Rejstrik.svelte'
 
   // params: [ID kapitoly, kotva?] – bez parametrů se ukáže seznam kapitol
   let { params }: { params: string[] } = $props()
@@ -66,7 +67,9 @@
   })
 </script>
 
-{#if chapter}
+{#if params[0] === 'rejstrik'}
+  <Rejstrik />
+{:else if chapter}
   <nav>
     <button onclick={back}><Arrow dir="left" /> Zpět</button>
     <button onclick={() => go('ctenar')}>Kapitoly</button>
@@ -97,9 +100,10 @@
       bind:value={readerSearch.query}
       aria-label="Hledat v knihách"
     />
-    {#if hasCreatures}
-      <p><a class="btn" href="#/bestiar">Bestiář <Arrow dir="right" /></a></p>
-    {/if}
+    <p class="actions">
+      <a class="btn" href="#/ctenar/rejstrik">Rejstřík <Arrow dir="right" /></a>
+      {#if hasCreatures}<a class="btn" href="#/bestiar">Bestiář <Arrow dir="right" /></a>{/if}
+    </p>
   {/if}
   {#if searching}
     <p class="muted">
@@ -159,6 +163,11 @@
   .book h2 {
     font-size: 1.1rem;
     margin: 1.25rem 0 0.5rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   .results {
     list-style: none;

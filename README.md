@@ -77,3 +77,8 @@ modul sám, seznam modulů je v `src/modules/index.ts`. Moduly se nevolají nap�
   (odesílání, příjem a zkouška zvuku).
 - Data ukázkových postav jsou v `src/data/demo.ts`.
 - Odkazy `chapter:ID#kotva` a `term:ID` v textech se otevírají z kteréhokoli modulu.
+- **Rejstřík** (Příručka → Rejstřík) se skládá z herních pojmů balíčku. Další místa u pojmů s vysvětlením na více
+  místech a vlastní hesla se doplňují ručně v `src/data/index-extra.json` (jen ID pojmů a cíle `chapter:ID#kotva`,
+  žádné texty knih): `{ "terms": { "pojem:zdroje": ["chapter:35-pouzivani-dovednosti#suroviny"] },
+  "entries": [{ "name": "Heslo", "targets": ["chapter:ID#kotva", "chapter:ID2"] }] }`. První cíl hesla je hlavní odkaz,
+  ostatní jsou v závorce. Neznámé kapitoly se vynechají.
