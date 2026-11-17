@@ -14,6 +14,8 @@
   import { settings } from '../../core/settings.svelte'
   import BlockView from '../../ui/BlockView.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
+  import { buildIndex, search } from '../../core/search'
+  import { readerSearch } from './state.svelte'
 
   // params: [ID kapitoly, kotva?] – bez parametrů se ukáže seznam kapitol
   let { params }: { params: string[] } = $props()
@@ -23,13 +25,10 @@
   const index = $derived(siblings.findIndex((c) => c.id === params[0]))
   const prev = $derived(index > 0 ? siblings[index - 1] : undefined)
   const next = $derived(index >= 0 ? siblings[index + 1] : undefined)
-  let query = $state('')
-  const norm = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
-  const shown = $derived(
-    books()
-      .map((b) => ({ ...b, chapters: b.chapters.filter((c) => norm(c.title).includes(norm(query.trim()))) }))
-      .filter((b) => b.chapters.length),
-  )
+  const searchIndex = $derived(buildIndex(library.packs))
+  const hits = $derived(search(searchIndex, readerSearch.query))
+  const searching = $derived(readerSearch.query.trim().length >= 2)
+  const KIND_LABEL = { kapitola: 'Kapitola', bytost: 'Bytost', pojem: 'Pojem' }
   const kindLink = $derived(
     chapter?.kind
       ? {
@@ -94,30 +93,51 @@
   {#if chapters().length}
     <input
       type="search"
-      placeholder="Hledat kapitolu…"
-      bind:value={query}
-      aria-label="Hledat kapitolu"
+      placeholder="Hledat v knihách…"
+      bind:value={readerSearch.query}
+      aria-label="Hledat v knihách"
     />
     {#if hasCreatures}
       <p><a class="btn" href="#/bestiar">Bestiář <Arrow dir="right" /></a></p>
     {/if}
   {/if}
-  {#each shown as book (book.id)}
-    <section class="book">
-      <h2>{book.name}</h2>
-      <ul class="chapters">
-        {#each book.chapters as c}
-          <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
-        {/each}
-      </ul>
-    </section>
-  {:else}
+  {#if searching}
     <p class="muted">
-      {chapters().length
-        ? 'Žádná kapitola neodpovídá hledání.'
-        : 'Není nainstalována žádná příručka. Načtěte balíček v části Více.'}
+      {hits.length ? `Nalezeno: ${hits.length}${hits.length >= 60 ? '+' : ''}` : 'Nic nenalezeno.'}
     </p>
-  {/each}
+    <ul class="results">
+      {#each hits as h (h.entry.href + h.entry.title)}
+        <li>
+          <a class="btn panel" href={h.entry.href}>
+            <strong>{h.entry.title}</strong>
+            <span class="muted where">{KIND_LABEL[h.entry.kind]} · {h.entry.where}</span>
+            {#if h.snippet.length}
+              <span class="snippet"
+                >{#each h.snippet as part}{#if part.hit}<mark>{part.t}</mark>{:else}{part.t}{/if}{/each}</span
+              >
+            {/if}
+          </a>
+        </li>
+      {/each}
+    </ul>
+  {:else}
+    {#each books() as book (book.id)}
+      <section class="book">
+        <h2>{book.name}</h2>
+        <ul class="chapters">
+          {#each book.chapters as c}
+            <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
+          {/each}
+        </ul>
+      </section>
+    {:else}
+      <p class="muted">
+        {chapters().length
+          ? ''
+          : 'Není nainstalována žádná příručka. Načtěte balíček v části Více.'}
+      </p>
+    {/each}
+  {/if}
 {/if}
 
 <style>
@@ -139,6 +159,29 @@
   .book h2 {
     font-size: 1.1rem;
     margin: 1.25rem 0 0.5rem;
+  }
+  .results {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .results a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .where {
+    font-size: 0.8rem;
+  }
+  .snippet {
+    font-size: 0.9rem;
+    font-weight: normal;
+  }
+  mark {
+    background: color-mix(in srgb, var(--drd-accent) 35%, transparent);
+    color: inherit;
+    border-radius: 2px;
   }
   .chapters .btn {
     display: block;
