@@ -1,4 +1,6 @@
 <script lang="ts">
+  import EnvIcon from '../../ui/EnvIcon.svelte'
+  import { ENVIRONMENTS } from '../../core/environments'
   import type { Creature } from '../../core/content/schema'
   import { termIndex } from '../../core/library.svelte'
   import { settings } from '../../core/settings.svelte'
@@ -22,7 +24,9 @@
 
 <h1>
   {creature.name}
-  {#if creature.glyphs}<span class="glyphs" title="označení v knize">{creature.glyphs}</span>{/if}
+  {#if creature.glyphs}<span class="glyphs" title="označení v knize"
+      >{#each creature.glyphs as g}{#if ENVIRONMENTS[g]}<EnvIcon letter={g} size="1em" />{:else}{g}{/if}{/each}</span
+    >{/if}
 </h1>
 <p class="muted">
   {kindName(creature.kind)}{#if isUser(creature) && creature.kind !== 'vlastni'}
@@ -83,7 +87,8 @@
 
 <style>
   .glyphs {
-    font-size: 0.5em;
+    font-size: 0.6em;
+    letter-spacing: 0.15em;
     color: var(--drd-muted);
     font-weight: normal;
   }

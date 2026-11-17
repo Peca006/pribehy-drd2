@@ -4,6 +4,8 @@
   import Inline from './Inline.svelte'
   import Self from './BlockView.svelte'
   import ZoomImage from './ZoomImage.svelte'
+  import EnvIcon from './EnvIcon.svelte'
+  import { splitEnvHeading } from '../core/environments'
 
   let { blocks, onlink }: { blocks: Block[]; onlink?: (href: string) => void } = $props()
 </script>
@@ -25,7 +27,9 @@
   {#if b.type === 'heading'}
     {#if b.level === 2}<h2 id={b.id}>{b.text}</h2>
     {:else if b.level === 3}<h3 id={b.id}>{b.text}</h3>
-    {:else}<h4 id={b.id}>{b.text}</h4>{/if}
+    {:else}{@const env = splitEnvHeading(b.text)}<h4 id={b.id}>
+        {#if env}{env.name} <EnvIcon letter={env.letter} size="1.1em" />{:else}{b.text}{/if}
+      </h4>{/if}
   {:else if b.type === 'p'}
     <p><Inline nodes={parseInline(b.text)} {onlink} /></p>
   {:else if b.type === 'list'}
