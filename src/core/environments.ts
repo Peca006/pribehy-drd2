@@ -10,9 +10,13 @@ export const ENVIRONMENTS: Record<string, string> = {
   a: 'Prastará bytost',
 }
 
+// nadpisy v knize, které se liší od názvu značky
+const HEADING_ALIASES: Record<string, string[]> = { a: ['Prastaří'] }
+
 /** Nadpis typu „Lesy b“ (písmeno značky na konci) → název a písmeno; jinak undefined. */
 export function splitEnvHeading(text: string): { name: string; letter: string } | undefined {
   const m = /^(.+\S) ([b-h])$/.exec(text)
   if (!m) return undefined
-  return ENVIRONMENTS[m[2]] === m[1] ? { name: m[1], letter: m[2] } : undefined
+  const names = [ENVIRONMENTS[m[2]], ...(HEADING_ALIASES[m[2]] ?? [])]
+  return names.includes(m[1]) ? { name: m[1], letter: m[2] } : undefined
 }
