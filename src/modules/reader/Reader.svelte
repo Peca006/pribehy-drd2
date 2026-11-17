@@ -6,6 +6,7 @@
     creatureKinds,
     library,
     packCreatures,
+    professionBooks,
     termIndex,
     terms,
   } from '../../core/library.svelte'
@@ -17,6 +18,7 @@
   import { buildIndex, search } from '../../core/search'
   import { readerSearch } from './state.svelte'
   import Rejstrik from './Rejstrik.svelte'
+  import ProfessionView from './ProfessionView.svelte'
 
   // params: [ID kapitoly, kotva?] – bez parametrů se ukáže seznam kapitol
   let { params }: { params: string[] } = $props()
@@ -69,6 +71,8 @@
 
 {#if params[0] === 'rejstrik'}
   <Rejstrik />
+{:else if params[0] === 'povolani'}
+  <ProfessionView id={params[1] ?? ''} />
 {:else if chapter}
   <nav>
     <button onclick={back}><Arrow dir="left" /> Zpět</button>
@@ -93,7 +97,7 @@
   </nav>
 {:else}
   <h1>Příručka</h1>
-  {#if chapters().length}
+  {#if chapters().length || professionBooks().length}
     <input
       type="search"
       placeholder="Hledat v knihách…"
@@ -136,10 +140,20 @@
       </section>
     {:else}
       <p class="muted">
-        {chapters().length
+        {professionBooks().length
           ? ''
           : 'Není nainstalována žádná příručka. Načtěte balíček v části Více.'}
       </p>
+    {/each}
+    {#each professionBooks() as book (book.id)}
+      <section class="book">
+        <h2>{book.name}</h2>
+        <ul class="chapters">
+          {#each book.professions as p}
+            <li><a class="btn" href={'#/ctenar/povolani/' + encodeURIComponent(p.id)}>{p.name}</a></li>
+          {/each}
+        </ul>
+      </section>
     {/each}
   {/if}
 {/if}

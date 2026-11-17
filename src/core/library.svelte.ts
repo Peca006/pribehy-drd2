@@ -1,6 +1,6 @@
 // Knihovna obsahu: nainstalované balíčky v paměti, hledání položek podle ContentId a pojmů.
 import skeletonData from '../data/skeleton.json'
-import { booksOf, type Book } from './books'
+import { booksOf, professionBooksOf, type Book, type ProfessionBook } from './books'
 import { listPacks } from './content/store'
 import type {
   Ability,
@@ -60,6 +60,8 @@ export const creationRules = (): CreationRules | undefined =>
 
 /** Knihy s kapitolami v pořadí příručky (pravidla první). */
 export const books = (): Book[] => booksOf(library.packs)
+/** Balíčky jen s povoláními (např. Hry mocných) pro samostatnou sekci Příručky. */
+export const professionBooks = (): ProfessionBook[] => professionBooksOf(library.packs)
 export const chapters = (): Chapter[] => books().flatMap((b) => b.chapters)
 export const professions = (): Profession[] => all((p) => p.professions)
 export const races = (): Race[] => all((p) => p.races)

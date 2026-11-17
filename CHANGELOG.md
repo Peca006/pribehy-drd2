@@ -1,5 +1,9 @@
 # Změny
 
+## 0.3.10 (17. 11. 2026)
+
+- **Příručka:** balíček, který přináší jen povolání bez kapitol (např. **Hry mocných** s mistrovskými povoláními), má v Příručce vlastní sekci. Povolání otevřete klepnutím: úvod, dovednosti a schopnosti.
+
 ## 0.3.9 (17. 11. 2026)
 
 - **Ohrožení** se v panelu Hod bere vždy z trackeru: výchozí 2, rozsah 1 až 99, pole s ± (číslo lze i napsat). Stejné ovládání má Výhoda. Cena vyčerpání je rovna Ohrožení. **Konec konfliktu** vrátí Ohrožení na 2 a Výhodu na 0.

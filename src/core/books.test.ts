@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { booksOf } from './books'
+import { booksOf, professionBooksOf } from './books'
 import type { ContentPack } from './content/schema'
 
 const pack = (id: string, chapters: string[], extra: Partial<ContentPack> = {}): ContentPack =>
@@ -25,5 +25,16 @@ describe('booksOf', () => {
     const b = pack('b', ['1'])
     b.manifest.order = 1
     expect(booksOf([a, b]).map((x) => x.id)).toEqual(['b', 'a'])
+  })
+})
+
+describe('professionBooksOf', () => {
+  it('vrátí jen balíčky s povoláními bez kapitol', () => {
+    const rules = pack('pravidla', ['11-a'], { professions: [{} as never] })
+    const power = pack('mocni', [], { professions: [{ id: 'p', name: 'Paladin' } as never] })
+    const empty = pack('nic', [])
+    expect(professionBooksOf([rules, power, empty]).map((b) => [b.id, b.professions.length])).toEqual([
+      ['mocni', 1],
+    ])
   })
 })
