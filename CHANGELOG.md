@@ -1,5 +1,12 @@
 # Změny
 
+## 0.3.9 (17. 11. 2026)
+
+- **Ohrožení** se v panelu Hod bere vždy z trackeru: výchozí 2, rozsah 1 až 99, pole s ± (číslo lze i napsat). Stejné ovládání má Výhoda. Cena vyčerpání je rovna Ohrožení. **Konec konfliktu** vrátí Ohrožení na 2 a Výhodu na 0.
+- **Výroba a nástrahy → panel Hod:** u výroby „Na výpravě“ tlačítko **Hodit zkoušku v panelu Hod** (dialog se skryje, rozepsané hodnoty zůstanou, vrátíte se tlačítkem Pokračovat ve výrobě); **Použít** nástrahu předvyplní výzvu. Ohrožení zůstává podle trackeru.
+- **Postup vyhodnocení:** karty Léčení, Výroba a Nástrahy ukazují související dovednosti (názvy z balíčku, bez balíčku odkaz do SRD).
+- **Léčení Jizvy:** v dialogu je nápověda „?“ (postup, dovednosti, odkaz do příručky nebo SRD).
+
 ## 0.3.8 (17. 11. 2026)
 
 - **Knihy a kapitoly:** Příručka ukazuje knihy a pod nimi kapitoly; Předchozí a Další listuje v rámci jedné knihy.
