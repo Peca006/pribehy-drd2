@@ -1,5 +1,9 @@
 # Změny
 
+## 0.3.11 (17. 11. 2026)
+
+- **Příručka:** nový rozcestník nahoře. Vedle Rejstříku je tlačítko pro každou další načtenou knihu (Bestiář, Hry mocných), které posune stránku na nadpis její sekce. Základní pravidla jsou hned nahoře, tlačítko nemají. Tlačítko Bestiář už neotevírá modul Bestiáře (ten zůstává na záložce Bestiář a v kapitolách druhů).
+
 ## 0.3.10 (17. 11. 2026)
 
 - **Příručka:** balíček, který přináší jen povolání bez kapitol (např. **Hry mocných** s mistrovskými povoláními), má v Příručce vlastní sekci. Povolání otevřete klepnutím: úvod, dovednosti a schopnosti.
