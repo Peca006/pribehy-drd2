@@ -1,4 +1,4 @@
-// Značky prostředí. V knihách je kreslí písmo „drd2-font“ (písmena b až h); my je ukazujeme jako vlastní ikony.
+// Značky prostředí. V knihách je kreslí písmo „drd2-font“ (písmena b až h; a = prastará bytost); my je ukazujeme jako vlastní ikony.
 export const ENVIRONMENTS: Record<string, string> = {
   b: 'Lesy',
   c: 'Pláně',
@@ -7,6 +7,7 @@ export const ENVIRONMENTS: Record<string, string> = {
   f: 'Udržovaná krajina',
   g: 'Lidská sídla',
   h: 'Ruiny',
+  a: 'Prastará bytost',
 }
 
 /** Nadpis typu „Lesy b“ (písmeno značky na konci) → název a písmeno; jinak undefined. */

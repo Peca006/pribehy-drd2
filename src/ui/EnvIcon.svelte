@@ -21,7 +21,14 @@
     aria-label={label}
   >
     <title>{label}</title>
-    {#if letter === 'b'}
+    {#if letter === 'a'}
+      <!-- královská lebka (prastará bytost) -->
+      <path d="M7 8 6 3.5l3 2 3-3 3 3 3-2L17 8z" fill="currentColor" fill-opacity="0.25" />
+      <path d="M6.5 14c-.2-3.5 2-5.5 5.5-5.5s5.7 2 5.5 5.5c-.1 1.5-.8 2.5-1.8 3.2V21H9.3v-3.8C7.3 16.5 6.6 15.5 6.5 14z" />
+      <circle cx="9.5" cy="14" r="1.4" fill="currentColor" />
+      <circle cx="14.5" cy="14" r="1.4" fill="currentColor" />
+      <path d="M12 15.8l-.7 1.6h1.4zM10.7 21v-2M12 21v-2M13.3 21v-2" />
+    {:else if letter === 'b'}
       <!-- strom (jehličnan) -->
       <path d="M12 2.5 6.5 10h3L5 16h14l-4.5-6h3z" fill="currentColor" fill-opacity="0.25" />
       <path d="M12 16v5.5" />
