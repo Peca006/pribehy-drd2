@@ -32,10 +32,3 @@
     <p><Inline nodes={parseInline(part.p)} /></p>
   {/if}
 {/each}
-
-<style>
-  .nodesc {
-    font-size: 0.85rem;
-    margin: 0.25rem 0;
-  }
-</style>

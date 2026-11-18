@@ -140,7 +140,7 @@ export class AudioSession {
   }
 
   close() {
-    this.proc && (this.proc.onaudioprocess = null)
+    if (this.proc) this.proc.onaudioprocess = null
     this.stream?.getTracks().forEach((t) => t.stop())
     void this.ctx.close()
   }
@@ -181,7 +181,7 @@ export class AudioSession {
     let active = false
     let quietFor = 0
     let floor = 0
-    let noise = 0.01
+    let noise: number
     try {
       while (performance.now() - t0 < maxSeconds * 1000) {
         await sleep(block * 1000, signal)

@@ -69,7 +69,7 @@ export function rsDecode(word: Uint8Array, nroots: number): number {
   }
   if (clean) return 0
   // Berlekamp–Massey
-  let C = [1]
+  const C = [1]
   let B = [1]
   let L = 0
   let m = 1

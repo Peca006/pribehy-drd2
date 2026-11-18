@@ -66,7 +66,6 @@
   {#if error}<p class="error" role="alert">{error}</p>{/if}
 {:else}
   <div class="cam">
-    <!-- svelte-ignore a11y_media_has_caption -->
     <video bind:this={video} playsinline muted></video>
     <button onclick={stop}>Zastavit kameru</button>
   </div>

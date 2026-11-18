@@ -30,7 +30,6 @@ export function suggestCost(kind: CraftKind, priceGroschen: number, severity: nu
 
 /** Rozdělení spotřeby: klíč `''` = Suroviny bez druhu, jinak ID druhu. */
 export type Alloc = Record<string, number>
-const keyOf = (ref: KindRef) => ref ?? ''
 const refOf = (key: string): KindRef => (key === '' ? undefined : key)
 
 /** Suroviny dostupné k rozdělení: bez druhu a po druzích (v pořadí vzniku). */

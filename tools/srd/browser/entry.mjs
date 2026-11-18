@@ -23,7 +23,7 @@ async function page(section, name) {
 function discover(section, fallback) {
   const found = new Set()
   for (const a of document.querySelectorAll(`a[href*="/${section}/"]`)) {
-    const m = a.getAttribute('href').match(new RegExp(`/${section}/(\d\d-[a-z0-9-]+)\.html`))
+    const m = a.getAttribute('href').match(new RegExp(`/${section}/(\\d\\d-[a-z0-9-]+)\\.html`))
     if (m) found.add(m[1])
   }
   return found.size >= fallback.length ? [...found].sort() : fallback

@@ -19,7 +19,7 @@
   {:else if n.t === 'strong'}<strong><Self nodes={n.c} {onlink} /></strong>
   {:else if n.t === 'term' && !n.plain && termId(n.c)}<a
       class="term"
-      href={'#/ctenar'}
+      href="#/ctenar"
       onclick={(e) => {
         e.preventDefault()
         openRef('term:' + termId(n.c))

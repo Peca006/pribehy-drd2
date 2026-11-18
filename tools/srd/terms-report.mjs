@@ -27,7 +27,10 @@ for (const p of packs) {
   for (const c of p.chapters ?? []) walkBlocks(c.blocks)
   for (const pr of p.professions) {
     note(pr.intro)
-    for (const a of pr.abilities) (note(a.text), a.flavor && note(a.flavor))
+    for (const a of pr.abilities) {
+      note(a.text)
+      if (a.flavor) note(a.flavor)
+    }
   }
   for (const r of p.races ?? []) for (const a of r.abilities) note(a.text)
   for (const c of p.creatures ?? []) {

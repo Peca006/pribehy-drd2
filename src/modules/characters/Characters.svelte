@@ -5,7 +5,6 @@
   import { hasCharacterDraft } from '../../core/character/drafts'
   import { loadReviews, type Reviews } from '../../core/character/reviews'
   import {
-    ATTRIBUTES,
     characterOf,
     type ChangeEvent,
     type Character,

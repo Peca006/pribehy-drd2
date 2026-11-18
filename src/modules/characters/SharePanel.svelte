@@ -20,7 +20,6 @@
   let reviews = $state<Reviews>({ status: {} })
   let mode = $state<'nove' | 'cela'>('nove')
   let code = $state('')
-  let note = $state('')
 
   onMount(async () => {
     log = await getLog(id)

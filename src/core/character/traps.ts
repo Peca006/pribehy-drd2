@@ -1,7 +1,6 @@
 // Nástrahy (pasti, třaskaviny, žíraviny, jedy): stručná evidence připravených nástrah postavy a výpočet ceny v Surovinách.
 // Aplikace jen počítá a zapisuje; popis zamýšleného účinku a slabiny je text hráče. Čísla z pravidel jsou návrh (cenu jde přepsat).
 import { ATTRIBUTES, newId, type Character, type Trap } from './model'
-import type { Attribute } from '../content/schema'
 import { cleanCount } from './rawMaterials'
 
 export type TrapType = 'jednoducha' | 'mechanicka' | 'trask' | 'jed' | 'kontaktni' | 'plynny' | 'omamna' | 'jina'

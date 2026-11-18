@@ -67,7 +67,7 @@ const HTML_FIXES = [
   ],
 ]
 
-export const basename = (p) => p.split(/[\/]/).pop().split(/[?#]/)[0]
+export const basename = (p) => p.split('/').pop().split(/[?#]/)[0]
 
 /** Projde bloky kapitoly (i vnořené) a zavolá `fn` pro každý blok `image`. */
 export function walkImages(blocks, fn) {

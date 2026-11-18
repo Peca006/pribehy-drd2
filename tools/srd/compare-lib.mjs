@@ -32,7 +32,10 @@ export function flattenBlocks(blocks, out = []) {
       walk(b.items)
     } else if (b.type === 'table') b.rows.forEach((r) => out.push(r.join(' ')))
     else if (b.type === 'quote') flattenBlocks(b.blocks, out)
-    else if (b.type === 'card') (out.push(b.title), flattenBlocks(b.blocks, out))
+    else if (b.type === 'card') {
+      out.push(b.title)
+      flattenBlocks(b.blocks, out)
+    }
   }
   return out
 }
@@ -52,7 +55,10 @@ function uncovered(s, other) {
   for (let i = 0; i <= s.length; i++) {
     const c = i === s.length ? 1 : cov[i]
     if (!c && start < 0) start = i
-    if (c && start >= 0) (out.push([start, i]), (start = -1))
+    if (c && start >= 0) {
+      out.push([start, i])
+      start = -1
+    }
   }
   return out
 }

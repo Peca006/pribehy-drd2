@@ -29,7 +29,7 @@
     type Dice,
     type Side,
   } from '../../core/character/roll'
-  import { bestTwo, MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
+  import { MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
   import { professions } from '../../core/library.svelte'
   import Guide from './Guide.svelte'
   import { rollRequest } from './rollRequest.svelte'

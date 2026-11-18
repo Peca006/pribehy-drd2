@@ -15,7 +15,7 @@ import { cashFrom, UNIT_ORDER, type CashUnit } from './cash'
 import { potionFrom } from './potions'
 import { trapFrom } from './traps'
 import { cleanCount, kindFrom } from './rawMaterials'
-import { groupRevisions, type Revision } from './revisions'
+import { groupRevisions } from './revisions'
 
 export const SHARE_VERSION = 1
 const PREFIX = 'DRD2:'
@@ -130,7 +130,10 @@ async function pipe(data: Uint8Array, stream: CompressionStream | DecompressionS
   }
   const out = new Uint8Array(size)
   let o = 0
-  for (const p of parts) (out.set(p, o), (o += p.length))
+  for (const p of parts) {
+    out.set(p, o)
+    o += p.length
+  }
   return out
 }
 
