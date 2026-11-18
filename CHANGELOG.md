@@ -1,5 +1,11 @@
 # Změny
 
+## 0.3.16 (18. 11. 2026)
+
+- **Oprava:** po stažení balíčků se pruh a Příručka správně překreslí hned (ve verzi 0.3.15 se obsah ukázal až po novém načtení stránky).
+- **Balíčky ze SRD:** obrázky jsou v repozitáři zvlášť (zdrojový JSON s odkazy a soubory `.webp`), konečné balíčky se sestavují při sestavení aplikace. Pro uživatele se nic nemění, stahování je stejné.
+- **Pod kapotou:** test reaktivity knihovny; 361 testů.
+
 ## 0.3.15 (18. 11. 2026)
 
 - **Úložiště dat:** záznamy postav, družin a bytostí nesou číslo schématu a při změně formátu se migrují (databáze ve verzi 5, stávající data zůstávají). Aplikace používá jedno sdílené připojení k databázi a při aktualizaci v jiné kartě ji neblokuje.
