@@ -10,7 +10,7 @@
 
 {#if canDownload() && todo.length}
   <button class="primary" disabled={downloads.busy} onclick={() => download()}>
-    {downloads.busy ? 'Stahuji…' : `${label} (${sizeMb(todo)} MB)`}
+    {downloads.busy ? `Stahuji… ${downloads.percent} %` : `${label} (${sizeMb(todo)} MB)`}
   </button>
   {#if downloads.error}<span class="error" role="alert">{downloads.error}</span>{/if}
 {:else if !canDownload()}

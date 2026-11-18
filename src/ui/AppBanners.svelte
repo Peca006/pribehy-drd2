@@ -59,7 +59,7 @@
     </span>
     {#if canDownload()}
       <button class="primary" disabled={downloads.busy} onclick={() => download()}>
-        {downloads.busy ? 'Stahuji…' : 'Aktualizovat'}
+        {downloads.busy ? `Stahuji… ${downloads.percent} %` : 'Aktualizovat'}
       </button>
     {:else}
       <a class="btn primary" href="#/knihovna">Více</a>
@@ -70,7 +70,7 @@
   <div class="bar" role="status">
     <span>Je dostupná novější verze balíčků: {updatable.map((e) => `„${e.name}“`).join(', ')}.</span>
     <button class="primary" disabled={downloads.busy} onclick={() => download()}>
-      {downloads.busy ? 'Stahuji…' : 'Aktualizovat'}
+      {downloads.busy ? `Stahuji… ${downloads.percent} %` : 'Aktualizovat'}
     </button>
     <button onclick={() => (hideUpdate = true)} aria-label="Skrýt">Později</button>
   </div>
@@ -80,7 +80,7 @@
       Pravidla a Bestiář se dají stáhnout do aplikace ({sizeMb(todo)} MB, pak fungují i offline).
     </span>
     <button class="primary" disabled={downloads.busy} onclick={() => download()}>
-      {downloads.busy ? 'Stahuji…' : 'Stáhnout'}
+      {downloads.busy ? `Stahuji… ${downloads.percent} %` : 'Stáhnout'}
     </button>
     <button onclick={later} aria-label="Skrýt">Později</button>
   </div>

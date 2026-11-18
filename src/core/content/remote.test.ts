@@ -52,7 +52,7 @@ describe('katalog balíčků', () => {
 
   it('chyba serveru, cizí formát i stránka místo JSON dají čitelnou chybu', async () => {
     mockFetch({ 'packs/index.json': 500 })
-    await expect(fetchCatalog()).rejects.toThrow('nepodařilo načíst')
+    await expect(fetchCatalog()).rejects.toThrow('chybu 500')
     mockFetch({ 'packs/index.json': JSON.stringify({ format: 2, packs: [] }) })
     await expect(fetchCatalog()).rejects.toThrow('Neznámý formát')
     mockFetch({ 'packs/index.json': '<!doctype html><title>aplikace</title>' })
@@ -78,7 +78,7 @@ describe('stažení balíčku', () => {
 
   it('chyba serveru se nahlásí a nic se nenainstaluje', async () => {
     mockFetch({ 'packs/drd2-test.json': 404 })
-    await expect(downloadPack(entryFor(packJson('drd2-test'), 'drd2-test'))).rejects.toThrow('nezdařilo')
+    await expect(downloadPack(entryFor(packJson('drd2-test'), 'drd2-test'))).rejects.toThrow('chybu 404')
     expect(await listPacks()).toEqual([])
   })
 
@@ -99,6 +99,44 @@ describe('stažení balíčku', () => {
     expect(p.manifest.version).toBe('1.1.0')
     await removePack('drd2-test')
     expect(await listPacks()).toEqual([])
+  })
+})
+
+describe('odolnost stahování', () => {
+  it('stránka místo katalogu se pozná podle typu odpovědi', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('<html></html>', { headers: { 'content-type': 'text/html' } })),
+    )
+    await expect(fetchCatalog()).rejects.toThrow('stránku místo katalogu')
+  })
+
+  it('bez připojení dá srozumitelnou chybu', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('Failed to fetch'))))
+    await expect(fetchCatalog()).rejects.toThrow('bez připojení')
+  })
+
+  it('zaseknuté stahování se po časovém limitu přeruší', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        (_url: string, init: RequestInit) =>
+          new Promise((_res, rej) =>
+            init.signal!.addEventListener('abort', () => rej(new DOMException('aborted', 'AbortError'))),
+          ),
+      ),
+    )
+    const json = packJson('drd2-test')
+    await expect(downloadPack(entryFor(json, 'drd2-test'), undefined, 30)).rejects.toThrow('neodpovídá')
+    expect(await listPacks()).toEqual([])
+  })
+
+  it('průběh stahování hlásí počet bajtů', async () => {
+    const json = packJson('drd2-test')
+    mockFetch({ 'packs/drd2-test.json': json })
+    const got: number[] = []
+    await downloadPack(entryFor(json, 'drd2-test'), (n) => got.push(n))
+    expect(got.at(-1)).toBe(new TextEncoder().encode(json).length)
   })
 })
 

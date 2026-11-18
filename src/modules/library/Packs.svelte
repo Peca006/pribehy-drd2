@@ -57,7 +57,7 @@
       </div>
       {#if needsUpdate(e, inst)}
         <button class="primary" disabled={downloads.busy} onclick={() => download([e])}>
-          {downloads.current === e.id ? 'Stahuji…' : inst ? 'Aktualizovat' : 'Stáhnout'}
+          {downloads.current === e.id ? `Stahuji… ${downloads.percent} %` : inst ? 'Aktualizovat' : 'Stáhnout'}
         </button>
       {/if}
     </div>

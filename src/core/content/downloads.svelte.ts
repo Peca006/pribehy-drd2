@@ -9,7 +9,9 @@ export const downloads = $state<{
   busy: boolean
   /** id právě stahovaného balíčku */
   current: string
-}>({ catalog: null, error: '', busy: false, current: '' })
+  /** průběh celého stahování v procentech (podle velikostí z katalogu) */
+  percent: number
+}>({ catalog: null, error: '', busy: false, current: '', percent: 0 })
 
 let loading: Promise<void> | undefined
 
@@ -42,16 +44,23 @@ export async function download(entries: CatalogEntry[] = pending()): Promise<voi
   if (downloads.busy) return
   downloads.busy = true
   downloads.error = ''
+  downloads.percent = 0
+  const total = entries.reduce((n, e) => n + e.size, 0) || 1
+  let done = 0
   try {
     for (const e of entries) {
       downloads.current = e.id
-      await downloadPack(e)
+      await downloadPack(e, (got) => {
+        downloads.percent = Math.min(99, Math.round(((done + got) / total) * 100))
+      })
+      done += e.size
     }
   } catch (err) {
     downloads.error = err instanceof Error ? err.message : String(err)
   } finally {
     downloads.busy = false
     downloads.current = ''
+    downloads.percent = 0
     await refreshLibrary()
   }
 }
