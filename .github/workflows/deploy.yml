@@ -1,6 +1,6 @@
 # Sestaví aplikaci a nasadí ji na GitHub Pages. Nepotřebuje žádné secrets, používá vestavěný token.
 # Jednorázově: Settings → Pages → Source: GitHub Actions.
-# Texty knih (content-packs/local) v repozitáři nejsou, do nasazení se tedy nedostanou.
+# Balíčky ze SRD (content-packs/srd) se kopírují do dist/packs; ostatní texty (content-packs/local) v repozitáři nejsou.
 name: Nasazení na GitHub Pages
 
 on:
@@ -30,6 +30,9 @@ jobs:
       - run: npm test
       - run: npm run check
       - run: npm run build
+      - run: |
+          mkdir -p dist/packs
+          cp content-packs/srd/*.json dist/packs/ 2>/dev/null || true
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

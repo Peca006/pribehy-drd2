@@ -3,6 +3,7 @@
   import { installPack, removePack } from '../../core/content/store'
   import { outdatedPacks } from '../../core/content/builds'
   import { library, refreshLibrary } from '../../core/library.svelte'
+  import { downloadPack, fetchCatalog, needsUpdate, type CatalogEntry } from '../../core/content/remote'
   import SrdImport from './SrdImport.svelte'
 
   // Obsahové balíčky: načtení ze souboru, seznam nainstalovaných, odebrání a (sbalený) převod SRD.
@@ -17,6 +18,32 @@
       error = err instanceof Error ? err.message : String(err)
     }
     input.value = ''
+    await refreshLibrary()
+  }
+
+  // Balíčky ze SRD ke stažení z webu aplikace (katalog packs/index.json).
+  let catalog = $state<CatalogEntry[] | null>(null)
+  let catalogError = $state('')
+  let busyId = $state('')
+
+  async function loadCatalog() {
+    try {
+      catalog = await fetchCatalog()
+    } catch (err) {
+      catalogError = err instanceof Error ? err.message : String(err)
+    }
+  }
+  loadCatalog()
+
+  async function download(e: CatalogEntry) {
+    error = ''
+    busyId = e.id
+    try {
+      await downloadPack(e)
+    } catch (err) {
+      error = err instanceof Error ? err.message : String(err)
+    }
+    busyId = ''
     await refreshLibrary()
   }
 
@@ -36,9 +63,31 @@
 
 <h2>Obsahové balíčky</h2>
 <p class="muted">
-  Aplikace neobsahuje texty pravidel. Načtěte obsahový balíček (soubor <code>.json</code>), který
-  jste získali zvlášť.
+  Texty pravidel se do aplikace stahují jako samostatné balíčky (vychází ze SRD), nebo načtěte soubor
+  <code>.json</code>, který jste získali zvlášť.
 </p>
+{#if catalog?.length}
+  <h3>Ke stažení</h3>
+  {#each catalog as e}
+    {@const inst = library.packs.find((p) => p.manifest.id === e.id)}
+    <div class="panel pack">
+      <div>
+        <strong>{e.name}</strong>
+        <div class="muted">
+          {e.version} · {Math.round(e.size / 1024 / 1024 * 10) / 10} MB{#if inst && !needsUpdate(e, inst)}
+            · máte aktuální{/if}
+        </div>
+      </div>
+      {#if needsUpdate(e, inst)}
+        <button class="primary" disabled={busyId !== ''} onclick={() => download(e)}>
+          {busyId === e.id ? 'Stahuji…' : inst ? 'Aktualizovat' : 'Stáhnout'}
+        </button>
+      {/if}
+    </div>
+  {/each}
+{:else if catalogError}
+  <p class="muted">Balíčky ke stažení teď nejsou dostupné ({catalogError}). Použijte soubor.</p>
+{/if}
 <label class="btn primary">
   Načíst balíček…
   <input type="file" accept=".json,application/json" multiple onchange={onfile} hidden />
@@ -57,8 +106,8 @@
       </div>
       {#if outdatedPacks([p]).length}
         <div class="error">
-          Starší podoba balíčku: vytvořte ho znovu (Převod ze SRD) a načtěte, aby fungovaly nové
-          funkce.
+          Starší podoba balíčku: stáhněte ho znovu (nebo ho vytvořte přes Převod ze SRD), aby
+          fungovaly nové funkce.
         </div>
       {/if}
     </div>

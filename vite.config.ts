@@ -1,9 +1,23 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 import { VitePWA } from 'vite-plugin-pwa'
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'))
+
+// ve vývoji obsluhuje složku content-packs/srd jako /packs/ (v nasazení ji tam kopíruje workflow)
+const devPacks = {
+  name: 'dev-packs',
+  configureServer(server: { middlewares: { use: (fn: (req: any, res: any, next: () => void) => void) => void } }) {
+    server.middlewares.use((req, res, next) => {
+      const m = /^\/packs\/([\w.-]+)$/.exec((req.url ?? '').split('?')[0])
+      const file = m && `content-packs/srd/${m[1]}`
+      if (!file || !existsSync(file)) return next()
+      res.setHeader('Content-Type', 'application/json')
+      res.end(readFileSync(file))
+    })
+  },
+}
 
 export default defineConfig({
   base: './',
@@ -13,6 +27,7 @@ export default defineConfig({
   },
   plugins: [
     svelte(),
+    devPacks,
     VitePWA({
       workbox: { importScripts: ['share-target.js'], globIgnores: ['**/srd-import.js'] },
       // nová verze se stáhne na pozadí a uživateli se nabídne „Obnovit“ (registraci řeší src/core/pwa.svelte.ts)

@@ -27,8 +27,8 @@
     <span>
       {outdated.length === 1 ? 'Balíček' : 'Balíčky'}
       {outdated.map((p) => `„${p.manifest.name}“`).join(', ')}
-      {outdated.length === 1 ? 'je' : 'jsou'} ve starší podobě, než aplikace potřebuje. Vytvořte
-      {outdated.length === 1 ? 'ho' : 'je'} znovu (Více, Převod ze SRD) a načtěte.
+      {outdated.length === 1 ? 'je' : 'jsou'} ve starší podobě, než aplikace potřebuje. Stáhněte
+      {outdated.length === 1 ? 'ho' : 'je'} znovu (Více, Obsahové balíčky).
     </span>
     <a class="btn primary" href="#/knihovna">Více</a>
     <button onclick={() => (hideOutdated = true)} aria-label="Skrýt">Později</button>
