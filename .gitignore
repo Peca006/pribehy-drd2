@@ -18,5 +18,5 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Vygenerovaný bookmarklet (npm run build:bookmarklet)
+# VygenerovanÃ½ bookmarklet (npm run build:bookmarklet)
 /public/srd-import.js

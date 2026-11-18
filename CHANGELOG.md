@@ -1,5 +1,10 @@
 # Změny
 
+## 0.3.13 (18. 11. 2026)
+
+- **Balíčky ke stažení:** Základní příručka a Bestiář (v rozsahu SRD, s písemným svolením nakladatelství Altar pro nekomerční aplikaci) se stahují přímo z webu aplikace: Více, Obsahové balíčky, **Ke stažení**. Stahování ověřuje kontrolní součet a nabídne aktualizaci, když je balíček novější. Balíčky se aktualizují nezávisle na verzi aplikace. Soubor s balíčkem i převod ze SRD fungují dál (Hry mocných a další texty zůstávají jen soukromé).
+- **Upozornění** na starší balíček teď nabízí stažení místo nového převodu.
+
 ## 0.3.12 (17. 11. 2026)
 
 - **Hod:** tlačítko **Hodit** je přímo u kostek (místo políček s otazníky; „Zadat z kostek“ ukáže políčka pro fyzické kostky). Po hodu je na 2 sekundy zablokované proti omylem opakovanému hodu.
