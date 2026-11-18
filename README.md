@@ -8,8 +8,10 @@ kódem nebo QR.
 
 ## Zásady
 
-- **Aplikace neobsahuje texty pravidel.** Obsah (povolání, schopnosti, výbava, bestiář) se načítá ze samostatných
-  _obsahových balíčků_. Postava ukládá jen odkazy na obsah a vlastní hodnoty hráče.
+- **Obsah je v samostatných _obsahových balíčcích_,** ne v kódu aplikace. Pravidla a Bestiář v rozsahu SRD jsou
+  ve složce `content-packs/srd/` (se svolením Altaru, viz Právní upozornění) a aplikace je stahuje ze svého webu;
+  aktualizují se nezávisle na verzi aplikace. Další balíčky lze načíst ze souboru. Postava ukládá jen odkazy na
+  obsah a vlastní hodnoty hráče.
 - **Edice a opravy jako vrstvy (overlay):** Pravidla 2. vyd. + Bestiář 2. vyd. + Hry mocných 1. vyd.,
   volitelně Hotfix mistrovských povolání a/nebo opravy z Truhlice (Nogrim). Volí se na úrovni družiny.
 - **Skiny:** vzhled je oddělen od logiky přes design tokeny (`--drd-*`, viz `src/core/theme.ts`).

@@ -29,7 +29,7 @@
     saveSpent,
   } from '../../core/character/play'
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
-  import { findAbility, professions, races } from '../../core/library.svelte'
+  import { findAbility, professions, races, traits } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
   import type { Attribute } from '../../core/content/schema'
   import Md from '../../ui/Md.svelte'
@@ -272,8 +272,19 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
     </details>
   {/each}
 
-  {#if c.trait}<h2>Povahový rys</h2>
-    <p>{c.trait.startsWith('rys:') ? c.trait.slice(4) : c.trait}</p>{/if}
+  {#if c.trait}
+    {@const t = traits().find((x) => x.id === c.trait)}
+    <h2>Povahový rys</h2>
+    {#if t}
+      <details class="panel">
+        <summary><strong>{t.name}</strong></summary>
+        {#if t.flavor}<Md text={t.flavor} />{/if}
+        <Md text={t.text} hint srd={t.srd} />
+      </details>
+    {:else}
+      <p>{c.trait.startsWith('rys:') ? c.trait.slice(4) : c.trait}</p>
+    {/if}
+  {/if}
   {#if c.heroStory}<h2>Jak se stal hrdinou</h2>
     <p>{c.heroStory}</p>{/if}
 

@@ -1,5 +1,12 @@
 # Změny
 
+## 0.3.14 (18. 11. 2026)
+
+- **Stažení na místě:** při prvním spuštění online aplikace nabídne stažení Pravidel a Bestiáře (pruh s tlačítkem Stáhnout, volba Později se pamatuje). Nové verze balíčků se nabízejí jako Aktualizovat.
+- **Tam, kde balíček chybí** (Příručka, Rejstřík, Bestiář, tvorba postavy, výbava, popisy ras a schopností, karty Postup) je místo „načtěte balíček“ a odkazu do SRD tlačítko **Stáhnout**. Odkaz do SRD zůstává jen jako záloha bez připojení.
+- **Povahový rys** na postavě ukazuje popis z balíčku.
+- **Více:** vlastní převod ze SRD je ve sbaleném oddílu „Pro pokročilé“ (pro soukromé balíčky). Aktualizované README a TODO.
+
 ## 0.3.13 (18. 11. 2026)
 
 - **Balíčky ke stažení:** Základní příručka a Bestiář (v rozsahu SRD, s písemným svolením nakladatelství Altar pro nekomerční aplikaci) se stahují přímo z webu aplikace: Více, Obsahové balíčky, **Ke stažení**. Stahování ověřuje kontrolní součet a nabídne aktualizaci, když je balíček novější. Balíčky se aktualizují nezávisle na verzi aplikace. Soubor s balíčkem i převod ze SRD fungují dál (Hry mocných a další texty zůstávají jen soukromé).

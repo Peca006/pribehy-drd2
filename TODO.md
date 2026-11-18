@@ -1,6 +1,8 @@
 # Nápady a dolaďování
 
-## Otevřené úkoly (stav k verzi 0.3.5, 17. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.3.14, 18. 11. 2026)
+
+**Balíčky ze SRD** se stahují z webu aplikace (`content-packs/srd/`, `tools/srd/publish.mjs`). Nový balíček: build, `publish.mjs`, commit, nasazení `main`. Při změně formátu zvýšit `PACK_BUILD` a `EXPECTED_BUILD`.
 
 **Nasazeno (main = develop, v0.3.5):** audiogram (sloučen, přenos funguje QPSK 1200 i BPSK 800, Zkouška režimů ve Více),
 Suroviny po druzích, léčení Jizvy, Hotovost (dukáty / groše / haléře), výroba a opravy, lektvary a masti, nástrahy.
@@ -20,7 +22,7 @@ v Příručce podle knihy); postřeh k ikonkám prostředí v Bestiáři.
 
 **Postava:** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
 
-**Čeká na jiné:** Altar (texty pravidel), d20.cz (CORS pro SRD).
+**Čeká na jiné:** d20.cz (CORS pro SRD). Altar: svolení k SRD je (`content-packs/srd/SVOLENI.md`), Hry mocných a Hotfix se svolení netýká.
 
 **K ověření na telefonu:** nové dialogy (léčení, výroba, lektvary, nástrahy), Hotovost, aktualizace PWA, přenos postavy
 s novými poli mezi zařízeními.

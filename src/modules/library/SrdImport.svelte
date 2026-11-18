@@ -21,7 +21,11 @@
 </script>
 
 <details>
-  <summary>Vytvořit na webu SRD</summary>
+  <summary>Pro pokročilé: vlastní převod ze SRD (soukromé balíčky)</summary>
+  <p class="muted">
+    Běžně stačí balíčky stáhnout výše. Vlastní převod se hodí pro balíčky, které se nesmějí veřejně šířit
+    (např. Hry mocných), nebo když chcete mít novější stav SRD, než je ve stažených balíčcích.
+  </p>
   <p>
     Balíčky pravidel a bestiáře si můžete sestavit sami z veřejného SRD, aniž byste cokoli stahovali
     z cizích zdrojů. Převod proběhne ve vašem prohlížeči a texty zůstanou jen u vás. Převodník se

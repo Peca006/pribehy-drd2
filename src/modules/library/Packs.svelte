@@ -40,8 +40,8 @@
 
 <h2>Obsahové balíčky</h2>
 <p class="muted">
-  Texty pravidel se do aplikace stahují jako samostatné balíčky (vychází ze SRD), nebo načtěte soubor
-  <code>.json</code>, který jste získali zvlášť.
+  Pravidla a Bestiář (v rozsahu SRD) se stahují z webu aplikace a pak fungují i offline. Jiný balíček
+  (např. vlastní) načtěte ze souboru <code>.json</code>.
 </p>
 {#if downloads.catalog?.length}
   <h3>Ke stažení</h3>
