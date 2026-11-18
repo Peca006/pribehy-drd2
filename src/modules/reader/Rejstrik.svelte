@@ -1,6 +1,7 @@
 <script lang="ts">
   // Rejstřík pojmů: začátky knih, pak abecední seznam; u pojmů s více místy další odkazy v závorce.
   import Arrow from '../../ui/Arrow.svelte'
+  import GetPacks from '../../ui/GetPacks.svelte'
   import extra from '../../data/index-extra.json'
   import { books, terms } from '../../core/library.svelte'
   import { buildRejstrik, type IndexExtra } from '../../core/rejstrik'
@@ -46,7 +47,7 @@
     </ul>
   {/each}
 {:else}
-  <p class="muted">Rejstřík se ukáže po načtení knih (<a href="#/knihovna">Více</a>).</p>
+  <p class="muted">Rejstřík se ukáže po stažení knih. <GetPacks label="Stáhnout pravidla a Bestiář" /></p>
 {/if}
 
 <style>

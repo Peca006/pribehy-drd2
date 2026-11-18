@@ -4,6 +4,7 @@
   import { emptyCharacter, eventsFor } from '../../core/character/model'
   import { saveLog } from '../../core/character/store'
   import { hasRulesPack } from '../../core/library.svelte'
+  import GetPacks from '../../ui/GetPacks.svelte'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import { creationData } from './data'
@@ -70,13 +71,14 @@
 {#if data && !hasRulesPack()}
   <p class="muted">
     Používáte vestavěný přehled (názvy a čísla) bez popisů pravidel. Popisy, hotové sady výbavy a
-    ceník doplní balíček pravidel v části <a href="#/knihovna">Více</a>.
+    ceník doplní balíček pravidel.
+    <GetPacks />
   </p>
 {/if}
 {#if !data}
   <p class="muted">
     Pro tvorbu postavy je potřeba nainstalovaný balíček s pravidly (rasy, povolání, výbava).
-    <a href="#/knihovna">Načíst balíček</a>
+    <GetPacks />
   </p>
 {:else if draft}
   {#if resumed}

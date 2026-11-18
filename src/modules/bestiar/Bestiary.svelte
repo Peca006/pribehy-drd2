@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
+  import GetPacks from '../../ui/GetPacks.svelte'
   import { onMount } from 'svelte'
   import type { Creature } from '../../core/content/schema'
   import { addToConflict, fromCreature } from '../../core/party/conflict'
@@ -147,7 +148,7 @@
     <div class="panel">
       <strong>Bytosti z knihy nejsou nainstalované.</strong>
       <p class="muted">
-        Data Bestiáře se načítají zvlášť jako obsahový balíček (<a href="#/knihovna">Více</a>).
+        Data Bestiáře jsou v obsahovém balíčku. <GetPacks label="Stáhnout Bestiář" />
         Bestiář můžete používat i s vlastními bytostmi – vytvořte si je, nebo je importujte od
         jiných vypravěčů.
       </p>

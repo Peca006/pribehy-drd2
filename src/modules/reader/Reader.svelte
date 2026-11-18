@@ -1,5 +1,6 @@
 <script lang="ts">
   import Arrow from '../../ui/Arrow.svelte'
+  import GetPacks from '../../ui/GetPacks.svelte'
   import {
     books,
     chapters,
@@ -150,11 +151,11 @@
         </ul>
       </section>
     {:else}
-      <p class="muted">
-        {professionBooks().length
-          ? ''
-          : 'Není nainstalována žádná příručka. Načtěte balíček v části Více.'}
-      </p>
+      {#if !professionBooks().length}
+        <p class="muted">
+          Není nainstalována žádná příručka. <GetPacks label="Stáhnout pravidla a Bestiář" />
+        </p>
+      {/if}
     {/each}
     {#each professionBooks() as book (book.id)}
       <section class="book">

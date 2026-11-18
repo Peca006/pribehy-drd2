@@ -1,4 +1,5 @@
 <script lang="ts">
+  import GetPacks from '../../../ui/GetPacks.svelte'
   import type { CreationData } from '../data'
   import type { Draft } from '../draft.svelte'
   import { applyKitGear, formatMoney, plain } from '../rules'
@@ -72,7 +73,7 @@
 <h2>Výbava</h2>
 {#if manual}
   <p class="muted">
-    Hotové sady ani ceník nejsou nainstalované (načtěte balíček pravidel v části Více). Výbavu zatím
+    Hotové sady ani ceník nejsou nainstalované (<GetPacks label="Stáhnout pravidla" />). Výbavu zatím
     napište ručně, jednu položku na řádek. Vyberte úroveň vybavení: nastaví se hotovost a vloží
     výčet položek, který můžete upravit.
   </p>
