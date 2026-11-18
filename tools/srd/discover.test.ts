@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-// @ts-expect-error – JS modul bez typů
 import { discoverPages } from './pipeline.mjs'
 
 // Dřív byl regulární výraz v bookmarkletu chybný (`\d` v šabloně), takže se nikdy nic nenašlo a tiše platil pevný seznam.

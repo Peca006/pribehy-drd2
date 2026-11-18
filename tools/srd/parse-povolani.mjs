@@ -42,10 +42,17 @@ const isFlavor = (el) => {
 /** Z HTML stránky SRD s povoláními (h2 = povolání, h3 = sekce, h4 = dovednost/schopnost). */
 export function parseProfessions(html, kind) {
   const main = parse(html).querySelector('main')
+  if (!main) throw new Error('Stránka SRD nemá <main>.')
+  /** @type {any[]} */
   const professions = []
-  let prof, section, item
+  /** @type {any} */
+  let prof
+  /** @type {any} */
+  let section
+  /** @type {any} */
+  let item
 
-  for (const el of (main.querySelector('#content') ?? main).childNodes) {
+  for (const el of /** @type {any[]} */ ((main.querySelector('#content') ?? main).childNodes)) {
     const tag = el.rawTagName?.toLowerCase()
     if (!tag) continue
     if (tag === 'h2') {

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-// @ts-expect-error – JS modul bez typů
 import {
   deriveEquipment,
   deriveRaces,
@@ -78,7 +77,7 @@ describe('deriveEquipment, deriveStartingKits, deriveTerms', () => {
         ],
       },
     ])
-    expect(g[0].items[0]).toMatchObject({ id: 'vybaveni:naradi/kladivo', price: { min: 30 } })
+    expect(g[0]?.items[0]).toMatchObject({ id: 'vybaveni:naradi/kladivo', price: { min: 30 } })
   })
   it('rychlá volba výbavy', () => {
     const k = deriveStartingKits([

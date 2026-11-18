@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-// @ts-expect-error – JS modul bez typů
 import { compare, cleanPdfText, KINDS } from './compare-lib.mjs'
 
 // Vymyšlený text – záměrně nejde o obsah pravidel.

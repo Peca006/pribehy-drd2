@@ -79,6 +79,7 @@ export function parseBlocks(container) {
 /** `id` kapitoly je název souboru bez předpony a přípony, např. `31-zakladni-pravidla`. */
 export function parseChapter(html, id) {
   const content = parse(html).querySelector('#content')
+  if (!content) throw new Error(`Kapitola ${id} nemá #content.`)
   const h1 = content.querySelector('h1')
   return { id, title: plain(h1), blocks: parseBlocks(content) }
 }

@@ -69,10 +69,17 @@ export function parseRulesCreatures(html, sourceId) {
 /** `kindOf(h2?)`: bez argumentu vrátí aktuální druh, s názvem h2 ho přepne. */
 function parseList(html, kindOf, sourceId) {
   const content = parse(html).querySelector('#content')
+  if (!content) throw new Error('Stránka SRD nemá #content.')
+  /** @type {any[]} */
   const creatures = []
-  let cur, section, lastBase
+  /** @type {any} */
+  let cur
+  /** @type {any} */
+  let section
+  /** @type {any} */
+  let lastBase
 
-  for (const el of content.childNodes) {
+  for (const el of /** @type {any[]} */ (content.childNodes)) {
     const tag = el.rawTagName?.toLowerCase()
     if (!tag) continue
     if (tag === 'h2') {
@@ -107,7 +114,7 @@ function parseList(html, kindOf, sourceId) {
     } else if (!cur) continue
     else if (tag === 'h4') {
       const title = stripMd(inlineMd(el)).trim().replace(/:$/, '')
-      const known = SECTIONS.find(([re]) => re.test(title))
+      const known = SECTIONS.find(([re]) => /** @type {RegExp} */ (re).test(title))
       section = { id: known ? known[1] : slug(title), title, text: '' }
       cur.sections.push(section)
     } else if (tag === 'div' && el.classList.contains('card')) {

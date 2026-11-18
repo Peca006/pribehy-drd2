@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-// @ts-expect-error – JS modul bez typů
 import { parseProfessions, parseTitle } from './parse-povolani.mjs'
 import { validatePack } from '../../src/core/content/validate'
 import type { ContentPack, Profession } from '../../src/core/content/schema'

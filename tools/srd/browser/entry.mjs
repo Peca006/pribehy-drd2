@@ -37,7 +37,7 @@ async function imageLoader(src) {
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(bmp.width * k)
   canvas.height = Math.round(bmp.height * k)
-  canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height)
+  canvas.getContext('2d')?.drawImage(bmp, 0, 0, canvas.width, canvas.height)
   const blob = await new Promise((res) => canvas.toBlob(res, 'image/webp', 0.85))
   if (!blob || blob.type !== 'image/webp') throw new Error('Prohlížeč neumí WebP z canvasu.')
   return new Promise((res, rej) => {

@@ -38,7 +38,7 @@ describe.skipIf(!existsSync(file))('lokální balíček SRD', () => {
   it('každý pojem ve slovníku ukazuje na existující nadpis a nemá společné tvary s jiným pojmem', () => {
     const pack: ContentPack = JSON.parse(readFileSync(file, 'utf8'))
     const anchors = new Set(
-      pack.chapters.flatMap((c) =>
+      pack.chapters!.flatMap((c) =>
         c.blocks.filter((b) => b.type === 'heading').map((b) => `chapter:${c.id}#${(b as { id: string }).id}`),
       ),
     )

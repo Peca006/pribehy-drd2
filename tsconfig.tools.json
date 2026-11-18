@@ -1,0 +1,20 @@
+{
+  // Kontrola typů nástrojů v tools/ (JavaScript s JSDoc a testy). `noImplicitAny` je vypnuté:
+  // převodník staví objekty za běhu, typy jsou doplněné tam, kde pomáhají (viz `@type` v kódu).
+  "compilerOptions": {
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "types": ["node"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": false
+  },
+  "include": ["tools/**/*.mjs", "tools/**/*.ts"]
+}

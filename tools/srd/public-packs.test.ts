@@ -3,9 +3,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
-// @ts-expect-error – JS modul bez typů
 import { assemble, imageRefs } from './assemble-lib.mjs'
-// @ts-expect-error – JS modul bez typů
 import { PUBLIC_DIR, PUBLIC_PACK_IDS } from './public-packs.mjs'
 
 // Pojistky veřejné složky: jen balíčky ze SRD, zdroj bez vložených obrázků, každý odkaz má soubor a naopak.

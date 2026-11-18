@@ -13,7 +13,7 @@
     "prebuild": "npm run build:bookmarklet && node tools/srd/assemble.mjs",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.tools.json",
     "test": "vitest run",
     "lint": "eslint .",
     "e2e": "playwright test",

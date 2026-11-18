@@ -90,6 +90,7 @@ export function deriveRaces(chapters) {
     .map(([h, blocks]) => {
       const name = plainHeading(h)
       const key = slug(name)
+      /** @type {any} */
       const race = {
         id: `rasa:${key}`,
         name,
@@ -100,6 +101,7 @@ export function deriveRaces(chapters) {
         abilities: [],
       }
       const firstH = blocks.findIndex((b) => b.type === 'heading')
+      /** @type {any[]} */
       const texts = []
       for (const b of blocks.slice(0, firstH < 0 ? blocks.length : firstH)) {
         const m = b.type === 'p' && b.text.match(NAMES_RE)
@@ -124,6 +126,7 @@ export function deriveRaces(chapters) {
           )
         } else {
           const ct = parseTitle(t)
+          /** @type {any} */
           const culture = {
             id: `kultura:${key}/${slug(ct.name)}`,
             name: ct.name,
@@ -206,6 +209,7 @@ export function deriveStartingKits(chapters) {
       const m = i.text.match(/^\*\*([^*]+?):\*\*\s*([^]*)$/)
       return m ? { label: m[1], text: m[2].trim() } : { label: '', text: i.text }
     })
+    /** @type {any} */
     const kit = { id: `vybava:${slug(name)}`, name, lines }
     const cash = lines.find((l) => l.label === 'Hotovost')?.text.match(/\((\d+)\)\s*\*?gro/)
     if (cash) kit.cash = Number(cash[1]) * 10
@@ -219,6 +223,7 @@ export function deriveTerms(chapters) {
   const man = ch && sections(ch.blocks, 2).find(([h]) => plainHeading(h) === 'Manévry')
   if (!man) return []
   const target = (h) => `chapter:${ch.id}#${h.id}`
+  /** @type {any[]} */
   const terms = [
     {
       id: 'pojem:zakladni-manevry',

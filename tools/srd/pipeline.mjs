@@ -54,6 +54,7 @@ export const BESTIAR_PAGES = [
 ]
 
 // Opravy SRD podle tištěné knihy (drd2-pravidla.pdf); viz `npm run compare:srd`. Počet zásahů je pevně daný.
+/** @type {[string, string, number][]} */
 const PDF_FIXES = [
   ['Vyberte si jednu rasovou základní schopnost', 'Vyberte si jednu rasovou zvláštní schopnost', 1],
   ['*Výrobě elixírů* a *Podávání* *elixírů', '*Výrobě elixírů* a *Používání* *elixírů', 2],
@@ -125,11 +126,13 @@ export function buildRulesChapters(pages) {
 }
 
 /** Dokončí balíček pravidel (po vložení obrázků do `chapters`). Vrací { json, problems }. */
+/** @param {{ professions: any[], chapters: any[], creatures?: any[] }} built */
 export function finishRulesPack({ professions, chapters, creatures = [] }) {
   const problems = []
   const requirements = deriveRequirements(chapters, professions)
   for (const p of professions) if (requirements.has(p.id)) p.requires = requirements.get(p.id)
   const { races, common } = deriveRaces(chapters)
+  /** @type {any} */
   const pack = {
     manifest: {
       format: 1,
@@ -172,7 +175,9 @@ const KIND_CHAPTER_ORDER = ['21', '22', '23', '24', '25']
 export function bestiarChapters(fixed, problems = []) {
   const intro = parseChapter(fixed('01-uvod'), '01-uvod')
   const chapters = []
+  /** @type {Record<string, any>} */
   const home = {}
+  /** @type {any} */
   let cur
   for (const b of intro.blocks) {
     if (b.type === 'heading' && b.level === 2) {
@@ -187,6 +192,7 @@ export function bestiarChapters(fixed, problems = []) {
   Object.keys(KINDS).forEach((file, i) => {
     // úvodní text druhu je vše před první bytostí (h3)
     const content = parse(fixed(file)).querySelector('#content')
+    if (!content) throw new Error(`Stránka ${file} nemá #content.`)
     const kids = content.childNodes
     const at = kids.findIndex((n) => n.rawTagName?.toLowerCase() === 'h3')
     if (at >= 0) for (const n of kids.slice(at)) n.remove()

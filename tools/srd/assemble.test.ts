@@ -2,7 +2,6 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
-// @ts-expect-error – JS modul bez typů
 import { assemble, imageRefs, inlineImages } from './assemble-lib.mjs'
 
 const root = mkdtempSync(join(tmpdir(), 'asm-'))

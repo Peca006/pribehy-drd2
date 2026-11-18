@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-// @ts-expect-error – JS modul bez typů
 import { parseCharacteristic, parseCreatures, parseLimits, parseRulesCreatures } from './parse-bestiar.mjs'
 
 // Vymyšlená stránka – záměrně nejde o obsah Bestiáře.

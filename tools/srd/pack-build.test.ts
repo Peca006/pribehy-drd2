@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { EXPECTED_BUILD } from '../../src/core/content/builds'
-// @ts-expect-error – JS modul bez typů
 import { PACK_BUILD } from './pipeline.mjs'
 
 describe('číslo sestavení balíčků', () => {
