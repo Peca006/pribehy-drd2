@@ -23,3 +23,7 @@ Thumbs.db
 
 # Sestavené balíčky ze SRD (npm run dev / build: tools/srd/assemble.mjs)
 /public/packs/
+
+# Playwright
+/test-results/
+/playwright-report/

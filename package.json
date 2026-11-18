@@ -16,12 +16,14 @@
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
     "test": "vitest run",
     "lint": "eslint .",
+    "e2e": "playwright test",
     "build:srd": "node tools/srd/build.mjs",
     "compare:srd": "node tools/srd/compare-pdf.mjs",
     "format": "prettier --write ."
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.1",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tsconfig/svelte": "^5.0.8",
     "@types/node": "^24.19.2",

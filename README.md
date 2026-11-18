@@ -25,6 +25,9 @@ npm install
 npm run dev      # vývojový server
 npm run check    # typy (svelte-check + tsc)
 npm test         # testy (vitest)
+npm run lint     # ESLint
+npm run e2e      # E2E zkouška hlavní cesty (Playwright; jednou `npx playwright install chromium`,
+                 # nebo bez stahování s nainstalovaným Edge: PW_CHANNEL=msedge npm run e2e)
 npm run build    # produkční build + service worker
 ```
 
