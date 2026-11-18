@@ -13,7 +13,7 @@ kódem nebo QR.
   aktualizují se nezávisle na verzi aplikace. Další balíčky lze načíst ze souboru. Postava ukládá jen odkazy na
   obsah a vlastní hodnoty hráče.
 - **Edice a opravy jako vrstvy (overlay):** Pravidla 2. vyd. + Bestiář 2. vyd. + Hry mocných 1. vyd.,
-  volitelně Hotfix mistrovských povolání a/nebo opravy z Truhlice (Nogrim). Volí se na úrovni družiny.
+  volitelně Hotfix mistrovských povolání. Volí se na úrovni družiny.
 - **Skiny:** vzhled je oddělen od logiky přes design tokeny (`--drd-*`, viz `src/core/theme.ts`).
 - **Data jako seznam událostí** – historie změn, porovnání při synchronizaci, schvalování vypravěčem.
 - Bez serveru: sdílení kódem / QR / souborem.
@@ -35,8 +35,14 @@ Větev `develop` je pracovní; vydání se značkují do hlavní větve.
 
 ## Zdrojové materiály
 
-Knihy DrD2 a Truhlice jsou autorská díla třetích stran a **nejsou součástí repozitáře**. Lokálně patří do
-`reference/` (ignorováno gitem). Texty z nich se do repozitáře nikdy necommitují.
+Knihy DrD2 (kromě částí SRD, viz Právní upozornění) jsou autorská díla třetích stran a **nejsou součástí
+repozitáře**. Lokálně patří do `reference/` (ignorováno gitem). Texty z nich se do repozitáře nikdy necommitují.
+
+## Inspirace a poděkování
+
+Projekt je inspirovaný dílem **Truhlice** (autor Nogrim). Jde **pouze o ideovou inspiraci**:
+z Truhlice se nepoužívá žádný kód, text ani data. Případná shoda funkcí plyne z potřeb hraní hry Dračí doupě 2.
+Samostatná stránka s poděkováním (O aplikaci, autoři, zdroje a inspirace) je v plánu, viz `TODO.md`.
 
 ## Licence
 

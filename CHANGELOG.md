@@ -1,5 +1,10 @@
 # Změny
 
+## 0.3.18 (19. 11. 2026)
+
+- **Dokumentace:** README a komentáře upřesňují, že Truhlice (Nogrim) je jen ideová inspirace, ne zdroj dat; případná shoda funkcí plyne z potřeb hraní Dračího doupěte 2. Do plánu přibyla stránka „O aplikaci“ s poděkováním (credits).
+- **Pod kapotou:** průběžná kontrola větve `develop` (testy, typy, lint, E2E).
+
 ## 0.3.17 (19. 11. 2026)
 
 - **Hod:** vyhodnocení zkoušky, výzvy a střetu je vyčleněné do samostatné funkce s testy (chování se nemění).

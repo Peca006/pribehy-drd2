@@ -1,6 +1,8 @@
 # Nápady a dolaďování
 
-## Otevřené úkoly (stav k verzi 0.3.14, 18. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.3.18, 19. 11. 2026)
+
+**O aplikaci a poděkování (credits):** v aplikaci (Více) i v README zřetelná stránka „O aplikaci“: autor, licence (GPL-3.0-or-later), poděkování Altaru za svolení k SRD a autorům SRD (drd2srd.d20.cz), zmínka o inspiraci Truhlicí (Nogrim; jen ideová inspirace), použité knihovny a jejich licence, odkaz na zdrojový kód a na `SVOLENI.md`. Hodí se i „Honorable mention“ pro testery a komunitu.
 
 **Balíčky ze SRD** se stahují z webu aplikace (`content-packs/srd/`, `tools/srd/publish.mjs`). Nový balíček: build, `publish.mjs`, commit, nasazení `main`. Při změně formátu zvýšit `PACK_BUILD` a `EXPECTED_BUILD`.
 
@@ -306,7 +308,7 @@ nebo text kódu). `public/share-target.js` (importovaný do service workeru) ulo
 ## Nápad: skiny s obrázkovou mapou ovládacích prvků (později)
 
 Skin by definoval ovládací prvky souřadnicemi na jednom velkém obrázku: **tlačítko** (klikací oblast), **popis** (label) a
-**výstup** (textové pole), případně pevné rozvržení. Dvě varianty: pixelartový (jako Truhlice) se škálováním podle poměru stran,
+**výstup** (textové pole), případně pevné rozvržení. Dvě varianty: pixelartový (ideová inspirace: Truhlice) se škálováním podle poměru stran,
 nebo v celých násobcích s posouváním viditelné oblasti, a klasický plovoucí. Předpoklad: nejdřív uklidit stránky a navigaci
 (pět záložek: Postava, Družina, Příručka, Bestiář, Více), aby definice oblastí odpovídala hotovému rozvržení.
 

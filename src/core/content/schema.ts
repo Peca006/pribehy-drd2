@@ -262,7 +262,7 @@ export interface Overlay {
   version: string
   /** ID balíčků, na které se překryv vztahuje */
   appliesTo: string[]
-  /** čitelný původ/autor opravy (např. „Hotfix“, „Truhlice – Nogrim“) */
+  /** čitelný původ/autor opravy (např. „Hotfix“) */
   origin: string
   patches: Patch[]
 }
