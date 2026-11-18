@@ -1,5 +1,11 @@
 # Změny
 
+## 0.3.17 (19. 11. 2026)
+
+- **Hod:** vyhodnocení zkoušky, výzvy a střetu je vyčleněné do samostatné funkce s testy (chování se nemění).
+- **Seznamy:** postavy, vlastní bytosti, balíčky, kapitoly a družiny mají klíče, takže se při změně překreslují přesně.
+- **Pod kapotou:** E2E zkouška hlavní cesty (stažení balíčků, tvorba postavy, hod, sdílení a import), typová kontrola nástrojů převodníku SRD, 372 testů.
+
 ## 0.3.16 (18. 11. 2026)
 
 - **Oprava:** po stažení balíčků se pruh a Příručka správně překreslí hned (ve verzi 0.3.15 se obsah ukázal až po novém načtení stránky).
