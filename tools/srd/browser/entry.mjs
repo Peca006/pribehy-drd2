@@ -6,6 +6,7 @@ import {
   RULES_PAGES,
   buildBestiarPack,
   buildRulesChapters,
+  discoverPages,
   embedImagesWith,
   finishRulesPack,
 } from '../pipeline.mjs'
@@ -19,15 +20,13 @@ async function page(section, name) {
   return r.text()
 }
 
-/** Názvy stránek z navigace (odkazy na stránce); když jich je méně než známých, platí pevný seznam. */
-function discover(section, fallback) {
-  const found = new Set()
-  for (const a of document.querySelectorAll(`a[href*="/${section}/"]`)) {
-    const m = a.getAttribute('href').match(new RegExp(`/${section}/(\\d\\d-[a-z0-9-]+)\\.html`))
-    if (m) found.add(m[1])
-  }
-  return found.size >= fallback.length ? [...found].sort() : fallback
-}
+/** Názvy stránek z navigace (odkazy na stránce), viz `discoverPages`. */
+const discover = (section, fallback) =>
+  discoverPages(
+    [...document.querySelectorAll(`a[href*="/${section}/"]`)].map((a) => a.getAttribute('href')),
+    section,
+    fallback,
+  )
 
 /** Obrázek jako WebP data URI (zmenšený na MAX_SIDE) přes canvas. */
 async function imageLoader(src) {

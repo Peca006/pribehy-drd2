@@ -1,15 +1,21 @@
 <script lang="ts">
   import { canDownload } from '../core/content/downloads.svelte'
-  import GetPacks from './GetPacks.svelte'
+  import { srdUrl } from '../core/srd'
 
-  // Krátká nápověda, když chybí popis: stažení balíčku; bez dostupného katalogu (offline) odkaz do SRD.
+  // Krátká poznámka u chybějícího popisu. Tlačítko Stáhnout je jen jedno na stránce (nahoře v Tvorbě postavy,
+  // v Příručce, v Bestiáři), tady je jen odkaz do Více; bez dostupného katalogu (offline) i odkaz do SRD.
   let { srd }: { srd?: string } = $props()
-  const SRD_BASE = 'https://drd2srd.d20.cz/'
 </script>
 
 <span class="muted nodesc">
-  <GetPacks label="Stáhnout popisy" />
+  Popis chybí: <a href="#/knihovna">stáhnout balíček</a>
   {#if !canDownload() && srd}
-    / <a href={SRD_BASE + srd} target="_blank" rel="noopener noreferrer">čti pravidla v SRD</a>
+    / <a href={srdUrl(srd)} target="_blank" rel="noopener noreferrer">čti pravidla v SRD</a>
   {/if}
 </span>
+
+<style>
+  .nodesc {
+    font-size: 0.85rem;
+  }
+</style>

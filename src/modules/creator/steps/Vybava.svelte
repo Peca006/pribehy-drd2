@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { srdUrl } from '../../../core/srd'
   import GetPacks from '../../../ui/GetPacks.svelte'
   import type { CreationData } from '../data'
   import type { Draft } from '../draft.svelte'
@@ -19,7 +20,6 @@
   // bez balíčku pravidel (jen vestavěná kostra) nejsou hotové sady ani ceník: výbava se píše ručně
   const manual = $derived(!data.kits.some((k) => k.lines.length) && priced.length === 0)
   const lines = $derived(draft.equipment.join('\n'))
-  const SRD_BASE = 'https://drd2srd.d20.cz/'
   const priceSrd = $derived(data.kits.find((k) => k.priceSrd)?.priceSrd)
   /** po výběru sady zůstal ručně upravený text beze změny */
   let kept = $state(false)
@@ -104,7 +104,7 @@
   {#if priceSrd}
     <p class="muted">
       Ceny a popisy najdete v <a
-        href={SRD_BASE + priceSrd}
+        href={srdUrl(priceSrd)}
         target="_blank"
         rel="noopener noreferrer">ceníku vybavení v SRD</a
       >.

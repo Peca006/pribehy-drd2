@@ -4,7 +4,7 @@
   import { outdatedPacks } from '../../core/content/builds'
   import { library, refreshLibrary } from '../../core/library.svelte'
   import { download, downloads, loadCatalog } from '../../core/content/downloads.svelte'
-  import { needsUpdate } from '../../core/content/remote'
+  import { packState } from '../../core/content/packState'
   import SrdImport from './SrdImport.svelte'
 
   // Obsahové balíčky: načtení ze souboru, seznam nainstalovaných, odebrání a (sbalený) převod SRD.
@@ -47,15 +47,16 @@
   <h3>Ke stažení</h3>
   {#each downloads.catalog as e}
     {@const inst = library.packs.find((p) => p.manifest.id === e.id)}
+    {@const st = packState(e, inst)}
     <div class="panel pack">
       <div>
         <strong>{e.name}</strong>
         <div class="muted">
-          {e.version} · {Math.round(e.size / 1024 / 1024 * 10) / 10} MB{#if inst && !needsUpdate(e, inst)}
+          {e.version} · {Math.round(e.size / 1024 / 1024 * 10) / 10} MB{#if st === 'ok'}
             · máte aktuální{/if}
         </div>
       </div>
-      {#if needsUpdate(e, inst)}
+      {#if st !== 'ok'}
         <button class="primary" disabled={downloads.busy} onclick={() => download([e])}>
           {downloads.current === e.id ? `Stahuji… ${downloads.percent} %` : inst ? 'Aktualizovat' : 'Stáhnout'}
         </button>

@@ -1,25 +1,26 @@
 <script lang="ts">
   import { outdatedPacks } from '../core/content/builds'
   import { canDownload, download, downloads, loadCatalog, pending, sizeMb } from '../core/content/downloads.svelte'
+  import { packState } from '../core/content/packState'
   import { library } from '../core/library.svelte'
   import { applyUpdate, install, pwa } from '../core/pwa.svelte'
+  import { nextBanner } from './banners'
 
-  // Pruhy nad navigací: nová verze ke stažení a nabídka instalace aplikace na plochu.
-  let hideInstall = $state(false)
-  let busy = $state(false)
-  let hideOutdated = $state(false)
-  const outdated = $derived(library.loaded ? outdatedPacks(library.packs) : [])
-
-  // balíčky ze SRD ke stažení z webu aplikace: nabídka při prvním spuštění a aktualizace
+  // Pruhy nad navigací (jeden najednou, pořadí podle priority v `banners.ts`): nová verze aplikace,
+  // zastaralé / novější / první stažení balíčků ze SRD a nabídka instalace aplikace na plochu.
   const PROMPT_KEY = 'drd2.packPromptDismissed'
-  let hideFirst = $state(read())
-  function read(): boolean {
+  const read = (): boolean => {
     try {
       return localStorage.getItem(PROMPT_KEY) === '1'
     } catch {
       return false
     }
   }
+  let hideInstall = $state(false)
+  let hideOutdated = $state(false)
+  let hideUpdate = $state(false)
+  let hideFirst = $state(read())
+  let busy = $state(false)
   function later() {
     hideFirst = true
     try {
@@ -29,14 +30,32 @@
     }
   }
   loadCatalog()
-  const todo = $derived(pending())
-  const have = (id: string) => library.packs.some((p) => p.manifest.id === id)
-  const first = $derived(
-    library.loaded && canDownload() && !hideFirst && (downloads.catalog ?? []).every((e) => !have(e.id)),
+
+  const outdated = $derived(library.loaded ? outdatedPacks(library.packs) : [])
+  const states = $derived(
+    (downloads.catalog ?? []).map((e) => ({
+      entry: e,
+      state: packState(
+        e,
+        library.packs.find((p) => p.manifest.id === e.id),
+      ),
+    })),
   )
-  const updatable = $derived(library.loaded ? todo.filter((e) => have(e.id)) : [])
-  let hideUpdate = $state(false)
-  const showInstall = $derived(pwa.installable && !pwa.installed && !hideInstall)
+  const updatable = $derived(library.loaded ? states.filter((s) => s.state === 'update').map((s) => s.entry) : [])
+  const first = $derived(
+    library.loaded && canDownload() && states.length > 0 && states.every((s) => s.state === 'missing'),
+  )
+  const todo = $derived(pending())
+
+  const kind = $derived(
+    nextBanner({
+      appUpdate: pwa.needRefresh && !pwa.updateDismissed,
+      outdated: outdated.length > 0 && !hideOutdated,
+      update: updatable.length > 0 && !hideUpdate,
+      first: first && !hideFirst,
+      install: pwa.installable && !pwa.installed && !hideInstall,
+    }),
+  )
 
   async function update() {
     busy = true
@@ -44,13 +63,13 @@
   }
 </script>
 
-{#if pwa.needRefresh && !pwa.updateDismissed}
+{#if kind === 'app-update'}
   <div class="bar" role="status">
     <span>Je dostupná nová verze aplikace. Rozepsané úpravy zůstanou uložené.</span>
     <button class="primary" disabled={busy} onclick={update}>Obnovit</button>
     <button onclick={() => (pwa.updateDismissed = true)} aria-label="Skrýt">Později</button>
   </div>
-{:else if outdated.length && !hideOutdated}
+{:else if kind === 'packs-outdated'}
   <div class="bar" role="status">
     <span>
       {outdated.length === 1 ? 'Balíček' : 'Balíčky'}
@@ -66,7 +85,7 @@
     {/if}
     <button onclick={() => (hideOutdated = true)} aria-label="Skrýt">Později</button>
   </div>
-{:else if updatable.length && !hideUpdate}
+{:else if kind === 'packs-update'}
   <div class="bar" role="status">
     <span>Je dostupná novější verze balíčků: {updatable.map((e) => `„${e.name}“`).join(', ')}.</span>
     <button class="primary" disabled={downloads.busy} onclick={() => download()}>
@@ -74,7 +93,7 @@
     </button>
     <button onclick={() => (hideUpdate = true)} aria-label="Skrýt">Později</button>
   </div>
-{:else if first}
+{:else if kind === 'packs-first'}
   <div class="bar" role="status">
     <span>
       Pravidla a Bestiář se dají stáhnout do aplikace ({sizeMb(todo)} MB, pak fungují i offline).
@@ -84,7 +103,7 @@
     </button>
     <button onclick={later} aria-label="Skrýt">Později</button>
   </div>
-{:else if showInstall}
+{:else if kind === 'install'}
   <div class="bar" role="status">
     <span>Aplikaci lze nainstalovat na plochu a používat jako běžnou aplikaci, i offline.</span>
     <button class="primary" onclick={install}>Nainstalovat</button>

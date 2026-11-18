@@ -1,6 +1,7 @@
 // Sestavení balíčků ze stránek SRD jako čisté funkce nad řetězci HTML (bez souborů a bez `sharp`), aby je mohl
 // použít jak Node nástroj (`build.mjs`, `build-bestiar.mjs`), tak bookmarklet běžící na stránce SRD v prohlížeči.
 // Texty SRD tak nikdy neopouštějí zařízení uživatele.
+import buildNumber from '../../src/data/pack-build.json' with { type: 'json' }
 import { parseProfessions } from './parse-povolani.mjs'
 import { parse } from 'node-html-parser'
 import { parseBlocks, parseChapter } from './parse-chapter.mjs'
@@ -18,7 +19,7 @@ import {
 
 const RULES_ID = 'drd2-pravidla-2'
 /** Číslo sestavení balíčků; musí odpovídat `EXPECTED_BUILD` v `src/core/content/builds.ts` (hlídá test). */
-export const PACK_BUILD = 2
+export const PACK_BUILD = buildNumber.build
 
 /** Stránky Základní příručky a Bestiáře (název souboru bez `.html`), kdyby je nešlo zjistit z navigace. */
 export const RULES_PAGES = [
@@ -66,6 +67,20 @@ const HTML_FIXES = [
     'naposledy. Neuváženě jsem se vysmívala lidským bůžkům, a když',
   ],
 ]
+
+/**
+ * Názvy stránek sekce SRD z odkazů na stránce (`/sekce/NN-nazev.html`); když jich je méně než známých,
+ * platí pevný seznam `fallback`.
+ */
+export function discoverPages(hrefs, section, fallback) {
+  const re = new RegExp(`/${section}/(\\d\\d-[a-z0-9-]+)\\.html`)
+  const found = new Set()
+  for (const h of hrefs) {
+    const m = (h ?? '').match(re)
+    if (m) found.add(m[1])
+  }
+  return found.size >= fallback.length ? [...found].sort() : fallback
+}
 
 export const basename = (p) => p.split('/').pop().split(/[?#]/)[0]
 

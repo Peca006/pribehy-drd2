@@ -1,3 +1,4 @@
+import { srdChapterUrl } from '../../core/srd'
 // Stručný postup vyhodnocení (vlastní heslovitý výtah, ne text pravidel). Podrobnosti jsou v příručce.
 export interface Card {
   id: string
@@ -184,7 +185,7 @@ export const srdOf = (c: Card) => {
   const l = linkOf(c)
   if (!l) return undefined
   const [, chapter, anchor] = /^#\/ctenar\/([^/]+)(?:\/(.+))?$/.exec(l) ?? []
-  return chapter ? `https://drd2srd.d20.cz/zakladni-prirucka/${chapter}.html${anchor ? '#' + anchor : ''}` : undefined
+  return chapter ? srdChapterUrl(chapter, anchor) : undefined
 }
 
 export interface SkillRef {

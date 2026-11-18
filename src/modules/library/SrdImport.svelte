@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { SRD_BASE } from '../../core/srd'
   // Převod SRD přímo v prohlížeči uživatele: záložka (bookmarklet) se spustí na stránce drd2srd.d20.cz, stáhne ji,
   // převede na balíčky a nabídne je ke stažení. Aplikace ani tento web žádný text SRD neobsahují ani nehostují.
   const script = new URL('srd-import.js', location.href.split('#')[0]).href
   const bookmarklet = `javascript:(()=>{var s=document.createElement('script');s.src='${script}?'+Date.now();document.head.appendChild(s)})()`
   const userscript = new URL('srd-import.user.js', location.href.split('#')[0]).href
-  const SRD = 'https://drd2srd.d20.cz/'
+  const SRD = SRD_BASE
   // dotykové zařízení (telefon, tablet) dostane postup pro telefon, ostatní postup pro počítač
   const touch = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches
   let other = $state(false)
