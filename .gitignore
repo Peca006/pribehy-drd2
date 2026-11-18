@@ -20,3 +20,6 @@ Thumbs.db
 
 # Vygenerovaný bookmarklet (npm run build:bookmarklet)
 /public/srd-import.js
+
+# Sestavené balíčky ze SRD (npm run dev / build: tools/srd/assemble.mjs)
+/public/packs/

@@ -18,16 +18,23 @@ import type {
   Term,
 } from './content/schema'
 
-// `packs` se vždy nahrazuje celé (`refreshLibrary`) a obsah balíčků se nemění, proto `$state.raw`:
-// bez hlubokého proxy nad několika MB JSON. Položku v balíčku nikdy neupravujte na místě.
-export const library: { packs: ContentPack[]; loaded: boolean } = $state.raw({
-  packs: [],
-  loaded: false,
-})
+// Stav knihovny je `$state.raw`: obsah balíčků (několik MB JSON) se nikdy nemění po částech, jen se celý stav
+// nahradí novým objektem (`refreshLibrary`), takže hluboký proxy je zbytečný. POZOR: u `$state.raw` je reaktivní
+// jen PŘIŘAZENÍ celé proměnné, ne změna vlastnosti (`library.packs = …` by se neprojevilo). Proto je `library`
+// jen čtecí pohled (gettery) nad proměnnou `state`, která se vždy přepisuje celá.
+let state = $state.raw<{ packs: ContentPack[]; loaded: boolean }>({ packs: [], loaded: false })
+
+export const library: Readonly<{ packs: ContentPack[]; loaded: boolean }> = {
+  get packs() {
+    return state.packs
+  },
+  get loaded() {
+    return state.loaded
+  },
+}
 
 export async function refreshLibrary() {
-  library.packs = await listPacks()
-  library.loaded = true
+  state = { packs: await listPacks(), loaded: true }
 }
 
 /**

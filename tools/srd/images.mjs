@@ -1,7 +1,8 @@
-// Obrázky ze SRD se do balíčku vkládají přímo do JSONu jako `data:image/webp;base64,…`.
+// Obrázky ze SRD: zdrojový balíček na ně odkazuje (`img/NAZEV.webp`), konečný balíček je má vložené jako
+// `data:image/webp;base64,…` (viz `assemble-lib.mjs`).
 // Zdrojové PNG se stahují ručně do reference/srd/assets/ (gitignorováno), viz `missingImages`.
 // (Prohlížečová verze s canvasem je v tools/srd/browser/entry.mjs.)
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import sharp from 'sharp'
 import { basename, walkImages } from './pipeline.mjs'
 
@@ -32,5 +33,30 @@ export function nodeImageLoader(assetsDir) {
     return `data:image/webp;base64,${webp.toString('base64')}`
   }
   load.bytes = () => bytes
+  return load
+}
+
+/**
+ * Načítač obrázků pro `embedImagesWith` do zdrojového tvaru: zmenšený WebP se zapíše do `outDir`
+ * a v balíčku zůstane odkaz `img/NAZEV.webp`. Už existující soubor se NEPŘEPISUJE (bajty se mezi sestaveními
+ * nemění, git je uloží jen jednou); `force` ho vytvoří znovu (změnil se zdrojový obrázek).
+ */
+export function fileImageLoader(assetsDir, outDir, { force = false } = {}) {
+  let written = 0
+  const load = async (_src, file) => {
+    const name = `${file.replace(/\.[^.]+$/, '')}.webp`
+    const target = `${outDir}${name}`
+    if (force || !existsSync(target)) {
+      const webp = await sharp(readFileSync(`${assetsDir}${file}`))
+        .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 85, effort: 6 })
+        .toBuffer()
+      mkdirSync(outDir, { recursive: true })
+      writeFileSync(target, webp)
+      written++
+    }
+    return `img/${name}`
+  }
+  load.written = () => written
   return load
 }

@@ -15,6 +15,8 @@ if (problems.length) {
 
 mkdirSync('content-packs/local', { recursive: true })
 writeFileSync(`content-packs/local/${id}.json`, json)
+mkdirSync('content-packs/local/src', { recursive: true })
+writeFileSync(`content-packs/local/src/${id}.json`, json)
 const byKind = {}
 for (const c of pack.creatures) byKind[c.kind] = (byKind[c.kind] ?? 0) + 1
 const noStats = pack.creatures.filter((c) => !c.stats.length).map((c) => c.name)

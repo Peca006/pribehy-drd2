@@ -1,42 +1,29 @@
-// Zkopíruje hotové balíčky ze SRD z content-packs/local/ do veřejné složky content-packs/srd/
-// a zapíše katalog index.json (verze, číslo sestavení, velikost, SHA-256).
+// Zkopíruje zdrojový tvar balíčků ze SRD z content-packs/local/src/ (JSON + img/*.webp) do veřejné složky
+// content-packs/srd/. Konečné balíčky (s vloženými obrázky) a katalog index.json vznikají až při sestavení
+// aplikace (`tools/srd/assemble.mjs`), v repozitáři jsou jen zdrojové soubory.
 // Použití: node tools/srd/publish.mjs [--check]   (nejdřív node tools/srd/build.mjs a build-bestiar.mjs)
 // `--check` jen ukáže, co by se změnilo, a nic nezapíše.
-import { createHash } from 'node:crypto'
-import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs'
+import { imageRefs } from './assemble-lib.mjs'
 import { LOCAL_DIR, PUBLIC_DIR, PUBLIC_PACK_IDS } from './public-packs.mjs'
 
 const check = process.argv.includes('--check')
-if (!check) mkdirSync(PUBLIC_DIR, { recursive: true })
-const previous = existsSync(`${PUBLIC_DIR}index.json`)
-  ? JSON.parse(readFileSync(`${PUBLIC_DIR}index.json`, 'utf8')).packs
-  : []
-const packs = PUBLIC_PACK_IDS.map((id) => {
-  const file = `${id}.json`
-  const text = readFileSync(`${LOCAL_DIR}${file}`)
-  const m = JSON.parse(text.toString('utf8')).manifest
-  const sha256 = createHash('sha256').update(text).digest('hex')
-  const old = previous.find((p) => p.id === m.id)
-  // beze změny obsahu se nic nepřepisuje (každá nová verze se trvale ukládá do historie gitu)
-  if (old?.sha256 === sha256 && existsSync(`${PUBLIC_DIR}${file}`)) return { ...old, unchanged: true }
-  if (!check) copyFileSync(`${LOCAL_DIR}${file}`, `${PUBLIC_DIR}${file}`)
-  const target = check ? `${LOCAL_DIR}${file}` : `${PUBLIC_DIR}${file}`
-  return {
-    id: m.id,
-    name: m.name,
-    version: m.version,
-    build: m.build ?? 0,
-    file,
-    size: statSync(target).size,
-    sha256,
+const FROM = `${LOCAL_DIR}src/`
+const same = (a, b) => existsSync(b) && readFileSync(a).equals(readFileSync(b))
+
+const copy = (from, to, label) => {
+  const unchanged = same(from, to)
+  if (!unchanged && !check) {
+    mkdirSync(to.slice(0, to.lastIndexOf('/')), { recursive: true })
+    copyFileSync(from, to)
   }
-})
-if (!check)
-  writeFileSync(
-    `${PUBLIC_DIR}index.json`,
-    JSON.stringify({ format: 1, packs: packs.map(({ unchanged: _u, ...p }) => p) }, null, 2) + '\n',
-  )
-for (const p of packs)
-  console.log(
-    `${p.id} ${p.version} (sestavení ${p.build}, ${Math.round(p.size / 1024)} kB): ${p.unchanged ? 'beze změny' : check ? 'liší se od zveřejněného' : 'AKTUALIZOVÁNO'}`,
-  )
+  console.log(`${label}: ${unchanged ? 'beze změny' : check ? 'liší se od zveřejněného' : 'AKTUALIZOVÁNO'}`)
+}
+
+for (const id of PUBLIC_PACK_IDS) {
+  const file = `${id}.json`
+  if (!existsSync(`${FROM}${file}`)) throw new Error(`chybí ${FROM}${file}: spusťte build.mjs`)
+  copy(`${FROM}${file}`, `${PUBLIC_DIR}${file}`, id)
+  for (const img of imageRefs(JSON.parse(readFileSync(`${FROM}${file}`, 'utf8'))))
+    copy(`${FROM}img/${img}`, `${PUBLIC_DIR}img/${img}`, `  img/${img}`)
+}

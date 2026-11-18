@@ -8,9 +8,9 @@
   "type": "module",
   "scripts": {
     "build:bookmarklet": "vite build -c vite.srd.config.ts",
-    "predev": "npm run build:bookmarklet",
+    "predev": "npm run build:bookmarklet && node tools/srd/assemble.mjs",
     "dev": "vite",
-    "prebuild": "npm run build:bookmarklet",
+    "prebuild": "npm run build:bookmarklet && node tools/srd/assemble.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
