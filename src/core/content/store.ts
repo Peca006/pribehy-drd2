@@ -1,3 +1,4 @@
+import { connection } from '../idb'
 import type { ContentPack } from './schema'
 import { validatePack } from './validate'
 
@@ -5,20 +6,19 @@ import { validatePack } from './validate'
 const DB = 'drd2-content'
 const STORE = 'packs'
 
-function open(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1)
-    req.onupgradeneeded = () => req.result.createObjectStore(STORE, { keyPath: 'manifest.id' })
-    req.onsuccess = () => resolve(req.result)
-    req.onerror = () => reject(req.error)
-  })
-}
+const conn = connection(DB, 1, (req) => {
+  if (!req.result.objectStoreNames.contains(STORE))
+    req.result.createObjectStore(STORE, { keyPath: 'manifest.id' })
+})
+
+/** Zavře sdílené připojení (testy). */
+export const closeContentDb = () => conn.close()
 
 async function run<T>(
   mode: IDBTransactionMode,
   fn: (s: IDBObjectStore) => IDBRequest<T>,
 ): Promise<T> {
-  const db = await open()
+  const db = await conn.db()
   return new Promise((resolve, reject) => {
     const req = fn(db.transaction(STORE, mode).objectStore(STORE))
     req.onsuccess = () => resolve(req.result)

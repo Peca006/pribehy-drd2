@@ -12,7 +12,7 @@ export interface CatalogEntry {
   sha256: string
 }
 
-const base = () => new URL('packs/', document.baseURI).href
+const base = () => new URL('packs/', globalThis.document?.baseURI ?? 'http://localhost/').href
 
 const hex = (buf: ArrayBuffer) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('')
@@ -20,7 +20,8 @@ const hex = (buf: ArrayBuffer) =>
 export async function fetchCatalog(): Promise<CatalogEntry[]> {
   const res = await fetch(`${base()}index.json`, { cache: 'no-cache' })
   if (!res.ok) throw new Error('Katalog balíčků se nepodařilo načíst.')
-  const data = await res.json()
+  // služba může místo JSON vrátit stránku aplikace (záložní odpověď offline cache): čitelná chyba místo „Unexpected token“
+  const data = await res.json().catch(() => undefined)
   if (!data || data.format !== 1 || !Array.isArray(data.packs)) throw new Error('Neznámý formát katalogu.')
   return data.packs
 }
