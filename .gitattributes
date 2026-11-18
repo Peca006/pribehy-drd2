@@ -1,3 +1,5 @@
 * text=auto eol=lf
 *.png binary
 *.pdf binary
+# balíčky ze SRD: bajty se nesmí měnit (kontrolní součet v index.json), diffy z nich jsou nečitelné
+content-packs/srd/*.json -text -diff linguist-generated=true

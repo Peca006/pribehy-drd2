@@ -17,8 +17,18 @@ node tools/srd/build.mjs            # pravidla  -> content-packs/local/
 node tools/srd/build-bestiar.mjs    # bestiář   -> content-packs/local/
 ```
 
-Hotové balíčky se po kontrole zkopírují sem a do `index.json` se zapíše nová verze.
-(Plánovaný skript `tools/srd/publish.mjs` to udělá sám, včetně kontrolního součtu.)
+Hotové balíčky se po kontrole zkopírují sem a do `index.json` se zapíše nová verze:
+
+```
+node tools/srd/publish.mjs
+```
+
+Skript přepíše jen balíček, jehož obsah se změnil (kontrolní součet). **Publikujte jen při skutečné změně
+obsahu nebo formátu**: každá verze zůstává navždy v historii gitu. Měření: dalších ~40–70 kB na verzi
+(git ukládá rozdíly), takže to není problém, dokud se nepublikuje při každé drobnosti. Vyjímkou jsou obrázky
+(base64 ve WebP se nedají ukládat jako rozdíl; přebuilding mění jejich bajty, i když se obsah nezměnil).
+Proto se nepublikuje „jen tak“ po novém sestavení. Soubory mají v `.gitattributes` `-text -diff`, aby se
+jejich bajty (a součet v `index.json`) nikdy nezměnily převodem konců řádků.
 
 ## Jak se publikují
 
