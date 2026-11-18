@@ -75,8 +75,10 @@ test('první spuštění, stažení balíčků, postava, sdílení a import', as
   await page.goto(detail)
   await page.getByText('Další', { exact: true }).click() // sbalený oddíl
   await page.getByRole('button', { name: 'Smazat…' }).click()
+  await expect(page.getByText('Smaže se i historie změn')).toBeVisible() // potvrzovací dialog
   await page.getByRole('button', { name: 'Smazat', exact: true }).click()
-  await expect(page.getByText('Testovací hrdina')).toBeHidden()
+  await expect(page).toHaveURL(/#\/postavy$/) // po smazání zpět na seznam
+  await expect(page.getByRole('heading', { name: 'Testovací hrdina' })).toBeHidden()
 
   await page.getByRole('link', { name: /Import/ }).click()
   await page.getByLabel('Kód k importu').fill(code)

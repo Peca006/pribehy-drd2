@@ -1,0 +1,36 @@
+# Průběžná kontrola větve develop a pull requestů: testy, typy, lint a E2E (bez nasazení).
+# Nasazení na Pages dělá jen deploy.yml po pushi do main.
+name: Kontrola
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run check
+      - run: npm run lint
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+      # při selhání E2E se uloží stopa (trace) a snímky, aby šlo chybu rozebrat
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-vysledky
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
