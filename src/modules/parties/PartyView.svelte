@@ -324,7 +324,7 @@
         <div class="row">
           <select bind:value={pick} aria-label="Postava ze zařízení">
             <option value="">Přidat postavu z tohoto zařízení…</option>
-            {#each free as l}<option value={l.id}>{characterOf(l).name || '(beze jména)'}</option
+            {#each free as l (l.id)}<option value={l.id}>{characterOf(l).name || '(beze jména)'}</option
               >{/each}
           </select>
           <button disabled={!pick} onclick={addLocal}>Přidat</button>

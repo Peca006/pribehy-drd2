@@ -117,7 +117,7 @@
       <p class="muted">Nemáte žádné návrhy zápisů k odeslání. Přidejte zápis v žurnálu družiny.</p>
     {:else}
       <ul>
-        {#each bundle.journal as e}<li>{e.title || 'Zápis'}</li>{/each}
+        {#each bundle.journal as e (e.id)}<li>{e.title || 'Zápis'}</li>{/each}
       </ul>
       <p class="muted">
         Velikost kódu: {code.length} znaků{code.length > QR_CHUNK ? `, QR: ${qrCount}` : ''}.

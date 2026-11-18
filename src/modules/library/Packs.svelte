@@ -45,7 +45,7 @@
 </p>
 {#if downloads.catalog?.length}
   <h3>Ke stažení</h3>
-  {#each downloads.catalog as e}
+  {#each downloads.catalog as e (e.id)}
     {@const inst = library.packs.find((p) => p.manifest.id === e.id)}
     {@const st = packState(e, inst)}
     <div class="panel pack">
@@ -75,7 +75,7 @@
 {/if}
 
 <h3>Nainstalované</h3>
-{#each library.packs as p}
+{#each library.packs as p (p.manifest.id)}
   <div class="panel pack">
     <div>
       <strong>{p.manifest.name}</strong>

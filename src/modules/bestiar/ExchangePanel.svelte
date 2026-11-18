@@ -71,7 +71,7 @@
 
 <h2>Export vlastních bytostí</h2>
 {#if bestiary.user.length}
-  {#each bestiary.user as c}
+  {#each bestiary.user as c (c.id)}
     <label class="check"><input type="checkbox" bind:checked={chosen[c.id]} /> {c.name}</label>
   {/each}
   <p class="actions">

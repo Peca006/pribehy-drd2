@@ -168,7 +168,7 @@
   </div>
 
   <h2>Povolání</h2>
-  {#each Object.keys(draft.professions) as pid}
+  {#each Object.keys(draft.professions) as pid (pid)}
     <div class="row">
       <span>{nameOf(pid)}</span>
       <button onclick={() => setLevel(pid, draft!.professions[pid] - 1)} aria-label="Snížit úroveň"

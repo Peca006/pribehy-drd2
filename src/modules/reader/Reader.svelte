@@ -145,7 +145,7 @@
       <section class="book">
         <h2 id={'kniha-' + book.id}>{book.name}</h2>
         <ul class="chapters">
-          {#each book.chapters as c}
+          {#each book.chapters as c (c.id)}
             <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
           {/each}
         </ul>
@@ -161,7 +161,7 @@
       <section class="book">
         <h2 id={'kniha-' + book.id}>{book.name}</h2>
         <ul class="chapters">
-          {#each book.professions as p}
+          {#each book.professions as p (p.id)}
             <li><a class="btn" href={'#/ctenar/povolani/' + encodeURIComponent(p.id)}>{p.name}</a></li>
           {/each}
         </ul>

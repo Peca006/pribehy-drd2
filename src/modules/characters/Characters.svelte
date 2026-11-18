@@ -323,7 +323,7 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
     <a class="btn primary" href="#/tvorba">Nová</a>
     <a class="btn" href="#/postavy/import">Import…</a>
   </p>
-  {#each logs as l}
+  {#each logs as l (l.id)}
     {@const ch = characterOf(l)}
     <a class="btn panel row" href={'#/postavy/' + l.id}>
       <strong>{ch.name || '(beze jména)'}</strong>

@@ -127,7 +127,7 @@
     <p class="actions">
       <select bind:value={conflictParty} aria-label="Družina">
         <option value="">Družina…</option>
-        {#each parties as p}<option value={p.id}>{p.name}</option>{/each}
+        {#each parties as p (p.id)}<option value={p.id}>{p.name}</option>{/each}
       </select>
       <button disabled={!conflictParty} onclick={toConflict}>Do konfliktu</button>
     </p>

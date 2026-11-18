@@ -15,7 +15,8 @@ export default ts.config(
       globals: { ...globals.browser, ...globals.node, __APP_VERSION__: 'readonly', __BUILD_TIME__: 'readonly' },
     },
     rules: {
-      // statické seznamy (bez přidávání a řazení) se klíčují indexem; hlídání by jen zaplavilo výstup
+      // Klíč v `{#each}` mají seznamy, které se mění (postavy, bytosti, balíčky, družiny, kapitoly). Pravidlo samo je vypnuté:
+      // většina seznamů je statická (vlastnosti, kostky, volby) a klíč tam nic nepřináší, jen by zahltil výstup.
       'svelte/require-each-key': 'off',
       // `{' '}` a `{'; '}` vědomě drží mezery mezi výrazy (Svelte je jinak sbalí)
       'svelte/no-useless-mustaches': 'off',
