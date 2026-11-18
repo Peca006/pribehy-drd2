@@ -15,11 +15,9 @@
     type Bonus,
     type Spent,
   } from '../../core/character/play'
+  import { evaluateAction, type Actor, type Kind } from '../../core/character/action'
   import {
-    clash,
-    counted,
     describeRoll,
-    evaluateRoll,
     levelOf,
     rollDice,
     rollDie,
@@ -27,7 +25,6 @@
     type Mode,
     SUCCESS_AT,
     type Dice,
-    type Side,
   } from '../../core/character/roll'
   import { MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
   import { professions } from '../../core/library.svelte'
@@ -57,7 +54,6 @@
     onscar: (a: Attribute) => void
   } = $props()
 
-  type Kind = 'zkouska' | 'vyzva' | 'stret'
   type Outcome = 'vycerpano' | 'prijato' | 'bezreakce' | undefined
 
   // komponenta se pro každou postavu vytváří znovu (`{#key}` u volající stránky)
@@ -79,7 +75,7 @@
   // střet: soupeř (úroveň a kostky), kdo byl aktér, výsledek losu při úplné shodě
   let oppLevel = $state(0)
   let oppDice = $state<Dice>([0, 0])
-  let actor = $state<'me' | 'opp' | 'unclear'>('me')
+  let actor = $state<Actor>('me')
   let losWin = $state<'me' | 'opp' | undefined>(undefined)
 
   const owned = $derived(
@@ -92,32 +88,19 @@
       })),
   )
   const level = $derived(levelOf(character, used))
-  // Přesně = 3 kostky, dvě nejvyšší; postih nepřesně = 3 kostky, dvě nejnižší (přesně pak nejde)
-  const mode: Mode = $derived(man === 'presne' ? 'best' : inaccurate ? 'worst' : 'normal')
-  const three = $derived(mode !== 'normal')
-  const pair = $derived(counted(three ? [...dice, extra] : dice, mode))
-  const rolled = $derived(dice[0] > 0 && dice[1] > 0 && (!three || extra > 0))
-  const result = $derived(rolled ? evaluateRoll(pair, level) : undefined)
-  const oppRolled = $derived(oppDice[0] > 0 && oppDice[1] > 0)
-  const opp = $derived(oppRolled ? evaluateRoll(oppDice, oppLevel) : undefined)
-  const clashRes = $derived(
-    result && opp
-      ? clash(
-          { dice: pair, total: result.total },
-          { dice: oppDice, total: opp.total },
-          actor === 'me' ? ('a' as Side) : actor === 'opp' ? ('b' as Side) : undefined,
-        )
-      : undefined,
+  // pravidla vyhodnocení jsou v `core/character/action.ts` (čistá funkce s testy)
+  const evaluated = $derived(
+    evaluateAction({ kind, dice, extra, man, inaccurate, level, oppDice, oppLevel, actor, losWin }),
   )
+  const mode: Mode = $derived(evaluated.mode)
+  const three = $derived(evaluated.three)
+  const rolled = $derived(evaluated.rolled)
+  const result = $derived(evaluated.result)
+  const opp = $derived(evaluated.opp)
+  const clashRes = $derived(evaluated.clashRes)
   /** vyhodnocení je rozhodnuto (u střetu i po losu) */
-  const done = $derived(
-    kind === 'stret' ? !!clashRes && (clashRes.winner !== 'los' || !!losWin) : !!result,
-  )
-  const won = $derived(
-    kind === 'stret'
-      ? clashRes?.winner === 'a' || (clashRes?.winner === 'los' && losWin === 'me')
-      : !!result?.success,
-  )
+  const done = $derived(evaluated.done)
+  const won = $derived(evaluated.won)
   const REASONS: Record<string, string> = {
     hod: 'vyšší hod',
     aktér: 'při shodě vítězí aktér',

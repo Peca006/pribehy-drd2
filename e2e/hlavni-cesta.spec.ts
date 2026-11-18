@@ -58,6 +58,14 @@ test('první spuštění, stažení balíčků, postava, sdílení a import', as
   // popis schopnosti pochází z balíčku (bez balíčku by tu byla jen poznámka „Popis chybí“)
   await expect(page.getByText('Popis chybí')).toBeHidden()
 
+  // 4b) panel Hod: zkouška i střet vyhodnotí výsledek
+  const roll = page.locator('#roll-panel')
+  await roll.locator('button.roll').click()
+  await expect(roll.locator('.total').first()).not.toHaveText('–')
+  await roll.getByRole('button', { name: 'Střet', exact: true }).click()
+  await roll.getByRole('button', { name: 'Hodit za soupeře' }).click()
+  await expect(roll.getByText(/vyšší hod|při shodě|rozhodne los|Los vyhrál/).first()).toBeVisible()
+
   // 5) sdílení kódem
   await page.getByRole('link', { name: 'Sdílet…' }).click()
   const code = await page.getByLabel('Kód ke sdílení').inputValue()
