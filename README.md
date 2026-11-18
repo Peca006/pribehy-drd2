@@ -48,12 +48,14 @@ aplikace určena k použití. Texty pravidel, bestiáře a další obsah her jso
 vydavatelů a řídí se jejich vlastními podmínkami; do aplikace se načítají jen jako samostatné obsahové balíčky
 a jejich použití je na odpovědnosti uživatele.
 
-Zdrojem převodníku je veřejně dostupné SRD Dračího doupěte II na [drd2srd.d20.cz](https://drd2srd.d20.cz/),
-které vzniklo podle jeho autorů s výslovným svolením nakladatelství Altar a autorů hry. Web SRD nestanoví
-podmínky pro další šíření textu ani pro odvozená díla, a proto **repozitář ani nasazená aplikace žádný text
-SRD neobsahují**. Vestavěný přehled (`src/data/skeleton.json`) obsahuje jen názvy, identifikátory a číselné
-parametry (názvy povolání, ras, schopností, počty úrovní), nikoli popisy ani texty pravidel. Případné balíčky se šíří jen soukromě v uzavřeném okruhu testerů, dokud nebudou podmínky
-upřesněny s nositeli práv.
+Zdrojem balíčků je veřejně dostupné SRD Dračího doupěte II na [drd2srd.d20.cz](https://drd2srd.d20.cz/).
+Nakladatelství Altar písemně potvrdilo, že text dostupný jako SRD smí být do **nekomerční** aplikace
+zapracován (viz [content-packs/srd/SVOLENI.md](content-packs/srd/SVOLENI.md)). Proto jsou v repozitáři ve složce
+`content-packs/srd/` a v nasazené aplikaci balíčky **jen v rozsahu SRD** (Základní příručka a Bestiář), které
+si aplikace stahuje ze svého webu. Aplikace musí zůstat nekomerční. Jakékoli další texty (Hry mocných, Hotfix,
+tištěné knihy) repozitář ani nasazení neobsahují a svolení se jich netýká; lze je načíst jen jako soukromé
+balíčky. Vestavěný přehled (`src/data/skeleton.json`) obsahuje jen názvy, identifikátory a číselné
+parametry, nikoli popisy ani texty pravidel.
 
 Software je poskytován „tak, jak je“, bez jakékoli záruky, včetně záruky správnosti či úplnosti pravidel
 (viz GPL-3.0-or-later). Při rozporu s tištěnými knihami platí vždy knihy.

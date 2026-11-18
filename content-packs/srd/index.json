@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "packs": [
+    {
+      "id": "drd2-pravidla-2",
+      "name": "Dračí doupě 2 – Pravidla (SRD)",
+      "version": "2.0.0",
+      "build": 2,
+      "file": "drd2-pravidla-2.json",
+      "size": 2683715,
+      "sha256": "685847f6cfcd2a5dfe99f928a56183b66cb1e526bed70a4f9c36ed9e81577111"
+    },
+    {
+      "id": "drd2-bestiar-2",
+      "name": "Dračí doupě 2 – Bestiář (SRD)",
+      "version": "2.0.0",
+      "build": 2,
+      "file": "drd2-bestiar-2.json",
+      "size": 715576,
+      "sha256": "1b7d2d79548d7657588a6e894247b738025c42f10a5d64522cc456dc9a7793e6"
+    }
+  ]
+}
