@@ -18,7 +18,9 @@ import type {
   Term,
 } from './content/schema'
 
-export const library = $state<{ packs: ContentPack[]; loaded: boolean }>({
+// `packs` se vždy nahrazuje celé (`refreshLibrary`) a obsah balíčků se nemění, proto `$state.raw`:
+// bez hlubokého proxy nad několika MB JSON. Položku v balíčku nikdy neupravujte na místě.
+export const library: { packs: ContentPack[]; loaded: boolean } = $state.raw({
   packs: [],
   loaded: false,
 })
@@ -47,8 +49,12 @@ const all = <T extends { id: string }>(pick: (p: ContentPack) => T[] | undefined
   return out
 }
 
-/** Je nainstalován balíček s popisy a texty pravidel (ne jen vestavěná kostra)? */
-export const hasRulesPack = (): boolean => library.packs.some((p) => p.professions?.length)
+/** Je nainstalován balíček s povoláními, tedy s popisy a texty (ne jen vestavěná kostra)? */
+export const hasProfessions = (): boolean => library.packs.some((p) => p.professions?.length)
+
+/** Existuje v nainstalovaných knihách kapitola s tímto ID (cíl odkazu do čtečky)? */
+export const hasChapter = (id: string | undefined): boolean =>
+  !!id && library.packs.some((p) => p.chapters?.some((c) => c.id === id))
 
 export const commonRaceAbilities = (): Ability[] => all((p) => p.commonRaceAbilities)
 export const traits = (): Trait[] => all((p) => p.traits)

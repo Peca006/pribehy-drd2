@@ -175,6 +175,10 @@ export const linkOf = (c: Card) =>
       ? `#/ctenar/32-slozitejsi-situace/${c.link}`
       : undefined
 
+/** ID kapitoly příručky, na kterou karta odkazuje. */
+export const chapterOf = (c: Card): string | undefined =>
+  /^#\/ctenar\/([^/]+)/.exec(linkOf(c) ?? '')?.[1]
+
 /** Odkaz na stejné místo v SRD (použije se, když není nainstalován balíček s příručkou). */
 export const srdOf = (c: Card) => {
   const l = linkOf(c)

@@ -1,11 +1,11 @@
 <script lang="ts">
   // Kroky karty postupu, související dovednosti (z balíčku, jinak odkaz do SRD) a odkaz do příručky nebo SRD.
-  import { hasRulesPack, professions } from '../../core/library.svelte'
+  import { hasChapter, hasProfessions, professions } from '../../core/library.svelte'
   import GetPacks from '../../ui/GetPacks.svelte'
-  import { linkOf, skillsOf, srdOf, type Card } from './guide'
+  import { chapterOf, linkOf, skillsOf, srdOf, type Card } from './guide'
 
   let { card, ordered = true }: { card: Card; ordered?: boolean } = $props()
-  const found = $derived(card.skills?.length && hasRulesPack() ? skillsOf(card, professions()) : [])
+  const found = $derived(card.skills?.length && hasProfessions() ? skillsOf(card, professions()) : [])
 </script>
 
 {#if ordered}
@@ -26,7 +26,7 @@
   </p>
 {/if}
 <p>
-  {#if hasRulesPack()}<a href={linkOf(card)}>V příručce →</a>
+  {#if hasChapter(chapterOf(card))}<a href={linkOf(card)}>V příručce →</a>
   {:else}
     <GetPacks label="Stáhnout příručku" />
     {#if srdOf(card)}

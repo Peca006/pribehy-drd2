@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { BASIC, linkOf, skillsOf, srdOf } from './guide'
+import { BASIC, chapterOf, linkOf, skillsOf, srdOf } from './guide'
 
 const card = (id: string) => BASIC.find((c) => c.id === id)!
 
@@ -28,5 +28,13 @@ describe('postup vyhodnocení: dovednosti a odkaz do SRD', () => {
       ['Používání elixírů', 'podle akce', 'Alchymista'],
     ])
     expect(skillsOf(card('leceni'), [])).toEqual([])
+  })
+})
+
+describe('cíl odkazu do příručky', () => {
+  it('chapterOf vrací ID kapitoly, i u odkazu s kotvou', () => {
+    expect(chapterOf(card('vyroba'))).toBe('35-pouzivani-dovednosti')
+    expect(chapterOf({ id: 'x', title: 'x', steps: [], link: 'hrstka-a-houf' })).toBe('32-slozitejsi-situace')
+    expect(chapterOf({ id: 'x', title: 'x', steps: [] })).toBeUndefined()
   })
 })
