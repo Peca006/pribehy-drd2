@@ -1,5 +1,14 @@
 # Změny
 
+## 0.3.15 (18. 11. 2026)
+
+- **Úložiště dat:** záznamy postav, družin a bytostí nesou číslo schématu a při změně formátu se migrují (databáze ve verzi 5, stávající data zůstávají). Aplikace používá jedno sdílené připojení k databázi a při aktualizaci v jiné kartě ji neblokuje.
+- **Stahování balíčků:** hlídá zaseknutí (20 s bez dat), hlásí srozumitelné chyby (bez připojení, chyba serveru, stránka místo katalogu) a ukazuje průběh v procentech.
+- **Pruhy nad navigací:** jeden pruh najednou podle priority (aplikace, zastaralé balíčky, novější balíčky, první stažení, instalace). U chybějících popisů už není tlačítko u každé položky, jen odkaz.
+- **Příručka:** odkaz „V příručce“ na kartách Postup se ukáže jen tehdy, když kapitola existuje (dřív ho způsobil i balíček jen s Hrami mocných).
+- **Převod ze SRD:** opravené hledání stránek v navigaci SRD v záložce (dřív se tiše používal pevný seznam).
+- **Pod kapotou:** ESLint v CI, testy úložišť, stahování, směrovače a PWA (353 testů), jedno číslo sestavení balíčků a jedna adresa SRD v kódu.
+
 ## 0.3.14 (18. 11. 2026)
 
 - **Stažení na místě:** při prvním spuštění online aplikace nabídne stažení Pravidel a Bestiáře (pruh s tlačítkem Stáhnout, volba Později se pamatuje). Nové verze balíčků se nabízejí jako Aktualizovat.
