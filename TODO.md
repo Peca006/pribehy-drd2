@@ -18,6 +18,8 @@ u výroby a nástrah, názvy dovedností z balíčku a odkaz do SRD v pomůckác
 **Otevřené k rozhodnutí:** organizace balíčků, kapitol a bytostí (přehled „kapitoly, druhy, bytosti“, seskupení kapitol
 v Příručce podle knihy); postřeh k ikonkám prostředí v Bestiáři.
 
+**Ilustrace postav (rozhodnutí):** obrázky se sdílejí jen v souboru (hotovo: volitelně přiložené k souboru s postavou) a v celkovém exportu do souboru; později přes WebRTC. Do kódu, QR, zvuku ani jiných malých přenosů nikdy (příliš velké, přenos by byl vyčerpávající).
+
 **Před první beta verzí:** `schema` u uložených dat, řetězec `migrate`, celkový export a import `.json`, `FORMAT.md`.
 
 **Přenosy (pořadí):** ruční slučování konfliktů při importu revizí → Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC.
