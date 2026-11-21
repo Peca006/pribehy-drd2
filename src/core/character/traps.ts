@@ -1,6 +1,7 @@
 // Nástrahy (pasti, třaskaviny, žíraviny, jedy): stručná evidence připravených nástrah postavy a výpočet ceny v Surovinách.
 // Aplikace jen počítá a zapisuje; popis zamýšleného účinku a slabiny je text hráče. Čísla z pravidel jsou návrh (cenu jde přepsat).
 import { ATTRIBUTES, newId, type Character, type Trap } from './model'
+import { MAX_DESCRIPTION } from '../recipes/model'
 import { cleanCount } from './rawMaterials'
 
 export type TrapType = 'jednoducha' | 'mechanicka' | 'trask' | 'jed' | 'kontaktni' | 'plynny' | 'omamna' | 'jina'
@@ -70,6 +71,7 @@ export function trapFrom(v: unknown): Trap | undefined {
   const effect = TRAP_EFFECTS.find((e) => e.id === r.effect)?.id ?? 'ohrozeni'
   const maneuver = TRAP_MANEUVERS.find((m) => m.id === r.maneuver)?.id ?? ''
   const extra = Math.min(MAX_EXTRA, cleanCount(r.extra))
+  const description = cleanText(r.description, MAX_DESCRIPTION)
   return {
     name,
     type,
@@ -80,6 +82,7 @@ export function trapFrom(v: unknown): Trap | undefined {
     weakness: cleanText(r.weakness, MAX_TEXT),
     note: cleanText(r.note, MAX_TEXT),
     count: cleanCount(r.count),
+    ...(description ? { description } : {}),
   }
 }
 

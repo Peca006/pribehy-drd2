@@ -1,10 +1,9 @@
 // Stručný popis předpisu pro seznamy (Grimoár, postava) podle jeho druhu.
 import { trapSummary } from '../character/traps'
-import { recipeToTrap } from './kinds'
+import { potionLabel } from '../character/potions'
+import { recipeToPotion, recipeToTrap } from './kinds'
 import { RECIPE_KIND_LABELS, type Recipe } from './model'
 import { spellFrom, spellSummary } from './spells'
-
-const clip = (s: string, n = 80) => (s.length > n ? s.slice(0, n - 1) + '…' : s)
 
 export function recipeSummary(r: Recipe): string {
   switch (r.kind) {
@@ -14,10 +13,12 @@ export function recipeSummary(r: Recipe): string {
       const t = recipeToTrap(r, { count: 1 })
       return t ? trapSummary(t) : r.name
     }
-    case 'lektvar':
-      return r.name
+    case 'lektvar': {
+      const p = recipeToPotion(r, {})
+      return p ? potionLabel(p) : r.name
+    }
     default:
-      return r.description ? `${r.name}: ${clip(r.description)}` : r.name
+      return r.name
   }
 }
 

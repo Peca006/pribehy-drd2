@@ -19,6 +19,21 @@ vi.mock('./party/store', () => ({
   },
 }))
 
+const recipes: { id: string }[] = []
+vi.mock('./recipes/store', () => ({
+  listRecipes: async () => [...recipes],
+  putRecipe: async (r: { id: string }) => {
+    const i = recipes.findIndex((x) => x.id === r.id)
+    if (i >= 0) recipes[i] = r
+    else recipes.push(r)
+    return r
+  },
+  removeRecipe: async (id: string) => {
+    const i = recipes.findIndex((x) => x.id === id)
+    if (i >= 0) recipes.splice(i, 1)
+  },
+}))
+
 const store = new Map<string, string>()
 globalThis.localStorage = {
   getItem: (k: string) => store.get(k) ?? null,
@@ -31,6 +46,7 @@ const { removeDemo, restoreDemo, seedDemoOnce } = await import('./demo')
 beforeEach(() => {
   logs.length = 0
   parties.length = 0
+  recipes.length = 0
   store.clear()
 })
 
@@ -52,14 +68,20 @@ describe('ukázková data', () => {
     await restoreDemo('Test')
     expect(logs).toHaveLength(3)
     expect(parties).toHaveLength(1)
+    expect(recipes.length).toBeGreaterThanOrEqual(15)
+    const kinds = recipes.map((r) => (r as unknown as { kind: string }).kind)
+    for (const k of ['kouzlo', 'lektvar', 'nastraha', 'vyrobek'])
+      expect(kinds.filter((x) => x === k).length).toBeGreaterThanOrEqual(3)
   })
   it('odstranění smaže jen ukázková data a po něm se už nenabízejí samy', async () => {
     await restoreDemo('Test')
     logs.push({ id: 'moje-postava', events: [] })
+    recipes.push({ id: 'moje-kouzlo' })
     parties.push({ id: 'moje-druzina' })
     await removeDemo()
     expect(logs).toEqual([{ id: 'moje-postava', events: [] }])
     expect(parties).toEqual([{ id: 'moje-druzina' }])
+    expect(recipes).toEqual([{ id: 'moje-kouzlo' }])
     logs.length = 0
     parties.length = 0
     expect(await seedDemoOnce('Test')).toBe(false)

@@ -1,5 +1,6 @@
 /// <reference lib="dom" />
 import { expect, test } from '@playwright/test'
+import { clearRecipes } from './helpers'
 
 // Grimoár na liště, předpisy všech druhů, filtr podle druhu a převod starého formátu deníku (lektvary a nástrahy
 // zapsané přímo v postavě se při spuštění převedou na předpisy).
@@ -7,6 +8,7 @@ import { expect, test } from '@playwright/test'
 test('Grimoár je na liště mezi Bestiářem a Více', async ({ page }) => {
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
+  await expect(nav.getByRole('link', { name: /Grimoár/ })).toBeVisible()
   const names = await nav.getByRole('link').allInnerTexts()
   const clean = names.map((n) => n.replace(/\s+/g, ' ').trim())
   const i = clean.findIndex((n) => n.includes('Grimoár'))
@@ -17,6 +19,7 @@ test('Grimoár je na liště mezi Bestiářem a Více', async ({ page }) => {
 
 test('předpisy všech druhů a filtr podle druhu', async ({ page }) => {
   await page.goto('/#/grimoar')
+  await clearRecipes(page)
   await page.getByRole('button', { name: 'Skrýt' }).click()
   const druh = (n: string) => page.getByRole('group', { name: 'Druh nového předpisu' }).getByRole('button', { name: n, exact: true })
 
@@ -24,9 +27,10 @@ test('předpisy všech druhů a filtr podle druhu', async ({ page }) => {
   await page.getByRole('button', { name: 'Nový…' }).click()
   await druh('Lektvar').click()
   const lektvar = page.getByRole('dialog', { name: 'Lektvar' })
+  await lektvar.getByLabel('Název lektvaru').fill('Mast na popáleniny')
   await lektvar.getByLabel('Druh Jizvy').fill('popálenina')
   await lektvar.getByRole('button', { name: 'Uložit do Grimoáru' }).click()
-  await expect(page.getByText('popálenina (Tělo)')).toBeVisible()
+  await expect(page.getByText('Mast na popáleniny (Tělo, popálenina)')).toBeVisible()
 
   // nástraha
   await page.getByRole('button', { name: 'Nový…' }).click()
@@ -50,7 +54,7 @@ test('předpisy všech druhů a filtr podle druhu', async ({ page }) => {
   const filtr = page.getByRole('group', { name: 'Filtr podle druhu' })
   await expect(filtr.getByRole('button', { name: /Vše \(3\)/ })).toBeVisible()
   await filtr.getByRole('button', { name: /Lektvar \(1\)/ }).click()
-  await expect(page.getByText('popálenina (Tělo)')).toBeVisible()
+  await expect(page.getByText('Mast na popáleniny (Tělo, popálenina)')).toBeVisible()
   await expect(page.getByText('Lano z kopřiv')).toBeHidden()
   await filtr.getByRole('button', { name: /Kouzlo \(0\)/ }).click()
   await expect(page.getByText('Nic nenalezeno.')).toBeVisible()
@@ -63,6 +67,7 @@ test('lektvar zapsaný u postavy je předpis v Grimoáru a sdílí se mezi posta
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click()
   await expect(page.getByText('Ukázková data jsou obnovená')).toBeVisible()
+  await clearRecipes(page)
 
   await page.goto('/#/postavy')
   await page.getByRole('link', { name: /Brokan Rudovous/ }).click()
@@ -137,13 +142,15 @@ test('starý deník s lektvarem a nástrahou se při spuštění převede na př
 
 test('výrobky u postavy s počtem kusů a výběr lektvaru z Grimoáru podle názvu', async ({ page }) => {
   await page.goto('/#/grimoar')
+  await clearRecipes(page)
   await page.getByRole('button', { name: 'Skrýt' }).click()
   // lektvar v Grimoáru
   await page.getByRole('button', { name: 'Nový…' }).click()
   await page.getByRole('group', { name: 'Druh nového předpisu' }).getByRole('button', { name: 'Lektvar', exact: true }).click()
+  await page.getByRole('dialog', { name: 'Lektvar' }).getByLabel('Název lektvaru').fill('Mast na popáleniny')
   await page.getByRole('dialog', { name: 'Lektvar' }).getByLabel('Druh Jizvy').fill('popálenina')
   await page.getByRole('dialog', { name: 'Lektvar' }).getByRole('button', { name: 'Uložit do Grimoáru' }).click()
-  await expect(page.getByText('popálenina (Tělo)')).toBeVisible()
+  await expect(page.getByText('Mast na popáleniny (Tělo, popálenina)')).toBeVisible()
 
   await page.goto('/#/knihovna')
   await page.getByText('Ukázková data', { exact: true }).click()
@@ -157,13 +164,13 @@ test('výrobky u postavy s počtem kusů a výběr lektvaru z Grimoáru podle n�
   await page.getByRole('button', { name: 'Přidat lektvar' }).click()
   const dlg = page.getByRole('dialog', { name: 'Lektvar' })
   await dlg.getByLabel('Vybrat z Grimoáru').fill('POPAL')
-  await dlg.getByRole('button', { name: 'popálenina (Tělo)' }).click()
+  await dlg.getByRole('button', { name: 'Mast na popáleniny' }).click()
   await expect(dlg.getByLabel('Druh Jizvy')).toHaveValue('popálenina')
   await dlg.getByRole('button', { name: 'Uložit' }).click()
-  await expect(page.locator('.potions').getByText('popálenina (Tělo)')).toBeVisible()
+  await expect(page.locator('.potions').getByText('Mast na popáleniny (Tělo, popálenina)')).toBeVisible()
   // stále jediný předpis lektvaru
   await page.goto('/#/grimoar')
-  await expect(page.getByText('popálenina (Tělo)')).toHaveCount(1)
+  await expect(page.getByText('Mast na popáleniny (Tělo, popálenina)')).toHaveCount(1)
 
   // výrobek: nový, počet kusů, odebrání
   await page.goto('/#/postavy')

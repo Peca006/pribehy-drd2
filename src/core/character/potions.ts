@@ -2,11 +2,13 @@
 // Jizvy), kolik Surovin v nich je (každá ušetří při léčení 1 Zdroj) a poznámka. Čistě funkce nad postavou.
 import { ATTRIBUTES, newId, type Character, type Potion } from './model'
 import type { Attribute } from '../content/schema'
+import { MAX_DESCRIPTION } from '../recipes/model'
 import { cleanCount } from './rawMaterials'
 
 export const MAX_POTIONS = 40
 export const MAX_SCAR_TEXT = 60
 export const MAX_NOTE = 120
+export const MAX_NAME = 80
 
 export const cleanText = (v: unknown, max: number): string => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 
@@ -17,7 +19,16 @@ export function potionFrom(v: unknown): Potion | undefined {
   const attribute = ATTRIBUTES.find((a) => a === r.attribute)
   const scar = cleanText(r.scar, MAX_SCAR_TEXT)
   if (!attribute || !scar) return undefined
-  return { attribute, scar, count: cleanCount(r.count), note: cleanText(r.note, MAX_NOTE) }
+  const name = cleanText(r.name, MAX_NAME)
+  const description = cleanText(r.description, MAX_DESCRIPTION)
+  return {
+    attribute,
+    scar,
+    count: cleanCount(r.count),
+    note: cleanText(r.note, MAX_NOTE),
+    ...(name ? { name } : {}),
+    ...(description ? { description } : {}),
+  }
 }
 
 /** Platné lektvary z objektu neznámého původu (nejvýš `MAX_POTIONS`; ID bez tečky). */
@@ -85,4 +96,9 @@ export function consumePotions(c: Character, use: Record<string, number>): Chara
 }
 
 /** Zkrácený popis pro přehled: „popálenina (Tělo)“. */
-export const potionLabel = (p: Potion): string => `${p.scar} (${p.attribute})`
+/** Název lektvaru: vlastní (s vlastností a Jizvou v závorce), jinak podle Jizvy a vlastnosti. */
+export const potionLabel = (p: Potion): string =>
+  p.name ? `${p.name} (${p.attribute}, ${p.scar})` : `${p.scar} (${p.attribute})`
+
+/** Odvozený název lektvaru bez vlastního jména. */
+export const derivedPotionName = (p: Pick<Potion, 'attribute' | 'scar'>): string => `${p.scar} (${p.attribute})`

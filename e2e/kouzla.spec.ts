@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { clearRecipes } from './helpers'
 
 // Kouzla a Grimoár: ad hoc seslání bez uložení, uložení předpisu k postavě, odebrání a přidání našeptáváním
 // (bez ohledu na diakritiku a velikost písmen).
@@ -10,6 +11,7 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení
   await expect(page.getByText('Ukázková data jsou obnovená')).toBeVisible()
+  await clearRecipes(page)
 
   await page.goto('/#/postavy')
   await page.getByRole('link', { name: /Brokan Rudovous/ }).click()
@@ -54,6 +56,7 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
 
 test('Grimoár ve Více: nové kouzlo, úprava a smazání s potvrzením', async ({ page }) => {
   await page.goto('/#/grimoar')
+  await clearRecipes(page)
   await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
 
   await page.getByRole('button', { name: 'Nový…' }).click()
@@ -86,6 +89,7 @@ test('sdílení postavy přenese kouzlo do Grimoáru příjemce', async ({ page 
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click()
   await expect(page.getByText('Ukázková data jsou obnovená')).toBeVisible()
+  await clearRecipes(page)
 
   // kouzlo uložené u postavy
   await page.goto('/#/postavy')
@@ -126,6 +130,7 @@ test('sdílení postavy přenese kouzlo do Grimoáru příjemce', async ({ page 
 
 test('Grimoár: sdílení kouzla kódem a import v Postavy → Import', async ({ page }) => {
   await page.goto('/#/grimoar')
+  await clearRecipes(page)
   await page.getByRole('button', { name: 'Skrýt' }).click()
   await page.getByRole('button', { name: 'Nový…' }).click()
   await page.getByRole('group', { name: 'Druh nového předpisu' }).getByRole('button', { name: 'Kouzlo' }).click()

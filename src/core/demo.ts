@@ -1,14 +1,18 @@
 // Instalace ukázkových dat: při prvním spuštění do prázdné aplikace a na požádání ve Více (obnoví jen ukázková data).
 import { DEMO_CHARACTERS, demoLog, demoParty } from '../data/demo'
+import { DEMO_RECIPES } from '../data/demoRecipes'
 import { deleteLog, listLogs, saveLog } from './character/store'
 import { deleteParty, listParties, saveParty } from './party/store'
+import { sealRecipe } from './recipes/model'
+import { listRecipes, putRecipe, removeRecipe } from './recipes/store'
 
 const FLAG = 'drd2-demo-seeded'
 /** Všechna ukázková data mají ID s touto předponou, takže jdou odstranit najednou (i ta, která přibudou). */
 export const DEMO_PREFIX = 'demo-'
 
-/** Odstraní všechna ukázková data (postavy, družiny a jejich rozpracovaný konflikt). Ostatní data se nedotkne. */
+/** Odstraní všechna ukázková data (postavy, družiny, jejich rozpracovaný konflikt a ukázkové předpisy v Grimoáru). Ostatní data se nedotkne. */
 export async function removeDemo() {
+  for (const r of await listRecipes()) if (r.id.startsWith(DEMO_PREFIX)) await removeRecipe(r.id)
   for (const l of await listLogs()) if (l.id.startsWith(DEMO_PREFIX)) await deleteLog(l.id)
   for (const p of await listParties())
     if (p.id.startsWith(DEMO_PREFIX)) {
@@ -26,8 +30,9 @@ export async function removeDemo() {
   }
 }
 
-/** Přepíše (obnoví) ukázkové postavy a družinu; ostatní data se nedotkne. */
+/** Přepíše (obnoví) ukázkové postavy, družinu a předpisy v Grimoáru; ostatní data se nedotkne. */
 export async function restoreDemo(author: string) {
+  for (const r of DEMO_RECIPES) await putRecipe(await sealRecipe(r.id, r))
   for (const c of DEMO_CHARACTERS) await saveLog(demoLog(c, author))
   await saveParty(demoParty())
   try {

@@ -66,6 +66,7 @@
     />
   {/if}
   <TrapFields bind:spec />
+  <textarea bind:value={spec.description} rows="2" placeholder="Popis (nepovinný)" aria-label="Popis nástrahy"></textarea>
   <p>
     Cena jednoho kusu: <strong>{trapCost(priced)}</strong> Surovin
     <span class="muted">({trapCostLines(priced).join(', ')})</span>

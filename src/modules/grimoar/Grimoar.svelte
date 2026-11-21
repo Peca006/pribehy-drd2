@@ -125,6 +125,7 @@
           <button class="icon" onclick={() => (dialog = { kind: r.kind, recipe: r })} aria-label={`Upravit: ${r.name}`}>✎</button>
           <span class="what" title={r.description}>
             <small class="muted">{kindLabel(r)}</small> {recipeSummary(r)}
+            {#if r.description}<small class="muted desc">{r.description}</small>{/if}
           </span>
           <button onclick={() => share([r], r.name)} aria-label={`Sdílet: ${r.name}`}>Sdílet</button>
           <button onclick={() => remove(r)} aria-label={`Smazat: ${r.name}`}>✕</button>
@@ -180,6 +181,13 @@
   .what {
     flex: 1;
     min-width: 0;
+  }
+  .desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .icon {
     padding: 0 0.4rem;

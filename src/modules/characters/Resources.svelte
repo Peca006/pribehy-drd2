@@ -111,7 +111,7 @@
       );
     gap: 0.25rem;
     align-items: center;
-    margin: 0.35rem 0;
+    margin: 0.7rem 0;
   }
   .row button:not(.plain) {
     padding: 0.2rem;

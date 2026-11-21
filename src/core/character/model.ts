@@ -37,6 +37,9 @@ export interface Potion {
   /** Suroviny v zásobníku */
   count: number
   note: string
+  /** vlastní název lektvaru (chybí-li, říká se mu podle Jizvy a vlastnosti) a popis; patří k předpisu v Grimoáru */
+  name?: string
+  description?: string
 }
 
 /**
@@ -56,6 +59,8 @@ export interface Trap {
   note: string
   /** kolik kusů (dávek) je připraveno */
   count: number
+  /** popis nástrahy; patří k předpisu v Grimoáru */
+  description?: string
 }
 
 export interface Character {

@@ -117,23 +117,35 @@ describe('kouzla zůstávají nedotčená', () => {
   })
 })
 
-describe('popis předpisu nemění jeho totožnost', () => {
+describe('název a popis jsou součástí totožnosti předpisu', () => {
   it('změna počtu u lektvaru s popisem v Grimoáru ponechá odkaz na stejný předpis i s popisem', async () => {
     const c = base()
     const first = await write(emptyCharacter('a'), c, [])
     const withDesc = [{ ...first.recipes[0], description: 'Hojivá mast od Zorky.' }]
     const loaded = expand(first.stored, withDesc)
     const id = Object.keys(loaded.potions)[0]
+    expect(loaded.potions[id].description).toBe('Hojivá mast od Zorky.')
     const second = await write(loaded, adjustPotion(loaded, id, 1), withDesc)
     expect(second.created).toEqual([])
     expect(second.stored.recipeLinks[id].recipeId).toBe(withDesc[0].id)
   })
 
-  it('nový lektvar se stejným obsahem znovu použije předpis s popisem', async () => {
+  it('nový lektvar se stejným názvem, popisem a parametry znovu použije předpis', async () => {
     const first = await write(emptyCharacter('a'), base(), [])
     const withDesc = [{ ...first.recipes[0], description: 'Popis.' }]
-    const other = ok(savePotion(emptyCharacter('b'), { attribute: 'Tělo', scar: 'popálenina', count: 1 }))
-    const second = await write(emptyCharacter('b'), other, withDesc)
-    expect(second.created).toEqual([])
+    const same = ok(savePotion(emptyCharacter('b'), { attribute: 'Tělo', scar: 'popálenina', count: 1, description: 'Popis.' }))
+    expect((await write(emptyCharacter('b'), same, withDesc)).created).toEqual([])
+  })
+
+  it('jiný popis nebo vlastní název je jiný předpis (stávající se nemění)', async () => {
+    const first = await write(emptyCharacter('a'), base(), [])
+    const withDesc = [{ ...first.recipes[0], description: 'Popis.' }]
+    const plain = ok(savePotion(emptyCharacter('b'), { attribute: 'Tělo', scar: 'popálenina', count: 1 }))
+    expect((await write(emptyCharacter('b'), plain, withDesc)).created).toHaveLength(1)
+    const named = ok(savePotion(emptyCharacter('c'), { attribute: 'Tělo', scar: 'popálenina', count: 1, name: 'Zorčina mast', description: 'Popis.' }))
+    const res = await write(emptyCharacter('c'), named, withDesc)
+    expect(res.created).toHaveLength(1)
+    expect(res.created[0].input.name).toBe('Zorčina mast')
+    expect(withDesc[0].description).toBe('Popis.')
   })
 })

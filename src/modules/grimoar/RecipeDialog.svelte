@@ -1,7 +1,7 @@
 <script lang="ts">
   import { untrack } from 'svelte'
   import { ATTRIBUTES } from '../../core/character/model'
-  import { MAX_SCAR_TEXT, potionLabel, potionFrom } from '../../core/character/potions'
+  import { MAX_SCAR_TEXT, potionFrom } from '../../core/character/potions'
   import { trapFrom, trapSummary } from '../../core/character/traps'
   import type { Attribute } from '../../core/content/schema'
   import { potionToRecipe, recipeToTrap, trapToRecipe } from '../../core/recipes/kinds'
@@ -41,7 +41,8 @@
     },
   )
   // výrobek
-  let name = $state(init?.kind === 'vyrobek' ? init.name : '')
+  // lektvar a výrobek: vlastní název (nástraha ho má v poli nástrahy, kouzlo ve svém dialogu)
+  let name = $state(init?.kind === 'vyrobek' || init?.kind === 'lektvar' ? init.name : '')
   let error = $state('')
   let dialog: HTMLDialogElement
 
@@ -51,9 +52,10 @@
 
   function build(): RecipeInput | string {
     if (kind === 'lektvar') {
-      const p = potionFrom({ attribute, scar, count: 0, note: '' })
+      if (!name.trim()) return 'Zadejte název lektvaru.'
+      const p = potionFrom({ attribute, scar, count: 0, note: '', name, description })
       if (!p) return 'Zadejte vlastnost a druh Jizvy, na který lektvar působí.'
-      return { ...potionToRecipe(p), description }
+      return potionToRecipe(p)
     }
     if (kind === 'nastraha') {
       const t = trapFrom({ type: 'jina', effect: 'ohrozeni', maneuver: '', extra: 0, weakness: '', note: '', count: 1, ...spec })
@@ -72,7 +74,7 @@
   }
 
   const preview = $derived.by(() => {
-    if (kind === 'lektvar') return scar.trim() ? potionLabel({ attribute, scar: scar.trim(), count: 0, note: '' }) : ''
+    if (kind === 'lektvar') return scar.trim() ? `Působí na: ${attribute}, ${scar.trim()}` : ''
     if (kind === 'nastraha') {
       const t = trapFrom({ type: 'jina', effect: 'ohrozeni', maneuver: '', extra: 0, weakness: '', note: '', count: 1, ...spec })
       return t ? trapSummary(t) : ''
@@ -84,6 +86,7 @@
 <dialog bind:this={dialog} {onclose} aria-label={RECIPE_KIND_LABELS[kind]}>
   <h2>{recipe ? 'Upravit' : 'Nový'}: {RECIPE_KIND_LABELS[kind].toLowerCase()}</h2>
   {#if kind === 'lektvar'}
+    <input type="text" bind:value={name} maxlength={MAX_NAME} placeholder="Název lektvaru" aria-label="Název lektvaru" />
     <div class="seg" role="group" aria-label="Vlastnost">
       {#each ATTRIBUTES as a}
         <button class:primary={attribute === a} onclick={() => (attribute = a)}>{a}</button>
