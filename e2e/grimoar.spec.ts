@@ -1,6 +1,6 @@
 /// <reference lib="dom" />
 import { expect, test } from '@playwright/test'
-import { clearRecipes } from './helpers'
+import { clearRecipes } from './helpers.js'
 
 // Grimoár na liště, předpisy všech druhů, filtr podle druhu a převod starého formátu deníku (lektvary a nástrahy
 // zapsané přímo v postavě se při spuštění převedou na předpisy).

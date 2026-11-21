@@ -59,7 +59,8 @@ test('soubor se sdílením nese ilustrace postavy, kód a QR ne', async ({ page 
   for await (const chunk of file) text += chunk
   const count = (t: string) =>
     page.evaluate(async (x) => {
-      const m = await import('/src/core/character/share.ts')
+      const path = '/src/core/character/share.ts'
+      const m = await import(/* @vite-ignore */ path)
       const r = await m.decodeBundle(x)
       return r.bundle && 'images' in r.bundle ? (r.bundle.images?.length ?? 0) : -1
     }, t)

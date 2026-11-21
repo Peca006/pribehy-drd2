@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { clearRecipes } from './helpers'
+import { clearRecipes } from './helpers.js'
 
 // Kouzla a Grimoár: ad hoc seslání bez uložení, uložení předpisu k postavě, odebrání a přidání našeptáváním
 // (bez ohledu na diakritiku a velikost písmen).
