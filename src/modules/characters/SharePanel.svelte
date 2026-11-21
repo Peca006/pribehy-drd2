@@ -4,6 +4,7 @@
   import { characterOf, type CharacterLog } from '../../core/character/model'
   import { loadReviews, markSent, type Reviews } from '../../core/character/reviews'
   import { groupRevisions } from '../../core/character/revisions'
+  import { sinceIndex as sinceIndexOf, type ShareMode } from '../../core/character/shareRange'
   import { slugify } from '../../core/creatures/bundle'
   import { fitForQr, type Fitted } from '../../core/character/compact'
   import { QR_CHUNK, splitForQr } from '../../core/character/qr'
@@ -20,20 +21,21 @@
 
   let log = $state<CharacterLog | undefined>(undefined)
   let reviews = $state<Reviews>({ status: {} })
-  let mode = $state<'nove' | 'cela'>('nove')
+  let mode = $state<ShareMode>('nove')
+  // zvolený začátek (revize, od které se sdílí včetně)
+  let fromId = $state('')
   let code = $state('')
 
   onMount(async () => {
     log = await getLog(id)
     reviews = loadReviews(id)
-    mode = reviews.sentUpTo ? 'nove' : 'cela'
+    fromId = groupRevisions(log?.events ?? []).at(-1)?.id ?? ''
+    fromId = groupRevisions(log!.events).at(-1)?.id ?? ''
   })
 
   const name = $derived(log ? characterOf(log).name || 'postava' : '')
   const revs = $derived(log ? groupRevisions(log.events) : [])
-  const sinceIndex = $derived(
-    mode === 'nove' && reviews.sentUpTo ? revs.findIndex((r) => r.id === reviews.sentUpTo) : -1,
-  )
+  const sinceIndex = $derived(sinceIndexOf(revs, mode, reviews.sentUpTo, fromId))
   const included = $derived(revs.slice(sinceIndex + 1))
   const when = (iso: string) => new Date(iso).toLocaleString('cs-CZ')
 
@@ -122,6 +124,15 @@
     <label class="check">
       <input type="radio" bind:group={mode} value="nove" disabled={!reviews.sentUpTo} />
       Jen změny od posledního odeslání
+    </label>
+    <label class="check">
+      <input type="radio" bind:group={mode} value="bod" disabled={!revs.length} />
+      Od zvolené revize
+      <select bind:value={fromId} disabled={mode !== 'bod'} aria-label="Sdílet od revize">
+        {#each revs as r (r.id)}
+          <option value={r.id}>{when(r.at)} · {r.note || 'Změna'} · {r.by}</option>
+        {/each}
+      </select>
     </label>
     <label class="check">
       <input type="radio" bind:group={mode} value="cela" /> Celá postava od začátku

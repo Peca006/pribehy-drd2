@@ -126,6 +126,25 @@ describe('upgrade ze starší databáze', () => {
   })
 })
 
+describe('ilustrace postav', () => {
+  it('upgrade z verze 6 přidá úložiště ilustrací s indexem podle postavy', async () => {
+    const old = await new Promise<IDBDatabase>((res, rej) => {
+      const req = indexedDB.open('drd2-data', 6)
+      req.onupgradeneeded = () => {
+        for (const s of ['characters', 'creatures', 'creatureImages', 'parties', 'recipes'])
+          req.result.createObjectStore(s, { keyPath: 'id' })
+      }
+      req.onsuccess = () => res(req.result)
+      req.onerror = () => rej(req.error)
+    })
+    old.close()
+    const { run } = await import('./db')
+    await run('characterImages', 'readwrite', (s) => s.put({ id: 'i1', characterId: 'c', blob: 'x', added: 1 }))
+    const found = await run<unknown[]>('characterImages', 'readonly', (s) => s.index('characterId').getAll('c'))
+    expect(found).toHaveLength(1)
+  })
+})
+
 describe('sdílené připojení', () => {
   it('při upgradu z jiné karty se zavře, takže upgrade neuvázne', async () => {
     const c = connection('test-db', 1, (req) => req.result.createObjectStore('s'))

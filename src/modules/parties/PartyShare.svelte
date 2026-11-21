@@ -6,6 +6,7 @@
   import { QR_CHUNK, splitForQr } from '../../core/character/qr'
   import { roleOf, type Party } from '../../core/party/model'
   import { buildPartyBundle } from '../../core/party/share'
+  import { choosableEntries, sinceFor, type PartyShareMode } from '../../core/party/shareRange'
   import { getParty, saveParty } from '../../core/party/store'
   import { settings } from '../../core/settings.svelte'
   import QrView from '../../ui/QrView.svelte'
@@ -15,7 +16,9 @@
   let { id }: { id: string } = $props()
 
   let party = $state.raw<Party | undefined>(undefined)
-  let mode = $state<'nove' | 'cela'>('cela')
+  let mode = $state<PartyShareMode>('cela')
+  // zvolený zápis, od kterého se sdílí (včetně)
+  let fromId = $state('')
   let code = $state('')
   let showQr = $state(false)
   let showAudio = $state(false)
@@ -25,12 +28,18 @@
   onMount(async () => {
     party = await getParty(id)
     if (party?.lastSent) mode = 'nove'
+    fromId = choosableEntries(party?.journal ?? []).at(-1)?.id ?? ''
   })
 
   const gm = $derived(party ? roleOf(party) === 'pruvodce' : false)
+  const entries = $derived(choosableEntries(party?.journal ?? []))
   const bundle = $derived(
     party
-      ? buildPartyBundle(party, settings.author, gm && mode === 'nove' ? party.lastSent : null)
+      ? buildPartyBundle(
+          party,
+          settings.author,
+          gm ? sinceFor(party.journal, mode, party.lastSent, fromId) : null,
+        )
       : undefined,
   )
   $effect(() => {
@@ -94,6 +103,15 @@
       <label class="check">
         <input type="radio" bind:group={mode} value="nove" disabled={!party.lastSent} />
         Jen nové a změněné zápisy od posledního odeslání
+      </label>
+      <label class="check">
+        <input type="radio" bind:group={mode} value="bod" disabled={!entries.length} />
+        Od zvoleného zápisu
+        <select bind:value={fromId} disabled={mode !== 'bod'} aria-label="Sdílet od zápisu">
+          {#each entries as x (x.id)}
+            <option value={x.id}>{new Date(x.edited ?? x.at).toLocaleDateString('cs-CZ')} · {x.title || 'Zápis'}</option>
+          {/each}
+        </select>
       </label>
       <label class="check">
         <input type="radio" bind:group={mode} value="cela" /> Celá družina

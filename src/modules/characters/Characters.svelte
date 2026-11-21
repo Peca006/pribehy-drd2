@@ -29,6 +29,7 @@
     saveBonus,
     saveSpent,
   } from '../../core/character/play'
+  import { deleteImagesOfCharacter } from '../../core/character/images'
   import { appendEvents, deleteLog, getLog, listLogs } from '../../core/character/store'
   import { findAbility, professions, races, traits } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
@@ -36,6 +37,7 @@
   import Md from '../../ui/Md.svelte'
   import Advance from './Advance.svelte'
   import CharacterEditor from './CharacterEditor.svelte'
+  import CharacterImages from './CharacterImages.svelte'
   import CheckList from './CheckList.svelte'
   import HealDialog from './HealDialog.svelte'
   import History from './History.svelte'
@@ -168,6 +170,7 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
     )
       return
     await deleteLog(current.id)
+    await deleteImagesOfCharacter(current.id)
     go('postavy')
   }
 </script>
@@ -194,6 +197,7 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
     <a class="btn" href={'#/postavy/' + current.id + '/postup'}>Vylepšit</a>
     <a class="btn" href={'#/postavy/' + current.id + '/sdilet'}>Sdílet…</a>
   </p>
+  {#key current.id}<CharacterImages characterId={current.id} name={c.name} />{/key}
   {#key current.id}<Resources
       character={c}
       {spent}
