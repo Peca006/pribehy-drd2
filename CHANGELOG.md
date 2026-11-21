@@ -1,5 +1,9 @@
 # Změny
 
+## 0.4.4 (21. 11. 2026)
+
+- **Oprava rozsypané lišty na mobilu:** výběr „Odkazy v textu“ v panelu u kapitoly pravidel a v Bestiáři rozšiřoval stránku za šířku displeje, takže spodní lišta byla oříznutá a při přiblížení „plavala“. Výběr zůstává jen ve Více; lišta kapitoly se zalamuje.
+
 ## 0.4.3 (21. 11. 2026)
 
 - **Pod kapotou:** dokončen bod 7 revize kódu. Logika importu revizí, žurnálu a členů družiny a úpravy postavy je vyčleněná z panelů do samostatných funkcí s testy (`importFlow`, `journal`, `editor`). Chování se nemění, jen hláška po importu předpisů říká „Předpisy v Grimoáru“.
