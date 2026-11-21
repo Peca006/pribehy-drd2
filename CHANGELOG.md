@@ -1,5 +1,13 @@
 # Změny
 
+## 0.4.5 (21. 11. 2026)
+
+- **Název a popis předpisů:** název a popis jsou součástí identity předpisu u všech druhů. Lektvar má vlastní název a popis (starší lektvary si nechávají odvozený název), nástraha má popis. V Grimoáru je u názvu v závorce vlastnost (u lektvaru i Jizva), pod ním popis. Jiný popis nebo název znamená jiný předpis, stávající se potichu nemění.
+- **Ukázkové předpisy:** 18 předpisů v Grimoáru (kouzla, lektvary, nástrahy, výrobky); obnoví se a odstraní spolu s ukázkovými postavami.
+- **Sdílení od zvoleného bodu historie:** postavu lze sdílet od zvolené revize, družinu (Průvodce) od zvoleného zápisu žurnálu, vedle změn od posledního odeslání a celé historie.
+- **Ilustrace postavy:** víc obrázků k postavě, uložených jen v zařízení; jdou uložit do souboru. Do souboru se sdílením se přikládají volitelně (kód, QR a zvuk je nenesou), import je přidá bez duplicit.
+- **Více:** obsahové balíčky sloučené do jednoho seznamu (Pravidla a Bestiář vždy vidět se Stáhnout / Aktualizovat / Odebrat, pod nimi Načíst balíček); odstraněn vlastní převod ze SRD. Větší mezery mezi Zdroji.
+- **Pod kapotou:** databáze verze 7 (úložiště ilustrací), jednotné zmenšení obrázků, E2E zkoušky ilustrací a sdílení.
 ## 0.4.4 (21. 11. 2026)
 
 - **Oprava rozsypané lišty na mobilu:** výběr „Odkazy v textu“ v panelu u kapitoly pravidel a v Bestiáři rozšiřoval stránku za šířku displeje, takže spodní lišta byla oříznutá a při přiblížení „plavala“. Výběr zůstává jen ve Více; lišta kapitoly se zalamuje.
