@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import { expect, test } from '@playwright/test'
 
 // Grimoár na liště, předpisy všech druhů, filtr podle druhu a převod starého formátu deníku (lektvary a nástrahy
