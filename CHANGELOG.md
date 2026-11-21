@@ -1,5 +1,10 @@
 # Změny
 
+## 0.4.6 (21. 11. 2026)
+
+- **Zkouška zvuku (Více):** jedna společná zkouška. Na jednom zařízení „Snímat a vyhodnotit“, na druhém „Přehrát test“: po 3 s se přehrají tóny a potom všechny přenosové režimy. Příjemce ukáže úrovně tónů, výsledky režimů a špičku vstupu a po vyhodnocení sám otevře Protokol zkoušek ke zkopírování. Nastavení zařízení je sbalené, tóny jsou každý na jednom řádku.
+- **Pod kapotou:** společný signál a vyhodnocení tónů i režimů z jednoho záznamu (`fullTestSignal`, `toneLevels`) s testy.
+
 ## 0.4.5 (21. 11. 2026)
 
 - **Název a popis předpisů:** název a popis jsou součástí identity předpisu u všech druhů. Lektvar má vlastní název a popis (starší lektvary si nechávají odvozený název), nástraha má popis. V Grimoáru je u názvu v závorce vlastnost (u lektvaru i Jizva), pod ním popis. Jiný popis nebo název znamená jiný předpis, stávající se potichu nemění.

@@ -1,6 +1,6 @@
 # Nápady a dolaďování
 
-## Otevřené úkoly (stav k verzi 0.4.5, 21. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.4.6, 21. 11. 2026)
 
 **O aplikaci a poděkování (credits):** hotovo v `src/modules/library/About.svelte` (Více → O aplikaci), vydáno v 0.3.19. Zbývá doplnit jmenovitě testery, pokud si to budou přát, a ověřit licence knihoven proti `node_modules`.
 
