@@ -1,5 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte'
+  import { foldName } from '../../core/recipes/find'
   import { MAX_NAME, type Recipe } from '../../core/recipes/model'
   import {
     SPELL_DURATION,
@@ -18,7 +19,10 @@
     oncast,
     onsave,
     onclose,
+    allowed = [],
   }: {
+    /** obory magie, které postava ovládá (z jejích povolání) */
+    allowed?: string[]
     /** existující předpis z Grimoáru (úprava se projeví u všech postav, které ho mají) */
     recipe?: Recipe
     oncast: (name: string, spell: SpellParams) => void
@@ -30,6 +34,15 @@
   let name = $state(init?.name ?? '')
   let description = $state(init?.description ?? '')
   let spell = $state<SpellParams>(init ? spellFrom(init.params) : emptySpell())
+  // obor: výběr z oborů postavy; mimo ně jen záměrnou volbou „Vlastní obor“ (alternativní sada povolání)
+  const CUSTOM = '__custom'
+  let choice = $state(
+    untrack(() => (!spell.obor.trim() ? '' : (allowed.find((a) => foldName(a) === foldName(spell.obor)) ?? CUSTOM))),
+  )
+  function pick(v: string) {
+    choice = v
+    if (v !== CUSTOM) spell.obor = v
+  }
   let error = $state('')
   let dialog: HTMLDialogElement
 
@@ -50,7 +63,18 @@
   <h2>{recipe ? 'Upravit kouzlo' : 'Kouzlo'}</h2>
   {#if !recipe}<p class="muted">Bez uložení se kouzlo jen vyhodnotí, název ani popis není potřeba.</p>{/if}
   <input type="text" bind:value={name} maxlength={MAX_NAME} placeholder="Název (jen pro uložení)" aria-label="Název kouzla" />
-  <input type="text" bind:value={spell.obor} maxlength="60" placeholder="Obor magie (např. Magie ohně)" aria-label="Obor magie" />
+  <div class="row">
+    <label for="sp-field">Obor magie</label>
+    <select id="sp-field" value={choice} onchange={(e) => pick(e.currentTarget.value)}>
+      <option value="">Neurčeno</option>
+      {#each allowed as a}<option value={a}>{a}</option>{/each}
+      <option value={CUSTOM}>Vlastní obor…</option>
+    </select>
+  </div>
+  {#if choice === CUSTOM}
+    <input type="text" bind:value={spell.obor} maxlength="60" placeholder="Vlastní obor" aria-label="Vlastní obor" />
+    <p class="muted">Obor mimo schopnosti postavy (např. alternativní sada povolání).</p>
+  {/if}
 
   <fieldset>
     <legend>Rituál</legend>

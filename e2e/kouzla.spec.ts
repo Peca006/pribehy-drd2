@@ -13,12 +13,13 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
 
   await page.goto('/#/postavy')
   await page.getByRole('link', { name: /Brokan Rudovous/ }).click()
-  await expect(page.getByText('Kouzla', { exact: true })).toBeVisible()
+  await expect(page.locator('.spells').getByText('Kouzla', { exact: true })).toBeVisible()
 
   // ad hoc: bez názvu, bez uložení; cena se počítá a záměr se přenese do panelu Hod
   await page.getByRole('button', { name: 'Seslat / nové…' }).click()
   const dlg = page.getByRole('dialog', { name: 'Kouzlo' })
-  await dlg.getByLabel('Obor magie').fill('Magie ohně')
+  await dlg.getByLabel('Obor magie').selectOption({ label: 'Vlastní obor…' })
+  await dlg.getByLabel('Vlastní obor', { exact: true }).fill('Magie ohně')
   await dlg.getByLabel(/Náročné kouzlo/).check()
   await expect(dlg.getByText('1 Zdroje, 0 Surovin')).toBeVisible()
   await dlg.getByRole('button', { name: 'Seslat', exact: true }).click()
@@ -29,7 +30,8 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
 
   // uložení chce název
   await page.getByRole('button', { name: 'Seslat / nové…' }).click()
-  await dlg.getByLabel('Obor magie').fill('Magie ohně')
+  await dlg.getByLabel('Obor magie').selectOption({ label: 'Vlastní obor…' })
+  await dlg.getByLabel('Vlastní obor', { exact: true }).fill('Magie ohně')
   await dlg.getByRole('button', { name: 'Uložit do Grimoáru' }).click()
   await expect(dlg.getByRole('alert')).toContainText('zadejte název')
   await dlg.getByLabel('Název kouzla').fill('Ohnivá střela')
@@ -42,5 +44,10 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
   await expect(page.getByText('Ohnivá střela · Magie ohně')).toBeHidden()
   await page.getByLabel('Přidat kouzlo z Grimoáru').fill('OHNIVA')
   await page.getByRole('button', { name: 'Ohnivá střela' }).click()
+  // Brokan je bojovník: obor Magie ohně neovládá, přidat jde jen záměrně jako vlastní obor
+  await expect(page.getByRole('alert')).toContainText('neovládá')
+  await expect(page.getByText('Ohnivá střela · Magie ohně')).toBeHidden()
+  await page.getByRole('button', { name: 'Přidat přesto (vlastní obor)' }).click()
   await expect(page.getByText('Ohnivá střela · Magie ohně')).toBeVisible()
+  await expect(page.getByText('obor mimo schopnosti')).toBeHidden()
 })

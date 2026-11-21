@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { Character } from '../../core/character/model'
+  import { professions } from '../../core/library.svelte'
+  import { allowedFields, fieldAllowed } from '../../core/recipes/fields'
   import { suggestRecipes } from '../../core/recipes/find'
   import type { Recipe } from '../../core/recipes/model'
   import { listRecipes, saveRecipe } from '../../core/recipes/store'
@@ -35,6 +37,13 @@
 
   const list = $derived(linkedRecipes(character, recipes))
   const free = $derived(recipes.filter((r) => !list.some((l) => l.recipeId === r.id)))
+  const allowed = $derived(allowedFields(character, professions()))
+  const fieldOf = (r: Recipe) => spellFrom(r.params).obor
+  /** odkaz je v pořádku, když obor patří postavě, nebo byl přidán jako vlastní */
+  const linkOk = (r: Recipe, linkId: string) =>
+    fieldAllowed(fieldOf(r), allowed) || !!character.recipeLinks[linkId]?.state.vlastniObor
+  /** kouzlo čekající na potvrzení jako vlastní obor */
+  let override = $state<Recipe | undefined>(undefined)
   const hints = $derived(suggestRecipes(free, query, 'kouzlo'))
 
   const cast = (name: string, s: SpellParams) => {
@@ -42,9 +51,14 @@
     requestRoll('zkouska', spellIntent(name, s))
   }
 
-  async function add(r: Recipe) {
+  async function add(r: Recipe, ownField = false) {
     message = ''
-    const e = addLink(character, r.id)
+    override = undefined
+    if (!ownField && !fieldAllowed(fieldOf(r), allowed)) {
+      override = r
+      return void (message = `Obor „${fieldOf(r)}“ postava neovládá.`)
+    }
+    const e = addLink(character, r.id, undefined, ownField)
     if ('error' in e) return void (message = e.error)
     query = ''
     await onchange(e.character, `Kouzlo přidáno: ${r.name}`)
@@ -90,7 +104,7 @@
           {#if l.recipe}
             {@const r = l.recipe}
             <button class="icon" onclick={() => (dialog = { recipe: r })} aria-label={`Upravit: ${r.name}`} title="Upravit (platí pro všechny postavy)">✎</button>
-            <span class="what" title={r.description}>{spellSummary(r.name, spellFrom(r.params))}</span>
+            <span class="what" title={r.description}>{spellSummary(r.name, spellFrom(r.params))}{#if !linkOk(r, l.linkId)}<span class="warn" title="Obor nepatří mezi obory postavy"> ⚠ obor mimo schopnosti</span>{/if}</span>
             <button onclick={() => requestRoll('zkouska', spellIntent(r.name, spellFrom(r.params)))}>Seslat</button>
             <button onclick={() => remove(l.linkId, r.name)} aria-label={`Odebrat: ${r.name}`}>✕</button>
           {:else}
@@ -117,10 +131,13 @@
     {/if}
   {/if}
   {#if message}<p class="error" role="alert">{message}</p>{/if}
+  {#if override}
+    <p><button onclick={() => override && add(override, true)}>Přidat přesto (vlastní obor)</button></p>
+  {/if}
 </div>
 
 {#if dialog}
-  <SpellDialog recipe={dialog.recipe} oncast={cast} onsave={save} onclose={() => (dialog = undefined)} />
+  <SpellDialog recipe={dialog.recipe} {allowed} oncast={cast} onsave={save} onclose={() => (dialog = undefined)} />
 {/if}
 
 <style>
@@ -147,6 +164,9 @@
   .what {
     flex: 1 1 12rem;
     min-width: 0;
+  }
+  .warn {
+    color: var(--drd-accent);
   }
   .icon {
     padding: 0 0.4rem;

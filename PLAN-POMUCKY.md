@@ -170,7 +170,7 @@ Stav: 🚧 plán schválen v hlavních bodech, kód zatím nezačal. Navazuje na
 6. **Přidání předpisu k postavě našeptává podle názvu** (bez rozlišení velikosti písmen a diakritiky).
 7. **Obory magie z balíčku, hlídané podle schopností postavy.** Obor mimo schopnosti postavy se blokuje (ad hoc i uložený); výjimka je volba „vlastní obor“
    pro alternativní sady. Podpora alternativních povolání a prostředí až po vedení hry a Výpravách. Do té doby je potřeba ručně ověřená tabulka schopnost → obor
-   (obory jsou v balíčku jen v textu schopností).
+   (obory jsou dovednosti povolání: Magie …, Zaříkání, Znamení, Hadačství).
 8. **Rozsah 0.4.0:** etapy A až D níže; zobecnění na lektvary, jedy, nástrahy a výrobky (E) jako 0.4.x.
 9. **Odpolední zkouška** běží lokálně z `develop`, bez vydání.
 
@@ -178,8 +178,8 @@ Stav: 🚧 plán schválen v hlavních bodech, kód zatím nezačal. Navazuje na
 | Etapa | Obsah | Stav |
 |---|---|---|
 | 0. Základ dat | úložiště `recipes` (DB verze 6), obecný předpis s druhem, `contentHash`, odkazy postavy `recipeLinks` (`{recipeId, state}`, stav vázaný na postavu), našeptávání a plán importu (`src/core/recipes/`) | ✅ |
-| A. Kouzlo u postavy | `spells.ts` s testy (cena, rituál, obrana), dialog u zkoušky (ad hoc i z předpisu), seznam kouzel postavy s odkazy, karta Postup, refaktoring přechodů manévrů a plateb v `Roll` (bod 7 revize) | 🚧 hotovo: logika, dialog (ad hoc i uložení), seznam, našeptávání, E2E; zbývá karta Postup a refaktoring `Roll` |
-| B. Obory | tabulka schopnost → obor, výběr z balíčku, blokování, volba „vlastní obor“ | 🚧 |
+| A. Kouzlo u postavy | `spells.ts` s testy (cena, rituál, obrana), dialog u zkoušky (ad hoc i z předpisu), seznam kouzel postavy s odkazy, karta Postup, refaktoring přechodů manévrů a plateb v `Roll` (bod 7 revize) | 🚧 hotovo: logika, dialog, seznam, našeptávání, karta Postup, E2E; zbývá refaktoring `Roll` (bod 7 revize) |
+| B. Obory | tabulka schopnost → obor, výběr z balíčku, blokování, volba „vlastní obor“ | ✅ obory podle dovedností povolání (balíček i vestavěná tabulka hlídaná testem), výběr, blokování, volba „Vlastní obor“ |
 | C. Grimoár | obrazovka ve Více: seznam, vyhledávání, přidání, úprava, varianta, mazání | 🚧 |
 | D. Výměna | export a import jednotlivě i hromadně (soubor, kód, QR), pravidla importu z rozhodnutí 3, zapojení do `ImportPanel` | 🚧 |
 | E. Zobecnění | lektvary, jedy, nástrahy a výrobky jako další druhy předpisů, migrace stávajících lektvarů a nástrah z postavy | 🚧 (po 0.4.0) |

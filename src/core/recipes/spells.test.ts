@@ -48,6 +48,8 @@ describe('odkazy postavy na kouzla', () => {
     const r = removeLink(a.character, 'l1')
     expect('character' in r && r.character.recipeLinks).toEqual({})
     expect(removeLink(c, 'x')).toEqual({ error: 'Odkaz neexistuje.' })
+    const own = addLink(c, 'r2', 'l9', true)
+    expect('character' in own && own.character.recipeLinks.l9).toEqual({ recipeId: 'r2', state: { vlastniObor: 1 } })
   })
   it('spojí odkazy s předpisy a seřadí podle názvu; chybějící předpis jde na konec', async () => {
     const mlha = await sealRecipe('r1', { kind: 'kouzlo', name: 'Mlha' })

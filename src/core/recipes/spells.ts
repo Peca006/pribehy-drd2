@@ -132,12 +132,15 @@ export const spellIntent = (name: string, s: SpellParams) =>
 
 export type Edited = { character: Character } | { error: string }
 
-/** Přidá k postavě odkaz na předpis; jeden předpis jen jednou. */
-export function addLink(c: Character, recipeId: string, linkId: string = newId()): Edited {
+/**
+ * Přidá k postavě odkaz na předpis; jeden předpis jen jednou. `ownField`: obor kouzla je vlastní, mimo schopnosti
+ * postavy (alternativní sada povolání); značí se ve stavu odkazu a kontrola oboru ho pak nehlásí.
+ */
+export function addLink(c: Character, recipeId: string, linkId: string = newId(), ownField = false): Edited {
   const links = c.recipeLinks ?? {}
   if (Object.values(links).some((l) => l.recipeId === recipeId)) return { error: 'Postava už toto kouzlo má.' }
   if (Object.keys(links).length >= MAX_LINKS) return { error: `Odkazů může být nejvýš ${MAX_LINKS}.` }
-  return { character: { ...c, recipeLinks: { ...links, [linkId]: { recipeId, state: {} } } } }
+  return { character: { ...c, recipeLinks: { ...links, [linkId]: { recipeId, state: ownField ? { vlastniObor: 1 } : {} } } } }
 }
 
 export function removeLink(c: Character, linkId: string): Edited {
