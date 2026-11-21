@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { sanitizeCharacter } from './drafts'
-import { characterOf, emptyCharacter, eventsFor } from './model'
+import { characterOf, emptyCharacter } from './model'
 import { sanitizeEvent } from './share'
 import {
   adjustTrap,

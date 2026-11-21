@@ -116,3 +116,24 @@ describe('kouzla zůstávají nedotčená', () => {
     expect(e.traps).toEqual({})
   })
 })
+
+describe('popis předpisu nemění jeho totožnost', () => {
+  it('změna počtu u lektvaru s popisem v Grimoáru ponechá odkaz na stejný předpis i s popisem', async () => {
+    const c = base()
+    const first = await write(emptyCharacter('a'), c, [])
+    const withDesc = [{ ...first.recipes[0], description: 'Hojivá mast od Zorky.' }]
+    const loaded = expand(first.stored, withDesc)
+    const id = Object.keys(loaded.potions)[0]
+    const second = await write(loaded, adjustPotion(loaded, id, 1), withDesc)
+    expect(second.created).toEqual([])
+    expect(second.stored.recipeLinks[id].recipeId).toBe(withDesc[0].id)
+  })
+
+  it('nový lektvar se stejným obsahem znovu použije předpis s popisem', async () => {
+    const first = await write(emptyCharacter('a'), base(), [])
+    const withDesc = [{ ...first.recipes[0], description: 'Popis.' }]
+    const other = ok(savePotion(emptyCharacter('b'), { attribute: 'Tělo', scar: 'popálenina', count: 1 }))
+    const second = await write(emptyCharacter('b'), other, withDesc)
+    expect(second.created).toEqual([])
+  })
+})

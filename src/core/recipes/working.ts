@@ -32,6 +32,9 @@ export interface Collapsed {
   created: { id: string; input: RecipeInput }[]
 }
 
+const contentKey = (r: { kind: Recipe['kind']; name: string; params?: Recipe['params'] }) =>
+  canonical({ kind: r.kind, name: r.name, description: '', params: r.params ?? {} })
+
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
 
 /**
@@ -42,11 +45,15 @@ const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
 export function collapse(before: Character, after: Character, recipes: readonly Recipe[]): Collapsed {
   const links: Record<string, RecipeLink> = { ...after.recipeLinks }
   const created: Collapsed['created'] = []
+  // totožnost podle obsahu bez popisu: popis je v Grimoáru navíc a nesmí způsobit vznik duplicitního předpisu
   const known = new Map<string, string>()
-  for (const r of recipes) known.set(canonical(r), r.id)
+  for (const r of recipes) if (!known.has(contentKey(r))) known.set(contentKey(r), r.id)
 
-  const recipeFor = (input: RecipeInput): string => {
-    const key = canonical({ description: '', params: {}, ...input })
+  const recipeFor = (input: RecipeInput, current?: string): string => {
+    const key = contentKey(input)
+    const cur = current ? recipes.find((r) => r.id === current) : undefined
+    // odkaz už míří na předpis se stejným obsahem: ponechat (i s popisem)
+    if (cur && contentKey(cur) === key) return cur.id
     let id = known.get(key)
     if (!id) {
       id = newId()
@@ -64,7 +71,7 @@ export function collapse(before: Character, after: Character, recipes: readonly 
     for (const id of Object.keys(was ?? {})) if (!(now ?? {})[id]) delete links[id]
     for (const [id, x] of Object.entries(now ?? {})) {
       if (same(was?.[id], x)) continue
-      links[id] = { recipeId: recipeFor(toRecipe(x)), state: { ...links[id]?.state, ...stateOf(x.count, x.note) } }
+      links[id] = { recipeId: recipeFor(toRecipe(x), links[id]?.recipeId), state: { ...links[id]?.state, ...stateOf(x.count, x.note) } }
       if (!x.note) delete links[id].state.note
     }
   }
