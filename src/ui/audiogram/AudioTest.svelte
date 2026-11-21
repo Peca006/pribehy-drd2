@@ -1,145 +1,102 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { audioSupported, AudioSession } from '../../core/audiogram/audio'
+  import { audioSupported, AudioSession, deviceText } from '../../core/audiogram/audio'
   import LogView from './LogView.svelte'
-  import { deviceText } from '../../core/audiogram/audio'
   import {
     analyseModeTest,
+    fullTestSeconds,
+    fullTestSignal,
     MODE_TEST_FRAMES,
-    modeTestSeconds,
-    modeTestSignal,
     PROBE_TONES,
-    probeSignal,
     rms,
     toDb,
-    toneAmplitude,
+    toneLevels,
     type ModeTestResult,
   } from '../../core/audiogram/probe'
 
-  // Zkouška zvuku mezi dvěma zařízeními: jedno přehraje tóny, druhé ukáže, jaké úrovně u nich slyší. Pomůže zjistit,
-  // které frekvence reproduktor a mikrofon propustí (a jestli telefon zvuk neupravuje).
-  let playing = $state(false)
-  let listening = $state(false)
+  // Zkouška zvuku mezi dvěma zařízeními: jedno přehraje tóny a potom přenosové režimy, druhé je zaznamená a vyhodnotí,
+  // které frekvence reproduktor a mikrofon propustí a které režimy přenosu projdou (a jestli telefon zvuk neupravuje).
+  let busy = $state<'' | 'send' | 'recv' | 'eval'>('')
   let error = $state('')
-  /** nejvyšší naměřená úroveň (dB) u každého tónu a aktuální celková hlasitost */
-  let hold = $state<number[]>(PROBE_TONES.map(() => -120))
-  let level = $state(-120)
-  let info = $state<ReturnType<AudioSession['inputInfo']> | undefined>(undefined)
-  let session: AudioSession | undefined
-  let testBusy = $state<'' | 'send' | 'recv' | 'eval'>('')
+  /** nejvyšší naměřená úroveň (dB) u každého tónu */
+  let tones = $state<number[]>([])
   let modeResults = $state<ModeTestResult[]>([])
+  let info = $state<ReturnType<AudioSession['inputInfo']> | undefined>(undefined)
+  /** aktuální hlasitost vstupu při snímání (dB) a nejvyšší špička (0 až 1) */
+  let level = $state(-120)
+  let peak = $state(0)
+  let logOpen = $state(false)
   let abort: AbortController | undefined
-  /** nejvyšší špička vstupu při zkoušce režimů (0 až 1) */
-  let modePeak = $state(0)
 
-  // Zkouška režimů: odesílatel po odpočtu přehraje několik rámců v každém režimu, příjemce je zaznamená a vyhodnotí.
-  async function modeSend() {
+  // Přehrát test: po 3 s se postupně přehrají všechny tóny a pak všechny přenosové režimy.
+  async function send() {
     error = ''
-    testBusy = 'send'
+    busy = 'send'
     const s = new AudioSession()
     try {
       await s.ctx.resume()
       await new Promise((r) => setTimeout(r, 3000))
-      await s.play(modeTestSignal(s.fs))
+      await s.play(fullTestSignal(s.fs))
     } catch {
       error = 'Zvuk se nepodařilo přehrát.'
     } finally {
       s.close()
-      testBusy = ''
+      busy = ''
     }
   }
 
-  async function modeRecv() {
+  // Snímat a vyhodnotit: zaznamená celé vysílání, pak vyhodnotí tóny i režimy a otevře protokol ke zkopírování.
+  async function receive() {
     error = ''
+    tones = []
     modeResults = []
-    modePeak = 0
-    testBusy = 'recv'
+    level = -120
+    peak = 0
+    logOpen = false
+    busy = 'recv'
     abort = new AbortController()
     const s = new AudioSession()
     try {
       await s.open()
       info = s.inputInfo()
-      modePeak = 0
       s.tap = (block) => {
-        for (let i = 0; i < block.length; i++) modePeak = Math.max(modePeak, Math.abs(block[i]))
+        level = toDb(rms(block))
+        for (let i = 0; i < block.length; i++) peak = Math.max(peak, Math.abs(block[i]))
       }
-      // zaznamenat celé vysílání (odpočet 3 s + zkouška + rezerva), pak vyhodnotit
-      const rec = await s.record(modeTestSeconds() + 12, abort.signal)
-      testBusy = 'eval'
+      // celé vysílání (odpočet 3 s + tóny + režimy) s rezervou
+      const rec = await s.record(fullTestSeconds() + 12, abort.signal)
+      busy = 'eval'
       await new Promise((r) => setTimeout(r, 30))
+      tones = toneLevels(rec, s.fs)
       modeResults = analyseModeTest(rec, s.fs)
+      logOpen = true
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') error = 'Mikrofon se nepodařilo spustit (zkontrolujte povolení; potřebný je https).'
+      if ((e as Error).name !== 'AbortError')
+        error = 'Mikrofon se nepodařilo spustit (zkontrolujte povolení; potřebný je https).'
     } finally {
       s.close()
-      testBusy = ''
+      busy = ''
     }
   }
+  onDestroy(() => abort?.abort())
 
-  /** Souhrn všech výsledků zkoušek pro zkopírování. */
+  /** Souhrn všech výsledků pro zkopírování. */
   const report = $derived.by(() => {
-    const out: string[] = [deviceText(info)]
-    if (hold.some((h) => h > -120))
-      out.push('Tóny (nejvyšší úroveň): ' + PROBE_TONES.map((f, i) => `${f} Hz ${hold[i] > -120 ? Math.round(hold[i]) + ' dB' : '–'}`).join(', '))
-    if (modeResults.length)
-      out.push(`Špička vstupu při zkoušce režimů: ${Math.round(toDb(modePeak))} dB${modePeak > 0.95 ? ' (PŘEBUZENO)' : ''}`)
-    if (modeResults.length)
-      out.push(
-        `Režimy (zkušebních rámců ${MODE_TEST_FRAMES}): ` + modeResults.map((r) => `${r.mode} ${r.ok}/${MODE_TEST_FRAMES}`).join(', '),
-      )
+    const out: string[] = []
+    if (!tones.length && !modeResults.length) return out
+    out.push(deviceText(info))
+    out.push(
+      'Tóny (nejvyšší úroveň): ' +
+        PROBE_TONES.map((f, i) => `${f} Hz ${tones[i] > -120 ? Math.round(tones[i]) + ' dB' : '–'}`).join(', '),
+    )
+    out.push(`Špička vstupu při zkoušce: ${Math.round(toDb(peak))} dB${peak > 0.95 ? ' (PŘEBUZENO)' : ''}`)
+    out.push(
+      `Režimy (zkušebních rámců ${MODE_TEST_FRAMES}): ` +
+        modeResults.map((r) => `${r.mode} ${r.ok}/${MODE_TEST_FRAMES}`).join(', '),
+    )
     return out
   })
 
-  async function play() {
-    error = ''
-    playing = true
-    const s = new AudioSession()
-    try {
-      await s.ctx.resume()
-      await s.play(probeSignal(s.fs))
-    } catch {
-      error = 'Zvuk se nepodařilo přehrát.'
-    } finally {
-      s.close()
-      playing = false
-    }
-  }
-
-  async function listen() {
-    error = ''
-    hold = PROBE_TONES.map(() => -120)
-    level = -120
-    const s = new AudioSession()
-    session = s
-    try {
-      await s.open()
-      info = s.inputInfo()
-      let buf: number[] = []
-      const need = Math.round(s.fs * 0.25)
-      s.tap = (block) => {
-        level = toDb(rms(block))
-        buf.push(...block)
-        if (buf.length < need) return
-        const part = buf
-        buf = []
-        hold = hold.map((h, i) => Math.max(h, toDb(toneAmplitude(part, PROBE_TONES[i], s.fs))))
-      }
-      listening = true
-    } catch {
-      error = 'Mikrofon se nepodařilo spustit (zkontrolujte povolení; potřebný je https).'
-      s.close()
-      session = undefined
-    }
-  }
-
-  function stop() {
-    session?.close()
-    session = undefined
-    listening = false
-  }
-  onDestroy(stop)
-
-  const best = $derived(Math.max(...hold))
   const bar = (db: number) => Math.max(0, Math.min(100, ((db + 90) / 90) * 100))
   const yesNo = (v: boolean | string | undefined) =>
     v === undefined ? 'neznámé' : v === false ? 'vypnuto' : 'zapnuto'
@@ -149,8 +106,9 @@
   <p class="muted">Tento prohlížeč nepodporuje zvuk (mikrofon / Web Audio).</p>
 {:else}
   <p class="muted">
-    Na jednom zařízení stiskněte <em>Přehrát tóny</em>, na druhém předtím <em>Poslouchat</em>.
-    Uvidíte, které tóny druhé zařízení slyší a jak silně. Funguje v obou směrech.
+    Na jednom zařízení stiskněte nejprve <em>Snímat a vyhodnotit</em>, potom na druhém <em>Přehrát test</em> (za 3 s začne
+    zvuk, trvá necelou minutu). Uvidíte, které tóny druhé zařízení slyší a jak silně. Ukáže, které režimy přenosu mezi
+    zařízeními projdou. Na příjemci se objeví výsledek. Pro druhý směr role prohoďte.
   </p>
   <details>
     <summary>Nastavení zařízení před přenosem</summary>
@@ -166,63 +124,53 @@
     </ul>
   </details>
   <p class="actions">
-    <button onclick={play} disabled={playing}>{playing ? 'Přehrávám…' : 'Přehrát tóny'}</button>
-    {#if listening}
-      <button onclick={stop}>Skončit poslech</button>
+    {#if busy === 'recv'}
+      <button onclick={() => abort?.abort()}>Zrušit snímání</button>
     {:else}
-      <button onclick={listen}>Poslouchat</button>
+      <button class="primary" onclick={receive} disabled={busy !== ''}>
+        {busy === 'eval' ? 'Vyhodnocuji…' : 'Snímat a vyhodnotit'}
+      </button>
     {/if}
+    <button onclick={send} disabled={busy !== ''}>{busy === 'send' ? 'Přehrávám…' : 'Přehrát test'}</button>
   </p>
-  {#if listening || best > -120}
+  {#if busy === 'recv'}
+    <p class="muted" role="status">
+      Snímám… hlasitost na vstupu: {level > -120 ? `${Math.round(level)} dB` : '–'}. Na druhém zařízení stiskněte Přehrát test.
+    </p>
+  {/if}
+  {#if tones.length}
     <table class="probe" aria-label="Naměřené úrovně tónů">
       <thead><tr><th>Tón</th><th>Úroveň</th><th></th></tr></thead>
       <tbody>
         {#each PROBE_TONES as f, i}
           <tr>
-            <td>{f} Hz</td>
-            <td><progress max="100" value={bar(hold[i])}></progress></td>
-            <td>{hold[i] > -120 ? `${Math.round(hold[i])} dB` : '–'}</td>
+            <td class="nowrap">{f} Hz</td>
+            <td><progress max="100" value={bar(tones[i])}></progress></td>
+            <td class="nowrap">{tones[i] > -120 ? `${Math.round(tones[i])} dB` : '–'}</td>
           </tr>
         {/each}
       </tbody>
     </table>
     <p class="muted">
-      Hlasitost na vstupu teď: {level > -120 ? `${Math.round(level)} dB` : '–'}. Tóny slabší než
-      asi −60 dB zařízení prakticky neslyší; rozdíl nad 20 dB mezi tóny znamená, že je některé
-      pásmo tlumené.
+      Tóny slabší než asi −60 dB zařízení prakticky neslyší; rozdíl nad 20 dB mezi tóny znamená, že je některé pásmo
+      tlumené.
     </p>
   {/if}
-  <h4>Zkouška režimů</h4>
-  <p class="muted">
-    Ukáže, které režimy přenosu mezi zařízeními projdou. Na příjemci stiskněte <em>Přijmout a vyhodnotit</em>,
-    na vysílači hned potom <em>Vysílat režimy</em> (za 3 s začne zvuk, trvá asi půl minuty). Výsledek se objeví na příjemci;
-    pro druhý směr role prohoďte.
-  </p>
-  <p class="actions">
-    <button onclick={modeSend} disabled={testBusy !== ''}>{testBusy === 'send' ? 'Vysílám…' : 'Vysílat režimy'}</button>
-    {#if testBusy === 'recv'}
-      <button onclick={() => abort?.abort()}>Zrušit</button>
-    {:else}
-      <button onclick={modeRecv} disabled={testBusy !== ''}>
-        {testBusy === 'eval' ? 'Vyhodnocuji…' : 'Přijmout a vyhodnotit'}
-      </button>
-    {/if}
-  </p>
   {#if modeResults.length}
-    <p class={modePeak > 0.95 ? 'error' : 'muted'} role={modePeak > 0.95 ? 'alert' : undefined}>
-      Špička vstupu: {Math.round(toDb(modePeak))} dB.
-      {#if modePeak > 0.95}Vstup je přebuzený, výsledky rychlých režimů jsou zkreslené. Snižte hlasitost vysílače nebo citlivost mikrofonu a zopakujte.{/if}
+    <p class={peak > 0.95 ? 'error' : 'muted'} role={peak > 0.95 ? 'alert' : undefined}>
+      Špička vstupu: {Math.round(toDb(peak))} dB.
+      {#if peak > 0.95}Vstup je přebuzený, výsledky rychlých režimů jsou zkreslené. Snižte hlasitost vysílače nebo citlivost mikrofonu a zopakujte.{/if}
     </p>
     <table class="probe" aria-label="Výsledky zkoušky režimů">
       <thead><tr><th>Režim</th><th>Prošlo</th></tr></thead>
       <tbody>
         {#each modeResults as r}
-          <tr><td>{r.mode}</td><td>{r.ok} z {MODE_TEST_FRAMES}</td></tr>
+          <tr><td>{r.mode}</td><td class="nowrap">{r.ok} z {MODE_TEST_FRAMES}</td></tr>
         {/each}
       </tbody>
     </table>
   {/if}
-  <LogView lines={report} title="Protokol zkoušek" />
+  <LogView lines={report} title="Protokol zkoušek" bind:open={logOpen} />
   {#if info}
     <p class="muted">
       Vzorkování {info.fs} Hz · potlačení ozvěny: {yesNo(info.echoCancellation)} · potlačení šumu: {yesNo(
@@ -245,7 +193,12 @@
     text-align: left;
     padding: 0.15rem 0.5rem 0.15rem 0;
   }
+  /* každý tón na jednom řádku: text se nezalamuje a ukazatel dostane zbytek šířky */
+  .nowrap {
+    white-space: nowrap;
+  }
   progress {
     width: 100%;
+    min-width: 4rem;
   }
 </style>

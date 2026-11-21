@@ -22,11 +22,15 @@ v Příručce podle knihy); postřeh k ikonkám prostředí v Bestiáři.
 
 **Před první beta verzí:** `schema` u uložených dat, řetězec `migrate`, celkový export a import `.json`, `FORMAT.md`.
 
+**Sdílení vypravěč → družina:** Průvodce bude po každém sezení posílat opakovaně od zvoleného bodu revize družiny či výpravy každému hráči (hráč naopak posílá jen občas a málo). Dnes: soubor poslaný zprávou či e-mailem. Hromadné odeslání všem členům jednou akcí („multi-cast“) se nabízí až s WebRTC.
+
 **Přenosy (pořadí):** ruční slučování konfliktů při importu revizí → Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC.
 
 **Postava:** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
 
-**Čeká na jiné:** d20.cz (CORS pro SRD). Altar: svolení k SRD je (`content-packs/srd/SVOLENI.md`), Hry mocných a Hotfix se svolení netýká.
+**Balíčky ze SRD, plán obnovy:** data udržujeme sami (CORS u d20.cz neřešíme). Nové balíčky jen když se změní SRD (kontrola třeba jednou za měsíc až rok, prakticky se nemění) nebo když my změníme formát balíčků. Altar: svolení k SRD je (`content-packs/srd/SVOLENI.md`), Hry mocných a Hotfix se svolení netýká.
+
+**Hry mocných:** zatím jen pro vlastní interní účely, do veřejných balíčků až po zařazení do SRD (po revizi, nejspíš ne brzy; zprávy o práci na tom jsou staré). Nechat až po všech plánovaných milnících.
 
 **K ověření na telefonu:** nové dialogy (léčení, výroba, lektvary, nástrahy), Hotovost, aktualizace PWA, přenos postavy
 s novými poli mezi zařízeními.

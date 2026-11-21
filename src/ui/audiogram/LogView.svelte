@@ -1,6 +1,10 @@
 <script lang="ts">
   // Kopírovatelný protokol zkoušky nebo přenosu: text se dá vložit do zprávy a poslat vývojáři.
-  let { lines, title = 'Protokol' }: { lines: string[]; title?: string } = $props()
+  let {
+    lines,
+    title = 'Protokol',
+    open = $bindable(false),
+  }: { lines: string[]; title?: string; open?: boolean } = $props()
 
   let note = $state('')
   const text = $derived(lines.join('\n'))
@@ -16,7 +20,7 @@
 </script>
 
 {#if lines.length}
-  <details>
+  <details bind:open>
     <summary>{title} ({lines.length} řádků)</summary>
     <p class="actions"><button onclick={copy}>Kopírovat protokol</button> <small class="muted">{note}</small></p>
     <textarea readonly rows="10" aria-label={title} value={text}></textarea>

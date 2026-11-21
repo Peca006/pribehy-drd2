@@ -38,3 +38,43 @@ describe('zkouška režimů', () => {
     for (const r of res) expect(r.ok, r.mode).toBe(MODE_TEST_FRAMES)
   }, 60000)
 })
+
+describe('společná zkouška (tóny a režimy)', () => {
+  const fs = 48000
+
+  it('bez rušení se v záznamu najdou všechny tóny i všechny režimy', async () => {
+    const { fullTestSignal, toneLevels, analyseModeTest, MODE_TEST_FRAMES, PROBE_TONES } = await import('./probe')
+    const sig = fullTestSignal(fs)
+    // záznam: 3 s ticha před vysíláním (odpočet) a ticho po něm
+    const rec = new Float32Array(fs * 3 + sig.length + fs * 4)
+    rec.set(sig, fs * 3)
+    const levels = toneLevels(rec, fs)
+    for (const l of levels) expect(l).toBeGreaterThan(-9) // tón s amplitudou 0,5 má asi −6 dB
+    expect(levels).toHaveLength(PROBE_TONES.length)
+    for (const r of analyseModeTest(rec, fs)) expect(r.ok).toBe(MODE_TEST_FRAMES)
+  })
+
+  it('slabý první tón nezpůsobí, že se ztratí tóny na konci', async () => {
+    const { fullTestSignal, toneLevels, PROBE_TONE_S, PROBE_GAP_S } = await import('./probe')
+    const sig = fullTestSignal(fs)
+    const rec = new Float32Array(fs * 2 + sig.length)
+    rec.set(sig, fs * 2)
+    // první tón (500 Hz) úplně utlumit, zbytek beze změny
+    const first = Math.round((PROBE_TONE_S + PROBE_GAP_S) * fs)
+    for (let i = 0; i < first; i++) rec[fs * 2 + i] = 0
+    const levels = toneLevels(rec, fs)
+    expect(levels[0]).toBeLessThan(-60)
+    expect(levels[7]).toBeGreaterThan(-9)
+  })
+
+  it('v tichu nenaměří nic', async () => {
+    const { toneLevels } = await import('./probe')
+    for (const l of toneLevels(new Float32Array(fs * 20), fs)) expect(l).toBe(-120)
+  })
+
+  it('celá zkouška trvá do zhruba minuty', async () => {
+    const { fullTestSeconds } = await import('./probe')
+    expect(fullTestSeconds()).toBeLessThan(75)
+    expect(fullTestSeconds()).toBeGreaterThan(20)
+  })
+})

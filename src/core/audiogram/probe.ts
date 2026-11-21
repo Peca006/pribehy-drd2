@@ -115,3 +115,54 @@ export function analyseModeTest(rec: Float32Array, fs: number): ModeTestResult[]
     return { mode: m.name, bitrate: m.bitrate, ok: seen.size }
   })
 }
+
+// ---- Společná zkouška: tóny a potom režimy v jednom vysílání (odesílatel stiskne jedno tlačítko, příjemce vyhodnotí vše). ----
+/** Pauza mezi tóny a režimy (s). */
+const FULL_TEST_GAP_S = 1.5
+
+/** Doba tónů (s). */
+export const probeSeconds = () => PROBE_TONES.length * (PROBE_TONE_S + PROBE_GAP_S)
+
+/** Zvuk celé zkoušky: nejdřív všechny tóny, po pauze všechny režimy. */
+export function fullTestSignal(fs: number): Float32Array {
+  const tones = probeSignal(fs)
+  const gap = Math.round(FULL_TEST_GAP_S * fs)
+  const modes = modeTestSignal(fs)
+  const out = new Float32Array(tones.length + gap + modes.length)
+  out.set(tones, 0)
+  out.set(modes, tones.length + gap)
+  return out
+}
+
+/** Doba zvuku celé zkoušky (s). */
+export const fullTestSeconds = () => probeSeconds() + FULL_TEST_GAP_S + modeTestSeconds()
+
+/** Začátek vysílání v záznamu (s): první úsek, jehož hlasitost výrazně převýší šum před ním; `0`, když nic neslyšet. */
+export function onsetSeconds(rec: Float32Array, fs: number): number {
+  const step = Math.round(0.05 * fs)
+  const levels: number[] = []
+  for (let i = 0; i + step <= rec.length; i += step) levels.push(rms(rec.subarray(i, i + step)))
+  if (!levels.length) return 0
+  const quiet = [...levels.slice(0, 20)].sort((a, b) => a - b)
+  const floor = quiet[Math.floor(quiet.length / 2)] ?? 0
+  const limit = Math.max(floor * 4, 2e-4)
+  const at = levels.findIndex((l) => l > limit)
+  return at < 0 ? 0 : (at * step) / fs
+}
+
+/**
+ * Úrovně tónů (dB, nejvyšší za zkoušku; −120 = neslyšet) ze záznamu celé zkoušky. Měří se jen úsek tónů (od začátku vysílání
+ * po jejich konec s rezervou), ať je neovlivní režimy.
+ */
+export function toneLevels(rec: Float32Array, fs: number, tones = PROBE_TONES): number[] {
+  // první tón může být slabý a začátek se pak najde až u dalšího: začátek se posune o jeden tón dřív
+  const start = Math.max(0, onsetSeconds(rec, fs) - (PROBE_TONE_S + PROBE_GAP_S))
+  const end = Math.min(rec.length, Math.round((start + probeSeconds() + 1) * fs))
+  const win = Math.round(0.25 * fs)
+  const hold = tones.map(() => -120)
+  for (let i = Math.round(start * fs); i + win <= end; i += win) {
+    const part = rec.subarray(i, i + win)
+    tones.forEach((f, k) => (hold[k] = Math.max(hold[k], toDb(toneAmplitude(part, f, fs)))))
+  }
+  return hold
+}
