@@ -1,5 +1,9 @@
 # Změny
 
+## 0.4.1 (21. 11. 2026)
+
+- **Pod kapotou:** přechody manévrů, jejich plateb a iniciativy v panelu Hod jsou vyčleněné do samostatných funkcí s testy (chování se nemění); přibyla E2E zkouška manévrů. Zbývající body revize kódu: ImportPanel, PartyView, Conflict, CharacterEditor.
+
 ## 0.4.0 (21. 11. 2026)
 
 - **Kouzla:** u postavy sekce Kouzla: seslání ad hoc (bez názvu a ukládání, jen cena a zkouška) nebo uložení kouzla jako předpisu; přidání z Grimoáru s našeptáváním podle názvu bez ohledu na diakritiku. Karta Postup pro kouzla.
