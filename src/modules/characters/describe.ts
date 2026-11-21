@@ -3,6 +3,7 @@ import type { RawMaterialKind, Scar } from '../../core/character/model'
 import { kindFull } from '../../core/character/rawMaterials'
 import type { Potion, Trap } from '../../core/character/model'
 import { trapSummary } from '../../core/character/traps'
+import type { RecipeLink } from '../../core/recipes/model'
 import { potionLabel } from '../../core/character/potions'
 import { cashFrom, formatCash, UNIT_LABEL, type CashUnit } from '../../core/character/cash'
 import type { RevisionChange } from '../../core/character/revisions'
@@ -83,6 +84,19 @@ export function describeChange(c: RevisionChange): string[] {
       const lines: string[] = []
       if (trapSummary(b) !== trapSummary(a)) lines.push(`${trapSummary(b)} → ${trapSummary(a)}`)
       if (b.count !== a.count) lines.push(`${a.name}: ${b.count} → ${a.count} ks`)
+      return lines.length ? lines : ['(beze změny)']
+    }
+  }
+  if (c.path.startsWith('recipeLinks.')) {
+    const b = c.before as RecipeLink | undefined
+    const a = c.after as RecipeLink | undefined
+    if (!b && a) return ['+ předpis (odkaz do Grimoáru)']
+    if (b && !a) return ['− předpis (odkaz do Grimoáru)']
+    if (b && a) {
+      const lines: string[] = []
+      if (b.recipeId !== a.recipeId) lines.push('odkaz míří na jiný předpis')
+      for (const k of new Set([...Object.keys(b.state), ...Object.keys(a.state)]))
+        if (b.state[k] !== a.state[k]) lines.push(`${k}: ${b.state[k] ?? '—'} → ${a.state[k] ?? '—'}`)
       return lines.length ? lines : ['(beze změny)']
     }
   }
