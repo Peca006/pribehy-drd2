@@ -51,7 +51,7 @@ až později pomůcka k výrobě a opravám (cena podle pravidel) a volitelný s
 
 ### Rozdíl: slučování konfliktů, „změněno Průvodcem“ a „slučování zápisů“
 
-- **Ruční slučování konfliktů při importu revizí (přenosy, postavy)**: postava má strukturovaný deník revizí; když se dvě
+- ✅ **Ruční slučování konfliktů při importu revizí (přenosy, postavy)** (hotovo, na develop; volba „příchozí / ponechat moje“ u každého pole): postava má strukturovaný deník revizí; když se dvě
   větve historie změní na týchž polích (např. hráč i vypravěč upravili zdatnost), import dnes konflikt jen ohlásí. Zbývá
   nabídnout u každého konfliktního pole volbu „moje / jejich“ a sloučit zbytek. Je to jediné skutečné slučování, které
   zůstává.

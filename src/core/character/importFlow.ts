@@ -2,8 +2,8 @@
 // přijetí vybraných revizí (včetně zařazení předpisů do Grimoáru) a vrácení zamítnutých změn u hráče.
 import { importRecipes, remapBundle, type RecipeImport } from '../recipes/exchange'
 import { importSharedImages } from './imageFile'
-import { characterOf, type Character, type CharacterLog } from './model'
-import { groupRevisions, revertEvents, revisionChanges } from './revisions'
+import { characterOf, type Character, type CharacterLog, type ChangeEvent } from './model'
+import { getAt, groupRevisions, revertEvents, revisionChanges } from './revisions'
 import { applyRevisions, type ImportAnalysis, type RevisionBundle } from './share'
 import { appendEvents, getLog, saveLog } from './store'
 
@@ -11,7 +11,7 @@ export const KIND_TEXT: Record<ImportAnalysis['kind'], string> = {
   'nova-postava': 'Tuto postavu ještě v zařízení nemáte, vznikne nová.',
   navazuje: 'Změny navazují na poslední revizi v deníku.',
   'jiny-stav':
-    'V deníku jsou od společného základu novější změny. Příchozí hodnoty přepíšou současné u stejných polí.',
+    'V deníku jsou od společného základu novější změny. U polí změněných na obou stranách si zvolíte, která hodnota platí (výchozí je příchozí).',
   'neznamy-zaklad':
     'Základ těchto změn v deníku není (postava mohla být upravena jinde). Zkontrolujte rozdíl.',
   'nic-noveho': 'Všechny revize už v deníku jsou.',
@@ -57,6 +57,36 @@ export function decisionOf(analysis: ImportAnalysis, accept: Record<string, bool
 }
 
 /**
+ * U vybraných konfliktních polí ponechá místní hodnotu: po přijetí revizí se přidá revize „Ponecháno moje“, která
+ * hodnotu vrátí. Příchozí události v deníku zůstanou (opakovaný import pak nic nového nenajde).
+ * `before` je deník před přijetím, `after` deník po přijetí.
+ */
+export function withKeptMine(
+  before: CharacterLog | undefined,
+  after: CharacterLog,
+  keepMine: readonly string[],
+  by: string,
+): CharacterLog {
+  if (!before || !keepMine.length) return after
+  const mineNow = characterOf(before)
+  const ours = characterOf(after)
+  const rid = `rev-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
+  const at = new Date().toISOString()
+  const events: ChangeEvent[] = keepMine
+    .filter((path) => JSON.stringify(getAt(ours, path)) !== JSON.stringify(getAt(mineNow, path)))
+    .map((path, i) => ({
+      id: `${rid}-${i}`,
+      at,
+      by,
+      note: 'Ponecháno moje (při importu)',
+      rev: rid,
+      path,
+      value: getAt(mineNow, path),
+    }))
+  return events.length ? { ...after, events: [...after.events, ...events] } : after
+}
+
+/**
  * Přijme vybrané revize do deníku. Přiložené předpisy se zařadí do Grimoáru a odkazy v revizích se opraví na
  * předpisy příjemce. Vrací zprávu o předpisech (prázdnou, když žádné nebyly).
  */
@@ -64,6 +94,8 @@ export async function acceptRevisions(
   log: CharacterLog | undefined,
   bundle: RevisionBundle,
   accepted: readonly string[],
+  keepMine: readonly string[] = [],
+  by = '',
 ): Promise<string> {
   if (!accepted.length) return ''
   let note = ''
@@ -73,7 +105,7 @@ export async function acceptRevisions(
     b = remapBundle(b, imp.map)
     note = ` Předpisy v Grimoáru: ${recipeImportNote(imp)}`
   }
-  await saveLog(applyRevisions(log, b, new Set(accepted)))
+  await saveLog(withKeptMine(log, applyRevisions(log, b, new Set(accepted)), keepMine, by))
   if (b.images?.length) {
     const img = await importSharedImages(b.char, b.images)
     note += ` Ilustrace: přidáno ${img.added}${img.skipped ? `, už byly ${img.skipped}` : ''}.`

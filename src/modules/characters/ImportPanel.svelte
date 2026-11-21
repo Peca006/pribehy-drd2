@@ -2,9 +2,10 @@
   import Arrow from '../../ui/Arrow.svelte'
   import { characterOf, emptyCharacter, type CharacterLog } from '../../core/character/model'
   import { recordResponse } from '../../core/character/reviews'
-  import { groupRevisions } from '../../core/character/revisions'
+  import { getAt, groupRevisions } from '../../core/character/revisions'
   import {
     analyzeImport,
+    applyRevisions,
     decodeBundle,
     encodeBundle,
     previewAfter,
@@ -20,6 +21,7 @@
     KIND_TEXT,
     recipeImportNote,
     revertRejectedRevisions,
+    withKeptMine,
   } from '../../core/character/importFlow'
   import { upgradeBundle } from '../../core/recipes/legacy'
   import { importRecipes } from '../../core/recipes/exchange'
@@ -47,6 +49,8 @@
   let log = $state.raw<CharacterLog | undefined>(undefined)
   let analysis = $state.raw<ImportAnalysis | undefined>(undefined)
   let accept = $state<Record<string, boolean>>({})
+  /** konfliktní pole (cesta) → ponechat místní hodnotu */
+  let keep = $state<Record<string, boolean>>({})
   let result = $state('')
   let reply = $state('')
   let replyNote = $state('')
@@ -90,6 +94,7 @@
     if (bundle.type === 'revize') {
       analysis = analyzeImport(log, bundle)
       accept = Object.fromEntries(analysis.fresh.map((x) => [x.id, true]))
+      keep = {}
     }
   }
   // QR z kamery: díly se skládají, hotový kód se zpracuje stejně jako vložený text
@@ -144,9 +149,30 @@
         .map(([k]) => k),
     ),
   )
-  const afterChar = $derived(
-    bundle?.type === 'revize' && analysis ? previewAfter(log, bundle, acceptedSet) : undefined,
-  )
+  const keptPaths = $derived(Object.keys(keep).filter((p) => keep[p]))
+  const afterChar = $derived.by(() => {
+    if (bundle?.type !== 'revize' || !analysis) return undefined
+    if (!log || !keptPaths.length) return previewAfter(log, bundle, acceptedSet)
+    const next = withKeptMine(
+      log,
+      applyRevisions(log, bundle, acceptedSet),
+      keptPaths,
+      settings.author,
+    )
+    return characterOf(next)
+  })
+  // místní a příchozí hodnota u konfliktních polí (příchozí = po přijetí všech nových revizí)
+  const conflictRows = $derived.by(() => {
+    if (bundle?.type !== 'revize' || !analysis || !log) return []
+    const mineNow = characterOf(log)
+    const theirs = characterOf(
+      applyRevisions(log, bundle, new Set(analysis.fresh.map((r) => r.id))),
+    )
+    return analysis.conflicts.map((path) => ({
+      path,
+      lines: describeChange({ path, before: getAt(mineNow, path), after: getAt(theirs, path) }),
+    }))
+  })
   const beforeChar = $derived(log ? characterOf(log) : undefined)
 
   // změny jednotlivých příchozích revizí v pořadí, v jakém se použijí
@@ -157,7 +183,7 @@
   async function decide() {
     if (!bundle || bundle.type !== 'revize' || !analysis) return
     const { accepted, rejected } = decisionOf(analysis, accept)
-    const recipeMsg = await acceptRevisions(log, bundle, accepted)
+    const recipeMsg = await acceptRevisions(log, bundle, accepted, keptPaths, settings.author)
     log = await getLog(bundle.char)
     replyBundle = {
       v: 1,
@@ -257,9 +283,23 @@
     </p>
   {/if}
   {#if analysis.conflicts.length}
-    <p class="panel error" role="alert">
-      Změněno na obou stranách: {analysis.conflicts.map(pathLabel).join(', ')}.
-    </p>
+    <div class="panel error" role="alert">
+      <p>Změněno na obou stranách. U každého pole zvolte, která hodnota zůstane:</p>
+      {#each conflictRows as row (row.path)}
+        <div>
+          <strong>{pathLabel(row.path)}</strong>
+          {#each row.lines as line}<div class="muted">{line}</div>{/each}
+          <label class="check">
+            <input type="radio" name={'k-' + row.path} checked={!keep[row.path]} onchange={() => (keep[row.path] = false)} />
+            <span>Příchozí (jejich)</span>
+          </label>
+          <label class="check">
+            <input type="radio" name={'k-' + row.path} checked={!!keep[row.path]} onchange={() => (keep[row.path] = true)} />
+            <span>Ponechat moje</span>
+          </label>
+        </div>
+      {/each}
+    </div>
   {/if}
   {#each shown as { r, changes, before, after } (r.id)}
     <div class="panel">

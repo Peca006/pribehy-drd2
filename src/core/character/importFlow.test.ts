@@ -3,7 +3,7 @@ import { IDBFactory } from 'fake-indexeddb'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { closeDb } from '../db'
 import { listRecipes } from '../recipes/store'
-import { acceptRevisions, decisionOf, incomingSteps, KIND_TEXT, recipeImportNote, revertRejectedRevisions } from './importFlow'
+import { acceptRevisions, decisionOf, incomingSteps, KIND_TEXT, recipeImportNote, revertRejectedRevisions, withKeptMine } from './importFlow'
 import { characterOf } from './model'
 import { analyzeImport, type RevisionBundle } from './share'
 import { getLog } from './store'
@@ -67,6 +67,32 @@ describe('průběh importu', () => {
     expect(msg).toContain('přidáno 1')
     expect(await listRecipes()).toHaveLength(1)
     expect(await getLog('c2')).toBeDefined()
+  })
+
+  it('u konfliktního pole lze ponechat místní hodnotu; příchozí události zůstanou, druhý import nic nenajde', async () => {
+    await acceptRevisions(undefined, bundle(), ['r1', 'r2'])
+    const local = (await getLog('c1'))!
+    expect(characterOf(local).xp).toBe(7)
+    const incoming: RevisionBundle = {
+      ...bundle(),
+      base: 'r1',
+      revisions: [
+        { id: 'r3', at: '2026-11-03T10:00:00.000Z', by: 'V', note: 'xp', events: [ev('e3', 'xp', 12)] },
+      ],
+    }
+    expect(analyzeImport(local, incoming).conflicts).toEqual(['xp'])
+    await acceptRevisions(local, incoming, ['r3'], ['xp'], 'Hráč')
+    const saved = (await getLog('c1'))!
+    expect(characterOf(saved).xp).toBe(7)
+    expect(saved.events.some((e) => e.id === 'e3')).toBe(true)
+    expect(analyzeImport(saved, incoming).kind).toBe('nic-noveho')
+  })
+
+  it('bez ponechání platí příchozí hodnota; neměněné pole se nezapisuje', async () => {
+    const log = { id: 'c1', events: [] }
+    const after = { id: 'c1', events: [{ id: 'x', at: 'a', by: 'b', path: 'xp', value: 3 }] }
+    expect(withKeptMine(log, after, [], 'H')).toBe(after)
+    expect(withKeptMine(log, after, ['name'], 'H')).toBe(after)
   })
 
   it('zpráva o předpisech uvádí konflikty', () => {
