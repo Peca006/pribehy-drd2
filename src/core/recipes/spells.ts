@@ -127,7 +127,8 @@ export function spellSummary(name: string, s: SpellParams): string {
 }
 
 /** Záměr zkoušky pro panel Hod. */
-export const spellIntent = (name: string, s: SpellParams) => `Kouzlo: ${spellSummary(name, s)}`
+export const spellIntent = (name: string, s: SpellParams) =>
+  name.trim() ? `Kouzlo: ${spellSummary(name, s)}` : `Kouzlo ad hoc: ${spellSummary('', s).replace(/^Kouzlo( · )?/, '') || 'bez parametrů'}`
 
 export type Edited = { character: Character } | { error: string }
 

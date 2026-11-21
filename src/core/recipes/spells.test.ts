@@ -34,6 +34,7 @@ describe('parametry kouzla', () => {
     expect(spellSummary('Mlha', s)).toBe('Mlha · Magie vody · Dotyk · 1 Zdroje')
     expect(spellSummary('', emptySpell())).toBe('Kouzlo · Neurčeno')
     expect(spellIntent('Mlha', s)).toBe('Kouzlo: Mlha · Magie vody · Dotyk · 1 Zdroje')
+    expect(spellIntent('', s)).toBe('Kouzlo ad hoc: Magie vody · Dotyk · 1 Zdroje')
   })
 })
 
