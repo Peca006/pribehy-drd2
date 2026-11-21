@@ -15,6 +15,7 @@
     type RevisionBundle,
   } from '../../core/character/share'
   import { appendEvents, getLog, saveLog } from '../../core/character/store'
+  import { upgradeBundle } from '../../core/recipes/legacy'
   import { importRecipes, remapBundle } from '../../core/recipes/exchange'
   import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
   import { onMount } from 'svelte'
@@ -71,7 +72,8 @@
     if (!text.trim()) return
     const r = await decodeBundle(text)
     errors = r.errors
-    bundle = r.bundle
+    // balíček ze starého formátu (lektvary a nástrahy přímo v deníku) se převede na odkazy na předpisy
+    bundle = r.bundle ? upgradeBundle(r.bundle) : undefined
     if (!bundle) return
     if (bundle.type === 'druzina') {
       partyMerge = mergeIncoming(await getParty(bundle.party.id), bundle)

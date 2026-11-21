@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { refreshLibrary } from './core/library.svelte'
+  import { refreshRecipes } from './core/recipes/cache.svelte'
+  import { migrateLegacyLogs } from './core/recipes/legacy'
   import { initPwa } from './core/pwa.svelte'
   import { allModules, getModule } from './core/modules'
   import { markRestore, router, startRouter, tabHref, toHash } from './core/router.svelte'
@@ -8,10 +10,17 @@
   import AppBanners from './ui/AppBanners.svelte'
   import ConfirmDialog from './ui/ConfirmDialog.svelte'
 
+  // stránky se vykreslí až po jednorázovém převodu starých deníků (lektvary a nástrahy → předpisy) a načtení Grimoáru
+  let ready = $state(false)
   onMount(() => {
     startRouter()
     refreshLibrary()
     initPwa()
+    migrateLegacyLogs()
+      .catch((e) => console.error('Převod starých deníků se nepovedl', e))
+      .then(() => refreshRecipes())
+      .catch((e) => console.error('Grimoár se nepodařilo načíst', e))
+      .finally(() => (ready = true))
   })
 
   const active = $derived(getModule(router.module || DEFAULT_MODULE))
@@ -22,7 +31,9 @@
 
 <div class="shell">
   <main>
-    {#if Current}
+    {#if !ready}
+      <p class="muted" role="status">Načítám…</p>
+    {:else if Current}
       <Current params={router.params} />
     {:else}
       <p>Stránka nenalezena. <a href={toHash(DEFAULT_MODULE)}>Domů</a></p>

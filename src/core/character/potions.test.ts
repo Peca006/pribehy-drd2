@@ -69,21 +69,6 @@ describe('lektvary: evidence', () => {
 })
 
 describe('lektvary: deník, přenos a stará data', () => {
-  it('každý lektvar je vlastní cesta v deníku a stav se přepočítá', () => {
-    const c = stocked()
-    const ev = eventsFor(emptyCharacter('a'), c, 'P', 'x')
-    expect(ev.map((e) => e.path).sort()).toEqual(
-      Object.keys(c.potions)
-        .map((id) => `potions.${id}`)
-        .sort(),
-    )
-    expect(characterOf({ id: 'a', events: ev }).potions).toEqual(c.potions)
-    const id = potionList(c)[0].id
-    const del = eventsFor(c, ok(removePotion(c, id)), 'P', 'x')
-    expect(del).toHaveLength(1)
-    expect(del[0].value).toBeUndefined()
-  })
-
   it('očištění přijatých změn a dat', () => {
     expect(sanitizeEvent({ id: 'e', path: 'potions.p1', value: { attribute: 'Tělo', scar: 'popálenina', count: 3 } })).toEqual({
       id: 'e',

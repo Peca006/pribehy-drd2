@@ -9,13 +9,12 @@
 //    ale v odkazu postavy (`RecipeLink.state`).
 import { sha256Hex } from '../hash'
 
-export const RECIPE_KINDS = ['kouzlo', 'lektvar', 'jed', 'nastraha', 'vyrobek'] as const
+export const RECIPE_KINDS = ['kouzlo', 'lektvar', 'nastraha', 'vyrobek'] as const
 export type RecipeKind = (typeof RECIPE_KINDS)[number]
 
 export const RECIPE_KIND_LABELS: Record<RecipeKind, string> = {
   kouzlo: 'Kouzlo',
   lektvar: 'Lektvar',
-  jed: 'Jed',
   nastraha: 'Nástraha',
   vyrobek: 'Výrobek',
 }

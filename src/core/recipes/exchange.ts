@@ -28,19 +28,21 @@ export function attachRecipes(bundle: RevisionBundle, all: readonly Recipe[]): R
   return recipes.length ? { ...bundle, recipes } : bundle
 }
 
-/** Přepíše ID předpisů v odkazech revizí podle mapy (původní ID → ID v Grimoáru příjemce). */
+/** Přepíše ID předpisů v odkazech událostí podle mapy (původní ID → ID v Grimoáru příjemce). */
+export function remapEvents<T extends { path: string; value?: unknown }>(
+  events: readonly T[],
+  map: Record<string, string>,
+): T[] {
+  return events.map((e) => {
+    const v = e.value as { recipeId?: unknown } | undefined
+    if (!e.path.startsWith('recipeLinks.') || typeof v?.recipeId !== 'string' || !map[v.recipeId]) return e
+    return { ...e, value: { ...v, recipeId: map[v.recipeId] } }
+  })
+}
+
+/** Totéž pro revize balíčku. */
 export function remapBundle(bundle: RevisionBundle, map: Record<string, string>): RevisionBundle {
-  return {
-    ...bundle,
-    revisions: bundle.revisions.map((r) => ({
-      ...r,
-      events: r.events.map((e) => {
-        const v = e.value as { recipeId?: unknown } | undefined
-        if (!e.path.startsWith('recipeLinks.') || typeof v?.recipeId !== 'string' || !map[v.recipeId]) return e
-        return { ...e, value: { ...v, recipeId: map[v.recipeId] } }
-      }),
-    })),
-  }
+  return { ...bundle, revisions: bundle.revisions.map((r) => ({ ...r, events: remapEvents(r.events, map) })) }
 }
 
 export interface RecipeImport {

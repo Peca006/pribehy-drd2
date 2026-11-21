@@ -85,13 +85,6 @@ describe('nástrahy: evidence', () => {
 })
 
 describe('nástrahy: deník, přenos a stará data', () => {
-  it('každá nástraha je vlastní cesta v deníku a stav se přepočítá', () => {
-    const c = ok(saveTrap(emptyCharacter('a'), { name: 'Oko', attribute: 'Tělo', count: 1 }))
-    const ev = eventsFor(emptyCharacter('a'), c, 'P', 'x')
-    expect(ev.map((e) => e.path)).toEqual([`traps.${trapList(c)[0].id}`])
-    expect(characterOf({ id: 'a', events: ev }).traps).toEqual(c.traps)
-  })
-
   it('očištění přijatých změn a dat', () => {
     const value = { name: 'Oko', attribute: 'Tělo', type: 'jednoducha', effect: 'jizva', maneuver: '', extra: 0, weakness: '', note: '', count: 2 }
     expect(sanitizeEvent({ id: 'e', path: 'traps.t1', value })).toEqual({ id: 'e', path: 'traps.t1', value })

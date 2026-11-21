@@ -177,7 +177,9 @@ export function diffCharacter(
     const a = before[key]
     const b = after[key]
     if (same(a, b)) continue
-    if (key === 'rawMaterialKinds' || key === 'potions' || key === 'traps' || key === 'recipeLinks') {
+    // lektvary a nástrahy jsou jen pracovní pohled; do deníku se zapisují jako odkazy na předpisy (recipes/commit.ts)
+    if (key === 'potions' || key === 'traps') continue
+    if (key === 'rawMaterialKinds' || key === 'recipeLinks') {
       // položky po jedné (každá = jedna cesta), aby se úpravy různých položek nepřebíjely
       const ma = (a ?? {}) as Record<string, unknown>
       const mb = (b ?? {}) as Record<string, unknown>

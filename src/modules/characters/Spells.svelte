@@ -35,7 +35,8 @@
     recipes = await listRecipes()
   })
 
-  const list = $derived(linkedRecipes(character, recipes))
+  // odkazy na lektvary a nástrahy mají vlastní seznamy; tady jen kouzla
+  const list = $derived(linkedRecipes(character, recipes).filter((l) => !l.recipe || l.recipe.kind === 'kouzlo'))
   const free = $derived(recipes.filter((r) => !list.some((l) => l.recipeId === r.id)))
   const allowed = $derived(allowedFields(character, professions()))
   const fieldOf = (r: Recipe) => spellFrom(r.params).obor

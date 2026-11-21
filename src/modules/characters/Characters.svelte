@@ -8,10 +8,12 @@
     characterOf,
     type ChangeEvent,
     type Character,
-    eventsFor,
     type CharacterLog,
   } from '../../core/character/model'
   import { healScar } from '../../core/character/healing'
+  import { recipes } from '../../core/recipes/cache.svelte'
+  import { changesFor } from '../../core/recipes/commit'
+  import { expand } from '../../core/recipes/working'
   import { settings } from '../../core/settings.svelte'
   import {
     type Bonus,
@@ -73,7 +75,8 @@
     load()
   })
 
-  const c = $derived(current ? characterOf(current) : undefined)
+  // pracovní postava: lektvary a nástrahy se rozbalí z odkazů na předpisy v Grimoáru (zápis zpět viz changesFor)
+  const c = $derived(current ? expand(characterOf(current), recipes()) : undefined)
   const race = $derived(races().find((r) => r.id === c?.raceId))
   const culture = $derived(race?.cultures.find((x) => x.id === c?.cultureId))
 
@@ -83,7 +86,7 @@
     const s = c.scars.find((x) => x.id === scarId)
     if (!s) return
     const note = `${what} jizvy (${s.attribute} ${s.severity}${s.note ? `: ${s.note}` : ''})`
-    current = await appendEvents(current.id, eventsFor(c, fn(c, scarId), settings.author, note))
+    current = await appendEvents(current.id, await changesFor(c, fn(c, scarId), settings.author, note))
   }
   /** Úplné zahojení: nejdřív se ukáže popis Jizvy a hráč potvrdí (kdyby to byl omyl, dá Zrušit). */
   async function cure(c: Character, scarId: string) {
@@ -106,14 +109,14 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
   /** Léčení v magickém okamžiku: revize deníku (snížení Jizvy) a čerpání Zdrojů v zařízení. */
   async function healed(next: Character, nextSpent: Spent, note: string) {
     if (!current || !c) return
-    current = await appendEvents(current.id, eventsFor(c, next, settings.author, note))
+    current = await appendEvents(current.id, await changesFor(c, next, settings.author, note))
     setSpent(nextSpent)
     healFor = undefined
   }
   /** Rychlá změna Surovin nebo Hotovosti (±, druhy) jako samostatná revize v deníku. */
   async function rawChange(next: Character, note: string) {
     if (!current || !c) return
-    const events = eventsFor(c, next, settings.author, note)
+    const events = await changesFor(c, next, settings.author, note)
     if (events.length) current = await appendEvents(current.id, events)
   }
   let spent = $state<Spent>({ Tělo: 0, Duše: 0, Vliv: 0 })
@@ -145,7 +148,7 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
   let scarMsg = $state('')
   async function addScar(next: Character, what: string, gain: number, attr: Attribute) {
     if (!current || !c) return
-    current = await appendEvents(current.id, eventsFor(c, next, settings.author, `Jizva (${what})`))
+    current = await appendEvents(current.id, await changesFor(c, next, settings.author, `Jizva (${what})`))
     scarFor = undefined
     if (gain) setBonus({ ...bonus, [attr]: bonus[attr] + gain })
     scarMsg = 'Jizva zapsána.'
