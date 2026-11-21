@@ -77,3 +77,48 @@ test('Grimoár ve Více: nové kouzlo, úprava a smazání s potvrzením', async
   await page.getByRole('button', { name: 'Smazat', exact: true }).click()
   await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
 })
+
+test('sdílení postavy přenese kouzlo do Grimoáru příjemce', async ({ page }) => {
+  await page.goto('/#/knihovna')
+  await page.getByRole('button', { name: 'Skrýt' }).click() // pruh s nabídkou stažení balíčků by překážel
+  await page.getByText('Ukázková data', { exact: true }).click()
+  await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
+  await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click()
+  await expect(page.getByText('Ukázková data jsou obnovená')).toBeVisible()
+
+  // kouzlo uložené u postavy
+  await page.goto('/#/postavy')
+  await page.getByRole('link', { name: /Brokan Rudovous/ }).click()
+  const detail = page.url()
+  await page.getByRole('button', { name: 'Seslat / nové…' }).click()
+  const dlg = page.getByRole('dialog', { name: 'Kouzlo' })
+  await dlg.getByLabel('Název kouzla').fill('Poslední slovo')
+  await dlg.getByRole('button', { name: 'Uložit do Grimoáru' }).click()
+  await expect(page.locator('.spells').getByText('Poslední slovo')).toBeVisible()
+
+  // kód ke sdílení
+  await page.getByRole('link', { name: 'Sdílet…' }).click()
+  const code = await page.getByLabel('Kód ke sdílení').inputValue()
+  expect(code.length).toBeGreaterThan(50)
+
+  // příjemce nemá ani postavu, ani kouzlo: smazat postavu i kouzlo z Grimoáru
+  await page.goto(detail)
+  await page.getByText('Další', { exact: true }).click()
+  await page.getByRole('button', { name: 'Smazat…' }).click()
+  await page.getByRole('button', { name: 'Smazat', exact: true }).click()
+  await expect(page).toHaveURL(/#\/postavy$/)
+  await page.goto('/#/knihovna')
+  await page.getByRole('button', { name: 'Smazat: Poslední slovo' }).click()
+  await page.getByRole('button', { name: 'Smazat', exact: true }).click()
+  await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
+
+  // import: postava se vrátí a kouzlo je zase v Grimoáru
+  await page.goto('/#/postavy/import')
+  await page.getByLabel('Kód k importu').fill(code)
+  await page.getByRole('button', { name: 'Potvrdit rozhodnutí' }).click()
+  await expect(page.getByText(/Kouzla v Grimoáru: přidáno 1/)).toBeVisible()
+  await page.goto('/#/knihovna')
+  await expect(page.getByText('Poslední slovo')).toBeVisible()
+  await page.goto(detail)
+  await expect(page.locator('.spells').getByText('Poslední slovo')).toBeVisible()
+})

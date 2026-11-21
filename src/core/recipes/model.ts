@@ -155,3 +155,21 @@ export function linksFrom(raw: unknown): Record<string, RecipeLink> {
   }
   return out
 }
+
+/** Předpis v přenosovém balíčku: obsah bez otisku a času (příjemce si otisk spočítá sám, cizímu se nevěří). */
+export type SharedRecipe = Pick<Recipe, 'id' | 'kind' | 'name' | 'description' | 'params'>
+
+export const MAX_SHARED_RECIPES = 100
+
+/** Očištěný seznam předpisů z přenosového balíčku; neplatné položky se vynechají. */
+export function sharedRecipesFrom(raw: unknown): SharedRecipe[] {
+  if (!Array.isArray(raw)) return []
+  const out: SharedRecipe[] = []
+  for (const v of raw.slice(0, MAX_SHARED_RECIPES)) {
+    const c = cleanRecipe(v)
+    const id = typeof v?.id === 'string' ? v.id : ''
+    if (c && id && id.length <= 100 && !out.some((o) => o.id === id))
+      out.push({ id, kind: c.kind, name: c.name, description: c.description ?? '', params: c.params ?? {} })
+  }
+  return out
+}

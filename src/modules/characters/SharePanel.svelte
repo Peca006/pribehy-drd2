@@ -8,6 +8,8 @@
   import { fitForQr, type Fitted } from '../../core/character/compact'
   import { QR_CHUNK, splitForQr } from '../../core/character/qr'
   import { buildRevisionBundle, encodeBundle } from '../../core/character/share'
+  import { attachRecipes } from '../../core/recipes/exchange'
+  import { listRecipes } from '../../core/recipes/store'
   import { getLog } from '../../core/character/store'
   import QrView from '../../ui/QrView.svelte'
   import AudioSend from '../../ui/audiogram/AudioSend.svelte'
@@ -39,7 +41,10 @@
     const l = log
     if (!l) return
     const since = sinceIndex >= 0 ? revs[sinceIndex].id : null
-    encodeBundle(buildRevisionBundle(l, name, since)).then((c) => (code = c))
+    // předpisy (kouzla…), na které revize odkazují, se přikládají, aby si je příjemce zařadil do svého Grimoáru
+    listRecipes()
+      .then((all) => encodeBundle(attachRecipes(buildRevisionBundle(l, name, since), all)))
+      .then((c) => (code = c))
   })
 
   const bytes = $derived(new TextEncoder().encode(code).length)

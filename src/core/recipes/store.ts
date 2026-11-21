@@ -21,4 +21,12 @@ export async function saveRecipe(input: RecipeInput, id?: string): Promise<Recip
   return recipe
 }
 
+/** Uloží už dokončený předpis (import): ID i otisk jsou hotové, ukládá se bez další úpravy. */
+export async function putRecipe(recipe: Recipe): Promise<Recipe> {
+  if (!(await getRecipe(recipe.id)) && (await listRecipes()).length >= MAX_RECIPES)
+    throw new Error(`Předpisů může být nejvýš ${MAX_RECIPES}.`)
+  await recipes.put(recipe)
+  return recipe
+}
+
 export const removeRecipe = (id: string) => recipes.remove(id)

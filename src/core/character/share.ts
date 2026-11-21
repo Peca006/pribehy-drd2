@@ -14,7 +14,7 @@ import { scarsOf } from './drafts'
 import { cashFrom, UNIT_ORDER, type CashUnit } from './cash'
 import { potionFrom } from './potions'
 import { trapFrom } from './traps'
-import { linkFrom } from '../recipes/model'
+import { linkFrom, sharedRecipesFrom, type SharedRecipe } from '../recipes/model'
 import { cleanCount, kindFrom } from './rawMaterials'
 import { groupRevisions } from './revisions'
 
@@ -53,6 +53,8 @@ export interface RevisionBundle {
   compact?: { upTo: string; hash: string }
   /** cesty textových polí, které se kvůli velikosti (QR) nepřenesly, např. `notes` */
   omitted?: string[]
+  /** předpisy z Grimoáru, na které odkazují změny v revizích (kouzla…); příjemce je zařadí do svého Grimoáru */
+  recipes?: SharedRecipe[]
   revisions: SharedRevision[]
 }
 
@@ -311,6 +313,7 @@ export function sanitizeBundle(raw: unknown): { bundle?: Bundle; errors: string[
       base: str(r.base, 100) ?? null,
       ...compactOf(r.compact),
       ...omittedOf(r.omitted),
+      ...recipesOf(r.recipes),
       revisions,
     },
     errors,
@@ -375,6 +378,11 @@ function omittedOf(raw: unknown): { omitted?: string[] } {
   if (!Array.isArray(raw)) return {}
   const list = raw.filter((x): x is string => typeof x === 'string' && OMITTABLE.includes(x))
   return list.length ? { omitted: [...new Set(list)] } : {}
+}
+
+function recipesOf(raw: unknown): { recipes?: SharedRecipe[] } {
+  const list = sharedRecipesFrom(raw)
+  return list.length ? { recipes: list } : {}
 }
 
 function compactOf(raw: unknown): { compact?: { upTo: string; hash: string } } {

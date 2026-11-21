@@ -15,6 +15,7 @@
     type RevisionBundle,
   } from '../../core/character/share'
   import { appendEvents, getLog, saveLog } from '../../core/character/store'
+  import { importRecipes, remapBundle } from '../../core/recipes/exchange'
   import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
   import { onMount } from 'svelte'
   import { takeShared } from '../../core/sharedInbox'
@@ -166,7 +167,17 @@
     if (!bundle || bundle.type !== 'revize' || !analysis) return
     const accepted = analysis.fresh.filter((r) => accept[r.id]).map((r) => r.id)
     const rejected = analysis.fresh.filter((r) => !accept[r.id]).map((r) => r.id)
-    if (accepted.length) await saveLog(applyRevisions(log, bundle, new Set(accepted)))
+    let recipeMsg = ''
+    if (accepted.length) {
+      let b: RevisionBundle = bundle
+      if (b.recipes?.length) {
+        // předpisy se zařadí do Grimoáru a odkazy v revizích se opraví na předpisy příjemce
+        const imp = await importRecipes(b.recipes)
+        b = remapBundle(b, imp.map)
+        recipeMsg = ` Kouzla v Grimoáru: přidáno ${imp.added.length}, použito stávajících ${imp.reused}.${imp.conflicts.length ? ` Pozor, kouzla se stejným označením a jiným obsahem se uložila zvlášť: ${imp.conflicts.join(', ')}.` : ''}`
+      }
+      await saveLog(applyRevisions(log, b, new Set(accepted)))
+    }
     log = await getLog(bundle.char)
     replyBundle = {
       v: 1,
@@ -177,7 +188,7 @@
       rejected,
       note: '',
     }
-    result = `Přijato revizí: ${accepted.length}, zamítnuto: ${rejected.length}.`
+    result = `Přijato revizí: ${accepted.length}, zamítnuto: ${rejected.length}.${recipeMsg}`
     analysis = undefined
     await makeReply()
   }
