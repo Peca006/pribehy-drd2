@@ -132,6 +132,25 @@ describe('přijetí Průvodcovy družiny hráčem', () => {
     const e1 = r.party!.journal.find((e) => e.id === 'e1')!
     expect(e1.text).toBe('nové znění')
     expect(e1.session?.applied).toEqual(['m1'])
+    expect(e1.changed).toBe(true)
+    expect(r.party!.journal.find((e) => e.id === 'e2')!.changed).toBeUndefined()
+  })
+
+  it('značka „změnil Průvodce“ se při dalším importu neztratí, nový zápis ani návrh ji nemají', () => {
+    const first = mergeIncoming(undefined, bundle).party!
+    expect(first.journal.some((e) => e.changed)).toBe(false)
+    const flagged: Party = {
+      ...first,
+      journal: first.journal.map((e) => (e.id === 'e1' ? { ...e, changed: true } : e)),
+    }
+    const again = {
+      ...bundle,
+      journal: bundle.journal.map((e) =>
+        e.id === 'e1' ? { ...e, edited: '2026-03-02T00:00:00.000Z' } : e,
+      ),
+    }
+    const r = mergeIncoming(flagged, again)
+    expect(r.party!.journal.find((e) => e.id === 'e1')!.changed).toBe(true)
   })
 
   it('schválený návrh nahradí místní návrh; zamítnutý se označí; vlastní návrhy zůstanou', () => {

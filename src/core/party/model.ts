@@ -34,6 +34,8 @@ export interface JournalEntry {
   title: string
   text: string
   session?: SessionRecord
+  /** jen místní: Průvodce zápis po přijetí nové kopie změnil a hráč to ještě nepotvrdil */
+  changed?: boolean
 }
 
 export interface Party {

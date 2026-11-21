@@ -248,7 +248,13 @@ export function mergeIncoming(local: Party | undefined, b: PartyBundle): MergeRe
         journal[i].title !== e.title
       ) {
         // pravda je u Průvodce: jeho znění vždy nahradí místní (i vlastní návrh se schválením)
-        journal[i] = fromShared(e, undefined, journal[i])
+        // značka jen při změně obsahu schváleného zápisu (ne vlastního návrhu a ne jen časové značky)
+        const contentChanged =
+          !journal[i].status && (journal[i].text !== e.text || journal[i].title !== e.title)
+        journal[i] = {
+          ...fromShared(e, undefined, journal[i]),
+          ...(contentChanged || journal[i].changed ? { changed: true } : {}),
+        }
         report.updated.push(e)
       } else report.ignored++
     }

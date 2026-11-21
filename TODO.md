@@ -57,7 +57,7 @@ až později pomůcka k výrobě a opravám (cena podle pravidel) a volitelný s
   zůstává.
 - **Slučování souběžných úprav jednoho zápisu (družina)**: prakticky odpadá. Schválené zápisy mění jen Průvodce (hráči jen
   navrhují nové), takže dva lidé jeden zápis souběžně neupraví. Z TODO se vyřazuje.
-- **Upozornění „Průvodce změnil zápis“**: jen informace, žádné slučování: když přijde nová kopie družiny, zápisy, které se
+- ✅ **Upozornění „Průvodce změnil zápis“** (hotovo, na develop): jen informace, žádné slučování: když přijde nová kopie družiny, zápisy, které se
   proti hráčově kopii změnily, dostanou značku. Malá úprava, nezávislá na slučování.
 
 ### Zdroje ze sebezasazené jizvy (hotovo)

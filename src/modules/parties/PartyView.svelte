@@ -121,6 +121,10 @@
     Object.assign(e, editedEntry(e))
     await save()
   }
+  async function seen(e: JournalEntry) {
+    delete e.changed
+    await save()
+  }
   async function approve(e: JournalEntry) {
     if (!party) return
     party = approveEntry($state.snapshot(party) as Party, e.id)
@@ -263,6 +267,7 @@
           {e.title}
           {#if e.status === 'navrh'}<span class="badge">čeká na schválení</span>{/if}
           {#if e.status === 'zamitnuto'}<span class="badge off">zamítnuto Průvodcem</span>{/if}
+          {#if e.changed && !gm}<span class="badge">změnil Průvodce</span>{/if}
         </h3>
         <p class="muted">{day(e.at)} · {e.by}</p>
         {#if e.text}<p class="text">{e.text}</p>{/if}
@@ -280,6 +285,11 @@
               </li>
             {/each}
           </ul>
+        {/if}
+        {#if e.changed && !gm}
+          <p class="actions">
+            <button onclick={() => seen(e)}>Beru na vědomí</button>
+          </p>
         {/if}
         {#if mine(e)}
           <p class="actions">
