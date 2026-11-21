@@ -76,7 +76,7 @@ export const DEMO_RECIPES: (RecipeInput & { id: string })[] = (
       attribute: 'Duše',
       effect: 'ohrozeni',
       weakness: 'tenký drát u země',
-      description: 'Drátek přes chodbu spojený se zvonky. Cinkne i na kočku, ale každého, kdo se plíží kolem, prozradí.',
+      description: 'Drátek či motouzek přes chodbu spojený se zvonkem. Cinkne i na kočku a každého, kdo se plíží kolem, prozradí.',
     }),
     trap({
       name: 'Pálivý prášek',
@@ -85,7 +85,7 @@ export const DEMO_RECIPES: (RecipeInput & { id: string })[] = (
       effect: 'ohrozeni',
       maneuver: 'rozsahle',
       weakness: 'ostrý pach',
-      description: 'Papírový váček s drceným pepřem a sírou. Po rozbití vytvoří oblak, který zasáhne všechny v okolí.',
+      description: 'Poprašek s drceným ledkem a sírou. Po rozšlapání vytvoří ohnivý oblak, který zasáhne všechny v okolí.',
     }),
     trap({
       name: 'Spavý jed na čepeli',
