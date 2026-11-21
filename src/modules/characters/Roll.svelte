@@ -21,12 +21,19 @@
     levelOf,
     rollDice,
     rollDie,
-    rollInitiative,
     type Mode,
     SUCCESS_AT,
     type Dice,
   } from '../../core/character/roll'
   import { MANEUVERS, maneuver, type ManeuverId } from '../../core/character/maneuvers'
+  import {
+    initiativeAction,
+    newActionManeuver,
+    payManeuver as payManeuverStep,
+    pickManeuver,
+    toggleInaccurate,
+    type ManeuverState,
+  } from '../../core/character/maneuverFlow'
   import { professions } from '../../core/library.svelte'
   import Guide from './Guide.svelte'
   import { rollRequest } from './rollRequest.svelte'
@@ -119,30 +126,29 @@
     outcome = undefined
     losWin = undefined
   }
+  // přechody manévru a plateb jsou v `core/character/maneuverFlow.ts` (čisté funkce s testy); tady jen přenos do stavu
+  const maneuverState = (): ManeuverState => ({ man, manPaid, manMsg, extra, inaccurate })
+  function setManeuverState(s: ManeuverState) {
+    man = s.man
+    manPaid = s.manPaid
+    manMsg = s.manMsg
+    extra = s.extra
+    inaccurate = s.inaccurate
+  }
   /** Nová akce: manévr se znovu neplatí a nic z předchozí akce nezůstává. */
   function newAction() {
     reset()
-    manPaid = false
-    manMsg = ''
-    extra = 0
+    setManeuverState(newActionManeuver(maneuverState()))
   }
   function payManeuver(): boolean {
-    if (!man) return true
-    if (manPaid) return true
-    if (!pay(payAttr, 1)) {
-      manMsg = `Na manévr nemáte Zdroj (${payAttr}).`
-      return false
-    }
-    manPaid = true
-    manMsg = `Manévr zaplacen (1 ${payAttr}).`
-    return true
+    const r = payManeuverStep(maneuverState(), payAttr, pay)
+    setManeuverState(r.state)
+    return r.ok
   }
-  function pickMan(id: ManeuverId) {
-    if (manPaid) return
-    man = man === id ? undefined : id
-    if (man === 'presne') inaccurate = false
-    if (man !== 'presne' && !inaccurate) extra = 0
-    manMsg = ''
+  const pickMan = (id: ManeuverId) => setManeuverState(pickManeuver(maneuverState(), id))
+  function toggleInaccurateNow() {
+    setManeuverState(toggleInaccurate(maneuverState()))
+    reset()
   }
   function setDie(i: 0 | 1, v: number) {
     dice = i === 0 ? [v, dice[1]] : [dice[0], v]
@@ -175,16 +181,11 @@
   let initText = $state('')
   let initFlash = $state('')
   function rollInit() {
-    if (initMode !== 'normal') {
-      if (!pay('Duše', 1)) {
-        initFlash = 'Chybí Duše na přístup.'
-        return
-      }
-      initFlash = '−1 Duše'
-      setTimeout(() => (initFlash = ''), 2500)
-    } else initFlash = ''
-    const r = rollInitiative(initMode)
-    initText = `Iniciativa ${r.total} (${describeRoll(r.dice, initMode)})`
+    const r = initiativeAction(initMode, pay)
+    initFlash = r.flash
+    if (!r.ok) return
+    if (r.flash) setTimeout(() => (initFlash = ''), 2500)
+    initText = r.text
   }
   function setKind(k: Kind) {
     kind = k
@@ -285,12 +286,7 @@
     <button
       class:primary={inaccurate}
       disabled={manPaid && man === 'presne'}
-      onclick={() => {
-        inaccurate = !inaccurate
-        if (inaccurate && man === 'presne') man = undefined
-        if (!inaccurate && man !== 'presne') extra = 0
-        reset()
-      }}>Nepřesně (postih)</button
+      onclick={toggleInaccurateNow}>Nepřesně (postih)</button
     >
   </p>
   {#if inaccurate}
