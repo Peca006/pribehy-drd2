@@ -31,6 +31,13 @@ describe('postup vyhodnocení: dovednosti a odkaz do SRD', () => {
   })
 })
 
+describe('karta Kouzla', () => {
+  it('míří do kapitoly o kouzlech a má kroky', () => {
+    expect(chapterOf(card('kouzla'))).toBe('36-kouzla-nastrahy-leceni')
+    expect(card('kouzla').steps.length).toBeGreaterThan(3)
+  })
+})
+
 describe('cíl odkazu do příručky', () => {
   it('chapterOf vrací ID kapitoly, i u odkazu s kotvou', () => {
     expect(chapterOf(card('vyroba'))).toBe('35-pouzivani-dovednosti')

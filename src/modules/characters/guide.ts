@@ -85,6 +85,17 @@ export const BASIC: Card[] = [
     skills: ['alchymista/vyroba-elixiru', 'mastickar/masti-a-bezne-jedy', 'saman/vyroba-omamnych-latek-a-odvaru', 'alchymista/vyroba-traskavin-ziravin-a-plynnych-jedu', 'lupic/vyroba-kontaktnich-jedu'],
   },
   {
+    id: 'kouzla',
+    title: 'Kouzla',
+    steps: [
+      'Bez rituálu (zvuky a slova, gesta, příprava substance) kouzlo nejde seslat.',
+      'Dosah (dotyk, dohled, symbolický dotyk, obrazec), rozsah (chýše, statek) a trvání (okamžitě, dlouho, velmi dlouho) vychází z podoby kouzla v příběhu.',
+      'Cena: základní kouzlo nestojí nic, náročné 1 Zdroj, aktivace schopnosti se platí, substance Surovinami podle magie.',
+      'Zkouška nebo střet jako u jiné akce. Zmařené kouzlo propadne vložené Zdroje.',
+      'Obrana soupeře: přerušení rituálu, únik z dosahu, zrušení účinků, vyčkání, protikouzlo.',
+    ],
+    link: '36-kouzla-nastrahy-leceni',
+  },  {
     id: 'nastrahy',
     title: 'Nástrahy',
     steps: [
