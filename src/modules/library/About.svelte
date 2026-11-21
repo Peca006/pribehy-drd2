@@ -60,6 +60,10 @@
         >qrcode-generator</a
       > tvorba QR kódů (MIT)
     </li>
+    <li>
+      <a href="https://developer.chrome.com/docs/workbox" target="_blank" rel="noopener">Workbox</a>
+      práce offline a mezipaměť v prohlížeči (MIT)
+    </li>
   </ul>
 </div>
 

@@ -1,8 +1,8 @@
 # Nápady a dolaďování
 
-## Otevřené úkoly (stav k verzi 0.4.6, 21. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.4.7, 22. 11. 2026)
 
-**O aplikaci a poděkování (credits):** hotovo v `src/modules/library/About.svelte` (Více → O aplikaci), vydáno v 0.3.19. Zbývá doplnit jmenovitě testery, pokud si to budou přát, a ověřit licence knihoven proti `node_modules`.
+**O aplikaci a poděkování (credits):** hotovo v `src/modules/library/About.svelte` (Více → O aplikaci), vydáno v 0.3.19. Licence knihoven ověřeny proti `node_modules` (0.4.7). Jména testerů zatím nejsou, doplnit až budou.
 
 **Balíčky ze SRD** se stahují z webu aplikace (`content-packs/srd/`, `tools/srd/publish.mjs`). Nový balíček: build, `publish.mjs`, commit, nasazení `main`. Při změně formátu zvýšit `PACK_BUILD` a `EXPECTED_BUILD`.
 
@@ -10,8 +10,12 @@
 Suroviny po druzích, léčení Jizvy, Hotovost (dukáty / groše / haléře), výroba a opravy, lektvary a masti, nástrahy.
 Podrobně v `CHANGELOG.md` a `PLAN-POMUCKY.md`.
 
-**Odloženo (pomůcky):** Kouzla (11d2, po načtení pravidel magie), Kořist (11e, patří k Výpravám), předvyplnění panelu Hod
-u výroby a nástrah, názvy dovedností z balíčku a odkaz do SRD v pomůckách, nápověda „?“ k léčení.
+**Odloženo (pomůcky):** Kořist (11e, patří k Výpravám). Předvyplnění panelu Hod u výroby, nástrah a kouzel je hotové.
+
+**Nápověda napříč aplikací (úplně na konec, až po všech drobnostech):** dnes je „?“ jen u léčení Jizvy (karta Postup s dovednostmi z balíčku
+a odkazem do příručky nebo SRD; `CardHelp.svelte`, `guide.ts`). Zobecnit: malá plovoucí vysvětlení (hint, tooltip) pravidel a řešení
+všude, kde dává smysl (výroba, nástrahy, kouzla, Grimoár, Hotovost, Suroviny, Zdroje, Hod …), s odkazem do příručky
+nebo SRD, místy i ve smyslu návodu k použití aplikace. K návrhu: jednotná komponenta, texty v jednom místě, bez balíčku odkaz do SRD.
 
 **Audiogram:** DSP (zúžení pásma, LDPC) a další zkoušky čekají na testery a zařízení; viz `AUDIOGRAM.md`.
 
@@ -51,13 +55,13 @@ až později pomůcka k výrobě a opravám (cena podle pravidel) a volitelný s
 
 ### Rozdíl: slučování konfliktů, „změněno Průvodcem“ a „slučování zápisů“
 
-- ✅ **Ruční slučování konfliktů při importu revizí (přenosy, postavy)** (hotovo, na develop; volba „příchozí / ponechat moje“ u každého pole): postava má strukturovaný deník revizí; když se dvě
+- ✅ **Ruční slučování konfliktů při importu revizí (přenosy, postavy)** (hotovo, 0.4.7; volba „příchozí / ponechat moje“ u každého pole): postava má strukturovaný deník revizí; když se dvě
   větve historie změní na týchž polích (např. hráč i vypravěč upravili zdatnost), import dnes konflikt jen ohlásí. Zbývá
   nabídnout u každého konfliktního pole volbu „moje / jejich“ a sloučit zbytek. Je to jediné skutečné slučování, které
   zůstává.
 - **Slučování souběžných úprav jednoho zápisu (družina)**: prakticky odpadá. Schválené zápisy mění jen Průvodce (hráči jen
   navrhují nové), takže dva lidé jeden zápis souběžně neupraví. Z TODO se vyřazuje.
-- ✅ **Upozornění „Průvodce změnil zápis“** (hotovo, na develop): jen informace, žádné slučování: když přijde nová kopie družiny, zápisy, které se
+- ✅ **Upozornění „Průvodce změnil zápis“** (hotovo, 0.4.7): jen informace, žádné slučování: když přijde nová kopie družiny, zápisy, které se
   proti hráčově kopii změnily, dostanou značku. Malá úprava, nezávislá na slučování.
 
 ### Zdroje ze sebezasazené jizvy (hotovo)

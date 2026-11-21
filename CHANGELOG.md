@@ -1,5 +1,12 @@
 # Změny
 
+## 0.4.7 (22. 11. 2026)
+
+- **Družina: „změnil Průvodce“:** když hráč přijme novou kopii družiny a Průvodce mezitím změnil název nebo text schváleného zápisu, zápis má značku a tlačítko „Beru na vědomí“. Značka je jen místní informace, vlastní návrhy ji nemají.
+- **Import revizí, konflikty:** u polí změněných na obou stranách se ukáže místní i příchozí hodnota a u každého pole se zvolí „Příchozí“ nebo „Ponechat moje“. Volba „moje“ se zapíše jako revize „Ponecháno moje (při importu)“, opakovaný import pak nic nenajde.
+- **O aplikaci:** doplněn Workbox mezi použité knihovny; licence ověřeny proti nainstalovaným balíčkům.
+- **Pod kapotou:** `withKeptMine` v `importFlow` s testy; příznak `changed` u zápisů žurnálu.
+
 ## 0.4.6 (21. 11. 2026)
 
 - **Zkouška zvuku (Více):** jedna společná zkouška. Na jednom zařízení „Snímat a vyhodnotit“, na druhém „Přehrát test“: po 3 s se přehrají tóny a potom všechny přenosové režimy. Příjemce ukáže úrovně tónů, výsledky režimů a špičku vstupu a po vyhodnocení sám otevře Protokol zkoušek ke zkopírování. Nastavení zařízení je sbalené, tóny jsou každý na jednom řádku.
