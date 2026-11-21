@@ -1,5 +1,9 @@
 # Změny
 
+## 0.4.3 (21. 11. 2026)
+
+- **Pod kapotou:** dokončen bod 7 revize kódu. Logika importu revizí, žurnálu a členů družiny a úpravy postavy je vyčleněná z panelů do samostatných funkcí s testy (`importFlow`, `journal`, `editor`). Chování se nemění, jen hláška po importu předpisů říká „Předpisy v Grimoáru“.
+
 ## 0.4.2 (21. 11. 2026)
 
 - **Grimoár na liště:** samostatná stránka (📕) mezi Bestiářem a Více s filtrem podle druhu: kouzla, lektvary, nástrahy a výrobky. Nový předpis, úprava, nová varianta, smazání s výpisem postav, sdílení jednotlivě i celého Grimoáru.
