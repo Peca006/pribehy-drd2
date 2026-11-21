@@ -51,6 +51,12 @@
     await saveParty(partyMerge.party)
     go('druziny', bundle.party.id)
   }
+  async function acceptRecipes() {
+    if (!bundle || bundle.type !== 'predpisy') return
+    const imp = await importRecipes(bundle.recipes)
+    result = `Grimoár: přidáno ${imp.added.length}, použito stávajících ${imp.reused}.${imp.conflicts.length ? ` Kouzla se stejným označením a jiným obsahem se uložila zvlášť: ${imp.conflicts.join(', ')}.` : ''}`
+    bundle = undefined
+  }
   let scanner = $state<{ stop: () => void } | undefined>(undefined)
   let scanInfo = $state('')
   const assembler = loadAssembler()
@@ -71,6 +77,7 @@
       partyMerge = mergeIncoming(await getParty(bundle.party.id), bundle)
       return
     }
+    if (bundle.type === 'predpisy') return // zobrazí se nabídka přidání do Grimoáru
     log = await getLog(bundle.char)
     if (bundle.type === 'revize') {
       analysis = analyzeImport(log, bundle)
@@ -353,6 +360,18 @@
     >
   </p>
   {#if showReplyQr}<QrView code={reply} />{/if}
+{/if}
+
+{#if bundle?.type === 'predpisy'}
+  <h2>Předpisy do Grimoáru</h2>
+  <div class="panel">
+    <p>Balíček obsahuje předpisy ({bundle.recipes.length}):</p>
+    <ul>
+      {#each bundle.recipes as r (r.id)}<li>{r.name}</li>{/each}
+    </ul>
+    <p class="muted">Co už v Grimoáru je, se nezdvojí; nic se nepřepisuje.</p>
+    <p><button class="primary" onclick={acceptRecipes}>Přidat do Grimoáru</button></p>
+  </div>
 {/if}
 
 {#if bundle?.type === 'druzina' && partyMerge}

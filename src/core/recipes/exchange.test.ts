@@ -108,3 +108,17 @@ describe('zařazení do Grimoáru příjemce', () => {
     expect(await listRecipes()).toHaveLength(1)
   })
 })
+
+describe('balíček předpisů bez postavy', () => {
+  it('projde kódem a očištěním; prázdný nebo neplatný se odmítne', async () => {
+    const a = await sealRecipe('a', spell)
+    const b = await sealRecipe('b', { ...spell, name: 'Druhé' })
+    const { buildRecipesBundle } = await import('./exchange')
+    const code = await encodeBundle(buildRecipesBundle([a, b]))
+    const r = await decodeBundle(code)
+    expect(r.errors).toEqual([])
+    expect(r.bundle?.type === 'predpisy' && r.bundle.recipes.map((x) => x.name)).toEqual(['Ohnivá střela', 'Druhé'])
+    expect((await decodeBundle(JSON.stringify({ v: 1, type: 'predpisy', recipes: [] }))).errors[0]).toMatch(/použitelné/)
+    expect((await decodeBundle(JSON.stringify({ v: 1, type: 'predpisy', recipes: [{ kind: 'x' }] }))).bundle).toBeUndefined()
+  })
+})

@@ -69,7 +69,14 @@ export interface ReviewBundle {
   note: string
 }
 
-export type Bundle = RevisionBundle | ReviewBundle | PartyBundle
+/** Předpisy z Grimoáru bez postavy (jednotlivě i hromadně). */
+export interface RecipesBundle {
+  v: typeof SHARE_VERSION
+  type: 'predpisy'
+  recipes: SharedRecipe[]
+}
+
+export type Bundle = RevisionBundle | ReviewBundle | PartyBundle | RecipesBundle
 
 // --- sestavení ---
 
@@ -271,6 +278,12 @@ export function sanitizeBundle(raw: unknown): { bundle?: Bundle; errors: string[
   const r = raw as Record<string, unknown>
   if (r.v !== SHARE_VERSION) return { errors: [`Nepodporovaná verze balíčku: ${String(r.v)}`] }
   if (r.type === 'druzina') return sanitizePartyBundle(raw)
+  if (r.type === 'predpisy') {
+    const recipes = sharedRecipesFrom(r.recipes)
+    return recipes.length
+      ? { bundle: { v: SHARE_VERSION, type: 'predpisy', recipes }, errors }
+      : { errors: ['Balíček neobsahuje použitelné předpisy.'] }
+  }
   const char = str(r.char, 100)
   if (!char) return { errors: ['Balíčku chybí označení postavy.'] }
   const name = str(r.name, 200) ?? ''

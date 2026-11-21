@@ -2,7 +2,9 @@
   import { onMount } from 'svelte'
   import { characterOf } from '../../core/character/model'
   import { listLogs } from '../../core/character/store'
+  import { encodeBundle } from '../../core/character/share'
   import { ask } from '../../core/confirm.svelte'
+  import { buildRecipesBundle } from '../../core/recipes/exchange'
   import { foldName } from '../../core/recipes/find'
   import type { Recipe } from '../../core/recipes/model'
   import { listRecipes, removeRecipe, saveRecipe } from '../../core/recipes/store'
@@ -48,6 +50,24 @@
     }
   }
 
+  // sdílení: kód DRD2:… s jedním kouzlem nebo s celým Grimoárem; příjemce ho vloží v Postavy → Import
+  let shareCode = $state('')
+  let shareTitle = $state('')
+  let copied = $state(false)
+  async function share(list: Recipe[], title: string) {
+    copied = false
+    shareTitle = title
+    shareCode = await encodeBundle(buildRecipesBundle(list))
+  }
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(shareCode)
+      copied = true
+    } catch {
+      msg = 'Kód se nepodařilo zkopírovat, označte ho a zkopírujte ručně.'
+    }
+  }
+
   async function remove(r: Recipe) {
     msg = ''
     const users = usedBy(r.id, (await listLogs()).map(characterOf))
@@ -68,6 +88,8 @@
   </p>
   <p>
     <button onclick={() => (dialog = {})}>Nové kouzlo…</button>
+    {#if recipes.length}<button onclick={() => share(recipes, 'celý Grimoár')}>Sdílet vše</button>{/if}
+    <a class="btn" href="#/postavy/import">Importovat…</a>
   </p>
   {#if recipes.length > 5}
     <input type="search" bind:value={query} placeholder="Hledat podle názvu" aria-label="Hledat v Grimoáru" />
@@ -78,6 +100,7 @@
         <li>
           <button class="icon" onclick={() => (dialog = { recipe: r })} aria-label={`Upravit: ${r.name}`}>✎</button>
           <span class="what" title={r.description}>{spellSummary(r.name, spellFrom(r.params))}</span>
+          <button onclick={() => share([r], r.name)} aria-label={`Sdílet: ${r.name}`}>Sdílet</button>
           <button onclick={() => remove(r)} aria-label={`Smazat: ${r.name}`}>✕</button>
         </li>
       {/each}
@@ -86,6 +109,14 @@
     <p class="muted">{recipes.length ? 'Nic nenalezeno.' : 'Grimoár je zatím prázdný.'}</p>
   {/if}
   {#if msg}<p role="status">{msg}</p>{/if}
+  {#if shareCode}
+    <p><strong>Kód ke sdílení: {shareTitle}</strong> <span class="muted">(vložte v Postavy → Import)</span></p>
+    <textarea readonly rows="3" value={shareCode} aria-label="Kód předpisů ke sdílení"></textarea>
+    <p>
+      <button onclick={copy}>{copied ? 'Zkopírováno' : 'Kopírovat'}</button>
+      <button onclick={() => (shareCode = '')}>Zavřít</button>
+    </p>
+  {/if}
 </div>
 
 {#if dialog}
@@ -117,6 +148,11 @@
   }
   .icon {
     padding: 0 0.4rem;
+  }
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: monospace;
   }
   input[type='search'] {
     width: 100%;

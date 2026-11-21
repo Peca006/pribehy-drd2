@@ -2,7 +2,7 @@
 // Pravidla importu (po dokončení): stejný obsah už v Grimoáru je = použije se existující předpis a odkazy v revizích
 // se přepíšou; jiný obsah = vloží se jako nový předpis (při shodě ID s jiným obsahem s novým ID, nic se nepřepisuje).
 import { newId } from '../character/model'
-import type { RevisionBundle } from '../character/share'
+import { SHARE_VERSION, type RecipesBundle, type RevisionBundle } from '../character/share'
 import { planImport } from './find'
 import { sealRecipe, type Recipe, type SharedRecipe } from './model'
 import { listRecipes, putRecipe } from './store'
@@ -73,3 +73,10 @@ export async function importRecipes(shared: readonly SharedRecipe[]): Promise<Re
   }
   return result
 }
+
+/** Balíček předpisů z Grimoáru (jednotlivě i hromadně). */
+export const buildRecipesBundle = (list: readonly Recipe[]): RecipesBundle => ({
+  v: SHARE_VERSION,
+  type: 'predpisy',
+  recipes: list.map(({ id, kind, name, description, params }) => ({ id, kind, name, description, params })),
+})
