@@ -182,7 +182,7 @@ Stav (21. 11. 2026): 🚧 etapy 0, B, C, D hotové na `develop` (nevydáno), z e
 | B. Obory | tabulka schopnost → obor, výběr z balíčku, blokování, volba „vlastní obor“ | ✅ obory podle dovedností povolání (balíček i vestavěná tabulka hlídaná testem), výběr, blokování, volba „Vlastní obor“ |
 | C. Grimoár | obrazovka ve Více: seznam, vyhledávání, přidání, úprava, varianta, mazání | ✅ obrazovka ve Více: seznam, hledání, nové, úprava (i varianta), mazání s výpisem postav |
 | D. Výměna | export a import jednotlivě i hromadně (soubor, kód, QR), pravidla importu z rozhodnutí 3, zapojení do `ImportPanel` | ✅ přenos předpisů s postavou a samostatně (jednotlivě i celý Grimoár) kódem, import v Postavy → Import; včetně zhuštěného QR (předpisy se přikládají) |
-| E. Zobecnění | lektvary, jedy, nástrahy a výrobky jako další druhy předpisů, migrace stávajících lektvarů a nástrah z postavy | 🚧 (po 0.4.0) |
+| E. Zobecnění | lektvary, jedy, nástrahy a výrobky jako další druhy předpisů, migrace stávajících lektvarů a nástrah z postavy | ✅ 0.4.2: lektvary, nástrahy a výrobky jako předpisy; Grimoár na liště s filtrem; převod starých deníků a importů naráz; našeptávání při zadání u postavy |
 
 ### Rizika
 - **Velikost QR a kódu při sdílení postavy**, když nese předpisy. Hlídat kompaktní formát (`compact.ts`) a test velikosti.

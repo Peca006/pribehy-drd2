@@ -133,3 +133,51 @@ test('starý deník s lektvarem a nástrahou se při spuštění převede na př
   await expect(page.getByText('strach z vody (Duše)')).toHaveCount(1)
   await expect(page.getByText(/Zvonek na niti/)).toHaveCount(1)
 })
+
+test('výrobky u postavy s počtem kusů a výběr lektvaru z Grimoáru podle názvu', async ({ page }) => {
+  await page.goto('/#/grimoar')
+  await page.getByRole('button', { name: 'Skrýt' }).click()
+  // lektvar v Grimoáru
+  await page.getByRole('button', { name: 'Nový…' }).click()
+  await page.getByRole('group', { name: 'Druh nového předpisu' }).getByRole('button', { name: 'Lektvar', exact: true }).click()
+  await page.getByRole('dialog', { name: 'Lektvar' }).getByLabel('Druh Jizvy').fill('popálenina')
+  await page.getByRole('dialog', { name: 'Lektvar' }).getByRole('button', { name: 'Uložit do Grimoáru' }).click()
+  await expect(page.getByText('popálenina (Tělo)')).toBeVisible()
+
+  await page.goto('/#/knihovna')
+  await page.getByText('Ukázková data', { exact: true }).click()
+  await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
+  await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click()
+  await expect(page.getByText('Ukázková data jsou obnovená')).toBeVisible()
+  await page.goto('/#/postavy')
+  await page.getByRole('link', { name: /Brokan Rudovous/ }).click()
+
+  // výběr lektvaru z Grimoáru: našeptá se bez diakritiky a velikosti písmen, pole se předvyplní
+  await page.getByRole('button', { name: 'Přidat lektvar' }).click()
+  const dlg = page.getByRole('dialog', { name: 'Lektvar' })
+  await dlg.getByLabel('Vybrat z Grimoáru').fill('POPAL')
+  await dlg.getByRole('button', { name: 'popálenina (Tělo)' }).click()
+  await expect(dlg.getByLabel('Druh Jizvy')).toHaveValue('popálenina')
+  await dlg.getByRole('button', { name: 'Uložit' }).click()
+  await expect(page.locator('.potions').getByText('popálenina (Tělo)')).toBeVisible()
+  // stále jediný předpis lektvaru
+  await page.goto('/#/grimoar')
+  await expect(page.getByText('popálenina (Tělo)')).toHaveCount(1)
+
+  // výrobek: nový, počet kusů, odebrání
+  await page.goto('/#/postavy')
+  await page.getByRole('link', { name: /Brokan Rudovous/ }).click()
+  await page.getByRole('button', { name: '+ Nový výrobek…' }).click()
+  const v = page.getByRole('dialog', { name: 'Výrobek' })
+  await v.getByLabel('Název výrobku').fill('Pochodeň')
+  await v.getByRole('button', { name: 'Uložit do Grimoáru' }).click()
+  const crafts = page.locator('.crafts')
+  await expect(crafts.getByText('Pochodeň')).toBeVisible()
+  await crafts.getByRole('button', { name: 'Přidat: Pochodeň' }).click()
+  await expect(crafts.locator('.n')).toHaveText('2')
+  await crafts.getByRole('button', { name: 'Odebrat: Pochodeň' }).click()
+  await expect(crafts.getByText('Pochodeň')).toBeHidden()
+  // předpis zůstává v Grimoáru
+  await page.goto('/#/grimoar')
+  await expect(page.getByText('Pochodeň')).toBeVisible()
+})

@@ -3,6 +3,7 @@
   import { ATTRIBUTES, type Character } from '../../core/character/model'
   import { MAX_NOTE, MAX_SCAR_TEXT, potionLabel, removePotion, savePotion } from '../../core/character/potions'
   import type { Attribute } from '../../core/content/schema'
+  import RecipeSuggest from './RecipeSuggest.svelte'
 
   // Lektvar, mast, odvar nebo nektar: na co je (vlastnost a druh Jizvy), kolik Surovin v něm je a poznámka.
   let {
@@ -47,6 +48,15 @@
 
 <dialog bind:this={dialog} {onclose} aria-label="Lektvar">
   <h2>{id ? 'Upravit lektvar' : 'Nový lektvar'}</h2>
+  {#if !id}
+    <RecipeSuggest
+      kind="lektvar"
+      onpick={(r) => {
+        attribute = (r.params.vlastnost as Attribute) ?? attribute
+        scar = typeof r.params.jizva === 'string' ? r.params.jizva : scar
+      }}
+    />
+  {/if}
   <div class="seg" role="group" aria-label="Vlastnost">
     {#each ATTRIBUTES as a}
       <button class:primary={attribute === a} onclick={() => (attribute = a)}>{a}</button>

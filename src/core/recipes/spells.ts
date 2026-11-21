@@ -2,7 +2,7 @@
 // Aplikace jen počítá a zapisuje; popis kouzla v příběhu si hráči odehrají mimo ni.
 import { newId, type Character } from '../character/model'
 import { FALLBACK_FIELDS } from './fields'
-import { MAX_LINKS, type Recipe, type RecipeParams } from './model'
+import { MAX_LINKS, type Recipe, type RecipeLink, type RecipeParams } from './model'
 
 export const SPELL_REACH = [
   { id: '', label: 'Neurčeno' },
@@ -137,11 +137,17 @@ export type Edited = { character: Character } | { error: string }
  * Přidá k postavě odkaz na předpis; jeden předpis jen jednou. `ownField`: obor kouzla je vlastní, mimo schopnosti
  * postavy (alternativní sada povolání); značí se ve stavu odkazu a kontrola oboru ho pak nehlásí.
  */
-export function addLink(c: Character, recipeId: string, linkId: string = newId(), ownField = false): Edited {
+export function addLink(
+  c: Character,
+  recipeId: string,
+  linkId: string = newId(),
+  ownField = false,
+  state: RecipeLink['state'] = {},
+): Edited {
   const links = c.recipeLinks ?? {}
   if (Object.values(links).some((l) => l.recipeId === recipeId)) return { error: 'Postava už toto kouzlo má.' }
   if (Object.keys(links).length >= MAX_LINKS) return { error: `Odkazů může být nejvýš ${MAX_LINKS}.` }
-  return { character: { ...c, recipeLinks: { ...links, [linkId]: { recipeId, state: ownField ? { vlastniObor: 1 } : {} } } } }
+  return { character: { ...c, recipeLinks: { ...links, [linkId]: { recipeId, state: ownField ? { ...state, vlastniObor: 1 } : state } } } }
 }
 
 export function removeLink(c: Character, linkId: string): Edited {
@@ -166,3 +172,12 @@ export const usedBy = (recipeId: string, characters: readonly Character[]): Char
 
 /** Všechny obory magie, které vestavěná tabulka zná (nabídka v Grimoáru, kde není konkrétní postava). */
 export const KNOWN_FIELDS = [...new Set(Object.values(FALLBACK_FIELDS).flat())]
+
+/** Přičte nebo odečte počet ve stavu odkazu (kusy výrobku, zásoba); v mezích 0 až 9999. Neznámý odkaz nic nezmění. */
+export function adjustLinkCount(c: Character, linkId: string, by: number): Character {
+  const l = c.recipeLinks?.[linkId]
+  if (!l) return c
+  const now = typeof l.state.count === 'number' ? l.state.count : 0
+  const count = Math.min(9999, Math.max(0, now + by))
+  return { ...c, recipeLinks: { ...c.recipeLinks, [linkId]: { ...l, state: { ...l.state, count } } } }
+}

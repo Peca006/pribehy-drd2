@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { emptyCharacter } from '../character/model'
 import { sealRecipe } from './model'
-import { KNOWN_FIELDS, addLink, emptySpell, linkedRecipes, removeLink, spellCost, spellFrom, spellIntent, spellSummary, spellToParams, usedBy } from './spells'
+import { KNOWN_FIELDS, adjustLinkCount, addLink, emptySpell, linkedRecipes, removeLink, spellCost, spellFrom, spellIntent, spellSummary, spellToParams, usedBy } from './spells'
 
 describe('cena kouzla', () => {
   it('základní kouzlo nestojí nic', () => {
@@ -70,5 +70,17 @@ describe('použití předpisu', () => {
     expect(usedBy('r2', [a, b])).toEqual([])
     expect(KNOWN_FIELDS).toContain('Magie ohně')
     expect(new Set(KNOWN_FIELDS).size).toBe(KNOWN_FIELDS.length)
+  })
+})
+
+describe('počet ve stavu odkazu', () => {
+  it('mění počet v mezích a neznámý odkaz ignoruje', () => {
+    const a = addLink(emptyCharacter('c'), 'r1', 'l1', false, { count: 1 })
+    if (!('character' in a)) throw new Error()
+    const up = adjustLinkCount(a.character, 'l1', 2)
+    expect(up.recipeLinks.l1.state).toEqual({ count: 3 })
+    expect(adjustLinkCount(up, 'l1', -10).recipeLinks.l1.state.count).toBe(0)
+    expect(adjustLinkCount(up, 'l1', 1e9).recipeLinks.l1.state.count).toBe(9999)
+    expect(adjustLinkCount(up, 'x', 1)).toBe(up)
   })
 })

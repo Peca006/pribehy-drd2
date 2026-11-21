@@ -42,6 +42,7 @@
   import Cash from './Cash.svelte'
   import CraftDialog from './CraftDialog.svelte'
   import Potions from './Potions.svelte'
+  import Crafts from './Crafts.svelte'
   import Spells from './Spells.svelte'
   import Traps from './Traps.svelte'
   import RawMaterials from './RawMaterials.svelte'
@@ -300,6 +301,7 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
   {#key current.id}<Potions character={c} onchange={rawChange} />{/key}
   {#key current.id}<Traps character={c} onchange={rawChange} />{/key}
   {#key current.id}<Spells character={c} onchange={rawChange} />{/key}
+  {#key current.id}<Crafts character={c} onchange={rawChange} />{/key}
   <p><button onclick={() => (craftOpen = true)}>Výroba a opravy…</button></p>
   {#if craftOpen}
     <CraftDialog character={c} onsave={crafted} onclose={() => (craftOpen = false)} />

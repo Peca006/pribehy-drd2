@@ -109,7 +109,7 @@
             <button onclick={() => requestRoll('zkouska', spellIntent(r.name, spellFrom(r.params)))}>Seslat</button>
             <button onclick={() => remove(l.linkId, r.name)} aria-label={`Odebrat: ${r.name}`}>✕</button>
           {:else}
-            <span class="what muted">Kouzlo chybí v Grimoáru</span>
+            <span class="what muted">Předpis chybí v Grimoáru</span>
             <button onclick={() => remove(l.linkId, 'chybějící')} aria-label="Odebrat chybějící kouzlo">✕</button>
           {/if}
         </li>

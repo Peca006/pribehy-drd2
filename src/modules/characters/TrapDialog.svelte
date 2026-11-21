@@ -2,6 +2,8 @@
   import { untrack } from 'svelte'
   import type { Character, Trap } from '../../core/character/model'
   import { removeTrap, saveTrap, trapCost, trapCostLines, trapSummary, trapFrom } from '../../core/character/traps'
+  import { recipeToTrap } from '../../core/recipes/kinds'
+  import RecipeSuggest from './RecipeSuggest.svelte'
   import TrapFields from './TrapFields.svelte'
 
   // Zapsání nebo úprava připravené nástrahy (nalezené, koupené nebo vyrobené mimo aplikaci). Výroba s odečtem Surovin je
@@ -54,6 +56,15 @@
 
 <dialog bind:this={dialog} {onclose} aria-label="Nástraha">
   <h2>{id ? 'Upravit nástrahu' : 'Nová nástraha'}</h2>
+  {#if !id}
+    <RecipeSuggest
+      kind="nastraha"
+      onpick={(r) => {
+        const t = recipeToTrap(r, { count: 1 })
+        if (t) spec = { ...t }
+      }}
+    />
+  {/if}
   <TrapFields bind:spec />
   <p>
     Cena jednoho kusu: <strong>{trapCost(priced)}</strong> Surovin
