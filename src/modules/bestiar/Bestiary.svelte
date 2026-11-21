@@ -9,7 +9,6 @@
   import { listParties } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { library } from '../../core/library.svelte'
-  import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
   import EnvIcon from '../../ui/EnvIcon.svelte'
   import { ENVIRONMENTS } from '../../core/environments'
   import CreatureImages from './CreatureImages.svelte'
@@ -112,7 +111,7 @@
 {:else if params[0] === 'uprav' && editing}
   <CreatureEditor initial={editing} />
 {:else if creature}
-  <nav><a class="btn" href="#/bestiar"><Arrow dir="left" /> Bestiář</a> <LinkModeSelect /></nav>
+  <nav><a class="btn" href="#/bestiar"><Arrow dir="left" /> Bestiář</a></nav>
   <p class="actions">
     {#if isUser(creature)}
       <a class="btn" href={'#/bestiar/uprav/' + encodeURIComponent(creature.id)}>Upravit</a>

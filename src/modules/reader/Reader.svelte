@@ -15,7 +15,6 @@
   import { back, go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
   import BlockView from '../../ui/BlockView.svelte'
-  import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
   import { shortBookName } from '../../core/books'
   import { buildIndex, search } from '../../core/search'
   import { readerSearch } from './state.svelte'
@@ -85,7 +84,6 @@
   <nav>
     <button onclick={back}><Arrow dir="left" /> Zpět</button>
     <button onclick={() => go('ctenar')}>Kapitoly</button>
-    <LinkModeSelect />
   </nav>
   <article>
     <h1>{chapter.title}</h1>
@@ -173,6 +171,7 @@
 <style>
   nav {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: var(--drd-gap);
   }
