@@ -1,5 +1,13 @@
 # Změny
 
+## 0.4.0 (21. 11. 2026)
+
+- **Kouzla:** u postavy sekce Kouzla: seslání ad hoc (bez názvu a ukládání, jen cena a zkouška) nebo uložení kouzla jako předpisu; přidání z Grimoáru s našeptáváním podle názvu bez ohledu na diakritiku. Karta Postup pro kouzla.
+- **Obory magie:** postava sesílá jen z oborů svých povolání (dovednosti Magie …, Zaříkání, Znamení, Hadačství); jiný obor jen záměrnou volbou Vlastní obor.
+- **Grimoár:** ve Více seznam uložených kouzel (hledání, nové, úprava, nová varianta, smazání s výpisem postav). Postavy se na kouzlo odkazují, úprava se projeví u všech.
+- **Sdílení kouzel:** kód i QR postavy nesou kouzla, na která odkazuje; Grimoár nebo jedno kouzlo jde sdílet i samostatně a vložit v Postavy → Import. Stejný obsah se nezdvojí, nic se nepřepisuje.
+- **Pod kapotou:** nové úložiště předpisů (databáze verze 6), otisk obsahu předpisu, E2E zkoušky kouzel a Grimoáru.
+
 ## 0.3.19 (21. 11. 2026)
 
 - **O aplikaci:** ve Více přibyla sekce O aplikaci: autor, licence, odkaz na zdrojový kód, poděkování (Altar, autoři SRD, Truhlice jako ideová inspirace, testeři) a použité knihovny.
