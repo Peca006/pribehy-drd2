@@ -66,7 +66,9 @@
     const l = log
     fitted = undefined
     if (!l || !showQr || !compactOn || !canCompact) return
-    fitForQr(l, name, maxQr).then((f) => (fitted = f))
+    listRecipes()
+      .then((all) => fitForQr(l, name, maxQr, all))
+      .then((f) => (fitted = f))
   })
   const qrCode = $derived(compactOn && canCompact && fitted ? fitted.code : code)
   const qrCount = $derived(splitForQr(qrCode).length)

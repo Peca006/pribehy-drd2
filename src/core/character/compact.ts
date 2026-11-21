@@ -2,6 +2,8 @@
 // od začátku se sloučí do jedné výchozí revize („stav k revizi N“) a novější na ni navazují. Jen pro přenos,
 // místní deník zůstává celý. Příjemce s plnou historií podle otisku ověří, že stav souhlasí.
 import { characterOf, emptyCharacter, eventsFor, type CharacterLog } from './model'
+import { attachRecipes } from '../recipes/exchange'
+import type { Recipe } from '../recipes/model'
 import { QR_CHUNK } from './qr'
 import { groupRevisions, type Revision } from './revisions'
 import {
@@ -91,14 +93,19 @@ const OMIT_STEPS: string[][] = [['notes'], ['notes', 'heroStory']]
  * ani s úplným zhuštěním, vynechá poznámky a příběh; když ani to nestačí, vrátí nejmenší možný kód
  * a `fits: false`.
  */
-export async function fitForQr(log: CharacterLog, name: string, maxQr: number): Promise<Fitted> {
+export async function fitForQr(
+  log: CharacterLog,
+  name: string,
+  maxQr: number,
+  recipes: readonly Recipe[] = [],
+): Promise<Fitted> {
   const limit = maxQr * QR_CHUNK
   const n = groupRevisions(log.events).length
   const make = async (keepLast: number, omit: string[] = []): Promise<Fitted> => {
     const whole =
       keepLast >= n ? buildRevisionBundle(log, name, null) : buildCompactBundle(log, name, keepLast)
     const merged = whole.compact ? n - (whole.revisions.length - 1) : 0
-    const bundle = withoutPaths(whole, omit)
+    const bundle = attachRecipes(withoutPaths(whole, omit), recipes)
     const code = await encodeBundle(bundle)
     return {
       code,

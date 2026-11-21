@@ -156,3 +156,20 @@ describe('zhuštění historie', () => {
     expect((await fitForQr(mid, 'M', 2)).omitted).toEqual(['notes'])
   })
 })
+
+describe('zhuštění a předpisy', () => {
+  it('zhuštěný kód nese předpisy, na které odkazuje stav postavy', async () => {
+    const { sealRecipe } = await import('../recipes/model')
+    const recipe = await sealRecipe('r1', { kind: 'kouzlo', name: 'Poryv' })
+    const log = {
+      id: 'c',
+      events: [
+        { id: 'e1', at: '2026-11-21T10:00:00.000Z', by: 'a', path: 'name', value: 'Hrdina', rev: 'v1' },
+        { id: 'e2', at: '2026-11-21T10:01:00.000Z', by: 'a', path: 'recipeLinks.l1', value: { recipeId: 'r1', state: {} }, rev: 'v2' },
+        { id: 'e3', at: '2026-11-21T10:02:00.000Z', by: 'a', path: 'xp', value: 3, rev: 'v3' },
+      ],
+    }
+    const f = await fitForQr(log, 'Hrdina', 5, [recipe])
+    expect(f.bundle.recipes?.map((r) => r.id)).toEqual(['r1'])
+  })
+})
