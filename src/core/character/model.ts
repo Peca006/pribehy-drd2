@@ -1,6 +1,7 @@
 // Model postavy jako deník změn (event log): stav postavy se vždy odvodí z posloupnosti změn.
 // Díky tomu jde ukázat historii, porovnat dva deníky před sloučením a schvalovat změny.
 import type { Attribute, ContentId } from '../content/schema'
+import type { RecipeLink } from '../recipes/model'
 import { emptyCash, fromHeller, type Cash } from './cash'
 
 export const ATTRIBUTES: Attribute[] = ['Tělo', 'Duše', 'Vliv']
@@ -87,6 +88,8 @@ export interface Character {
   potions: Record<string, Potion>
   /** připravené nástrahy podle ID */
   traps: Record<string, Trap>
+  /** odkazy na předpisy v Grimoáru (kouzla…) podle ID odkazu; stav vázaný na postavu je v odkazu */
+  recipeLinks: Record<string, RecipeLink>
   /** nespotřebované body zkušeností (12 = jedno zlepšení postavy) */
   xp: number
   scars: Scar[]
@@ -109,6 +112,7 @@ export const emptyCharacter = (id: string): Character => ({
   rawMaterialKinds: {},
   potions: {},
   traps: {},
+  recipeLinks: {},
   xp: 0,
   scars: [],
   notes: '',
@@ -173,7 +177,7 @@ export function diffCharacter(
     const a = before[key]
     const b = after[key]
     if (same(a, b)) continue
-    if (key === 'rawMaterialKinds' || key === 'potions' || key === 'traps') {
+    if (key === 'rawMaterialKinds' || key === 'potions' || key === 'traps' || key === 'recipeLinks') {
       // položky po jedné (každá = jedna cesta), aby se úpravy různých položek nepřebíjely
       const ma = (a ?? {}) as Record<string, unknown>
       const mb = (b ?? {}) as Record<string, unknown>

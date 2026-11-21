@@ -127,7 +127,7 @@ s druhem, výbava). Tohle patří k milníku **Výpravy** (sekce pro vypravěče
 | 11c2 Lektvary (stručná evidence) | malý až střední | 11b, 11c | viz níže |
 | 11d1 Nástrahy | střední | 11a, 11b | kalkulátor + výzva |
 | 11e Kořist | střední | milník Výpravy | podpora vypravěče, odloženo |
-| 11d2 Kouzla | střední | | **odloženo** (uživatel si pravidla nejdřív načte) |
+| 11d2 Kouzla | střední | | 🚧 viz Verze 0.4.0 níže |
 
 Doporučené pořadí: **11c-2, 11f, 11b, 11c2, 11d1**, pak podle Výprav 11e a podle rozhodnutí 11d2. Každý krok = jedna verze (0.3.x), s testy a záznamem v `CHANGELOG.md`.
 
@@ -147,9 +147,46 @@ Výroba lektvaru v 11b vytvoří záznam. Nouzové lektvary (bez Surovin) se nee
 3. **Kdo léčí:** volný text pro ošetřujícího (často jiný člen družiny); hod řeší ošetřující, u cizí postavy vypravěč nebo automatický úspěch. Ošetřovaný si
    sníží Jizvu a upraví její text (viz 11c, doplnění).
 4. **Lektvary:** stručně evidovat, na co jsou (vlastnost + druh Jizvy + počet Surovin), viz 11c2.
-5. **Kouzla:** odloženo, uživatel si nejdřív pravidla načte (11d2).
+5. **Kouzla:** původně odloženo; rozhodnuto 21. 11. 2026, viz Verze 0.4.0 (Kouzla a Grimoár).
 6. **Kořist:** hráč jen zápisem v dobrodružství a položkami u postav; panel Kořist až jako podpora vypravěče u modulu Výpravy (11e).
 7. **Názvy dovedností (hotovo ve verzi 0.3.9, v kartách Postupu vyhodnocení):** ano, holé názvy a vlastnost (zdroj) z balíčku, jinak odkaz do SRD. Bez balíčku holý postup a odkaz do SRD.
+
+## Verze 0.4.0: Kouzla a Grimoár (rozhodnuto 21. 11. 2026)
+
+Stav: 🚧 plán schválen v hlavních bodech, kód zatím nezačal. Navazuje na 11d2 (Kouzla); místo samotné pomůcky u zkoušky vzniká obecný sklad předpisů.
+
+### Rozhodnutí
+1. **Grimoár (sklad předpisů) patří hráči, ne postavě.** Je to úložiště na zařízení (IndexedDB, vedle postav a družin). Používání je nepovinné: kdo
+   Grimoár neotevře, kouzlo uložené u postavy v něm stejně vzniká na pozadí.
+2. **Předpis = jedna instance, postavy se na ni odkazují (žádné kopie).** Předpis má stabilní `id` a k tomu `contentHash` (otisk obsahu:
+   normalizovaný název, parametry, popis i přepsané ceny; SHA-256, normalizace NFC, oříznuté mezery, pevné pořadí klíčů). Hash slouží k rychlému
+   porovnání a deduplikaci, při shodě se ještě porovnají vlastnosti.
+3. **Přenos postavy nese použité předpisy.** Při importu se po jeho dokončení každý předpis porovná s Grimoárem příjemce: stejný hash = použije se
+   existující předpis a odkaz u postavy se opraví; jiný hash = vloží se nový předpis s novým `id`; stejné `id` s jiným hashem = nový předpis,
+   nikdy tiché přepsání, hráč dostane upozornění. Deduplikace stačí po dokončení importu.
+4. **Úprava předpisu se projeví u všech postav na zařízení**; je tam volba „Uložit jako novou variantu“. Mazání použitého předpisu vypíše postavy, které ho mají.
+5. **Ad hoc sesílání:** přímé zadání parametrů (rituál, dosah, rozsah, trvání, náročnost, substance) bez názvu a bez ukládání. Aplikace jen vyřeší
+   mechaniku a hody. Uložit jako předpis lze nepovinně; teprve tehdy je povinný název, doporučený popis. Totéž platí pro lektvary a další předpisy.
+6. **Přidání předpisu k postavě našeptává podle názvu** (bez rozlišení velikosti písmen a diakritiky).
+7. **Obory magie z balíčku, hlídané podle schopností postavy.** Obor mimo schopnosti postavy se blokuje (ad hoc i uložený); výjimka je volba „vlastní obor“
+   pro alternativní sady. Podpora alternativních povolání a prostředí až po vedení hry a Výpravách. Do té doby je potřeba ručně ověřená tabulka schopnost → obor
+   (obory jsou v balíčku jen v textu schopností).
+8. **Rozsah 0.4.0:** etapy A až D níže; zobecnění na lektvary, jedy, nástrahy a výrobky (E) jako 0.4.x.
+9. **Odpolední zkouška** běží lokálně z `develop`, bez vydání.
+
+### Itinerář
+| Etapa | Obsah | Stav |
+|---|---|---|
+| 0. Základ dat | úložiště `recipes` (DB verze 6), obecný předpis s druhem, `contentHash`, odkazy postavy `recipeLinks` (`{recipeId, state}`, stav vázaný na postavu), našeptávání a plán importu (`src/core/recipes/`) | ✅ |
+| A. Kouzlo u postavy | `spells.ts` s testy (cena, rituál, obrana), dialog u zkoušky (ad hoc i z předpisu), seznam kouzel postavy s odkazy, karta Postup, refaktoring přechodů manévrů a plateb v `Roll` (bod 7 revize) | 🚧 |
+| B. Obory | tabulka schopnost → obor, výběr z balíčku, blokování, volba „vlastní obor“ | 🚧 |
+| C. Grimoár | obrazovka ve Více: seznam, vyhledávání, přidání, úprava, varianta, mazání | 🚧 |
+| D. Výměna | export a import jednotlivě i hromadně (soubor, kód, QR), pravidla importu z rozhodnutí 3, zapojení do `ImportPanel` | 🚧 |
+| E. Zobecnění | lektvary, jedy, nástrahy a výrobky jako další druhy předpisů, migrace stávajících lektvarů a nástrah z postavy | 🚧 (po 0.4.0) |
+
+### Rizika
+- **Velikost QR a kódu při sdílení postavy**, když nese předpisy. Hlídat kompaktní formát (`compact.ts`) a test velikosti.
+- **Formát sdílení** potřebuje nové číslo verze (`SHARE_VERSION`) a odmítnutí starší aplikací musí být srozumitelné.
 
 ## Formát dat a migrace (průřezově, pohlídat od 11a)
 

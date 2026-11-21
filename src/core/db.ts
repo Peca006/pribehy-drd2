@@ -8,8 +8,8 @@
 import { connection } from './idb'
 
 const DB = 'drd2-data'
-const VERSION = 5
-export const STORES = ['characters', 'creatures', 'creatureImages', 'parties'] as const
+const VERSION = 6
+export const STORES = ['characters', 'creatures', 'creatureImages', 'parties', 'recipes'] as const
 export type StoreName = (typeof STORES)[number]
 
 /** Úložiště se záznamy s číslem schématu (obrázky bytostí jsou jen binární data). */
@@ -22,6 +22,7 @@ export const MIGRATIONS: Record<DataStore, Migration[]> = {
   characters: [],
   creatures: [],
   parties: [],
+  recipes: [],
 }
 
 /** Aktuální schéma = počet migrací + 1. */

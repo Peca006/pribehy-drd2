@@ -43,6 +43,7 @@ export function pathLabel(path: string): string {
   if (path.startsWith('rawMaterialKinds.')) return 'Druh Surovin'
   if (path.startsWith('potions.')) return 'Lektvar'
   if (path.startsWith('traps.')) return 'Nástraha'
+  if (path.startsWith('recipeLinks.')) return 'Předpis'
   if (path.startsWith('cash.')) return `Hotovost: ${UNIT_LABEL[path.slice(5) as CashUnit]?.toLowerCase() ?? path.slice(5)}`
   return LABELS[path] ?? path
 }

@@ -4,6 +4,7 @@ import { emptyCharacter, type Character, type Scar } from './model'
 import { cashFrom } from './cash'
 import { potionsFrom } from './potions'
 import { trapsFrom } from './traps'
+import { linksFrom } from '../recipes/model'
 import { cleanCount, kindsFrom } from './rawMaterials'
 
 const KEY = (id: string) => `drd2-char-draft:${id}`
@@ -83,6 +84,7 @@ export function sanitizeCharacter(raw: unknown, fallback: Character): Character 
     rawMaterialKinds: kindsFrom(r.rawMaterialKinds),
     potions: potionsFrom(r.potions),
     traps: trapsFrom(r.traps),
+    recipeLinks: linksFrom(r.recipeLinks),
     xp: Math.max(0, num(r.xp) ?? 0),
     scars: scarsOf(r.scars),
     notes: str(r.notes) ?? '',

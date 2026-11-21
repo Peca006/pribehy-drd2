@@ -14,6 +14,7 @@ import { scarsOf } from './drafts'
 import { cashFrom, UNIT_ORDER, type CashUnit } from './cash'
 import { potionFrom } from './potions'
 import { trapFrom } from './traps'
+import { linkFrom } from '../recipes/model'
 import { cleanCount, kindFrom } from './rawMaterials'
 import { groupRevisions } from './revisions'
 
@@ -227,6 +228,11 @@ export function sanitizeEvent(raw: unknown): SharedEvent | undefined {
     if (v === undefined || v === null) return { id, path }
     const t = trapFrom(v)
     return t ? { id, path, value: t } : undefined
+  }
+  if (path.startsWith('recipeLinks.') && path.length > 12 && !path.slice(12).includes('.')) {
+    if (v === undefined || v === null) return { id, path }
+    const l = linkFrom(v)
+    return l ? { id, path, value: l } : undefined
   }
   if (path.startsWith('attributes.')) {
     const n = num(v)

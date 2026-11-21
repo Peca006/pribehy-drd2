@@ -10,7 +10,7 @@ beforeEach(async () => {
   globalThis.indexedDB = new IDBFactory()
 })
 
-const migs = (...m: Migration[]) => ({ characters: m, creatures: [], parties: [] })
+const migs = (...m: Migration[]) => ({ characters: m, creatures: [], parties: [], recipes: [] })
 
 describe('migrace záznamů (čistá funkce)', () => {
   it('záznam bez čísla je schéma 1 a po migraci nese aktuální číslo', () => {
@@ -98,6 +98,31 @@ describe('upgrade ze starší databáze', () => {
     })
     const raw = await run<Record<string, unknown>>('characters', 'readonly', (s) => s.get('stara'))
     expect(raw.schema).toBe(1)
+  })
+
+  it('upgrade z verze 5 přidá úložiště předpisů a postavy nechá beze změny', async () => {
+    const old = await new Promise<IDBDatabase>((res, rej) => {
+      const req = indexedDB.open('drd2-data', 5)
+      req.onupgradeneeded = () => {
+        for (const s of ['characters', 'creatures', 'creatureImages', 'parties'])
+          req.result.createObjectStore(s, { keyPath: 'id' })
+      }
+      req.onsuccess = () => res(req.result)
+      req.onerror = () => rej(req.error)
+    })
+    await new Promise<void>((res, rej) => {
+      const tx = old.transaction('characters', 'readwrite')
+      tx.objectStore('characters').put({ id: 'p', events: [] })
+      tx.oncomplete = () => res()
+      tx.onerror = () => rej(tx.error)
+    })
+    old.close()
+
+    const recipes = repo<{ id: string; name: string }>('recipes')
+    expect(await recipes.list()).toEqual([])
+    await recipes.put({ id: 'r', name: 'Ohnivá střela' })
+    expect(await recipes.get('r')).toEqual({ id: 'r', name: 'Ohnivá střela' })
+    expect(await repo<{ id: string }>('characters').get('p')).toEqual({ id: 'p', events: [] })
   })
 })
 

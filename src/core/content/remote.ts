@@ -1,3 +1,4 @@
+import { sha256Hex } from '../hash'
 import { installPack } from './store'
 import type { ContentPack } from './schema'
 
@@ -13,9 +14,6 @@ export interface CatalogEntry {
 }
 
 const base = () => new URL('packs/', globalThis.document?.baseURI ?? 'http://localhost/').href
-
-const hex = (buf: ArrayBuffer) =>
-  [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('')
 
 /** Jak dlouho smí server mlčet (do hlaviček i mezi částmi dat), než se stahování přeruší. */
 export const STALL_MS = 20_000
@@ -104,7 +102,7 @@ export async function downloadPack(
   stallMs?: number,
 ): Promise<ContentPack> {
   const { bytes } = await get(`${base()}${e.file}`, `Stažení „${e.name}“`, { stallMs, onProgress })
-  if (hex(await crypto.subtle.digest('SHA-256', bytes)) !== e.sha256)
+  if ((await sha256Hex(bytes)) !== e.sha256)
     throw new Error(`Soubor „${e.name}“ je poškozený nebo neodpovídá katalogu. Zkuste to znovu.`)
   return installPack(new TextDecoder().decode(bytes))
 }
