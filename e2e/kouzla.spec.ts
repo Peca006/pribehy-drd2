@@ -53,10 +53,11 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
 })
 
 test('Grimoár ve Více: nové kouzlo, úprava a smazání s potvrzením', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/grimoar')
   await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
 
-  await page.getByRole('button', { name: 'Nové kouzlo…' }).click()
+  await page.getByRole('button', { name: 'Nový…' }).click()
+  await page.getByRole('group', { name: 'Druh nového předpisu' }).getByRole('button', { name: 'Kouzlo' }).click()
   const dlg = page.getByRole('dialog', { name: 'Kouzlo' })
   await expect(dlg.getByRole('button', { name: 'Seslat', exact: true })).toBeHidden() // bez postavy se nesesílá
   await dlg.getByLabel('Obor magie').selectOption({ label: 'Magie větru' })
@@ -73,7 +74,7 @@ test('Grimoár ve Více: nové kouzlo, úprava a smazání s potvrzením', async
   await expect(page.locator('li', { hasText: 'Poryv' })).toHaveCount(1)
 
   await page.getByRole('button', { name: 'Smazat: Poryv' }).click()
-  await expect(page.getByText('Žádná postava na zařízení kouzlo nemá')).toBeVisible()
+  await expect(page.getByText('Žádná postava na zařízení předpis nemá')).toBeVisible()
   await page.getByRole('button', { name: 'Smazat', exact: true }).click()
   await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
 })
@@ -107,7 +108,7 @@ test('sdílení postavy přenese kouzlo do Grimoáru příjemce', async ({ page 
   await page.getByRole('button', { name: 'Smazat…' }).click()
   await page.getByRole('button', { name: 'Smazat', exact: true }).click()
   await expect(page).toHaveURL(/#\/postavy$/)
-  await page.goto('/#/knihovna')
+  await page.goto('/#/grimoar')
   await page.getByRole('button', { name: 'Smazat: Poslední slovo' }).click()
   await page.getByRole('button', { name: 'Smazat', exact: true }).click()
   await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
@@ -117,16 +118,17 @@ test('sdílení postavy přenese kouzlo do Grimoáru příjemce', async ({ page 
   await page.getByLabel('Kód k importu').fill(code)
   await page.getByRole('button', { name: 'Potvrdit rozhodnutí' }).click()
   await expect(page.getByText(/Kouzla v Grimoáru: přidáno 1/)).toBeVisible()
-  await page.goto('/#/knihovna')
+  await page.goto('/#/grimoar')
   await expect(page.getByText('Poslední slovo')).toBeVisible()
   await page.goto(detail)
   await expect(page.locator('.spells').getByText('Poslední slovo')).toBeVisible()
 })
 
 test('Grimoár: sdílení kouzla kódem a import v Postavy → Import', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/grimoar')
   await page.getByRole('button', { name: 'Skrýt' }).click()
-  await page.getByRole('button', { name: 'Nové kouzlo…' }).click()
+  await page.getByRole('button', { name: 'Nový…' }).click()
+  await page.getByRole('group', { name: 'Druh nového předpisu' }).getByRole('button', { name: 'Kouzlo' }).click()
   const dlg = page.getByRole('dialog', { name: 'Kouzlo' })
   await dlg.getByLabel('Název kouzla').fill('Vzkaz větru')
   await dlg.getByRole('button', { name: 'Uložit do Grimoáru' }).click()
@@ -142,6 +144,6 @@ test('Grimoár: sdílení kouzla kódem a import v Postavy → Import', async ({
   await page.getByLabel('Kód k importu').fill(code)
   await page.getByRole('button', { name: 'Přidat do Grimoáru' }).click()
   await expect(page.getByText('Grimoár: přidáno 1')).toBeVisible()
-  await page.goto('/#/knihovna')
+  await page.goto('/#/grimoar')
   await expect(page.getByText('Vzkaz větru')).toBeVisible()
 })
