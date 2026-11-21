@@ -2,7 +2,7 @@
 
 ## Otevřené úkoly (stav k verzi 0.3.18, 19. 11. 2026)
 
-**O aplikaci a poděkování (credits):** v aplikaci (Více) i v README zřetelná stránka „O aplikaci“: autor, licence (GPL-3.0-or-later), poděkování Altaru za svolení k SRD a autorům SRD (drd2srd.d20.cz), zmínka o inspiraci Truhlicí (Nogrim; jen ideová inspirace), použité knihovny a jejich licence, odkaz na zdrojový kód a na `SVOLENI.md`. Hodí se i „Honorable mention“ pro testery a komunitu.
+**O aplikaci a poděkování (credits):** hotovo v `src/modules/library/About.svelte` (Více → O aplikaci), čeká na vydání. Zbývá doplnit jmenovitě testery, pokud si to budou přát, a ověřit licence knihoven proti `node_modules`.
 
 **Balíčky ze SRD** se stahují z webu aplikace (`content-packs/srd/`, `tools/srd/publish.mjs`). Nový balíček: build, `publish.mjs`, commit, nasazení `main`. Při změně formátu zvýšit `PACK_BUILD` a `EXPECTED_BUILD`.
 

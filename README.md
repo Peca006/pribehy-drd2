@@ -42,7 +42,7 @@ repozitáře**. Lokálně patří do `reference/` (ignorováno gitem). Texty z n
 
 Projekt je inspirovaný dílem **Truhlice** (autor Nogrim). Jde **pouze o ideovou inspiraci**:
 z Truhlice se nepoužívá žádný kód, text ani data. Případná shoda funkcí plyne z potřeb hraní hry Dračí doupě 2.
-Samostatná stránka s poděkováním (O aplikaci, autoři, zdroje a inspirace) je v plánu, viz `TODO.md`.
+Poděkování, zdroje a použité knihovny jsou i v aplikaci na stránce Více → O aplikaci.
 
 ## Licence
 

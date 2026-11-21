@@ -2,6 +2,7 @@
   import { setAuthor, settings } from '../../core/settings.svelte'
   import AudioTest from '../../ui/audiogram/AudioTest.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
+  import About from './About.svelte'
   import AppInfo from './AppInfo.svelte'
   import DemoData from './DemoData.svelte'
   import Packs from './Packs.svelte'
@@ -34,6 +35,7 @@
 </details>
 
 <AppInfo />
+<About />
 
 <style>
   .settings {
