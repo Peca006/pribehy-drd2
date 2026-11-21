@@ -1,5 +1,13 @@
 # Změny
 
+## 0.4.2 (21. 11. 2026)
+
+- **Grimoár na liště:** samostatná stránka (📕) mezi Bestiářem a Více s filtrem podle druhu: kouzla, lektvary, nástrahy a výrobky. Nový předpis, úprava, nová varianta, smazání s výpisem postav, sdílení jednotlivě i celého Grimoáru.
+- **Lektvary a nástrahy jako předpisy:** postava si je ukládá jako odkazy na předpisy v Grimoáru (počet Surovin či kusů a poznámka zůstávají u postavy). Stejný lektvar či nástraha u více postav je jeden předpis; úprava u postavy cizí předpis potichu nemění. Starší deníky se při prvním spuštění převedou (historie se přepíše), balíčky ze starší verze se převedou při importu.
+- **Výrobky:** nový druh předpisu s počtem kusů u postavy.
+- **Našeptávání:** při zadání nového lektvaru nebo nástrahy u postavy se nabízí předpisy z Grimoáru podle názvu (bez ohledu na diakritiku a velikost písmen).
+- **Pod kapotou:** pracovní pohled postavy (rozbalení a zápis zpět do odkazů), převod starého formátu, E2E zkoušky Grimoáru a převodu deníku. Bod revize 7: ImportPanel, PartyView, Conflict a CharacterEditor zůstávají.
+
 ## 0.4.1 (21. 11. 2026)
 
 - **Pod kapotou:** přechody manévrů, jejich plateb a iniciativy v panelu Hod jsou vyčleněné do samostatných funkcí s testy (chování se nemění); přibyla E2E zkouška manévrů. Zbývající body revize kódu: ImportPanel, PartyView, Conflict, CharacterEditor.
