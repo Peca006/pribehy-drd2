@@ -246,6 +246,9 @@
 {#if bundle?.type === 'revize' && analysis}
   <h2>Postava {bundle.name || bundle.char}</h2>
   <p>{KIND_TEXT[analysis.kind]}</p>
+  {#if bundle?.type === 'revize' && bundle.images?.length}
+    <p class="muted">Soubor obsahuje ilustrace postavy ({bundle.images.length}), po přijetí revize se k postavě přidají.</p>
+  {/if}
   {#if analysis.note}<p class="muted">{analysis.note}</p>{/if}
   {#if bundle.omitted?.length}
     <p class="muted">

@@ -58,7 +58,7 @@ export const DEMO_RECIPES: (RecipeInput & { id: string })[] = (
     // Lektvary
     potion('Mast ranhojiče', 'Tělo', 'sečné poranění', 'Lepkavá mast z jitrocelu a vosku. Natírá se na ránu pod obvaz a zpomaluje krvácení.'),
     potion('Odvar jasné mysli', 'Duše', 'fobie', 'Hořký odvar z kozlíku a mečíku. Pomáhá zvládnout záchvat strachu, jen se nesmí pít na lačno.'),
-    potion('Elixír pálivé síly', 'Tělo', 'popálenina', 'Červený nápoj s chilli a kůrou jilmu. Zchladí popálené místo a podpoří hojení kůže.'),
+    potion('Elixír pálivé síly', 'Tělo', 'omrzlina', 'Po vypití zahřeje prochladlé tělo. V obkladech podpoří hojení omrzlin.'),
     potion('Nektar řečníka', 'Vliv', 'ostuda', 'Sladký lektvar z medu a lipového květu. Uleví po veřejném ponížení a vrací sebejistotu.'),
 
     // Nástrahy

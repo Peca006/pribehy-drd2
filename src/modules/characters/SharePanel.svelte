@@ -12,6 +12,8 @@
   import { attachRecipes } from '../../core/recipes/exchange'
   import { listRecipes } from '../../core/recipes/store'
   import { getLog } from '../../core/character/store'
+  import { listCharacterImages } from '../../core/character/images'
+  import { toSharedImages } from '../../core/character/imageFile'
   import QrView from '../../ui/QrView.svelte'
   import AudioSend from '../../ui/audiogram/AudioSend.svelte'
 
@@ -86,9 +88,21 @@
     copied = true
     setTimeout(() => (copied = false), 2000)
   }
-  function download() {
+  // ilustrace postavy se přikládají jen do souboru (volitelně), ne do kódu, QR ani zvuku
+  let imageCount = $state(0)
+  let withImages = $state(true)
+  $effect(() => {
+    void listCharacterImages(id).then((l) => (imageCount = l.length))
+  })
+  async function download() {
+    let text = code
+    if (withImages && imageCount && log) {
+      const all = await listRecipes()
+      const bundle = attachRecipes(buildRevisionBundle(log, name, sinceIndex >= 0 ? revs[sinceIndex].id : null), all)
+      text = await encodeBundle({ ...bundle, images: await toSharedImages(await listCharacterImages(id)) })
+    }
     const a = document.createElement('a')
-    a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' }))
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }))
     a.download = `postava-${slugify(name) || 'drd2'}.drd2.txt`
     a.click()
     URL.revokeObjectURL(a.href)
@@ -159,6 +173,12 @@
     {#if copyFailed}<p class="error" role="alert">
         Kopírování není povoleno, označte text výše a zkopírujte ho ručně (nebo použijte soubor).
       </p>{/if}
+    {#if imageCount}
+      <label class="check">
+        <input type="checkbox" bind:checked={withImages} />
+        Do souboru přiložit ilustrace postavy ({imageCount}); kód, QR a zvuk je nenesou
+      </label>
+    {/if}
     <p class="actions">
       <button class="primary" onclick={copy}>{copied ? 'Zkopírováno ✓' : 'Zkopírovat kód'}</button>
       <button

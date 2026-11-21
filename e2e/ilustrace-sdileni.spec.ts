@@ -39,3 +39,30 @@ test('sdílení postavy: začátek lze zvolit podle revize', async ({ page }) =>
   await expect(page.getByLabel('Sdílet od revize')).toBeEnabled()
   await expect(page.getByRole('heading', { name: /Obsah \(1\)/ })).toBeVisible()
 })
+
+test('soubor se sdílením nese ilustrace postavy, kód a QR ne', async ({ page }) => {
+  await page.goto('/#/postavy/demo-brokan')
+  const sekce = page.getByRole('region', { name: 'Ilustrace postavy' })
+  await sekce.locator('input[type=file]').setInputFiles({ name: 'a.png', mimeType: 'image/png', buffer: PNG })
+  await expect(sekce.getByRole('img')).toHaveCount(1)
+
+  await page.goto('/#/postavy/demo-brokan/sdilet')
+  await page.getByRole('button', { name: 'Skrýt' }).click()
+  await page.getByRole('radio', { name: /Celá postava/ }).check()
+  const kod = await page.getByLabel('Kód ke sdílení').inputValue()
+  await expect(page.getByLabel(/Do souboru přiložit ilustrace/)).toBeChecked()
+
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Stáhnout soubor' }).click()
+  const file = await (await download).createReadStream()
+  let text = ''
+  for await (const chunk of file) text += chunk
+  const count = (t: string) =>
+    page.evaluate(async (x) => {
+      const m = await import('/src/core/character/share.ts')
+      const r = await m.decodeBundle(x)
+      return r.bundle && 'images' in r.bundle ? (r.bundle.images?.length ?? 0) : -1
+    }, t)
+  expect(await count(text)).toBe(1)
+  expect(await count(kod)).toBe(-1) // bez pole ilustrací
+})

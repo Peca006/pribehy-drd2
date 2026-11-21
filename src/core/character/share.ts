@@ -22,7 +22,11 @@ export const SHARE_VERSION = 1
 const PREFIX = 'DRD2:'
 const MAX_REVISIONS = 200
 const MAX_EVENTS = 200
-const MAX_DECODED = 2_000_000
+// ilustrace přiložené k souboru s postavou mají vlastní rozumný strop (kód, QR a zvuk je nenesou)
+const MAX_DECODED = 16_000_000
+const MAX_IMAGES = 12
+const MAX_IMAGE_CHARS = 3_000_000
+const IMAGE_MIMES = ['image/webp', 'image/png', 'image/jpeg']
 
 export interface SharedEvent {
   id: string
@@ -55,7 +59,14 @@ export interface RevisionBundle {
   omitted?: string[]
   /** předpisy z Grimoáru, na které odkazují změny v revizích (kouzla…); příjemce je zařadí do svého Grimoáru */
   recipes?: SharedRecipe[]
+  /** ilustrace postavy (jen v souboru, ne v kódu, QR ani zvuku): obrázek v base64 */
+  images?: SharedImage[]
   revisions: SharedRevision[]
+}
+
+export interface SharedImage {
+  mime: string
+  data: string
 }
 
 /** Odpověď vypravěče: které revize přijal a které zamítl. */
@@ -327,10 +338,25 @@ export function sanitizeBundle(raw: unknown): { bundle?: Bundle; errors: string[
       ...compactOf(r.compact),
       ...omittedOf(r.omitted),
       ...recipesOf(r.recipes),
+      ...imagesOf(r.images),
       revisions,
     },
     errors,
   }
+}
+
+/** Ilustrace z balíčku: jen povolené druhy obrázků, platný base64 a omezená velikost i počet. */
+function imagesOf(raw: unknown): { images?: SharedImage[] } {
+  if (!Array.isArray(raw)) return {}
+  const images: SharedImage[] = []
+  for (const x of raw.slice(0, MAX_IMAGES)) {
+    if (typeof x !== 'object' || x === null) continue
+    const { mime, data } = x as Record<string, unknown>
+    if (typeof mime !== 'string' || !IMAGE_MIMES.includes(mime)) continue
+    if (typeof data !== 'string' || data.length === 0 || data.length > MAX_IMAGE_CHARS || !/^[A-Za-z0-9+/]+={0,2}$/.test(data)) continue
+    images.push({ mime, data })
+  }
+  return images.length ? { images } : {}
 }
 
 /** Přečte kód `DRD2:…` nebo holý JSON a očistí ho. */

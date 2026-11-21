@@ -1,6 +1,7 @@
 // Průběh importu revizí (logika panelu Import): popisy druhu importu, změny po jednotlivých příchozích revizích,
 // přijetí vybraných revizí (včetně zařazení předpisů do Grimoáru) a vrácení zamítnutých změn u hráče.
 import { importRecipes, remapBundle, type RecipeImport } from '../recipes/exchange'
+import { importSharedImages } from './imageFile'
 import { characterOf, type Character, type CharacterLog } from './model'
 import { groupRevisions, revertEvents, revisionChanges } from './revisions'
 import { applyRevisions, type ImportAnalysis, type RevisionBundle } from './share'
@@ -73,6 +74,10 @@ export async function acceptRevisions(
     note = ` Předpisy v Grimoáru: ${recipeImportNote(imp)}`
   }
   await saveLog(applyRevisions(log, b, new Set(accepted)))
+  if (b.images?.length) {
+    const img = await importSharedImages(b.char, b.images)
+    note += ` Ilustrace: přidáno ${img.added}${img.skipped ? `, už byly ${img.skipped}` : ''}.`
+  }
   return note
 }
 

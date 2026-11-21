@@ -36,3 +36,9 @@ export const imageFileName = (name: string, index: number): string => {
     .replace(/^-|-$/g, '')
   return `${slug || 'postava'}-${index + 1}.webp`
 }
+
+/** Uloží už zpracovaný obrázek (import ze souboru); `added` určuje pořadí. */
+export async function putCharacterImage(characterId: string, blob: Blob, added = Date.now()): Promise<void> {
+  const image: CharacterImage = { id: crypto.randomUUID(), characterId, blob, added }
+  await run('characterImages', 'readwrite', (s) => s.put(image))
+}
