@@ -1,5 +1,9 @@
 # Změny
 
+## 0.3.19 (21. 11. 2026)
+
+- **O aplikaci:** ve Více přibyla sekce O aplikaci: autor, licence, odkaz na zdrojový kód, poděkování (Altar, autoři SRD, Truhlice jako ideová inspirace, testeři) a použité knihovny.
+
 ## 0.3.18 (19. 11. 2026)
 
 - **Dokumentace:** README a komentáře upřesňují, že Truhlice (Nogrim) je jen ideová inspirace, ne zdroj dat; případná shoda funkcí plyne z potřeb hraní Dračího doupěte 2. Do plánu přibyla stránka „O aplikaci“ s poděkováním (credits).

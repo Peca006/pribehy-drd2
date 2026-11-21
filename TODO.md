@@ -1,8 +1,8 @@
 # Nápady a dolaďování
 
-## Otevřené úkoly (stav k verzi 0.3.18, 19. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.3.19, 21. 11. 2026)
 
-**O aplikaci a poděkování (credits):** hotovo v `src/modules/library/About.svelte` (Více → O aplikaci), čeká na vydání. Zbývá doplnit jmenovitě testery, pokud si to budou přát, a ověřit licence knihoven proti `node_modules`.
+**O aplikaci a poděkování (credits):** hotovo v `src/modules/library/About.svelte` (Více → O aplikaci), vydáno v 0.3.19. Zbývá doplnit jmenovitě testery, pokud si to budou přát, a ověřit licence knihoven proti `node_modules`.
 
 **Balíčky ze SRD** se stahují z webu aplikace (`content-packs/srd/`, `tools/srd/publish.mjs`). Nový balíček: build, `publish.mjs`, commit, nasazení `main`. Při změně formátu zvýšit `PACK_BUILD` a `EXPECTED_BUILD`.
 
