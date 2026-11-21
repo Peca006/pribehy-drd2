@@ -2,21 +2,27 @@
   import Arrow from '../../ui/Arrow.svelte'
   import { characterOf, emptyCharacter, type CharacterLog } from '../../core/character/model'
   import { recordResponse } from '../../core/character/reviews'
-  import { groupRevisions, revertEvents, revisionChanges } from '../../core/character/revisions'
+  import { groupRevisions } from '../../core/character/revisions'
   import {
     analyzeImport,
-    applyRevisions,
     decodeBundle,
     encodeBundle,
     previewAfter,
     type Bundle,
     type ImportAnalysis,
     type ReviewBundle,
-    type RevisionBundle,
   } from '../../core/character/share'
-  import { appendEvents, getLog, saveLog } from '../../core/character/store'
+  import { getLog } from '../../core/character/store'
+  import {
+    acceptRevisions,
+    decisionOf,
+    incomingSteps,
+    KIND_TEXT,
+    recipeImportNote,
+    revertRejectedRevisions,
+  } from '../../core/character/importFlow'
   import { upgradeBundle } from '../../core/recipes/legacy'
-  import { importRecipes, remapBundle } from '../../core/recipes/exchange'
+  import { importRecipes } from '../../core/recipes/exchange'
   import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
   import { onMount } from 'svelte'
   import { takeShared } from '../../core/sharedInbox'
@@ -55,7 +61,7 @@
   async function acceptRecipes() {
     if (!bundle || bundle.type !== 'predpisy') return
     const imp = await importRecipes(bundle.recipes)
-    result = `Grimoár: přidáno ${imp.added.length}, použito stávajících ${imp.reused}.${imp.conflicts.length ? ` Kouzla se stejným označením a jiným obsahem se uložila zvlášť: ${imp.conflicts.join(', ')}.` : ''}`
+    result = `Grimoár: ${recipeImportNote(imp)}`
     bundle = undefined
   }
   let scanner = $state<{ stop: () => void } | undefined>(undefined)
@@ -144,49 +150,14 @@
   const beforeChar = $derived(log ? characterOf(log) : undefined)
 
   // změny jednotlivých příchozích revizí v pořadí, v jakém se použijí
-  const shown = $derived.by(() => {
-    if (!bundle || bundle.type !== 'revize' || !analysis) return []
-    const b: RevisionBundle = bundle
-    let tmp: CharacterLog | undefined = log
-    return analysis.fresh.map((r) => {
-      const prev = tmp ? characterOf(tmp) : undefined
-      tmp = applyRevisions(tmp, b, new Set([r.id]))
-      const rev = groupRevisions(tmp.events).find((x) => x.id === r.id)
-      // stav po této revizi (v pořadí příchozích) a před ní, k posouzení, co která revize pokazila
-      return {
-        r,
-        changes: rev ? revisionChanges(tmp, rev) : [],
-        before: prev,
-        after: characterOf(tmp),
-      }
-    })
-  })
-
-  const KIND: Record<ImportAnalysis['kind'], string> = {
-    'nova-postava': 'Tuto postavu ještě v zařízení nemáte, vznikne nová.',
-    navazuje: 'Změny navazují na poslední revizi v deníku.',
-    'jiny-stav':
-      'V deníku jsou od společného základu novější změny. Příchozí hodnoty přepíšou současné u stejných polí.',
-    'neznamy-zaklad':
-      'Základ těchto změn v deníku není (postava mohla být upravena jinde). Zkontrolujte rozdíl.',
-    'nic-noveho': 'Všechny revize už v deníku jsou.',
-  }
+  const shown = $derived(
+    bundle?.type === 'revize' && analysis ? incomingSteps(log, bundle, analysis) : [],
+  )
 
   async function decide() {
     if (!bundle || bundle.type !== 'revize' || !analysis) return
-    const accepted = analysis.fresh.filter((r) => accept[r.id]).map((r) => r.id)
-    const rejected = analysis.fresh.filter((r) => !accept[r.id]).map((r) => r.id)
-    let recipeMsg = ''
-    if (accepted.length) {
-      let b: RevisionBundle = bundle
-      if (b.recipes?.length) {
-        // předpisy se zařadí do Grimoáru a odkazy v revizích se opraví na předpisy příjemce
-        const imp = await importRecipes(b.recipes)
-        b = remapBundle(b, imp.map)
-        recipeMsg = ` Kouzla v Grimoáru: přidáno ${imp.added.length}, použito stávajících ${imp.reused}.${imp.conflicts.length ? ` Pozor, kouzla se stejným označením a jiným obsahem se uložila zvlášť: ${imp.conflicts.join(', ')}.` : ''}`
-      }
-      await saveLog(applyRevisions(log, b, new Set(accepted)))
-    }
+    const { accepted, rejected } = decisionOf(analysis, accept)
+    const recipeMsg = await acceptRevisions(log, bundle, accepted)
     log = await getLog(bundle.char)
     replyBundle = {
       v: 1,
@@ -233,19 +204,7 @@
   }
   async function revertRejected() {
     if (!bundle || bundle.type !== 'odpoved' || !log) return
-    // od nejnovější po nejstarší, aby se vracelo postupně
-    let cur = log
-    for (const rid of [...bundle.rejected].reverse()) {
-      const rev = groupRevisions(cur.events).find((r) => r.id === rid)
-      if (!rev) continue
-      const undo = revertEvents(
-        cur,
-        rev,
-        settings.author,
-        `Vrácení (zamítnuto): ${rev.note || 'změna'}`,
-      )
-      if (undo.length) cur = await appendEvents(cur.id, undo)
-    }
+    await revertRejectedRevisions(log, bundle.rejected, settings.author)
     recordResponse(bundle.char, bundle.accepted, bundle.rejected, bundle.note)
     go('postavy', bundle.char)
   }
@@ -286,7 +245,7 @@
 
 {#if bundle?.type === 'revize' && analysis}
   <h2>Postava {bundle.name || bundle.char}</h2>
-  <p>{KIND[analysis.kind]}</p>
+  <p>{KIND_TEXT[analysis.kind]}</p>
   {#if analysis.note}<p class="muted">{analysis.note}</p>{/if}
   {#if bundle.omitted?.length}
     <p class="muted">

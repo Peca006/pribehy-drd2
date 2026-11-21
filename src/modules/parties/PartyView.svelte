@@ -3,16 +3,27 @@
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { appendEvents, getLog, listLogs } from '../../core/character/store'
-  import { characterOf, eventsFor, type CharacterLog } from '../../core/character/model'
+  import { characterOf, type CharacterLog } from '../../core/character/model'
   import {
     baseXpOf,
-    newPartyId,
     PACES,
     roleOf,
     type JournalEntry,
     type Member,
     type Party,
   } from '../../core/party/model'
+  import {
+    addFreeMember,
+    addLocalMember,
+    canChange,
+    editedEntry,
+    markApplied,
+    newEntry,
+    removeMember as removeMemberFrom,
+    withEntry,
+    withoutEntry,
+    xpGrant,
+  } from '../../core/party/journal'
   import { partyOverview } from '../../core/party/overview'
   import { approveEntry, rejectEntry } from '../../core/party/share'
   import { professions } from '../../core/library.svelte'
@@ -63,14 +74,13 @@
 
   async function addLocal() {
     if (!party || !pick) return
-    const n = nameOfChar(pick) ?? 'Postava'
-    party.members = [...party.members, { id: newPartyId(), name: n, characterId: pick }]
+    party = addLocalMember(party, pick, nameOfChar(pick) ?? 'Postava')
     pick = ''
     await save()
   }
   async function addFree() {
     if (!party || !freeName.trim()) return
-    party.members = [...party.members, { id: newPartyId(), name: freeName.trim() }]
+    party = addFreeMember(party, freeName)
     freeName = ''
     await save()
   }
@@ -83,41 +93,32 @@
       }))
     )
       return
-    party.members = party.members.filter((x) => x.id !== m.id)
+    party = removeMemberFrom(party, m.id)
     await save()
   }
 
   // --- žurnál ---
   async function addEntry() {
-    if (!party || (!entryTitle.trim() && !entryText.trim())) return
-    const e: JournalEntry = {
-      id: newPartyId(),
-      at: new Date().toISOString(),
-      by: settings.author,
-      // zápis hráče je návrh, který musí schválit Průvodce
-      ...(gm ? {} : { status: 'navrh' as const }),
-      title: entryTitle.trim() || 'Zápis',
-      text: entryText.trim(),
-    }
-    party.journal = [e, ...party.journal]
+    if (!party) return
+    const e = newEntry(settings.author, gm, entryTitle, entryText)
+    if (!e) return
+    party = withEntry(party, e)
     entryTitle = ''
     entryText = ''
     await save()
   }
   /** Hráč smí měnit a mazat jen vlastní návrhy; Průvodce všechno. */
-  const mine = (e: JournalEntry) => gm || e.status === 'navrh' || e.status === 'zamitnuto'
+  const mine = (e: JournalEntry) => canChange(gm, e)
   async function removeEntry(e: JournalEntry) {
     if (!party || !mine(e)) return
     if (!(await ask(`Smazat zápis „${e.title}“?`, { title: 'Smazat zápis', ok: 'Smazat' })))
       return
-    party.journal = party.journal.filter((x) => x.id !== e.id)
+    party = withoutEntry(party, e.id)
     await save()
   }
   async function saveEdit(e: JournalEntry) {
     editing = ''
-    e.edited = new Date().toISOString()
-    // upravený zamítnutý návrh jde znovu ke schválení
-    if (e.status === 'zamitnuto') e.status = 'navrh'
+    Object.assign(e, editedEntry(e))
     await save()
   }
   async function approve(e: JournalEntry) {
@@ -142,24 +143,14 @@
   /** Připíše body zkušeností ze sezení postavě člena (pokud je v tomto zařízení a ještě nebyly připsány). */
   async function applyXp(e: JournalEntry, m: Member) {
     if (!party || !e.session || !m.characterId || e.session.applied.includes(m.id)) return
-    const log = await getLog(m.characterId)
-    const n = e.session.xp[m.id]
-    if (!log || !n) {
+    const grant = xpGrant(e, m, await getLog(m.characterId), settings.author)
+    if (!grant.ok) {
       message = `Postava člena ${m.name} v tomto zařízení není.`
       return
     }
-    const before = characterOf(log)
-    await appendEvents(
-      m.characterId,
-      eventsFor(
-        before,
-        { ...before, xp: before.xp + n },
-        settings.author,
-        `Zkušenosti za sezení „${e.title}“ (+${n})`,
-      ),
-    )
-    e.session.applied = [...e.session.applied, m.id]
-    message = `${m.name}: připsáno ${n} bodů zkušeností.`
+    await appendEvents(m.characterId, grant.events)
+    Object.assign(e, markApplied(e, m.id))
+    message = `${m.name}: připsáno ${grant.xp} bodů zkušeností.`
     await save()
   }
 

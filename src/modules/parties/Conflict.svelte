@@ -21,7 +21,8 @@
     type Participant,
     type Status,
   } from '../../core/party/conflict'
-  import { newPartyId, type Party } from '../../core/party/model'
+  import { conflictEntry, withEntry } from '../../core/party/journal'
+  import type { Party } from '../../core/party/model'
   import { getParty, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
@@ -92,16 +93,7 @@
     )
       return
     if (toJournal && party) {
-      party.journal = [
-        {
-          id: newPartyId(),
-          at: new Date().toISOString(),
-          by: settings.author,
-          title: 'Konflikt',
-          text: summary(conflict),
-        },
-        ...party.journal,
-      ]
+      party = withEntry(party, conflictEntry(settings.author, summary(conflict)))
       await saveParty(party)
     }
     envDone = false

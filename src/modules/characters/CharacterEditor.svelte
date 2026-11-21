@@ -10,17 +10,24 @@
   import {
     ATTRIBUTES,
     characterOf,
-    newId,
     eventsFor,
     type Character,
     type CharacterLog,
   } from '../../core/character/model'
   import { changesBetween } from '../../core/character/revisions'
   import { appendEvents, getLog } from '../../core/character/store'
-  import type { Ability } from '../../core/content/schema'
   import { commonRaceAbilities, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
+  import {
+    abilityGroups,
+    effectiveAttributes,
+    orphanAbilities,
+    toggleAbility,
+    withItem,
+    withNewScar,
+    withProfessionLevel,
+  } from '../../core/character/editor'
   import { UNIT_LABEL, UNIT_ORDER } from '../../core/character/cash'
   import CheckList from './CheckList.svelte'
   import { describeChange, nameOf, pathLabel } from './describe'
@@ -63,53 +70,19 @@
   // --- nabídky z balíčků ---
   const race = $derived(races().find((r) => r.id === draft?.raceId))
   const commonAbilities = $derived(commonRaceAbilities())
-  const groups = $derived.by(() => {
-    if (!draft) return []
-    const out: { title: string; abilities: Ability[] }[] = []
-    if (race)
-      out.push({ title: `Rasa: ${race.name}`, abilities: [...race.abilities, ...commonAbilities] })
-    for (const p of professions())
-      if ((draft.professions[p.id] ?? 0) > 0) out.push({ title: p.name, abilities: p.abilities })
-    return out
-  })
-  const known = $derived(new Set(groups.flatMap((g) => g.abilities.map((a) => a.id))))
-  const orphan = $derived(draft?.abilities.filter((a) => !known.has(a)) ?? [])
+  const groups = $derived(draft ? abilityGroups(draft, race, commonAbilities, professions()) : [])
+  const orphan = $derived(draft ? orphanAbilities(draft, groups) : [])
   const addable = $derived(professions().filter((p) => draft && !(p.id in draft.professions)))
   let adding = $state('')
   let newItem = $state('')
 
-  function toggle(abilityId: string) {
-    if (!draft) return
-    draft.abilities = draft.abilities.includes(abilityId)
-      ? draft.abilities.filter((a) => a !== abilityId)
-      : [...draft.abilities, abilityId]
-  }
-  function setLevel(pid: string, level: number) {
-    if (!draft) return
-    if (level <= 0) delete draft.professions[pid]
-    else draft.professions[pid] = Math.min(5, level)
-  }
-  function addScar() {
-    if (!draft) return
-    draft.scars = [...draft.scars, { id: newId(), attribute: 'Tělo', severity: 1, note: '' }]
-  }
-  const effective = $derived(
-    draft
-      ? Object.fromEntries(
-          ATTRIBUTES.map((a) => [
-            a,
-            Math.max(
-              0,
-              draft!.attributes[a] -
-                draft!.scars.filter((s) => s.attribute === a).reduce((n, s) => n + s.severity, 0),
-            ),
-          ]),
-        )
-      : {},
-  )
+  const toggle = (abilityId: string) => draft && (draft = toggleAbility(draft, abilityId))
+  const setLevel = (pid: string, level: number) => draft && (draft = withProfessionLevel(draft, pid, level))
+  const addScar = () => draft && (draft = withNewScar(draft))
+  const effective = $derived(draft ? effectiveAttributes(draft) : ({} as Record<string, number>))
   function addItem() {
     if (!draft || !newItem.trim()) return
-    draft.equipment = [...draft.equipment, newItem.trim()]
+    draft = withItem(draft, newItem)
     newItem = ''
   }
 

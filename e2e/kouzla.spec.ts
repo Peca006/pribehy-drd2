@@ -117,7 +117,7 @@ test('sdílení postavy přenese kouzlo do Grimoáru příjemce', async ({ page 
   await page.goto('/#/postavy/import')
   await page.getByLabel('Kód k importu').fill(code)
   await page.getByRole('button', { name: 'Potvrdit rozhodnutí' }).click()
-  await expect(page.getByText(/Kouzla v Grimoáru: přidáno 1/)).toBeVisible()
+  await expect(page.getByText(/Předpisy v Grimoáru: přidáno 1/)).toBeVisible()
   await page.goto('/#/grimoar')
   await expect(page.getByText('Poslední slovo')).toBeVisible()
   await page.goto(detail)
