@@ -5,6 +5,7 @@
   import About from './About.svelte'
   import AppInfo from './AppInfo.svelte'
   import DemoData from './DemoData.svelte'
+  import Grimoire from './Grimoire.svelte'
   import Packs from './Packs.svelte'
 
   // Více: nastavení nahoře (používá se nejčastěji), pak balíčky, a vzácněji používané věci sbalené.
@@ -26,6 +27,8 @@
 </div>
 
 <Packs />
+
+<Grimoire />
 
 <h2>Pomůcky</h2>
 <DemoData />

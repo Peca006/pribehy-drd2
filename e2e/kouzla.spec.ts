@@ -51,3 +51,29 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
   await expect(page.getByText('Ohnivá střela · Magie ohně')).toBeVisible()
   await expect(page.getByText('obor mimo schopnosti')).toBeHidden()
 })
+
+test('Grimoár ve Více: nové kouzlo, úprava a smazání s potvrzením', async ({ page }) => {
+  await page.goto('/#/knihovna')
+  await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Nové kouzlo…' }).click()
+  const dlg = page.getByRole('dialog', { name: 'Kouzlo' })
+  await expect(dlg.getByRole('button', { name: 'Seslat', exact: true })).toBeHidden() // bez postavy se nesesílá
+  await dlg.getByLabel('Obor magie').selectOption({ label: 'Magie větru' })
+  await dlg.getByRole('button', { name: 'Uložit do Grimoáru' }).click()
+  await expect(dlg.getByRole('alert')).toContainText('zadejte název')
+  await dlg.getByLabel('Název kouzla').fill('Poryv')
+  await dlg.getByRole('button', { name: 'Uložit do Grimoáru' }).click()
+  await expect(page.getByText('Poryv · Magie větru')).toBeVisible()
+
+  // úprava: stejné kouzlo, nový popis
+  await page.getByRole('button', { name: 'Upravit: Poryv' }).click()
+  await dlg.getByLabel('Popis kouzla').fill('Nárazový vítr.')
+  await dlg.getByRole('button', { name: 'Uložit změny' }).click()
+  await expect(page.locator('li', { hasText: 'Poryv' })).toHaveCount(1)
+
+  await page.getByRole('button', { name: 'Smazat: Poryv' }).click()
+  await expect(page.getByText('Žádná postava na zařízení kouzlo nemá')).toBeVisible()
+  await page.getByRole('button', { name: 'Smazat', exact: true }).click()
+  await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
+})

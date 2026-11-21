@@ -1,6 +1,7 @@
 // Kouzla jako druh předpisu: typované parametry, cena podle pravidel (kapitola 36 příručky) a práce s odkazy postavy.
 // Aplikace jen počítá a zapisuje; popis kouzla v příběhu si hráči odehrají mimo ni.
 import { newId, type Character } from '../character/model'
+import { FALLBACK_FIELDS } from './fields'
 import { MAX_LINKS, type Recipe, type RecipeParams } from './model'
 
 export const SPELL_REACH = [
@@ -158,3 +159,10 @@ export const linkedRecipes = (
   Object.entries(c.recipeLinks ?? {})
     .map(([linkId, l]) => ({ linkId, recipeId: l.recipeId, recipe: recipes.find((r) => r.id === l.recipeId) }))
     .sort((a, b) => (a.recipe?.name ?? '￿').localeCompare(b.recipe?.name ?? '￿', 'cs'))
+
+/** Postavy, které mají odkaz na předpis (pro potvrzení smazání). */
+export const usedBy = (recipeId: string, characters: readonly Character[]): Character[] =>
+  characters.filter((c) => Object.values(c.recipeLinks ?? {}).some((l) => l.recipeId === recipeId))
+
+/** Všechny obory magie, které vestavěná tabulka zná (nabídka v Grimoáru, kde není konkrétní postava). */
+export const KNOWN_FIELDS = [...new Set(Object.values(FALLBACK_FIELDS).flat())]

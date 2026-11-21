@@ -20,7 +20,10 @@
     onsave,
     onclose,
     allowed = [],
+    canCast = true,
   }: {
+    /** v Grimoáru bez postavy se nesesílá */
+    canCast?: boolean
     /** obory magie, které postava ovládá (z jejích povolání) */
     allowed?: string[]
     /** existující předpis z Grimoáru (úprava se projeví u všech postav, které ho mají) */
@@ -129,7 +132,7 @@
 
   {#if error}<p class="error" role="alert">{error}</p>{/if}
   <p class="actions">
-    <button class="primary" onclick={() => oncast(name, spell)}>Seslat</button>
+    {#if canCast}<button class="primary" onclick={() => oncast(name, spell)}>Seslat</button>{/if}
     {#if recipe}
       <button onclick={() => save(false)}>Uložit změny</button>
       <button onclick={() => save(true)}>Uložit jako novou variantu</button>

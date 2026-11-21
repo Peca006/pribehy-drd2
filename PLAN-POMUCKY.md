@@ -180,7 +180,7 @@ Stav: 🚧 plán schválen v hlavních bodech, kód zatím nezačal. Navazuje na
 | 0. Základ dat | úložiště `recipes` (DB verze 6), obecný předpis s druhem, `contentHash`, odkazy postavy `recipeLinks` (`{recipeId, state}`, stav vázaný na postavu), našeptávání a plán importu (`src/core/recipes/`) | ✅ |
 | A. Kouzlo u postavy | `spells.ts` s testy (cena, rituál, obrana), dialog u zkoušky (ad hoc i z předpisu), seznam kouzel postavy s odkazy, karta Postup, refaktoring přechodů manévrů a plateb v `Roll` (bod 7 revize) | 🚧 hotovo: logika, dialog, seznam, našeptávání, karta Postup, E2E; zbývá refaktoring `Roll` (bod 7 revize) |
 | B. Obory | tabulka schopnost → obor, výběr z balíčku, blokování, volba „vlastní obor“ | ✅ obory podle dovedností povolání (balíček i vestavěná tabulka hlídaná testem), výběr, blokování, volba „Vlastní obor“ |
-| C. Grimoár | obrazovka ve Více: seznam, vyhledávání, přidání, úprava, varianta, mazání | 🚧 |
+| C. Grimoár | obrazovka ve Více: seznam, vyhledávání, přidání, úprava, varianta, mazání | ✅ obrazovka ve Více: seznam, hledání, nové, úprava, mazání s výpisem postav; chybí „Uložit jako variantu“ jen funguje, import v etapě D |
 | D. Výměna | export a import jednotlivě i hromadně (soubor, kód, QR), pravidla importu z rozhodnutí 3, zapojení do `ImportPanel` | 🚧 |
 | E. Zobecnění | lektvary, jedy, nástrahy a výrobky jako další druhy předpisů, migrace stávajících lektvarů a nástrah z postavy | 🚧 (po 0.4.0) |
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { emptyCharacter } from '../character/model'
 import { sealRecipe } from './model'
-import { addLink, emptySpell, linkedRecipes, removeLink, spellCost, spellFrom, spellIntent, spellSummary, spellToParams } from './spells'
+import { KNOWN_FIELDS, addLink, emptySpell, linkedRecipes, removeLink, spellCost, spellFrom, spellIntent, spellSummary, spellToParams, usedBy } from './spells'
 
 describe('cena kouzla', () => {
   it('základní kouzlo nestojí nic', () => {
@@ -59,5 +59,16 @@ describe('odkazy postavy na kouzla', () => {
       recipeLinks: { a: { recipeId: 'r1', state: {} }, b: { recipeId: 'zmizel', state: {} }, c: { recipeId: 'r2', state: {} } },
     }
     expect(linkedRecipes(c, [mlha, ahoj]).map((x) => x.recipeId)).toEqual(['r2', 'r1', 'zmizel'])
+  })
+})
+
+describe('použití předpisu', () => {
+  it('najde postavy s odkazem a zná všechny obory', () => {
+    const a = { ...emptyCharacter('a'), recipeLinks: { l: { recipeId: 'r1', state: {} } } }
+    const b = emptyCharacter('b')
+    expect(usedBy('r1', [a, b]).map((c) => c.id)).toEqual(['a'])
+    expect(usedBy('r2', [a, b])).toEqual([])
+    expect(KNOWN_FIELDS).toContain('Magie ohně')
+    expect(new Set(KNOWN_FIELDS).size).toBe(KNOWN_FIELDS.length)
   })
 })
