@@ -34,6 +34,16 @@ const costOf = (text) => [...fold(text).matchAll(/\(aktivace (\d+) (dus\w*|tel\w
   const note = m[3].trim();
   return { resource, amount: +m[1], ...(note ? { note } : {}) };
 });
+// Cena aktivace s vazbou na mechanismus (`for`), když má karta víc mechanismů: cena patří odstavci, ve kterém je uvedena.
+const costWithTarget = (z) => {
+  const mechs = normMech(z.mech);
+  const paras = String(z.text ?? '').split(/\n\s*\n/);
+  const all = paras.flatMap((p, idx) => costOf(p).map((c) => {
+    const f = normMech(z.paraMech?.[idx]?.length ? z.paraMech[idx] : []);
+    return mechs.length > 1 && f.length ? { ...c, for: f } : c;
+  }));
+  return all;
+};
 const kindsOf = (t) => Object.entries({
   people: /\b(lid|clovek|lidem|lidi|lidsk)\w*/, animals: /zvir\w+/, monsters: /netvor\w*/, undead: /nemrtv\w*/,
   fiends: /\bbes(i|y|u|um|ech)?\b/, constructs: /oziven\w*/, inanimate: /\bnezi\w*/,
@@ -84,7 +94,7 @@ for (const z of prev.zs) {
   cards.push({
     type: 'zs', id: slug(z.name), name: z.name, source: 'srd', rulebook: 'Příručka', origin: o,
     attribute: attrId(z.attribute), mechanism: normMech(z.mech), domain: domainOf(z, t), subject: subjectOf(t), targetKind: kindsOf(t),
-    mass: z.area === 'area' || undefined, activationCost: costOf(z.text),
+    mass: z.area === 'area' || undefined, activationCost: costWithTarget(z),
     relatedSkill: z.skills.map((id) => ({ id, name: skillName.get(id) })),
     quickPick: z.quickPickLevel ?? z.quickPickCulture ?? undefined, monster: false, flavor: z.flavor ?? undefined, text: z.text, labels: 'auto',
   });
@@ -98,7 +108,7 @@ for (const b of inv.items.filter((i) => i.type === 'bestiar-definice')) {
   const mech = BESTIARY_FORCED[name] ? [BESTIARY_FORCED[name]] : null;
   cards.push({
     type: 'zs', id: slug(name), name, source: 'srd', rulebook: 'Bestiář', origin: { kind: 'bestiary', name: 'Bestiář' }, attribute: attrId(attr) ?? null,
-    mechanism: mech ?? [], domain: [], subject: [], targetKind: kindsOf(t), activationCost: [], relatedSkill: [], monster: true, text: b.text, labels: 'auto-draft',
+    mechanism: mech ?? [], domain: [], subject: [], targetKind: kindsOf(t), activationCost: [], relatedSkill: [], monster: true, text: b.text, labels: 'auto',
   });
 }
 // ---- dovednosti ----
@@ -117,7 +127,8 @@ if (dup('name').length || dup('id').length) console.error('KOLIZE názvů:', dup
 // ---- export ve formátu Kostky ----
 const kostka = (map, ids) => [...new Set(ids.flatMap((i) => map[i]?.kostka?.[0] ?? []))];
 const costText = (c) => (c.length ? [...new Set(c.map((x) => `${RESOURCE[x.resource]}: ${x.amount}`))].join(', ') : 'Bez Aktivace');
-const dial = (k, v) => `${k}="${v ?? ''}"`;
+// prázdné atributy se ve výstupu vynechávají (null se před spojením odfiltruje)
+const dial = (k, v) => (v ? `${k}="${v}"` : null);
 const zsMd = cards.filter((c) => c.type === 'zs').map((c) => {
   const eff = kostka(MECHANISM, c.mechanism).join(', ');
   // Kostka zná „Jizvy“ jako účel; u nás je to mechanismus, proto se přidává jen při exportu
@@ -129,14 +140,14 @@ const zsMd = cards.filter((c) => c.type === 'zs').map((c) => {
     dial('attribute', ATTRIBUTE[c.attribute] ?? ''), dial('related-skill', c.relatedSkill.map((r) => r.name).join(', ')), dial('effect', eff), dial('purpose', purpose),
     dial('activation-cost', costText(c.activationCost)), dial('class-basic', cb), dial('class-advanced', ca), dial('class-expert', ''),
     dial('race', c.origin.kind === 'race' ? (RACE[c.origin.name.replace(/^rasa:/, '')] ?? '') : ''), dial('monster', c.monster ? 'ano' : ''), '>', '',
-    c.flavor ? flavorMd(c.flavor) + '\n' : '', md(c.text), '', '</drd2-zs>', ''].join('\n');
+    c.flavor ? flavorMd(c.flavor) + '\n' : '', md(c.text), '', '</drd2-zs>', ''].filter((x) => x !== null).join('\n');
 }).join('\n');
 const skillMd = cards.filter((c) => c.type === 'skill').map((c) => {
   const type = [...new Set(c.area.map((a) => areaType[a]).filter(Boolean))].join(', ');
   return ['<drd2-skill', dial('name', c.name), dial('rulebook', 'Základní příručka'), dial('attribute', ATTRIBUTE[c.attribute] ?? ''),
     dial('level', c.origin.kind === 'class-basic' ? 'základní' : 'pokročilá'), dial('source-zs', ''), dial('environment', ''), dial('target', ''), dial('target-attribute', ''),
     dial('type', type), dial('class-basic', c.origin.kind === 'class-basic' ? c.origin.name : ''), dial('class-advanced', c.origin.kind === 'class-advanced' ? c.origin.name : ''),
-    dial('class-expert', ''), '>', '', c.text, '', '</drd2-skill>', ''].join('\n');
+    dial('class-expert', ''), '>', '', c.text, '', '</drd2-skill>', ''].filter((x) => x !== null).join('\n');
 }).join('\n');
 
 const outDir = resolve(root, 'reference/work/kartoteky-export');

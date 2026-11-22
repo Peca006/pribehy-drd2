@@ -27,7 +27,7 @@ export const MECHANISM = {
   'mark-detect': { cs: 'Označení či odhalení', kostka: ['Jiný'] },
   dominate: { cs: 'Ovládnutí', kostka: ['Posílení dovednosti'] },
   'special-effect': { cs: 'Zvláštní účinek (jednotlivé případy)', kostka: ['Jiný'] },
-  // návrh pro bestiářové schopnosti (nepotvrzeno)
+  // bestiářové schopnosti (schváleno 22. 11. 2026)
   'group-rule': { cs: 'Skupinové pravidlo bytostí', kostka: ['Jiný'] },
   'against-being': { cs: 'Pravidlo „proti bytosti“', kostka: ['Jiný'] },
 };

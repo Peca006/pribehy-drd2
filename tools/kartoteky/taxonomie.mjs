@@ -59,7 +59,9 @@ const zs = items.filter((i) => i.type === 'zs').map((i) => {
   const mech = MECH.filter(([, re]) => re.test(t)).map(([k]) => k);
   const cost = [...strip(i.text).matchAll(/\(Aktivace ([^)]*)\)/g)].map((m) => m[1].replace(/\s+/g, ' '));
   const area = /plosn/.test(t) ? 'area' : null;
-  return { ...i, mech: mech.length ? mech : ['other'], cost, area,
+  // mechanismy po odstavcích (zdrojový text má pasivní a aktivované části v samostatných odstavcích)
+  const paraMech = String(i.text ?? '').split(/\n\s*\n/).map((p) => MECH.filter(([, re]) => re.test(fold(p))).map(([k]) => k));
+  return { ...i, mech: mech.length ? mech : ['other'], cost, area, paraMech,
     kinds: KINDS.filter(([, re]) => re.test(t)).map(([k]) => k), skills: relatedSkills(i.text),
     cls: i.source.split(':').slice(0, 3).join(':') };
 });

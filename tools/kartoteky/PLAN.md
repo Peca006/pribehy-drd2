@@ -78,3 +78,9 @@ Nejsou to odkazy, ale hodnoty zapsané přímo; zatím zmapováno, nezpracováno
   27 z 206 ZS (hlavně rasové smysly a ochrany, bestiářová pravidla se do toho nepočítají).
 - Zbylé rozdíly jsou převážně úsudkové (Styky, Odznaky hrdinství, Přečtení soupeře, Bystrost); `purpose` u Fafrina je navíc u
   pokročilých povolání nevyplněné, takže tam není s čím porovnat.
+
+### Úpravy po kontrole exportu (22. 11. 2026)
+- Schváleno: bestiářové mechanismy `group-rule` a `against-being`.
+- Export pro Kostku vynechává prázdné atributy (related-skill, class-advanced, class-expert, race, monster, …).
+- Cena aktivace má u karet s víc mechanismy vazbu `for` na mechanismus, jehož odstavec ji uvádí (např. Lovčí: 1 Duše patří
+  `assess-abilities`, `skill-proficiency` je bez ceny). Formát Kostky to nevyjádří, tam zůstává jen „Duše: 1“; plochá karta to ví.
