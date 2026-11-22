@@ -463,8 +463,8 @@
   ]
  },
  "Zloděj": {
-  "domain": [
-   "stealth"
+  "relatedSkill": [
+   "Triky a kejkle"
   ]
  },
  "Talent": {
@@ -525,6 +525,17 @@
   "targetKind": [
    "people",
    "animals"
+  ]
+ },
+ "Ohněstrůjce": {
+  "relatedSkill": [
+   "Výroba třaskavin, žíravin a plynných jedů",
+   "Používání třaskavin, žíravin a plynných jedů"
+  ]
+ },
+ "Kapitán": {
+  "relatedSkill": [
+   "Vedení lidí mimo boj"
   ]
  }
 }

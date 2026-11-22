@@ -47,12 +47,13 @@ const KINDS = [['people', /\b(lid|clovek|lidem|lidi)\w*/], ['animals', /zvir\w+/
 
 const items = inv.items.filter((i) => i.type === 'zs' || i.type === 'skill');
 const skills = items.filter((i) => i.type === 'skill');
-const skillStems = skills.map((s) => ({ id: s.id, words: fold(s.name).split(' ').map((w) => w.slice(0, Math.max(3, w.length - 2))).filter((w) => w.length >= 3) }));
+const skillStems = skills.map((s) => ({ id: s.id, words: fold(s.name).split(' ').filter((w) => w.length >= 3).map((w) => ({ re: new RegExp('(^|[^a-z])' + (w.length <= 3 ? w : w.length <= 5 ? w.slice(0, -1) : w.slice(0, -2))) })) }));
 const relatedSkills = (t) => {
-  // jen kurzíva (názvy dovedností); tučné (***Zdroje***) se vynechá, sousední kurzívy se spojí
-  const src = (t ?? '').replace(/\*\*\*[^*]*\*\*\*/g, ' ').replace(/\*\s\*/g, ' ');
-  const f = fold((src.match(/(?<!\*)\*([^*]+)\*(?!\*)/g) ?? []).join(' | '));
-  return skillStems.filter((s) => s.words.every((w) => (w.length <= 3 ? new RegExp('(^|[^a-z])' + w).test(f) : f.includes(w)))).map((s) => s.id.replace('dovednost:', ''));
+  // jen kurzíva (názvy dovedností); tučné (***Zdroje***) se vynechá, sousední kurzívy se spojí.
+  // Všechna slova názvu se musí najít v jedné a téže kurzívě; kmen se hledá od začátku slova (u slov do 5 písmen se krátí jen o 1 znak, aby „Umění“ nezachytilo „Umělý“).
+  const src = (t ?? '').replace(/\*\*\*[^*]*\*\*\*/g, ' ').replace(/\*\s+(?:[^\s*]{1,3}\s+)?\*/g, ' ');
+  const spans = (src.match(/(?<!\*)\*([^*]+)\*(?!\*)/g) ?? []).map(fold);
+  return skillStems.filter((s) => spans.some((f) => s.words.every((w) => w.re.test(f)))).map((s) => s.id.replace('dovednost:', ''));
 };
 
 const zs = items.filter((i) => i.type === 'zs').map((i) => {
