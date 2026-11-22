@@ -10,8 +10,9 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   ukázkové dobrodružství a skupiny bytostí do ukázkových dat. Počká na reakce testerů a zkoušku 0.4.x na telefonu.
 - **Kořist (11e).** Patří k Výpravám: vypravěč si kořist předdefinuje, při odhalení upřesní, zafixuje a rozdělí postavám
   (Peníze, Suroviny s druhem, výbava). Hráč zvláštní panel nepotřebuje. Trofeje jen název a poznámka.
-- **Před první beta verzí.** Pole `schema` u uložených dat, řetězec `migrate`, celkový export a import `.json` (musí počítat
-  s ilustracemi postav) a `FORMAT.md` (zatím neexistuje). Zásady formátu: `PLAN-POMUCKY.md`, část Formát dat.
+- **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
+  včetně ilustrací). Zbývá projít migrace při první skutečné změně tvaru dat a ověřit zálohu a obnovu na telefonu (soubor přes
+  e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`.
 - **Přenosy (pořadí).** Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC. `file_handlers` se nedělají (jen počítač).
   Kód, soubor, QR (s odkazem do aplikace, zhuštění historie), zvuk a příjem sdíleného souboru jsou hotové.
 - **Sdílení vypravěč → družina.** Průvodce posílá po sezení opakovaně od zvoleného bodu žurnálu (hotovo), dnes souborem
@@ -59,6 +60,8 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - ✅ **Audiogram:** přenos zvukem (QPSK 1200, BPSK 800, další režimy), společná zkouška zvuku (0.4.6).
 - ✅ **Obsah:** kapitoly Příručky po částech, ikony prostředí a filtry Bestiáře (druh, prostředí), balíčky se stahují z webu aplikace, mapy a obrázky v balíčku (WebP, přiblížení), rejstřík pojmů, omezení
   počtu odkazů v textu (nastavení „Odkazy v textu“ ve Více), O aplikaci s poděkováním a licencemi (0.4.7).
+- ✅ **Formát dat a záloha:** `FORMAT.md` (přehled úložišť, `schema` + migrace, přenosy, pravidla změn), záloha všech dat do jednoho
+  `.json` s ilustracemi a místním stavem, obnova „doplnit / přepsat“ s očištěním vstupu (Více → Záloha a obnova dat).
 - ✅ **PWA:** aktualizace s pruhem „Obnovit“, instalace (Android, iOS návod), ikony.
 - ✅ **Převod SRD v zařízení (bookmarklet):** UI odstraněno v 0.4.5, zbytky kódu a sestavení (`tools/srd/browser`, `vite.srd.config.ts`); balíčky se stahují hotové.
 - ✅ **Tvorba postavy:** výbava bez balíčku, generátor jmen.

@@ -6,6 +6,7 @@
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
   import About from './About.svelte'
   import AppInfo from './AppInfo.svelte'
+  import Backup from './Backup.svelte'
   import DemoData from './DemoData.svelte'
   import Packs from './Packs.svelte'
 
@@ -34,6 +35,8 @@
 </div>
 
 <Packs />
+
+<Backup />
 
 <h2>Pomůcky</h2>
 <DemoData />
