@@ -87,6 +87,10 @@ export async function run<T>(
   })
 }
 
+/** Záznamy tak, jak jsou uložené (i s `schema`, bez migrace): pro zálohu, která musí nést číslo schématu. */
+export const rawRecords = (store: DataStore) =>
+  run<Record<string, unknown>[]>(store, 'readonly', (s) => s.getAll())
+
 /** Úložiště záznamů s klíčem `id`: čte s migrací a bez `schema`, zapisuje s aktuálním `schema`. */
 export function repo<T extends { id: string }>(store: DataStore) {
   return {

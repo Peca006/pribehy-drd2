@@ -72,9 +72,9 @@ nesouhlasu odmítnou import. V JSON chybí pole, v IndexedDB je `undefined` (ne 
 Zásady, které navrhuji držet:
 1. **Přidání volitelného pole** (jako `materialKinds`): bez zvýšení verze, chybějící = výchozí hodnota; starší aplikace nové pole ignoruje.
 2. **Změna významu nebo odstranění pole**: zvýšit číslo formátu a napsat převodní funkci stará → nová.
-3. **Před první beta verzí** přidat k uloženým postavám a družinám pole `schema` (číslo formátu dat) a řetězec funkcí `migrate(n → n+1)`
+3. ✅ **Hotovo (0.4.11):** `schema` u záznamů, řetězec `migrate` a záloha do `.json` (viz `FORMAT.md`). Původní záměr: přidat k uloženým postavám a družinám pole `schema` (číslo formátu dat) a řetězec funkcí `migrate(n → n+1)`
    spouštěný při čtení; zavést zálohu: export všech dat do jednoho `.json` s číslem formátu a import, který data převede. Výhoda JSON:
    čitelný, převoditelný, bez vazby na prohlížeč.
-4. **Dokument `FORMAT.md`** (formát postavy, družiny, přenosu, ukázky, tabulka verzí a změn) založit před první beta verzí a od té chvíle
+4. ✅ **`FORMAT.md` existuje.** Původní záměr: dokument (formát postavy, družiny, přenosu, ukázky, tabulka verzí a změn) založit před první beta verzí a od té chvíle
    každou změnu formátu zapisovat sem i do `CHANGELOG.md`.
-5. Do té doby („čert vem data“) lze formát měnit volně; já budu u každé změny formátu upozorňovat, zda jde o 1. nebo 2.
+5. Od zavedení `schema` a zálohy se formát uložených dat nemění bez migrace a zápisu do `FORMAT.md`; u každé změny upozorním, zda jde o 1. nebo 2.

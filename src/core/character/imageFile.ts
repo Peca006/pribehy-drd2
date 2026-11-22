@@ -4,12 +4,12 @@ import { sha256Hex } from '../hash'
 import { listCharacterImages, putCharacterImage, type CharacterImage } from './images'
 import type { SharedImage } from './share'
 
-const toBase64 = (bytes: Uint8Array) => {
+export const toBase64 = (bytes: Uint8Array) => {
   let s = ''
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
   return btoa(s)
 }
-const fromBase64 = (data: string) => Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
+export const fromBase64 = (data: string) => Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
 
 export async function toSharedImages(images: readonly CharacterImage[]): Promise<SharedImage[]> {
   const out: SharedImage[] = []

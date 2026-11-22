@@ -5,7 +5,7 @@ záznamem změn, bestiář a pravidla po ruce. Bez serveru, data zůstávají ve
 
 Stav: **před první beta verzí** (0.4.x). Hotové jsou postavy s deníkem revizí, družiny a sdílený žurnál, bestiář,
 pravidla po ruce, Grimoár a pomůcky (výroba, léčení, kouzla, nástrahy) a sdílení kódem, QR, souborem i zvukem.
-Otevřené úkoly jsou v `TODO.md`.
+Otevřené úkoly jsou v `TODO.md`, formát uložených dat a zálohy v `FORMAT.md`.
 
 ## Zásady
 

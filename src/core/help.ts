@@ -337,6 +337,18 @@ export const TOPICS_APP: Card[] = [
     ],
   },
   {
+    id: 'zaloha',
+    title: 'Záloha a obnova dat',
+    kind: 'navod',
+    text: 'Všechna data jsou jen v tomto zařízení. Záloha je uloží do jednoho souboru .json, ze kterého je lze vrátit i na jiném telefonu.',
+    steps: [
+      'Více → Záloha a obnova dat → „Stáhnout zálohu“. V souboru jsou postavy, družiny, bytosti, předpisy, rozpracované úpravy a (volitelně) ilustrace.',
+      'Soubor si pošlete mimo telefon (e-mail sobě, cloud). Smazání dat prohlížeče nebo odinstalace aplikace záznamy odstraní.',
+      'Obnova: vyberte soubor. „Doplnit“ přidá jen chybějící, „Přepsat“ nahradí záznamy se stejným ID zálohou.',
+      'Balíčky pravidel se nezálohují, stáhnou se znovu. Záloha z novější verze aplikace se nenačte: nejdřív obnovte aplikaci.',
+    ],
+  },
+  {
     id: 'zvuk',
     title: 'Přenos zvukem a zkouška zvuku',
     kind: 'navod',
