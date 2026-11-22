@@ -10,7 +10,7 @@ Hry mocných `reference/work/hry-structured.json`. Výstupy skriptů jdou do `re
 
 ## Postup
 1. [x] Inventář (`inventar.mjs` → `reference/work/kartoteky-inventar.json`).
-2. [ ] Vlastní taxonomie zdola (anglické názvy, nezávislé atributy, hodnoty s počty a příklady).
+2. [x] Vlastní taxonomie zdola (`taxonomie.mjs`, `TAXONOMIE.md`; návrh k schválení, bod 3).
 3. [ ] Porovnání s Fafrinovými dials, schvaluje uživatel (kontrolní bod před hromadným štítkováním).
 4. [ ] Slovník: stabilní anglické `id`, český popisek, alias na původní hodnotu z Kostky, export `drd2-zs` / `drd2-skill`.
 5. [ ] Kalibrace: naslepo ohodnotit Fafrinových 86 karet novou taxonomií a porovnat.
