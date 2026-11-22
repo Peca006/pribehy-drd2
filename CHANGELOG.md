@@ -1,5 +1,12 @@
 # Změny
 
+## 0.4.10 (22. 11. 2026)
+
+- **Průběžná kontrola postavy:** v úpravě postavy jsou povolání, na která postava nemá podmínky (pokročilá), v nabídce zašedlá s důvodem a nejdou přidat; tlačítko „+“ se zastaví na 5. úrovni. U schopností každého povolání je vidět „vybráno N z M“ a zvýrazní se, když jich je víc, než úroveň dovoluje. Kontrola postavy je i nahoře a označuje nové problémy.
+- **Tvorba postavy:** kroky, které už jsou prošlé a něco v nich nesedí, mají v pruhu kroků značku ⚠ a nahoře je seznam s odkazy na opravu, ne až v Shrnutí.
+- **Sdílet:** soubor se postavě i družině pojmenuje podle jména (`postava-brokan-rudovous.drd2.txt`, `druzina-sedi-vlci.drd2.txt`) i při Sdílet, dřív měl pevný název a v telefonu se nedal rozlišit.
+- **Pod kapotou:** sdílené funkce `extraAbilities`, `professionUsage` a `shareFileName`; E2E zkoušky kontroly.
+
 ## 0.4.9 (22. 11. 2026)
 
 - **Nápověda „?“:** tlačítko „?“ otevře pod prvkem krátké vysvětlení s kroky a odkazem do příručky (bez balíčku do SRD). Je u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výrobků, nástrah, kouzel a Grimoáru, u Postupu postavy, Jizev, sezení, konfliktu, žurnálu družiny, sdílení postavy a družiny a importu, u Příručky, Rejstříku, Bestiáře, Nastavení, balíčků, zvuku a Aplikace i v jejich dialozích.
