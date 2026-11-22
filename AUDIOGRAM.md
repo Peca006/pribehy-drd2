@@ -1,6 +1,8 @@
 # Audiogram: přenos kódu zvukem (experiment)
 
-Větev `audiogram` (z `develop`, nesměřuje do `develop` ani `main`). Přenos kódu `DRD2:…` postavy nebo družiny
+Stav (22. 11. 2026): sloučeno do `main`, v aplikaci jako „přenos zvukem“ (Vysílat / Přijímat zvukem, společná Zkouška zvuku ve Více);
+režimy QPSK 1200 a BPSK 800 fungují mezi skutečnými zařízeními, ostatní a společná zkouška (0.4.6) čekají na testery.
+Přenos kódu `DRD2:…` postavy nebo družiny
 mezi dvěma zařízeními reproduktorem a mikrofonem, bez serveru. Texty v kódu jsou česky, `TODO.md` se nemění.
 
 ## Stav (co funguje)
