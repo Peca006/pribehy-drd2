@@ -521,6 +521,10 @@
  "Živá voda": {
   "relatedSkill": [
    "Masti a běžné jedy"
+  ],
+  "targetKind": [
+   "people",
+   "animals"
   ]
  }
 }
