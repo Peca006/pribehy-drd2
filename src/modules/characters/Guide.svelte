@@ -1,6 +1,6 @@
 <script lang="ts">
-  import CardHelp from './CardHelp.svelte'
-  import { BASIC, SITUATIONS } from './guide'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
+  import { BASIC, SITUATIONS } from '../../core/help'
 
   // Stručná připomínka postupu vyhodnocení (jen kroky). Hráči si hody řeší u sebe v aplikaci nebo na kostky.
   let open = $state<string>('zkouska')
@@ -15,13 +15,13 @@
     <button class:primary={open === 'slozite'} onclick={() => (open = 'slozite')}>Složitější</button>
   </div>
   {#each BASIC.filter((c) => c.id === open) as c (c.id)}
-    <CardHelp card={c} />
+    <HelpPanel topic={c.id} />
   {/each}
   {#if open === 'slozite'}
     {#each SITUATIONS as c (c.id)}
       <details>
         <summary>{c.title}</summary>
-        <CardHelp card={c} ordered={false} />
+        <HelpPanel topic={c.id} ordered={false} />
       </details>
     {/each}
   {/if}

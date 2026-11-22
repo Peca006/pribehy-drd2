@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { untrack } from 'svelte'
   import { ATTRIBUTES, type Character, type Trap } from '../../core/character/model'
   import { trapCost, trapCostLines } from '../../core/character/traps'
@@ -150,7 +151,7 @@
 </script>
 
 <dialog bind:this={dialog} onclose={closed} aria-label="Výroba a opravy">
-  <h2>Výroba a opravy</h2>
+  <HelpHeading flush title="Výroba a opravy" topic="vyroba" />
   <div class="seg" role="group" aria-label="Druh">
     <button class:primary={kind === 'vyroba'} onclick={() => setKind('vyroba')}>Výroba</button>
     <button class:primary={kind === 'oprava'} onclick={() => setKind('oprava')}>Oprava</button>
@@ -284,9 +285,6 @@
   }
   dialog::backdrop {
     background: rgb(0 0 0 / 0.6);
-  }
-  h2 {
-    margin-top: 0;
   }
   .seg {
     display: flex;

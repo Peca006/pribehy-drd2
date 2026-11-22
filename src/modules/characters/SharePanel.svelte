@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { characterOf, type CharacterLog } from '../../core/character/model'
@@ -127,7 +128,7 @@
 {#if !log}
   <p class="muted">Postava nenalezena. <a href="#/postavy">Zpět na seznam</a></p>
 {:else}
-  <h1>Sdílet postavu {name}</h1>
+  <HelpHeading level={1} title={`Sdílet postavu ${name}`} topic="sdileni-postavy" />
   <p class="muted">
     Vypravěč dostane změny jako revize, uvidí rozdíl a může je přijmout nebo zamítnout. Kód nebo
     soubor pošlete jakkoli (zpráva, e-mail, AirDrop, Quick Share) a vypravěč ho vloží v části

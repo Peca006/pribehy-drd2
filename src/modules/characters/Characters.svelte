@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
@@ -227,7 +228,7 @@ Jizva se odstraní bez platby a zapíše se do deníku jako revize.`,
   {/if}
 
   {#if c.scars.length}
-    <h2>Jizvy</h2>
+    <HelpHeading title="Jizvy" topic="jizvy" />
     <ul>
       {#each c.scars as s (s.id)}
         <li>

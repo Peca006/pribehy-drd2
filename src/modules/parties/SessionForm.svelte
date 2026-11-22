@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { appendEvents, getLog } from '../../core/character/store'
@@ -107,7 +108,7 @@
   <p class="muted">Sezení zapisuje a zkušenosti rozděluje Průvodce družiny.</p>
   <p><a class="btn" href={'#/druziny/' + id}><Arrow dir="left" /> Zpět</a></p>
 {:else}
-  <h1>Nové sezení</h1>
+  <HelpHeading level={1} title="Nové sezení" topic="sezeni" />
   <label>Název <input bind:value={title} /></label>
   <label>Datum <input type="date" bind:value={date} /></label>
 

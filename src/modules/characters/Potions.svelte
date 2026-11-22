@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import { onDestroy } from 'svelte'
   import type { Character } from '../../core/character/model'
   import { adjustPotion, potionLabel, potionList } from '../../core/character/potions'
@@ -49,13 +51,15 @@
   onDestroy(() => {
     if (Object.keys(pending).length) void flush()
   })
+  let helpOpen = $state(false)
 </script>
 
 <div class="potions">
   <div class="head">
-    <strong>Lektvary a masti</strong>
+    <span><strong>Lektvary a masti</strong> <HelpButton bind:open={helpOpen} label="Nápověda: Lektvary a masti" /></span>
     <button class="icon" onclick={() => open('new')} aria-label="Přidat lektvar" title="Přidat lektvar">+ Přidat</button>
   </div>
+  <HelpPanel topic="lektvary" open={helpOpen} />
   {#if list.length}
     <ul>
       {#each list as { id, potion } (id)}

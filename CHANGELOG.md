@@ -1,5 +1,11 @@
 # Změny
 
+## 0.4.9 (22. 11. 2026)
+
+- **Nápověda „?“:** tlačítko „?“ otevře pod prvkem krátké vysvětlení s kroky a odkazem do příručky (bez balíčku do SRD). Je u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výrobků, nástrah, kouzel a Grimoáru, u Postupu postavy, Jizev, sezení, konfliktu, žurnálu družiny, sdílení postavy a družiny a importu, u Příručky, Rejstříku, Bestiáře, Nastavení, balíčků, zvuku a Aplikace i v jejich dialozích.
+- **Stránka Nápověda (Více):** úvod do aplikace a všechna témata (návody, pravidla po ruce, složitější situace) s hledáním bez ohledu na diakritiku.
+- **Pod kapotou:** karty postupu a nová témata jsou v jednom registru `core/help.ts` (dřív `guide.ts`), `CardHelp` je `ui/HelpPanel`, nové `HelpButton` a `HelpHeading`; test hlídá jedinečná ID i kotvy odkazů proti balíčku pravidel; E2E zkoušky nápovědy.
+
 ## 0.4.8 (22. 11. 2026)
 
 - **Pod kapotou:** odstraněn nepoužívaný převodník SRD v prohlížeči (bookmarklet): `tools/srd/browser`, `vite.srd.config.ts`, `public/srd-import.user.js`, krok sestavení před `dev` a `build` a související test. Balíčky se dál staví Node nástroji.

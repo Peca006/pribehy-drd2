@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import { onDestroy, untrack } from 'svelte'
   import { ATTRIBUTES, type Character } from '../../core/character/model'
   import type { Attribute } from '../../core/content/schema'
@@ -221,12 +223,14 @@
     dice = [0, 0]
     reset()
   }
+  let helpOpen = $state(false)
 </script>
 
 <section class="panel" id="roll-panel" aria-label="Hod">
   <div class="head">
-    <strong>Hod</strong>
+    <span><strong>Hod</strong> <HelpButton bind:open={helpOpen} label="Nápověda: Hod" /></span>
   </div>
+  <HelpPanel topic="hod" open={helpOpen} />
   <div class="chips" role="group" aria-label="Druh vyhodnocení">
     <button class:primary={kind === 'zkouska'} onclick={() => setKind('zkouska')}>Zkouška</button>
     <button class:primary={kind === 'vyzva'} onclick={() => setKind('vyzva')}>Výzva</button>

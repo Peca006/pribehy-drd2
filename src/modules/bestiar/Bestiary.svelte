@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import GetPacks from '../../ui/GetPacks.svelte'
@@ -142,7 +143,7 @@
 {:else if params[0] && params[0] !== 'druh'}
   <p class="muted">Bytost nenalezena. <a href="#/bestiar">Zpět do bestiáře</a></p>
 {:else}
-  <h1>Bestiář</h1>
+  <HelpHeading level={1} title="Bestiář" topic="bestiar" />
   {#if !hasPackData}
     <div class="panel">
       <strong>Bytosti z knihy nejsou nainstalované.</strong>

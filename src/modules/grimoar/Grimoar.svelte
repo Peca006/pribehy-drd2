@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { onMount } from 'svelte'
   import { characterOf } from '../../core/character/model'
   import { encodeBundle } from '../../core/character/share'
@@ -82,7 +83,7 @@
   }
 </script>
 
-<h1>Grimoár</h1>
+<HelpHeading title="Grimoár" topic="grimoar" level={1} />
 <div class="panel">
   <p class="muted">
     Kouzla, lektvary, nástrahy a výrobky uložené pro příště. U postavy se na ně odkazuje, úprava se projeví u všech

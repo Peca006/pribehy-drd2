@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import type { Character } from '../../core/character/model'
   import { recipes, refreshRecipes } from '../../core/recipes/cache.svelte'
   import { suggestRecipes } from '../../core/recipes/find'
@@ -53,13 +55,15 @@
       return err instanceof Error ? err.message : 'Uložení se nepovedlo.'
     }
   }
+  let helpOpen = $state(false)
 </script>
 
 <div class="crafts">
   <div class="head">
-    <strong>Výrobky</strong>
+    <span><strong>Výrobky</strong> <HelpButton bind:open={helpOpen} label="Nápověda: Výrobky" /></span>
     <button onclick={() => (creating = true)}>+ Nový výrobek…</button>
   </div>
+  <HelpPanel topic="vyroba" open={helpOpen} />
   {#if list.length}
     <ul>
       {#each list as l (l.linkId)}

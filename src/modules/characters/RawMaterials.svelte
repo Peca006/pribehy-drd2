@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import { onDestroy } from 'svelte'
   import type { Character } from '../../core/character/model'
   import {
@@ -75,12 +77,14 @@
   onDestroy(() => {
     if (Object.keys(pending).length) void flush()
   })
+  let helpOpen = $state(false)
 </script>
 
 <div class="raw">
   <div class="line">
     <button class="icon" onclick={openKinds} aria-label="Upravit druhy Surovin" title="Druhy Surovin">✎</button>
     <strong>Suroviny</strong>
+    <HelpButton bind:open={helpOpen} label="Nápověda: Suroviny" />
     {#if grouped}
       <span class="total" aria-label="Suroviny celkem">{total}</span>
     {:else}
@@ -89,6 +93,7 @@
       <button onclick={() => bump(undefined, 1)} aria-label="Přidat Surovinu">+</button>
     {/if}
   </div>
+  <HelpPanel topic="suroviny" open={helpOpen} />
   {#if grouped}
     <ul class="kinds">
       {#each kinds as { id, kind } (id)}

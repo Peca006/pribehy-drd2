@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { characterOf, emptyCharacter, type CharacterLog } from '../../core/character/model'
   import { recordResponse } from '../../core/character/reviews'
@@ -237,7 +238,7 @@
 </script>
 
 <nav><a class="btn" href="#/postavy"><Arrow dir="left" /> Postavy</a></nav>
-<h1>Import</h1>
+<HelpHeading level={1} title="Import" topic="import" />
 <p class="muted">
   Vložte kód (začíná <code>DRD2:</code>) nebo vyberte soubor od hráče nebo vypravěče. Před uložením
   uvidíte, co se změní.

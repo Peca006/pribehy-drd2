@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { untrack } from 'svelte'
   import type { Character } from '../../core/character/model'
   import {
@@ -81,7 +82,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Druhy Surovin">
-  <h2>Druhy Surovin</h2>
+  <HelpHeading flush title="Druhy Surovin" topic="suroviny" />
   <p class="muted">
     Druhy jsou volitelné: značka (stačí emotikona nebo písmeno) a název. Slouží k tomu, aby šlo vysvětlit, odkud
     Suroviny jsou (bylinky z cest, hřebíky z kovárny). Smazat jde jen druh bez Surovin.
@@ -138,9 +139,6 @@
   }
   dialog::backdrop {
     background: rgb(0 0 0 / 0.6);
-  }
-  h2 {
-    margin-top: 0;
   }
   .row {
     display: flex;
