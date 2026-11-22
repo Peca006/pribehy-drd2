@@ -6,7 +6,7 @@
   import { loadReviews, markSent, type Reviews } from '../../core/character/reviews'
   import { groupRevisions } from '../../core/character/revisions'
   import { sinceIndex as sinceIndexOf, type ShareMode } from '../../core/character/shareRange'
-  import { slugify } from '../../core/creatures/bundle'
+  import { shareFileName } from '../../core/shareFile'
   import { fitForQr, type Fitted } from '../../core/character/compact'
   import { QR_CHUNK, splitForQr } from '../../core/character/qr'
   import { buildRevisionBundle, encodeBundle } from '../../core/character/share'
@@ -104,14 +104,14 @@
     }
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }))
-    a.download = `postava-${slugify(name) || 'drd2'}.drd2.txt`
+    a.download = shareFileName('postava', name)
     a.click()
     URL.revokeObjectURL(a.href)
     sent()
   }
   const canShare = typeof navigator !== 'undefined' && 'share' in navigator
   async function share() {
-    const file = new File([code], `postava.drd2.txt`, { type: 'text/plain' })
+    const file = new File([code], shareFileName('postava', name), { type: 'text/plain' })
     try {
       if (navigator.canShare?.({ files: [file] }))
         await navigator.share({ title: `Postava ${name}`, files: [file] })
