@@ -93,3 +93,10 @@ Nejsou to odkazy, ale hodnoty zapsané přímo; zatím zmapováno, nezpracováno
 - 14 karet má středník nebo víc cen. K ruční kontrole: Něco z ničeho a Umění improvizace mají v obou částech stejné efekty
   („Zisk zdrojů, Posílení dovednosti“) a opačné pořadí než u Fafrina (cena Duše první); Živá voda a Lamač nadpřirozena mají
   druhou část odvozenou z odstavce o přirozené ochraně a léčení.
+
+### Řešení sporných karet (22. 11. 2026)
+- `gain-resources` („Zisk zdrojů“) jen u odstavců, kde jsou nouzové Suroviny zdarma; odstavec, kde se za ně platí („zaplatí“), je jen výroba.
+  Něco z ničeho, Umění improvizace: `Zisk zdrojů, Posílení dovednosti; Posílení dovednosti` / `Duše: 1; Bez Aktivace`.
+- `scar-effect` zúžen na skutečný účinek na hospodaření s Jizvami (Zdroj navíc při zasazení, nižší náročnost, levnější léčení);
+  pouhá zmínka o Jizvě to není (Živá voda už není `scar-effect`, Hlava nehlava je „Jiný“).
+- Pořadí částí je podle textu (u Něco z ničeho cena první), na rozdíl od Fafrina. Poslední rozdíl proti Fafrinovi: 2 karty z 86.

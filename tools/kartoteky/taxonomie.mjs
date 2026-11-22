@@ -22,7 +22,8 @@ const MECH = [
   ['defend-others', /reagovat (pomoci )?akci z obrany|reagovat pomoci akce z obrany|reagovat akci z obrany|muze[^.]*reagovat pomoci[^.]*obrany/],
   ['grant-resources', /poskytnout/],
   ['natural-protection', /prirozen\w* (ochranu|zbroj)|slevu \d na (vycerpani)|sleva \d na vycerpani|slevu 1 na vycerpani|poskytuji zbroje o 1 mensi slevu/],
-  ['scar-effect', /jizv/],
+  // účinek na hospodaření s Jizvami (Zdroj navíc při zasazení, nižší náročnost, levnější léčení); samotná zmínka o Jizvě to není
+  ['scar-effect', /zasadi-li si|narocnost zpusobena jizv|uzdravovani sv\w* jizev|jizvy na \w+ dokaze lecit/],
   ['narrative-authority', /obsahov\w* pravomoc|hrac muze[^.]{0,40}(urcit|stanovit)|hrac muze popsat/],
   ['stealth-evasion', /ukryt|setrast/],
   ['tracking', /stopovat/],

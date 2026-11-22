@@ -51,7 +51,8 @@ const partsOf = (z) => {
   const mechs = normMech(z.mech);
   const groups = [];
   String(z.text ?? '').split(/\n\s*\n/).forEach((p, idx) => {
-    const m = normMech(z.paraMech?.[idx] ?? []).filter((x) => x !== 'special-effect' || mechs.includes('special-effect'));
+    // „Zisk Zdrojů“ jen tam, kde jsou nouzové Suroviny zdarma; odstavec, ve kterém se za ně platí („zaplatí“), je jen výroba
+    const m = normMech(z.paraMech?.[idx] ?? []).filter((x) => (x !== 'special-effect' || mechs.includes('special-effect')) && !(x === 'gain-resources' && /zaplati/.test(fold(p))));
     const cost = costOf(p);
     if (!m.length && !cost.length) return;
     const sig = JSON.stringify([...new Map(cost.map((c) => [`${c.resource}${c.amount}`, c])).values()]);
