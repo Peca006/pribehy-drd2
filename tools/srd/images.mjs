@@ -1,7 +1,6 @@
 // Obrázky ze SRD: zdrojový balíček na ně odkazuje (`img/NAZEV.webp`), konečný balíček je má vložené jako
 // `data:image/webp;base64,…` (viz `assemble-lib.mjs`).
 // Zdrojové PNG se stahují ručně do reference/srd/assets/ (gitignorováno), viz `missingImages`.
-// (Prohlížečová verze s canvasem je v tools/srd/browser/entry.mjs.)
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import sharp from 'sharp'
 import { basename, walkImages } from './pipeline.mjs'
