@@ -11,11 +11,11 @@ Nezávislé atributy:
 | atribut | hodnoty | zdroj |
 |---|---|---|
 | `attribute` | body, soul, influence, none (Zloděj těl) | ze zdroje, 38 / 96 / 71 / 1 |
-| `mechanism` (víc hodnot) | viz tabulka níž | z textu |
-| `activation-cost` | none (150), 1 soul (36), 1 influence (16), 1 material (6), 3 material (2), 1 body, 3 influence, 2 body, 12 material | `(Aktivace …)` v textu, přesná hodnota |
-| `related-skill` | id dovednosti, víc hodnot | kurzíva v textu odpovídá názvu dovednosti (109 z 206) |
+| `mechanism` (pole, 38 karet má víc než jeden) | viz tabulka níž | z textu |
+| `activation-cost` (pole objektů `{resource, amount, note?}`) | prázdné (150), soul 1 (36), influence 1 (16), material 1 (6), material 3 (2), body 1, influence 3, body 2, material 12; 8 karet má víc aktivací | `(Aktivace …)` v textu; export zpět na „Duše: 1“ |
+| `related-skill` (pole; id i název, vzájemná kontrola) | dovednost | kurzíva v textu odpovídá názvu dovednosti (109 z 206) |
 | `target-kind` | people, animals, monsters, undead-fiends, constructs | z textu, jen když je výslovně uvedeno (43 z 206) |
-| `scope` | self, other-character, companion, area | odvozeno z mechanismu; `area` = „plošně“ (14) |
+| `mass` (příznak) | true / nic | „plošně“ (14) |
 | `origin` | class-basic, class-advanced, race (+ `class` / `race` název) | ze zdroje |
 | `quick-pick` | úroveň nebo kultura (rychlá volba) | ze zdroje, jen u části |
 
@@ -68,9 +68,45 @@ skupinová pravidla (Vůdce skupiny, Člen skupiny, Boj ve skupině, Dav, Živá
 Zranitelnost, Neschopnost, Nezastavitelný, Nesmrtelný). Pro skupinová pravidla a „proti bytosti“ chybí v ZS
 odpovídající mechanismus. Návrh: `group-rule` a `against-being` jako nové hodnoty mechanismu, příznak `monster`.
 
-## Otevřené otázky pro bod 3
+## Rozhodnutí (22. 11. 2026)
 
-- Je `mechanism` jedna hodnota nebo víc (u Kostky je víc)?
-- Je `scope` samostatný atribut, nebo jen odvozený?
-- `related-skill` jako id dovednosti, nebo jako název?
-- `activation-cost`: pole `{amount, resource}` nebo text („Duše: 1“ jako u Kostky)?
+- `mechanism` je pole.
+- `scope` jako enum se nezavádí (self / other-character / companion byl můj výmysl, ne Kostky ani pravidel DrD2;
+  informaci nesou mechanismy `grant-resources`, `defend-others`, `companion`). Zůstává příznak `mass: true`.
+  Případné `beneficiary` až bude potřeba.
+- `related-skill` se ukládá jako id i název (kontrola); export mimo databázi používá název.
+- `activation-cost` je strukturované pole `{resource, amount, note?}`; export na text „Duše: 1“.
+- Klíč karty je `name` (v SRD jednoznačný napříč ZS, dovednostmi i bestiářem); `id` je stabilní slug názvu,
+  uložený samostatně (při přejmenování se nemění); `source` rozlišuje `srd` / `fan`. Kolize názvů u cizí tvorby se
+  řeší indexem u názvu.
+
+## Porovnání s Fafrinovými dials (bod 3, 22. 11. 2026)
+
+Skripty: `fafrin.mjs` (načte 86 karet a vypíše rozložení hodnot), `porovnani.mjs` (porovnání po kartách podle názvu).
+Fafrinova sada má 86 karet = 60 základních povolání + 25 rasových + 1 společná; všechny se spárovaly s Příručkou.
+Ve zdrojovém souboru chybí u karty „Zaříkávač koní“ uzavírací tag `</drd2-zs>` (parser to snáší).
+
+| atribut | shoda | poznámka |
+|---|---|---|
+| `attribute` | 86 / 86 | |
+| `level` ↔ základní povolání | 60 / 60 | Fafrin: „základní“ nebo prázdné; `class-advanced` a `class-expert` jsou zatím prázdné |
+| `related-skill` | 29 / 30 | Fafrin vyplnil 30, já z textu (kurzíva) našel stejné; navíc nenašel nic. Neshoda: Odznaky hrdinství (Fafrin: Sebedůvěra, v textu jen „zastrašování“, tedy úsudek) |
+| `activation-cost` | liší se jen zápisem u 22 | „Duše: 1“ vs „1 Duše“; 5 karet má „Bez aktivace, Duše: 1“ (část schopnosti je bez aktivace, část za cenu) |
+| `effect` ↔ `mechanism` | 71 / 86 (podle mapování hodnot) | viz níž |
+
+### Kde se liší `effect` (Fafrin) a `mechanism` (návrh)
+
+- **Fafrin je jemnější u zdarma:** rozlišuje „Obrana zdarma“, „Rozsáhle zdarma“, „Přístupy zdarma“ a „Rozšířená obrana“
+  (= moje `defend-others`). Já mám `free-maneuver` pro všechno vč. přístupů; přístupy zdarma mají být zvlášť.
+- **Fafrin je hrubší u výroby a kouzel:** „Posílení dovednosti“ pokrývá výrobu, posílená kouzla, obrazce i změnu tváře;
+  já je dělím na `craft`, `spell-enhance`, `ward-sign`, `disguise` atd.
+- **„Zisk zdrojů“** použil u Něco z ničeho, Umění improvizace, Dar tvoření (výroba z nouzových Surovin zdarma), kde
+  já mám `craft`. Je to rozdíl v pohledu: výsledek (Zdroje zdarma) vs. činnost (výroba).
+- **„Jiný“** u Pádný úder a Plášť; já je řadím do `natural-protection` a `improvised-gear`.
+- **Nekonzistentní zápis hodnot u Fafrina:** 34 zápisů `effect` se po sjednocení velikosti písmen zredukuje na 21
+  („Zisk zdrojů“ / „Zisk Zdrojů“, „Silnější jizvy“ / „Silnější Jizvy“); `related-skill` je skloněný a s měkkým
+  rozdělením slova („Orien­taci v divočině“, „Masti a jedy“ místo „Masti a běžné jedy“).
+- **`purpose` (30 hodnot) mi chybí.** Míchá tři věci: oblast (Boj 20, Jednání 20, Skrývání 12, Znalosti 9, Magie 7,
+  Léčení 7, Jizvy 8, Výroba 5, Pohyb 2), druh cíle (Lidé 7, Zvířata 6, Nemrtví, Běsi, Netvoři, Oživení) a předmět
+  (Obrazce 5, Jedy 4, Pasti, Masti, Trofeje, Zřídla, Rituální předměty). Moje taxonomie má druh cíle (`target-kind`),
+  ale pro ZS nemá oblast; u dovedností ji mám (`area`).
