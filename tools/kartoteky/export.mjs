@@ -127,6 +127,13 @@ for (const z of prev.zs) {
     quickPick: z.quickPickLevel ?? z.quickPickCulture ?? undefined, monster: false, flavor: z.flavor ?? undefined, text: z.text, labels: 'auto',
   });
 }
+// ručně schválené štítky (rucni-stitky.json, 22. 11. 2026, z tabulky domain-rozdily): přepisují automatické domain / subject / targetKind
+const manual = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), 'rucni-stitky.json'), 'utf8'));
+for (const c of cards) {
+  const m = manual[c.name]; if (!m) continue;
+  for (const k of ['domain', 'subject', 'targetKind']) if (m[k]) c[k] = m[k];
+  c.labels = 'manual';
+}
 // ---- bestiářové schopnosti (27) ----
 for (const b of inv.items.filter((i) => i.type === 'bestiar-definice')) {
   const name = b.name.replace(/ \(.*\)$/, '');
