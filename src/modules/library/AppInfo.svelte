@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { applyUpdate, checkForUpdate, install, pwa } from '../../core/pwa.svelte'
 
   // Verze aplikace, kontrola aktualizací a instalace na plochu.
@@ -20,7 +21,7 @@
   }
 </script>
 
-<h2>Aplikace</h2>
+<HelpHeading title="Aplikace" topic="aplikace" />
 <div class="panel">
   <p>
     Verze <strong>{__APP_VERSION__}</strong>

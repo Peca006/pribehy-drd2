@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import type { Creature } from '../../core/content/schema'
@@ -67,7 +68,7 @@
 </script>
 
 <nav><a class="btn" href="#/bestiar"><Arrow dir="left" /> Bestiář</a></nav>
-<h1>Import a export</h1>
+<HelpHeading level={1} title="Import a export" topic="bestiar-vymena" />
 
 <h2>Export vlastních bytostí</h2>
 {#if bestiary.user.length}

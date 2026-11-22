@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { ask } from '../../core/confirm.svelte'
   import { installPack, removePack } from '../../core/content/store'
   import { outdatedPacks } from '../../core/content/builds'
@@ -41,7 +42,7 @@
   }
 </script>
 
-<h2>Obsahové balíčky</h2>
+<HelpHeading title="Obsahové balíčky" topic="baliccky" />
 <p class="muted">
   Pravidla a Bestiář (v rozsahu SRD) se stahují z webu aplikace a pak fungují i offline. Jiný balíček
   (např. vlastní) načtěte ze souboru <code>.json</code>.

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
   import AudioTest from '../../ui/audiogram/AudioTest.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
@@ -12,7 +13,7 @@
 
 <h1>Více</h1>
 
-<h2>Nastavení</h2>
+<HelpHeading title="Nastavení" topic="nastaveni" />
 <div class="panel settings">
   <label>
     <span class="muted">Jméno, kterým se podepisují změny postav a zápisy:</span>
@@ -31,6 +32,7 @@
 <DemoData />
 <details>
   <summary>Zkouška zvuku (přenos zvukem mezi zařízeními, audiogram)</summary>
+  <HelpHeading title="Nápověda ke zvuku" topic="zvuk" />
   <AudioTest />
 </details>
 

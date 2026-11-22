@@ -270,8 +270,98 @@ export const TOPICS_PARTY: Card[] = [
   },
 ]
 
+/** Témata k Příručce, Bestiáři a části Více. */
+export const TOPICS_APP: Card[] = [
+  {
+    id: 'prirucka',
+    title: 'Příručka',
+    kind: 'navod',
+    text: 'Pravidla po ruce: kapitoly v částech knihy, hledání a Rejstřík. Po stažení balíčku fungují i offline.',
+    steps: [
+      'Hledání (od dvou znaků) prochází kapitoly, bytosti i pojmy.',
+      'Kapitoly jsou ve sbalitelných částech; předchozí a další kapitola platí v rámci knihy.',
+      'Pojmy v textu jsou odkazy; kolik jich se ukáže, nastavíš ve Více (Odkazy v textu).',
+      'Bez balíčku nabídne aplikace Stáhnout, případně odkaz do SRD.',
+    ],
+  },
+  {
+    id: 'rejstrik',
+    title: 'Rejstřík',
+    kind: 'navod',
+    text: 'Herní pojmy z příručky řazené abecedně; každý pojem vede na místa, kde se vysvětluje.',
+    steps: [
+      'První odkaz hesla je hlavní, ostatní jsou v závorce.',
+      'Úvodní oddíl „Začátky knih“ vede na začátek každé knihy.',
+    ],
+  },
+  {
+    id: 'bestiar',
+    title: 'Bestiář',
+    kind: 'navod',
+    text: 'Bytosti pro vypravěče: z balíčku jen ke čtení a vlastní bytosti s editorem.',
+    steps: [
+      'Filtr podle druhu a podle prostředí (ikony, lze vybrat víc; prázdný čtvereček = bez uvedeného prostředí). Řadit jde abecedně nebo podle druhů.',
+      'Vlastní bytosti jdou vytvořit, upravit a vyexportovat do souboru; vlastní obrázky jsou jen v zařízení.',
+      'Tlačítko „Do konfliktu“ na kartě bytosti ji přidá do konfliktu družiny.',
+    ],
+  },
+  {
+    id: 'bestiar-vymena',
+    title: 'Import a export bytostí',
+    kind: 'navod',
+    text: 'Vlastní bytosti se přenášejí jako soubor JSON.',
+    steps: [
+      'Export uloží zaškrtnuté vlastní bytosti do souboru nebo zkopíruje text; bytosti z balíčku se neexportují.',
+      'Import je před uložením zkontroluje a přidá k vlastním bytostem.',
+    ],
+  },
+  {
+    id: 'nastaveni',
+    title: 'Nastavení',
+    kind: 'navod',
+    text: 'Nastavení platí jen v tomto zařízení.',
+    steps: [
+      'Jméno podepisuje změny postav a zápisy družiny (výchozí je „hráč“).',
+      'Odkazy v textu: jen první výskyt (výchozí), první a po 5000 znacích, všechny, nebo žádné.',
+    ],
+  },
+  {
+    id: 'baliccky',
+    title: 'Obsahové balíčky',
+    kind: 'navod',
+    text: 'Pravidla a Bestiář v rozsahu SRD se stahují z webu aplikace a pak fungují i bez připojení.',
+    steps: [
+      'Stáhnout, Aktualizovat a Odebrat jsou u každého balíčku; starší sestavení aplikace nabídne stáhnout znovu.',
+      'Jiný balíček (např. vlastní) načteš ze souboru .json.',
+      'Postava ukládá jen odkazy na obsah a vlastní hodnoty, takže odebrání balíčku postavy nesmaže.',
+    ],
+  },
+  {
+    id: 'zvuk',
+    title: 'Přenos zvukem a zkouška zvuku',
+    kind: 'navod',
+    text: 'Kód lze mezi dvěma zařízeními přenést zvukem z reproduktoru do mikrofonu. Je to experimentální funkce.',
+    steps: [
+      'Vysílat zvukem je u Sdílet, Přijímat zvukem u Importu. Potřebuje povolení mikrofonu a tiché okolí.',
+      'Zkouška zvuku: na jednom zařízení „Snímat a vyhodnotit“, na druhém „Přehrát test“. Po 3 s se přehrají tóny a všechny režimy.',
+      'Výsledky a špičku vstupu ukáže příjemce; Protokol zkoušek lze zkopírovat. Při selhání zvyš hlasitost a zmenši vzdálenost.',
+    ],
+  },
+  {
+    id: 'aplikace',
+    title: 'Aplikace a aktualizace',
+    kind: 'navod',
+    text: 'Aplikace je PWA: po prvním načtení běží i offline.',
+    steps: [
+      'Nová verze se stáhne na pozadí a nad navigací se ukáže „Obnovit“; rozepsané návrhy zůstanou uložené v zařízení.',
+      'Tady uvidíš verzi a datum sestavení a můžeš ručně zkontrolovat aktualizaci.',
+      'Nainstalovat jde z nabídky prohlížeče nebo tlačítkem Nainstalovat; na iOS přes Sdílet a Přidat na plochu.',
+    ],
+  },
+]
+
 /** Všechna témata nápovědy (kroky vyhodnocení, složitější situace, pomůcky). */
-export const helpTopics = (): Card[] => [...BASIC, ...SITUATIONS, ...TOPICS, ...TOPICS_PARTY]
+export const helpTopics = (): Card[] => [...BASIC, ...SITUATIONS, ...TOPICS, ...TOPICS_PARTY, ...TOPICS_APP]
 export const helpTopic = (id: string): Card | undefined => helpTopics().find((c) => c.id === id)
 
 export const SITUATIONS: Card[] = [

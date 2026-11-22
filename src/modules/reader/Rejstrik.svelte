@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   // Rejstřík pojmů: začátky knih, pak abecední seznam; u pojmů s více místy další odkazy v závorce.
   import Arrow from '../../ui/Arrow.svelte'
   import GetPacks from '../../ui/GetPacks.svelte'
@@ -12,7 +13,7 @@
 <nav>
   <a class="btn" href="#/ctenar"><Arrow dir="left" /> Kapitoly</a>
 </nav>
-<h1>Rejstřík</h1>
+<HelpHeading level={1} title="Rejstřík" topic="rejstrik" />
 
 {#if rejstrik.starts.length}
   <h2 class="letter">Začátky knih</h2>

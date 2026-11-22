@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import GetPacks from '../../ui/GetPacks.svelte'
   import {
@@ -102,7 +103,7 @@
       >{/if}
   </nav>
 {:else}
-  <h1>Příručka</h1>
+  <HelpHeading level={1} title="Příručka" topic="prirucka" />
   {#if chapters().length || professionBooks().length}
     <input
       type="search"
