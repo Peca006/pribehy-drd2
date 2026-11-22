@@ -100,3 +100,8 @@ Nejsou to odkazy, ale hodnoty zapsané přímo; zatím zmapováno, nezpracováno
 - `scar-effect` zúžen na skutečný účinek na hospodaření s Jizvami (Zdroj navíc při zasazení, nižší náročnost, levnější léčení);
   pouhá zmínka o Jizvě to není (Živá voda už není `scar-effect`, Hlava nehlava je „Jiný“).
 - Pořadí částí je podle textu (u Něco z ničeho cena první), na rozdíl od Fafrina. Poslední rozdíl proti Fafrinovi: 2 karty z 86.
+
+### Dials dovedností – návrh (22. 11. 2026, čeká na schválení)
+- `dovednosti.mjs` → `DOVEDNOSTI-NAVRH.md` (tabulka všech 77). `type` používá stejný slovník jako `domain` u ZS (Kostka: Boj, Magie, Výroba, Léčení;
+  nově Znalosti, Jednání, Pohyb, Skrývání), `environment` jen z názvu (Divočina 3, Město 1), `target` z názvu s několika ručními výjimkami,
+  `target-attribute` jen u léčení a obnovy (Tělo, Duše, Vliv), `source-zs` u všech prázdné. Do exportu zatím nezapojeno.
