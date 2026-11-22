@@ -2,7 +2,7 @@
 
 ## Nevydáno
 
-- **Nápověda „?“ u pomůcek:** tlačítko „?“ otevře pod prvkem krátké vysvětlení s kroky a odkazem do příručky (bez balíčku do SRD). Je u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výrobků, nástrah, kouzel, Grimoáru a v jejich dialozích. Karty postupu (zkouška, střet, léčení, …) a nová témata jsou v jednom registru, kotvy odkazů hlídá test proti balíčku pravidel.
+- **Nápověda „?“ u pomůcek:** tlačítko „?“ otevře pod prvkem krátké vysvětlení s kroky a odkazem do příručky (bez balíčku do SRD). Je u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výrobků, nástrah, kouzel, Grimoáru, Postupu postavy, Jizev, sezení, konfliktu, žurnálu družiny, sdílení postavy a družiny a importu a v jejich dialozích. Karty postupu (zkouška, střet, léčení, …) a nová témata jsou v jednom registru, kotvy odkazů hlídá test proti balíčku pravidel.
 - **Pod kapotou:** `guide.ts` přesunut do `core/help.ts`, `CardHelp` je `ui/HelpPanel`; nové `HelpButton` a `HelpHeading`; E2E zkouška nápovědy.
 
 ## 0.4.8 (22. 11. 2026)

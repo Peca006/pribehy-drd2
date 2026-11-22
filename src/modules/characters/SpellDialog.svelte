@@ -64,7 +64,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Kouzlo">
-  <HelpHeading title={recipe ? 'Upravit kouzlo' : 'Kouzlo'} topic="kouzla" />
+  <HelpHeading flush title={recipe ? 'Upravit kouzlo' : 'Kouzlo'} topic="kouzla" />
   {#if !recipe}<p class="muted">Bez uložení se kouzlo jen vyhodnotí, název ani popis není potřeba.</p>{/if}
   <input type="text" bind:value={name} maxlength={MAX_NAME} placeholder="Název (jen pro uložení)" aria-label="Název kouzla" />
   <div class="row">

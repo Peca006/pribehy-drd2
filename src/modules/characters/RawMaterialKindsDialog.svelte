@@ -82,7 +82,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Druhy Surovin">
-  <HelpHeading title="Druhy Surovin" topic="suroviny" />
+  <HelpHeading flush title="Druhy Surovin" topic="suroviny" />
   <p class="muted">
     Druhy jsou volitelné: značka (stačí emotikona nebo písmeno) a název. Slouží k tomu, aby šlo vysvětlit, odkud
     Suroviny jsou (bylinky z cest, hřebíky z kovárny). Smazat jde jen druh bez Surovin.

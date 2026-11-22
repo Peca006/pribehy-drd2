@@ -51,7 +51,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Lektvar">
-  <HelpHeading title={id ? 'Upravit lektvar' : 'Nový lektvar'} topic="lektvary" />
+  <HelpHeading flush title={id ? 'Upravit lektvar' : 'Nový lektvar'} topic="lektvary" />
   {#if !id}
     <RecipeSuggest
       kind="lektvar"

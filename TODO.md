@@ -31,11 +31,10 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
 - **Drobnosti.** Jména testerů do O aplikace (až budou).
-- **Nápověda napříč aplikací.** 🚧 Hotová etapa 1 a 2 (komponenty `HelpButton`, `HelpPanel`, `HelpHeading`, registr témat
-  `src/core/help.ts`, „?“ u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výroby, nástrah, kouzel a Grimoáru). Rozhodnutí:
+- **Nápověda napříč aplikací.** 🚧 Hotová etapa 1 až 3 (komponenty `HelpButton`, `HelpPanel`, `HelpHeading`, registr témat
+  `src/core/help.ts`, „?“ u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výroby, nástrah, kouzel, Grimoáru, Postupu, Jizev, sezení, konfliktu, žurnálu, sdílení a importu). Rozhodnutí:
   panel pod prvkem (ne hover), vlastní stručné výtahy s odkazem do příručky nebo SRD, kroky a návody v registru na jednom místě.
-  Zbývá: etapa 3 postava a družina (Postup, Jizvy, sezení, konflikt, sdílení a import včetně „moje / jejich“), etapa 4
-  Grimoár, Příručka, Bestiář a Více (balíčky, zvuk), etapa 5 stránka **Nápověda** ve Více (seznam všech témat s hledáním
+  Zbývá: etapa 4 Příručka, Bestiář a Více (balíčky, zvuk, zkouška zvuku), etapa 5 stránka **Nápověda** ve Více (seznam všech témat s hledáním
   a krátký úvod do aplikace). Patří sem i odkaz na konkrétní dovednost v SRD (v kostře je `srd` jen u povolání a schopností).
 - **Nápad: skiny s obrázkovou mapou ovládacích prvků (později).** Prvky (tlačítko, popis, výstup) definované souřadnicemi
   na obrázku; pixelartová varianta (inspirace Truhlice) nebo klasická. Předpoklad: uklidit stránky a navigaci.

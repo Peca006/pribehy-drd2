@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { type Character } from '../../core/character/model'
   import { MAX_SCAR, inflictScar, type Inflicted } from '../../core/character/healing'
   import { effectiveAttributes } from '../../core/character/play'
@@ -42,7 +43,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Jizva">
-  <h2>Jizva: {attr}</h2>
+  <HelpHeading flush title={`Jizva: ${attr}`} topic="jizvy" />
   <div class="row">
     <span>Závažnost</span>
     <button onclick={() => (severity = Math.max(1, severity - 1))} aria-label="Menší">−</button>
@@ -84,9 +85,6 @@
   }
   dialog::backdrop {
     background: rgb(0 0 0 / 0.6);
-  }
-  h2 {
-    margin-top: 0;
   }
   .row {
     display: flex;

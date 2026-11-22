@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import {
@@ -106,7 +107,7 @@
     Načítání… Postava nebo pravidla nejsou k dispozici. <a href="#/postavy">Zpět na seznam</a>
   </p>
 {:else}
-  <h1>Postup postavy {start.name}</h1>
+  <HelpHeading level={1} title={`Postup postavy ${start.name}`} topic="postup" />
   <p>
     Body zkušeností: <strong>{start.xp}</strong>
     <span class="muted"> (jedno zlepšení stojí {XP_PER_ADVANCEMENT})</span>

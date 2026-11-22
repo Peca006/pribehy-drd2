@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { ask } from '../../core/confirm.svelte'
   import { onMount } from 'svelte'
   import {
@@ -104,7 +105,7 @@
 <nav>
   <a class="btn" href={'#/druziny/' + id}><Arrow dir="left" /> Zpět</a>
 </nav>
-<h1>Konflikt</h1>
+<HelpHeading level={1} title="Konflikt" topic="kolo" />
 
 {#if party}
   <div class="bar">

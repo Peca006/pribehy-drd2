@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
@@ -242,7 +243,7 @@
     </div>
   {/if}
 
-  <h2>Žurnál dobrodružství</h2>
+  <HelpHeading title="Žurnál dobrodružství" topic="zurnal" />
   <details class="panel fold">
     <summary><strong>{gm ? '+ Nový zápis' : '+ Navrhnout zápis Průvodci'}</strong></summary>
     <div>

@@ -188,8 +188,90 @@ export const TOPICS: Card[] = [
   },
 ]
 
+/** Témata k postavě, družině a sdílení. */
+export const TOPICS_PARTY: Card[] = [
+  {
+    id: 'postup',
+    title: 'Postup postavy',
+    text: 'Za zkušenosti si postava zlepší povolání nebo zdatnost a získá zvláštní schopnost.',
+    steps: [
+      'Zlepšení stojí 12 bodů zkušeností: buď úroveň povolání a schopnost povolání, nebo zdatnost +1 a schopnost rasy či ovládaného povolání.',
+      'Nejvyšší úroveň povolání je 5. Pokročilé povolání vyžaduje úrovně ve dvou základních povoláních (podmínky aplikace ukáže).',
+      'Výsledek jde do návrhu úpravy s předvyplněným popisem; v editoru se zveřejní jako jedna revize.',
+    ],
+    link: '38-zkusenosti-a-zlepsovani-postavy',
+  },
+  {
+    id: 'jizvy',
+    title: 'Jizvy',
+    text: 'Jizva postavu trvale poznamená: snižuje zdatnost a zablokuje část Zdrojů dané vlastnosti.',
+    steps: [
+      'Jizvu lze zasadit klepnutím na hodnotu nebo políčka Zdrojů (závažnost 1; víc způsobí manévr). Sebezasazená Jizva dá dočasné Zdroje.',
+      '„Zmírnit“ otevře dialog léčení (5 Zdrojů za stupeň, lektvar ušetří Suroviny); „Zahojit“ Jizvu odstraní. Rozhoduje Průvodce mezi výpravami.',
+      'Každá změna je revize v deníku postavy.',
+    ],
+    link: '31-zakladni-pravidla#jizvy',
+  },
+  {
+    id: 'sezeni',
+    title: 'Sezení a zkušenosti',
+    kind: 'navod',
+    text: 'Sezení rozdělí zkušenosti družině a zapíše shrnutí do žurnálu.',
+    steps: [
+      'Označ přítomné. Za účast dostane každý body podle rychlosti postupu družiny (3, 4 nebo 6).',
+      'Odměny: nejvýš 2 body na hráče a odměnových bodů nejvýš o jeden víc než hráčů. Tajné odměny se hlasují, zapisují se jen součty.',
+      'Členům s postavou v zařízení se body rovnou připíšou jako revize; ostatním se označí „předat hráči“.',
+    ],
+    link: '38-zkusenosti-a-zlepsovani-postavy',
+  },
+  {
+    id: 'zurnal',
+    title: 'Žurnál družiny',
+    kind: 'navod',
+    text: 'Žurnál dobrodružství vede Průvodce; hráči navrhují zápisy.',
+    steps: [
+      'Průvodce zápis přidá rovnou, hráč ho jen navrhne a Průvodce ho přijme, nebo zamítne.',
+      'Hráč má kopii družiny; když Průvodce změní schválený zápis, zápis dostane značku „změnil Průvodce“ a tlačítko „Beru na vědomí“.',
+      'Družinu posílá Průvodce od zvoleného zápisu nebo celou (Sdílet).',
+    ],
+  },
+  {
+    id: 'sdileni-postavy',
+    title: 'Sdílení postavy',
+    kind: 'navod',
+    text: 'Postavu posíláš jako kód, soubor, QR nebo zvukem; nic nejde přes server.',
+    steps: [
+      'Posílají se změny od posledního odeslání, od zvolené revize, nebo celá postava.',
+      'Do QR se vejde zhuštěná historie (1 až 4 QR). Kód, QR a zvuk nenesou ilustrace; do souboru je lze přiložit volitelně.',
+      'Příjemce vidí náhled „před → po“ a revize přijme, nebo zamítne. Odpověď se vrací kódem a zamítnuté změny lze vrátit.',
+    ],
+  },
+  {
+    id: 'sdileni-druziny',
+    title: 'Sdílení družiny',
+    kind: 'navod',
+    text: 'Pravda je u Průvodce: ten družinu posílá, hráč si ji uloží jako kopii.',
+    steps: [
+      'Průvodce posílá členy, poznámky, schválené zápisy a zkušenosti; jen nové od posledního odeslání, od zvoleného zápisu, nebo celou.',
+      'Hráč může jen navrhovat zápisy; Průvodce je přijme, nebo zamítne a zamítnutí se vrátí s další družinou.',
+      '„Připsáno“ u zkušeností je vždy jen v zařízení.',
+    ],
+  },
+  {
+    id: 'import',
+    title: 'Import',
+    kind: 'navod',
+    text: 'Vlož kód, vyber soubor, naskenuj QR nebo přijmi zvuk. Před uložením uvidíš, co se změní.',
+    steps: [
+      'Postava: každou příchozí revizi přijmeš, nebo zamítneš; ukáže se i kontrola postavy po přijetí.',
+      'Změněno na obou stranách: u každého pole zvolíš „Příchozí“, nebo „Ponechat moje“ (zapíše se revize „Ponecháno moje“).',
+      'Družina, předpisy do Grimoáru a odpověď vypravěče se zpracují stejně, s náhledem a potvrzením.',
+    ],
+  },
+]
+
 /** Všechna témata nápovědy (kroky vyhodnocení, složitější situace, pomůcky). */
-export const helpTopics = (): Card[] => [...BASIC, ...SITUATIONS, ...TOPICS]
+export const helpTopics = (): Card[] => [...BASIC, ...SITUATIONS, ...TOPICS, ...TOPICS_PARTY]
 export const helpTopic = (id: string): Card | undefined => helpTopics().find((c) => c.id === id)
 
 export const SITUATIONS: Card[] = [

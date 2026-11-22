@@ -41,3 +41,20 @@ test('nápověda u přehledu postavy a v dialogu', async ({ page }) => {
   await dlg.getByRole('button', { name: 'Nápověda: Kouzlo' }).click()
   await expect(dlg.getByRole('region', { name: 'Nápověda: Kouzla' })).toContainText('rituálu')
 })
+
+test('nápověda u importu a žurnálu družiny', async ({ page }) => {
+  await page.goto('/#/knihovna')
+  await page.getByText('Ukázková data', { exact: true }).click()
+  await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
+  await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení
+  await expect(page.getByText('Ukázková data jsou obnovená')).toBeVisible()
+
+  await page.goto('/#/postavy/import')
+  await page.getByRole('button', { name: 'Nápověda: Import' }).click()
+  await expect(page.getByRole('region', { name: 'Nápověda: Import' })).toContainText('Ponechat moje')
+
+  await page.goto('/#/druziny')
+  await page.locator('a.btn.panel, .panel a').first().click()
+  await page.getByRole('button', { name: 'Nápověda: Žurnál dobrodružství' }).click()
+  await expect(page.getByRole('region', { name: 'Nápověda: Žurnál družiny' })).toContainText('Průvodce')
+})

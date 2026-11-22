@@ -151,7 +151,7 @@
 </script>
 
 <dialog bind:this={dialog} onclose={closed} aria-label="Výroba a opravy">
-  <HelpHeading title="Výroba a opravy" topic="vyroba" />
+  <HelpHeading flush title="Výroba a opravy" topic="vyroba" />
   <div class="seg" role="group" aria-label="Druh">
     <button class:primary={kind === 'vyroba'} onclick={() => setKind('vyroba')}>Výroba</button>
     <button class:primary={kind === 'oprava'} onclick={() => setKind('oprava')}>Oprava</button>

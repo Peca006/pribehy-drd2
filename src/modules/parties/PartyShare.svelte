@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { encodeBundle } from '../../core/character/share'
@@ -93,7 +94,7 @@
 {#if !party}
   <p class="muted">Družina nenalezena. <a href="#/druziny">Zpět na seznam</a></p>
 {:else}
-  <h1>Sdílet družinu {party.name}</h1>
+  <HelpHeading level={1} title={`Sdílet družinu ${party.name}`} topic="sdileni-druziny" />
   {#if gm}
     <p class="muted">
       Hráči dostanou členy, poznámky a schválené zápisy žurnálu a zkušenosti ze sezení. Kód nebo
