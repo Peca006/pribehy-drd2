@@ -512,5 +512,10 @@
   "domain": [
    "healing"
   ]
+ },
+ "Umělá duše": {
+  "relatedSkill": [
+   "Umělý život"
+  ]
  }
 }

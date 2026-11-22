@@ -47,12 +47,12 @@ const KINDS = [['people', /\b(lid|clovek|lidem|lidi)\w*/], ['animals', /zvir\w+/
 
 const items = inv.items.filter((i) => i.type === 'zs' || i.type === 'skill');
 const skills = items.filter((i) => i.type === 'skill');
-const skillStems = skills.map((s) => ({ id: s.id, words: fold(s.name).split(' ').map((w) => w.slice(0, Math.max(3, w.length - 2))) }));
+const skillStems = skills.map((s) => ({ id: s.id, words: fold(s.name).split(' ').map((w) => w.slice(0, Math.max(3, w.length - 2))).filter((w) => w.length >= 3) }));
 const relatedSkills = (t) => {
   // jen kurzíva (názvy dovedností); tučné (***Zdroje***) se vynechá, sousední kurzívy se spojí
   const src = (t ?? '').replace(/\*\*\*[^*]*\*\*\*/g, ' ').replace(/\*\s\*/g, ' ');
   const f = fold((src.match(/(?<!\*)\*([^*]+)\*(?!\*)/g) ?? []).join(' | '));
-  return skillStems.filter((s) => s.words.every((w) => f.includes(w))).map((s) => s.id.replace('dovednost:', ''));
+  return skillStems.filter((s) => s.words.every((w) => (w.length <= 3 ? new RegExp('(^|[^a-z])' + w).test(f) : f.includes(w)))).map((s) => s.id.replace('dovednost:', ''));
 };
 
 const zs = items.filter((i) => i.type === 'zs').map((i) => {

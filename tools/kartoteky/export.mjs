@@ -132,6 +132,7 @@ const manual = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta
 for (const c of cards) {
   const m = manual[c.name]; if (!m) continue;
   for (const k of ['domain', 'subject', 'targetKind']) if (m[k]) c[k] = m[k];
+  if (m.relatedSkill) c.relatedSkill = m.relatedSkill.map((n) => ({ id: [...skillName].find(([, v]) => v === n)?.[0], name: n }));
   c.labels = 'manual';
 }
 // ---- bestiářové schopnosti (27) ----
@@ -158,6 +159,12 @@ for (const s of prev.skills) {
     domain: d.type, environment: d.env.map((e) => ENV[e]), targetKind: d.target, targetAttribute: attrId(d.targetAttr),
     area: s.area, text: s.items.map((i) => `- ${md(i)}`).join('\n'), labels: 'auto',
   });
+}
+// cíl ZS se dědí z navázané dovednosti (rozhodnutí 23. 11. 2026); ruční cíl (rucni-stitky.json) má přednost
+const skillTargets = new Map(cards.filter((c) => c.type === 'skill').map((c) => [c.name, c.targetKind]));
+for (const c of cards) {
+  if (c.type !== 'zs' || c.monster || manual[c.name]?.targetKind || !c.relatedSkill.length) continue;
+  c.targetKind = [...new Set(c.relatedSkill.flatMap((r) => skillTargets.get(r.name) ?? []))];
 }
 // unikátnost názvu a id
 const dup = (k) => { const m = new Map(); for (const c of cards) m.set(c[k], (m.get(c[k]) ?? 0) + 1); return [...m].filter(([, n]) => n > 1).map(([v]) => v); };
