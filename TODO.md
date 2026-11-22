@@ -1,329 +1,74 @@
 # Nápady a dolaďování
 
+Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
+
 ## Otevřené úkoly (stav k verzi 0.4.7, 22. 11. 2026)
 
-**O aplikaci a poděkování (credits):** hotovo v `src/modules/library/About.svelte` (Více → O aplikaci), vydáno v 0.3.19. Licence knihoven ověřeny proti `node_modules` (0.4.7). Jména testerů zatím nejsou, doplnit až budou.
-
-**Balíčky ze SRD** se stahují z webu aplikace (`content-packs/srd/`, `tools/srd/publish.mjs`). Nový balíček: build, `publish.mjs`, commit, nasazení `main`. Při změně formátu zvýšit `PACK_BUILD` a `EXPECTED_BUILD`.
-
-**Nasazeno (main = develop, v0.3.5):** audiogram (sloučen, přenos funguje QPSK 1200 i BPSK 800, Zkouška režimů ve Více),
-Suroviny po druzích, léčení Jizvy, Hotovost (dukáty / groše / haléře), výroba a opravy, lektvary a masti, nástrahy.
-Podrobně v `CHANGELOG.md` a `PLAN-POMUCKY.md`.
-
-**Odloženo (pomůcky):** Kořist (11e, patří k Výpravám). Předvyplnění panelu Hod u výroby, nástrah a kouzel je hotové.
-
-**Nápověda napříč aplikací (úplně na konec, až po všech drobnostech):** dnes je „?“ jen u léčení Jizvy (karta Postup s dovednostmi z balíčku
-a odkazem do příručky nebo SRD; `CardHelp.svelte`, `guide.ts`). Zobecnit: malá plovoucí vysvětlení (hint, tooltip) pravidel a řešení
-všude, kde dává smysl (výroba, nástrahy, kouzla, Grimoár, Hotovost, Suroviny, Zdroje, Hod …), s odkazem do příručky
-nebo SRD, místy i ve smyslu návodu k použití aplikace. K návrhu: jednotná komponenta, texty v jednom místě, bez balíčku odkaz do SRD.
-
-**Audiogram:** DSP (zúžení pásma, LDPC) a další zkoušky čekají na testery a zařízení; viz `AUDIOGRAM.md`.
-
-**Otevřené k rozhodnutí:** organizace balíčků, kapitol a bytostí (přehled „kapitoly, druhy, bytosti“, seskupení kapitol
-v Příručce podle knihy); postřeh k ikonkám prostředí v Bestiáři.
-
-**Ilustrace postav (rozhodnutí):** obrázky se sdílejí jen v souboru (hotovo: volitelně přiložené k souboru s postavou) a v celkovém exportu do souboru; později přes WebRTC. Do kódu, QR, zvuku ani jiných malých přenosů nikdy (příliš velké, přenos by byl vyčerpávající).
-
-**Před první beta verzí:** `schema` u uložených dat, řetězec `migrate`, celkový export a import `.json`, `FORMAT.md`.
-
-**Sdílení vypravěč → družina:** Průvodce bude po každém sezení posílat opakovaně od zvoleného bodu revize družiny či výpravy každému hráči (hráč naopak posílá jen občas a málo). Dnes: soubor poslaný zprávou či e-mailem. Hromadné odeslání všem členům jednou akcí („multi-cast“) se nabízí až s WebRTC.
-
-**Přenosy (pořadí):** ruční slučování konfliktů při importu revizí → Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC.
-
-**Postava:** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
-
-**Balíčky ze SRD, plán obnovy:** data udržujeme sami (CORS u d20.cz neřešíme). Nové balíčky jen když se změní SRD (kontrola třeba jednou za měsíc až rok, prakticky se nemění) nebo když my změníme formát balíčků. Altar: svolení k SRD je (`content-packs/srd/SVOLENI.md`), Hry mocných a Hotfix se svolení netýká.
-
-**Hry mocných:** zatím jen pro vlastní interní účely, do veřejných balíčků až po zařazení do SRD (po revizi, nejspíš ne brzy; zprávy o práci na tom jsou staré). Nechat až po všech plánovaných milnících.
-
-**K ověření na telefonu:** nové dialogy (léčení, výroba, lektvary, nástrahy), Hotovost, aktualizace PWA, přenos postavy
-s novými poli mezi zařízeními.
-
-**Další milník: Výpravy.** Sekce pro vypravěče s podklady pro tažení, výpravy a dobrodružství, kořist, vazba na družiny
-a žurnál; ukázkové dobrodružství a skupiny bytostí do ukázkových dat.
-
-### Suroviny (vysvětlení a návrh)
-
-Podle pravidel (Používání dovedností: Výroba, Opravy, Suroviny, Kořist) jsou **Suroviny** druhá „měna“ vedle Peněz: vzácnější
-materiál pro výrobu a opravy (oleje, byliny, kouzelné přísady, čepy, hřebíky, proužky kůže), který nejde sehnat kdekoliv. Hráč
-si v deníku vede jen **celkový počet** Surovin, při použití škrtne tolik, kolik výroba nebo oprava stojí; mezi výpravami se
-Suroviny používají spolu s Penězi. Oprava a léčení Jizev na Poutu stojí 5 Zdrojů za stupeň závažnosti, placených Surovinami;
-řemeslník bere Peníze. Kořist (včetně surovin) se nachází nebo získává zpracováním bytostí. Volitelně „příběhová podoba“:
-seznam drobností s cenou v groších.
-Návrh pro aplikaci: počítadlo Surovin u postavy (vedle hotovosti, v deníku revizí), tlačítka ±, odečtení při výrobě nebo opravě;
-až později pomůcka k výrobě a opravám (cena podle pravidel) a volitelný seznam drobností.
-
-### Rozdíl: slučování konfliktů, „změněno Průvodcem“ a „slučování zápisů“
-
-- ✅ **Ruční slučování konfliktů při importu revizí (přenosy, postavy)** (hotovo, 0.4.7; volba „příchozí / ponechat moje“ u každého pole): postava má strukturovaný deník revizí; když se dvě
-  větve historie změní na týchž polích (např. hráč i vypravěč upravili zdatnost), import dnes konflikt jen ohlásí. Zbývá
-  nabídnout u každého konfliktního pole volbu „moje / jejich“ a sloučit zbytek. Je to jediné skutečné slučování, které
-  zůstává.
-- **Slučování souběžných úprav jednoho zápisu (družina)**: prakticky odpadá. Schválené zápisy mění jen Průvodce (hráči jen
-  navrhují nové), takže dva lidé jeden zápis souběžně neupraví. Z TODO se vyřazuje.
-- ✅ **Upozornění „Průvodce změnil zápis“** (hotovo, 0.4.7): jen informace, žádné slučování: když přijde nová kopie družiny, zápisy, které se
-  proti hráčově kopii změnily, dostanou značku. Malá úprava, nezávislá na slučování.
-
-### Zdroje ze sebezasazené jizvy (hotovo)
-
-Zdroje (závažnost + 2) se po zasazení ukážou u příslušné vlastnosti jako čárkovaná políčka a „+N“; čerpají se jako první;
-„Zahodit“ nebo „Obnovit“ je zruší (nespotřebované propadají, kolo aplikace nesleduje). Uloženo jen v zařízení (`play.ts`).
-
-## Plán: hody a řešení střetů, výzev a zkoušek (podle SRD)
-
-Pravidla (kap. Základní pravidla, Složitější situace, Používání dovedností): hod = 2k6 + úroveň povolání použité dovednosti
-(bez povolání 0, při více povoláních v jedné akci nejnižší úroveň, bytosti charakteristika); úspěch ve zkoušce a výzvě při hodu
-9 a více, ve střetu vyšší hod (shoda: aktér, pak vyšší kostka, pak vyšší součet, pak los). Neúspěch lze zmírnit **vyčerpáním**
-(škrtnout Zdroje podle Ohrožení, nejméně 1, Ohrožení se zvýší o 1) nebo přijmout. Zkouška (proti prostředí nebo nebránícímu se
-protivníkovi), výzva (akce prostředí, následná akce, nástraha; vyčerpání jen zmírňuje) a střet (protiakce aktér × protiaktér;
-vyčerpání změní plný úspěch vítěze v částečný). Následky: Ohrožení ±1, Jizva (závažnost 1, víc manévrem), Výhoda. Manévry:
-obrana, rozsáhle, přesně, mocně, lstivě (platí se při použití, nesčítají se). Konflikt: iniciativa, kola, vyřazení, hrdinská smrt.
-
-Postup v krocích (každý krok použitelný sám; pomůcky nahrazují papír a kostky, nerozhodují za hráče):
-
-1. **Hod**: tlačítko Hodit (2k6) i ruční zadání fyzických kostek; k hodu se přičte úroveň povolání zvolené z postavy (výběr
-   povolání nebo dovednosti, pravidlo nejnižší úrovně při více povoláních, 0 bez povolání); ukáže součet a „9 a více“.
-   Bez postavy jen úroveň zadaná ručně (pro Průvodce a bytosti).
-2. **Ohrožení**: počítadlo u postavy nebo účastníka (jen ve hře, ne v deníku revizí), úprava ±1, připomenutí „vyčerpání
-   vždy aspoň 1 Zdroj a Ohrožení +1“.
-3. **Zkouška (průvodce krokem)**: záměr a hrozící neúspěch (poznámka), hod, výsledek; při neúspěchu volba vyčerpat nebo přijmout:
-   vyčerpání škrtne Zdroje (napojení na `Resources`) podle Ohrožení a zvýší Ohrožení; při úspěchu volitelné následky
-   (Ohrožení −1, Výhoda, Jizva).
-4. **Výzva**: totéž s rozdíly (bez reakce nastane následek hned; úspěch jen odvrátí nebezpečí; vyčerpání jen zmírní).
-5. **Střet dvou účastníků**: aktér a protiaktér, dva hody, vítěz podle pravidel o shodě, poražený popisuje vyčerpání
-   (částečný úspěch vítěze); kontrola tří podmínek protiakce jako nápověda.
-6. **Následky a Výhody**: evidence Výhod a Ohrožení, Jizva z rozhodnutí hráče nebo jako následek (dialog Jizva už je);
-   Jizvy z nepřátelské akce rovnou jako revize deníku.
-7. **Manévry**: seznam (obrana, rozsáhle, přesně, mocně, lstivě) s cenou, platba až při použití, kontrola „nesčítají se“,
-   vliv na Zdroje; popisy jen z balíčku pravidel (bez balíčku název a odkaz do SRD).
-8. **Konflikt (pomůcka vypravěče)**: účastníci (postavy z družiny, bytosti z Bestiáře), iniciativa (podle příběhu nebo hodem
-   bez dovednosti, přístupy, odložení), pořadí a počítadlo kol, Ohrožení a Zdroje účastníků, vyřazení a opuštění boje;
-   uloženo u družiny nebo sezení, shrnutí se zapíše do žurnálu.
-9. **Bytosti v konfliktu**: Sudba a hranice bytostí (charakteristika jako úroveň, Jizvy bytostí jen jako náročnost a součet
-   proti hranici), tlačítka přímo v kartě bytosti z Bestiáře.
-10. **Složitější situace** (hotovo: panel Postup vyhodnocení, iniciativa s přístupy a kolo konfliktu s řazením a stavy, lepší/horší hod v panelu Hod): zkouška více postav nebo cílů, spolupráce, přípravné akce, ukrývání a odhalování, následné akce
-    a akce prostředí, hrstka a houf; nejdřív jen nápověda s odkazem do příručky, potom pomůcky.
-11. **Navazující pomůcky**: výroba a opravy (Suroviny), léčení Jizev, kouzla a nástrahy (cena Zdrojů), kořist a trofeje. Podrobný návrh a otevřené otázky: `PLAN-POMUCKY.md`.
-
-**Hotovo:** kroky 1 až 3 (zkouška s vyčerpáním: volba vlastnosti, cena = Ohrožení nejméně 1, zvýšení Ohrožení, nabídka zjizvení při nedostatku Zdrojů; stav čerpání se sdílí mezi panely Zdroje a Hod; panel Hod na detailu postavy: výběr povolání, 2k6 hozené nebo zadané z fyzických kostek, hod a
-úspěch od 9, počítadlo Ohrožení; `core/character/roll.ts`, `play.ts`). Hotové jsou i kroky 7 (manévry v panelu Hod: přesně = 3 kostky, mocně a lstivě po výhře, platba 1 Zdroje při použití), 8 (Konflikt u družiny: iniciativa, kola, Ohrožení, Výhody, vyřazení, shrnutí do žurnálu; `core/party/conflict.ts`) a 9 (tlačítko „Do konfliktu“ na kartě bytosti: Sudba, hranice a Jizvy bytosti). Hotový je i krok 5 (střet dvou účastníků: aktér / protiaktér, rozhodování shody, vyčerpání poraženého), krok 4 (výzva) a krok 6 (Výhoda jako „žolíkový“ Zdroj, platí se první; Ohrožení +1 při přijetí neúspěchu; konec konfliktu zruší Ohrožení i Výhodu). Zatím chybí následky úspěchu kromě Ohrožení −1 (Výhody jsou krok 6) a zápis do žurnálu.
-
-Pořadí realizace: 1, 2, 3, 4, 6, 5, 7, 8, 9, ostatní podle potřeby. Rozhodnout předem: zda hody žijí jen ve hře (zařízení),
-nebo se zapisují do žurnálu; jak vypadá pomůcka u stolu (jedna obrazovka „Hra“ s postavou, Ohrožením a hodem).
-
-## Rejstřík pojmů: počet odkazů (hotovo)
-
-Odkazy z pojmů (`***pojem***`) se omezují při zobrazení (`src/core/termLinks.ts`, značka `NO_LINK` v `parseInline`),
-v kapitolách i u karet bytostí. Nastavení „Odkazy v textu“ (`src/core/settings.svelte.ts`, uloženo v localStorage):
-jen první výskyt (výchozí) · první a po 5000 znacích textu · všechny · žádné. Pojem vysvětlený v téže kapitole
-se odkazuje jen před místem vysvětlení.
-
-## Mapy a obrázky v balíčku (hotovo)
-
-Obrázky ze SRD (4 ks) se při sestavení balíčku převedou na WebP a vloží do JSONu jako `data:image/webp`
-(`tools/srd/images.mjs`, zdrojové PNG se stahují do `reference/srd/assets/`). Čtečka je zobrazí s možností
-přiblížení (`src/ui/ZoomImage.svelte`). Možné vylepšení: ukládat obrázky z balíčku do IndexedDB jako soubory,
-pokud by velikost JSONu v paměti vadila.
-
-## Import ze SRD přímo v zařízení uživatele (bookmarklet, první verze hotova)
-
-Web SRD nemá hlavičky CORS (a nevysílá ani CSP, ověřeno), proto převod běží jako **bookmarklet** na stránce
-`drd2srd.d20.cz`: záložka načte skript `srd-import.js` z Pages, ten stáhne stránky (stejná doména), převede je a nabídne
-dva soubory `.json` ke stažení (pravidla, bestiář). Text se nehostuje, skript obsahuje jen kód převodníku.
-
-- `tools/srd/pipeline.mjs`: čisté funkce nad řetězci HTML (společné pro Node i prohlížeč); `build.mjs` a
-  `build-bestiar.mjs` jsou jen tenké obálky (výstup ověřen: shodný kontrolní součet s původním).
-- `tools/srd/browser/entry.mjs`: stažení stránek, obrázky přes canvas na WebP, okno s průběhem a odkazy ke stažení;
-  `vite.srd.config.ts` ho sestaví do `public/srd-import.js` (gitignorováno, běží před `dev` a `build`).
-- Návod a odkaz záložky: Knihovna → Převod SRD z webu (`SrdImport.svelte`).
-- **Ověřit po nasazení:** celý běh na živém SRD (z localhostu ho prohlížeč zablokuje), počet povolání (15), bytostí (117),
-  obrázků (4), a že balíčky z bookmarkletu jsou shodné s Node verzí.
-- Mobil: iOS Safari a Firefox pro Android bookmarklety zvládají, Chrome pro Android ne spolehlivě (v návodu je
-  odkaz ke zkopírování). Alternativa: balíček sestavit na počítači a soubor přenést.
-
-## Historie, návrhy a sdílení postav
-
-Hotovo (lokálně): deník změn je seskupený do **revizí** (`src/core/character/revisions.ts`), historie ukazuje
-„před → po“ a umí **Vrátit tuto změnu** (přidá novou revizi, nic se nemaže). Úprava postavy probíhá na
-**návrhu** uloženém v zařízení (`drafts.ts`), do deníku se zapíše až **Zveřejnit** jako jedna revize s povinným
-popisem a podpisem (nastavení `author`).
-
-Další krok: **sdílení revizí** s vypravěčem. Rozhodnutí: autoritou je deník vypravěče; hráč posílá návrh změny
-(revizi), vypravěč vidí rozdíl a **Přijme / Zamítne**. U hráče by revize byla ve stavu „čeká na schválení“, dokud
-nepřijde potvrzení (nebo import vypravěčova deníku). Revize obsahuje jen změněné cesty a nové hodnoty
-(odhad 100–500 B), stará hodnota se neposílá a odvodí se z deníku příjemce; je potřeba odkaz na revizi, na kterou
-navazuje (detekce rozdílného základu, slučování nepřekrývajících se změn).
-
-Způsoby přenosu (koncept, pořadí se ještě určí):
-
-- **Kód / soubor / QR.** Stlačený JSON (deflate + base64url). QR se spolehlivě čte do cca 1–1,5 kB, větší
-  data na více QR nebo souborem. Funguje všude a offline.
-- **NFC.** Web NFC (`NDEFReader`) je jen v Chrome na Androidu, iOS ho pro weby nemá. Vhodné pro krátké revize.
-- **Bluetooth.** Web Bluetooth neumí běžný přenos souborů mezi telefony, takže jen jako výjimka. Spíše přes
-  systémové sdílení.
-- **Wi-Fi / lokální síť.** Bez serveru jen přes WebRTC (výměna signalizace kódem/QR, pak přímé spojení v téže
-  Wi-Fi). Složitější, ale umožní větší data a oboustrannou synchronizaci.
-- **AirDrop (iOS/macOS) a Quick Share / Nearby Share (Android).** Přes systémové sdílení: Web Share API
-  (`navigator.share` se souborem `.json`) zobrazí systémový dialog, kde je AirDrop, resp. Quick Share. Nejpohodlnější
-  pro uživatele a téměř bez práce navíc; příjemce soubor otevře v aplikaci (zaregistrovat typ souboru /
-  `file_handlers` v manifestu PWA, na iOS import přes tlačítko).
-- Příjem souboru z jiných aplikací: `share_target` v manifestu PWA (Android).
-
-### Zhuštění historie pro QR
-
-Když se revize s historií nevejdou do QR (cíl cca 1,2 kB po stlačení, rozumný limit 1–1,5 kB), starší revize
-od začátku se při **exportu** sloučí do jedné výchozí revize „stav k revizi N“ (`eventsFor(prázdná, stav v čase N)`)
-a navazují na ni novější revize. N = nejmenší, při kterém se kód vejde.
-
-- Jen pro přenos; místní deník zůstává celý (nevratné zhuštění přímo v deníku jen jako zvláštní volba).
-- Výchozí revize nese otisk (hash) stavu v čase N: příjemce s plnou historií porovná otisk se svým stavem;
-  při shodě přijme navazující revize, při neshodě upozorní na rozdílný základ. Příjemce bez historie vezme
-  výchozí revizi jako počátek.
-- Před zhuštěním lze zkusit vynechat velké texty (příběh, poznámky) nebo rozdělit data na více QR / soubor.
-- Změřit skutečnou velikost typických postav a revizí, než se zvolí limit.
-
-## Vestavěný přehled a kontrola postavy (hotovo)
-
-`src/data/skeleton.json` (generuje `tools/srd/build-skeleton.mjs`) obsahuje jen názvy, ID, vlastnosti a čísla
-pravidel tvorby; aplikace s ním funguje bez balíčků a nainstalovaný balíček jeho položky přepisuje podle ID.
-`src/core/character/check.ts` kontroluje postavu (neznámá ID, počet schopností na úrovni, rasové schopnosti,
-kultura, rozsah úrovně, duplicity, hotovost); varuje, ale neblokuje. Zobrazuje se na detailu postavy a
-v editoru. Možné rozšíření: kontrola stavu po každé příchozí revizi při schvalování vypravěčem.
-Výbava bez balíčku: viz větev `vybava-bez-balicku` nahoře.
-
-## Sdílení revizí (první verze hotovo)
-
-Hráč: Postava → **Sdílet…** (`SharePanel`): kód `DRD2:` (stlačený JSON), soubor nebo systémové sdílení; posílají se
-změny od posledního odeslání, nebo celá postava (nová postava asi 450 znaků, revize s několika změnami asi 400).
-Vypravěč: Postavy → **Import…** (`ImportPanel`): náhled „před → po“ po revizích, detekce navázání / rozdílného
-stavu / neznámého základu a konfliktů, **Přijmout** (zaškrtnuté) nebo zamítnout, volitelně kód **odpovědi**
-hráči (přijato / zamítnuto + poznámka). Hráč odpověď naimportuje: revize dostanou štítek (odesláno / přijato /
-zamítnuto) a zamítnuté změny lze jedním tlačítkem vrátit. Jádro: `core/character/share.ts` (balíček, očištění,
-analýza), `reviews.ts` (stav revizí). Přijaté revize se do deníku vypravěče přidají beze změny ID.
-
-Zbývá: ruční slučování konfliktů, Wi-Fi/WebRTC, `file_handlers` (jen počítač), nakonec NFC. (Kontrola každé příchozí revize v importu je hotová.) (QR, zhuštění historie a `share_target` jsou hotové.)
-
-## QR a kontrola při importu (hotovo)
-
-Kód `DRD2:` se zobrazí jako QR (`qrcode-generator`, `src/ui/QrView.svelte`); delší kód se rozdělí na díly
-`DRD2Q:id.i.n.…` (700 znaků na QR), která se střídají a čtečka je složí (`core/character/qr.ts`). Čtečka
-kamerou (`jsqr`, `src/ui/QrScanner.svelte`) je v Importu; potřebuje https nebo localhost a povolení kamery.
-Ověřeno v prohlížeči na vykresleném QR (4 díly, 2,7 kB kódu se složily shodně); čtení skutečnou kamerou a
-na telefonu zatím nezkoušeno. Import ukazuje kontrolu postavy po přijetí zaškrtnutých revizí a označuje nové
-problémy proti současnému stavu.
-
-Čtení kamerou je ověřeno na telefonu (díly 500 znaků). Zbývá: NFC, Wi-Fi/WebRTC, `file_handlers`.
-
-## Zhuštění historie pro QR (hotovo)
-
-Na obrazovce Sdílet lze u QR zapnout „Zhustit starší historii, aby se vešla do 1/2/3 QR“ (`core/character/compact.ts`):
-starší revize se sloučí do výchozí revize „Zhuštěná historie“ a novější zůstanou; míra zhuštění se hledá půlením,
-aby se zachovalo co nejvíc historie. Jen pro QR (kód, soubor a sdílení posílají celou historii). Balíček nese
-`compact: { upTo, hash }`; příjemce s plnou historií ověří otisk (`stateHash`) a starší revize vynechá, příjemce
-bez deníku dostane výchozí stav jako první revizi, při neshodě nebo chybějícím základu je upozorněn.
-Ověřeno: postava se 14 revizemi 3872 znaků → 689 znaků (1 QR), QR přečteno zpět a import dal shodný stav.
-Když se nevejde ani zhuštěný stav, vynechají se poznámky, pak i příběh hrdiny (`omitted` v balíčku, příjemce
-je upozorněn). Ověřeno: 5595 znaků (8 QR) → 1 QR.
-
-## Nápad: přenos dat zvukem (retro)
-
-Přenos kódu mezi telefony zvukem, jako se kdysi posílala data z kazeťáku do 8bitu nebo APRS / packet radio mezi
-vysílačkami: jedno zařízení poslouchá (mikrofon), druhé kód „přehraje nahlas“. Modulace přes Web Audio
-(FSK/AFSK, případně OFDM) pro přenos desítek až stovek bajtů za pár sekund; rámce s kontrolním součtem
-(CRC), číslováním a opravou chyb; **handshake** (volání → odpověď o připravenosti) a **potvrzení o přijetí**
-(ACK, případně žádost o opakování poškozených rámců) hlasem druhého zařízení. Bez serveru a bez kamery,
-funguje mezi blízkými zařízeními i přes vysílačku. Zábavné i užitečné, když selže kamera nebo světlo. Rizika:
-šum v místnosti, mikrofon vyžaduje povolení a https, rozdíly zařízení; začít jednoduchým FSK s jedním
-kanálem a opakováním, pak teprve OFDM. Využije stejný balíček a kód `DRD2:` (stlačený, případně zhuštěný).
-
-## Úprava postavy podle pravidel (hotovo)
-
-- **Postup** (`core/character/advance.ts`, `Advance.svelte`): za 12 bodů zkušeností buď úroveň povolání + schopnost
-  povolání, nebo zdatnost +1 + schopnost rasy / ovládaného povolání; nejvyšší úroveň 5, pokročilé povolání
-  vyžaduje 6 úrovní ve dvou základních (po jedné z každého; `requires` odvozené z SRD), volitelné zapomínání.
-  Výsledek jde do návrhu úpravy s předvyplněným popisem; zveřejní se v editoru jako revize.
-- **Zkušenosti** (`xp`, nespotřebované body) a **Jizvy** (`scars`, snižují zdatnost) jsou v deníku (revize,
-  sdílení, kontrola postavy); **Zdroje** (čerpání Tělo/Duše/Vliv) jen v zařízení (`play.ts`), ne v historii.
-- Kontrola postavy počítá se zlepšením zdatnosti (schopnost navíc) a hlídá pokročilá povolání a jizvy.
-- Popis změny se ukládá do návrhu. Nápověda u položek bez textu odkazuje na SRD (`srd` v kostře).
-
-Hojení jizev je hotovo (Zmírnit o 1 / Zahojeno na detailu postavy, revize v deníku; `core/character/healing.ts`; obnovu Zdrojů jizvy už omezují).
-Zbývá: Suroviny, povolání z Her mocných,
-přidělení XP za sezení pro celou družinu (až s družinami).
-
-### QR: velikost dílů (z testu na telefonu)
-
-Samsung A52s nenaskenoval díl o 700 znacích (QR s 89 moduly, asi 3,5 px na modul na displeji). Díly jsou nově
-nejvýš 300 znaků, stejně velké, s opravou chyb M (65 modulů, asi 4,7 px) a zobrazené až na 30 rem; střídají se po
-2 s. Počty QR pro zhuštění: 1 až 4 (výchozí 2). Další ladění podle zkušeností: menší díly (200 znaků), větší
-kontrast / celá obrazovka, pomalejší střídání.
-
-## Družiny (první verze hotovo)
-
-Modul **Družina** (`src/modules/parties`, `core/party`): družina má členy (postava v zařízení, nebo jen jméno hráče),
-poznámky a **žurnál dobrodružství** (zápisy s datem a autorem, úpravy, mazání). **Sezení**: přítomní, odměny
-(nejvýš 2 body na hráče, odměnových bodů nejvýš hráči + 1) a shrnutí; za účast 4 body, sečte se a zapíše do žurnálu;
-členům s postavou v zařízení se body rovnou připíšou jako revize deníku („Zkušenosti za sezení…“), ostatním se
-označí „předat hráči“. Uloženo v IndexedDB (`parties`, verze databáze 4).
-
-Sdílení družiny, role Průvodce / hráč a přehled družiny jsou hotové (viz níže).
-Hotovo: rychlost postupu družiny (3 / 4 / 6 bodů za účast) a tajné odměny (hlasování, zapisují se jen součty).
-
-### QR jako odkaz do aplikace (z testu na telefonu)
-
-Systémová čtečka QR (Samsung) text `DRD2:…` načetla, ale nemohla ho předat aplikaci. QR proto obsahuje **odkaz**
-`<adresa aplikace>#/postavy/import/<kód nebo díl>` (volba „QR obsahuje odkaz do aplikace“, výchozí zapnuto):
-čtečka fotoaparátu ho otevře přímo v aplikaci a Import kód převezme. U kódů z více QR se díly otevírané postupně
-skládají (uložené v zařízení 15 minut, „Zahodit naskenované díly“). Čtečka v aplikaci rozumí odkazům i holému
-kódu. Díly mají nejvýš 500 znaků kódu (s odkazem asi 556 znaků v QR). Nápad: QR na celou obrazovku.
-
-## Aktualizace a instalace PWA (hotovo, ověřit na telefonu)
-
-- **Aktualizace** (`core/pwa.svelte.ts`, `ui/AppBanners.svelte`): service worker stáhne novou verzi na pozadí a
-  nad navigací se nabídne „Obnovit“ (rozepsané návrhy jsou uložené v zařízení). Kontrola při spuštění, po návratu do
-  aplikace (nejvýš co 10 min) a každou hodinu; ruční tlačítko je v Knihovna → Aplikace (verze, datum sestavení).
-- **Instalace**: tlačítko „Nainstalovat“ (Chrome/Edge: událost `beforeinstallprompt`) v pruhu a v Knihovna → Aplikace;
-  na iOS návod Sdílet → Přidat na plochu; ikony PNG (192, 512, maskable, apple-touch) v `public/icons`
-  (`tools/make-icons.mjs`), manifest s `purpose: maskable`.
-- Stav: tlačítka a pruhy ověřeny simulací událostí; samotný service worker se v prohlížeči vývojového panelu nedá
-  zaregistrovat (chyba prostředí), takže celý cyklus nové verze je potřeba zkusit na telefonu po nasazení
-  (nasadit verzi A, otevřít, nasadit verzi B, otevřít znovu: má se objevit pruh „Je dostupná nová verze“).
-  Pozor: první nasazení s tímto kódem se do telefonů dostane ještě starým mechanismem (autoUpdate), až další
-  verze už přes pruh.
-
-## Sdílení družiny a žurnálu (první verze hotovo)
-
-Pravda je u **Průvodce** (`core/party/share.ts`, `PartyShare.svelte`, Import v `ImportPanel`): Průvodce posílá družinu
-(členy, poznámky, schválené zápisy a zkušenosti ze sezení; jen nové od posledního odeslání, nebo celou) a hráč si
-ji uloží jako **kopii** (role `hrac`). Hráč navrhuje zápisy, které Průvodce **přijme** do žurnálu, nebo **zamítne**
-(zamítnutí se hráčům vrátí s další družinou). Hráč nemění schválené zápisy ani členy; „připsáno“ u zkušeností je
-vždy místní. Přenos jako u postav: kód, soubor, QR (s odkazem do aplikace), Web Share. Ověřeno celým cyklem
-Průvodce → hráč → návrhy → schválení / zamítnutí → hráč.
-
-Zbývá: sdílení členů s postavami (ID postav z jiných zařízení) a značka „změněno Průvodcem“ u zápisů. Více Průvodců se nedělá (uživatel je Průvodcem i hráčem). Přehled družiny je hotový.
-
-### QR bez obrázků (hotovo)
-
-Ukládání QR jako PNG se zrušilo (zbytné): kód se ukládá a posílá jako text nebo soubor (AirDrop, Quick Share). Díl QR má
-nově až 500 znaků kódu (s odkazem asi 556); zkusit na A52s, případně vrátit menší. Zbývá QR na celou obrazovku.
-
-
-### Příjem sdíleného souboru (první verze hotovo)
-
-Manifest má `share_target` (POST, text/plain): po instalaci PWA se aplikace nabídne v nabídce Sdílet (soubor `.drd2.txt`
-nebo text kódu). `public/share-target.js` (importovaný do service workeru) uloží kód do cache `drd2-shared` a přesměruje na
-`#/postavy/import/sdileno`, kde ho Import načte (`core/sharedInbox.ts`). Ověřit na telefonu (jen u nainstalované PWA).
-`file_handlers` se nedělají: fungují jen na počítači a soubor je `.drd2.txt`.
-
-## Nápad: skiny s obrázkovou mapou ovládacích prvků (později)
-
-Skin by definoval ovládací prvky souřadnicemi na jednom velkém obrázku: **tlačítko** (klikací oblast), **popis** (label) a
-**výstup** (textové pole), případně pevné rozvržení. Dvě varianty: pixelartový (ideová inspirace: Truhlice) se škálováním podle poměru stran,
-nebo v celých násobcích s posouváním viditelné oblasti, a klasický plovoucí. Předpoklad: nejdřív uklidit stránky a navigaci
-(pět záložek: Postava, Družina, Příručka, Bestiář, Více), aby definice oblastí odpovídala hotovému rozvržení.
-
-## Nápady z procházení stránek
-
-- Generátor jmen: viz větev `generator-jmen` nahoře.
-- **Dovednosti bez balíčku jako odkaz do SRD** na konkrétní dovednost (v kostře je `srd` jen u povolání a schopností); dát
-  až po odpovědi na dotaz o textech pravidel a nepřeplácat stránku odkazy.
+### Další práce
+
+- **Výpravy (další milník).** Sekce pro vypravěče: podklady pro tažení, výpravy a dobrodružství, vazba na družiny a žurnál,
+  ukázkové dobrodružství a skupiny bytostí do ukázkových dat. Počká na reakce testerů a zkoušku 0.4.x na telefonu.
+- **Kořist (11e).** Patří k Výpravám: vypravěč si kořist předdefinuje, při odhalení upřesní, zafixuje a rozdělí postavám
+  (Peníze, Suroviny s druhem, výbava). Hráč zvláštní panel nepotřebuje. Trofeje jen název a poznámka.
+- **Před první beta verzí.** Pole `schema` u uložených dat, řetězec `migrate`, celkový export a import `.json` (musí počítat
+  s ilustracemi postav) a `FORMAT.md` (zatím neexistuje). Zásady formátu: `PLAN-POMUCKY.md`, část Formát dat.
+- **Přenosy (pořadí).** Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC. `file_handlers` se nedělají (jen počítač).
+  Kód, soubor, QR (s odkazem do aplikace, zhuštění historie), zvuk a příjem sdíleného souboru jsou hotové.
+- **Sdílení vypravěč → družina.** Průvodce posílá po sezení opakovaně od zvoleného bodu žurnálu (hotovo), dnes souborem
+  zprávou či e-mailem. Hromadné odeslání všem jednou akcí (multi-cast) až s WebRTC. Zbývá sdílení členů s postavami
+  (ID postav z jiných zařízení). Více Průvodců se nedělá.
+- **Ilustrace postav (rozhodnutí).** Jen v souboru se sdílením, v celkovém exportu a později přes WebRTC. Do kódu, QR, zvuku
+  a jiných malých přenosů nikdy.
+- **Audiogram.** DSP (zúžení pásma, LDPC) a další zkoušky čekají na testery a zařízení; zkouška zvuku mezi dvěma zařízeními
+  (0.4.6) je neověřená. Viz `AUDIOGRAM.md`.
+- **Postava.** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
+- **Hry mocných.** Jen pro vlastní interní účely (lokální balíček, větev `hry-mocnych`), do veřejných balíčků až po zařazení
+  do SRD. Nechat až po všech milnících.
+- **Balíčky ze SRD, obnova.** Data udržujeme sami; nový balíček jen při změně SRD (kontrola jednou za měsíc až rok) nebo
+  formátu balíčků. Postup: build, `tools/srd/publish.mjs`, commit, nasazení `main`; při změně formátu zvýšit `PACK_BUILD`
+  a `EXPECTED_BUILD`. Svolení Altaru: `content-packs/srd/SVOLENI.md` (Her mocných a Hotfixu se netýká).
+- **K ověření na telefonu.** Dialogy (léčení, výroba, lektvary, nástrahy, kouzla), Hotovost, Grimoár, ilustrace, značka
+  „změnil Průvodce“, volba „moje / jejich“ při importu, aktualizace PWA (nasadit A, otevřít, nasadit B: má přijít pruh
+  „Je dostupná nová verze“), příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
+  poli mezi zařízeními.
+- **K rozhodnutí.** Organizace balíčků, kapitol a bytostí (přehled „kapitoly, druhy, bytosti“, seskupení kapitol v Příručce
+  podle knihy); ikonky prostředí v Bestiáři.
+- **Drobnosti.** Jména testerů do O aplikace (až budou). Úklid: zbytky bookmarkletu (`tools/srd/browser`,
+  `vite.srd.config.ts`, `globIgnores` ve `vite.config.ts`), UI už je pryč.
+- **Nápověda napříč aplikací (úplně na konec, po všech drobnostech).** Dnes je „?“ jen u léčení Jizvy (karta Postup
+  s dovednostmi z balíčku a odkazem do příručky nebo SRD; `CardHelp.svelte`, `guide.ts`). Zobecnit: malá plovoucí
+  vysvětlení (hint, tooltip) pravidel a řešení všude, kde dává smysl (výroba, nástrahy, kouzla, Grimoár, Hotovost, Suroviny,
+  Zdroje, Hod …), s odkazem do příručky nebo SRD, místy i návod k použití aplikace. Patří sem i názvy dovedností z balíčku
+  a odkaz do SRD v dialozích výroby a nástrah a odkaz na konkrétní dovednost v SRD (v kostře je `srd` jen u povolání
+  a schopností). K návrhu: jednotná komponenta, texty na jednom místě, bez balíčku odkaz do SRD.
+- **Nápad: skiny s obrázkovou mapou ovládacích prvků (později).** Prvky (tlačítko, popis, výstup) definované souřadnicemi
+  na obrázku; pixelartová varianta (inspirace Truhlice) nebo klasická. Předpoklad: uklidit stránky a navigaci.
+
+### Rozpracováno jinde (jiné větve a worktrees, nesahat)
+
+- Větev `kartoteky` (worktree `C:\gitRepos\pribehy-drd2-kartoteky`): rozpracováno, obsah neznám.
+- Větve `generator-jmen`, `vybava-bez-balicku` a `radiogram` jsou už v `main`; `hry-mocnych` má jen interní převodní skripty.
+
+## Hotovo (stručně)
+
+- ✅ **Pomůcky (krok 11 plánu hodů):** Suroviny po druzích (0.3.0), léčení Jizvy (0.3.1), Hotovost (0.3.2), výroba a opravy
+  (0.3.3), lektvary (0.3.4), nástrahy (0.3.5), kouzla a Grimoár (0.4.0), lektvary, nástrahy a výrobky jako předpisy (0.4.2),
+  název a popis předpisů a ukázkové předpisy (0.4.5). Panel Hod se při výrobě, nástrahách a kouzlech předvyplní. Plán a rozhodnutí: `PLAN-POMUCKY.md`.
+- ✅ **Hody, střety a konflikt (kroky 1 až 10):** panel Hod (2k6, fyzické kostky, vyčerpání, Ohrožení, Výhody, manévry,
+  zkouška, výzva, střet), konflikt u družiny (iniciativa, kola, vyřazení, shrnutí do žurnálu), bytosti v konfliktu, panel
+  Postup vyhodnocení. Zdroje ze sebezasazené Jizvy. Chybí jen následky úspěchu kromě Ohrožení −1 a zápis hodů do žurnálu.
+  Jádro: `core/character/roll.ts`, `play.ts`, `core/party/conflict.ts`.
+- ✅ **Sdílení postav:** deník revizí, návrh a Zveřejnit, kód / soubor / QR (díly po 500 znacích, odkaz do aplikace,
+  čtečka kamerou ověřena na telefonu), zhuštění historie pro QR, `share_target`, odpověď vypravěče s vrácením zamítnutých
+  změn, kontrola postavy při importu. Ruční slučování konfliktů při importu (volba „příchozí / ponechat moje“, 0.4.7).
+- ✅ **Družiny:** členové, žurnál, sezení s rozdělením zkušeností, rychlost postupu, tajné odměny, role Průvodce / hráč,
+  sdílení od zvoleného zápisu, návrhy hráčů, značka „změnil Průvodce“ (0.4.7). Slučování souběžných úprav zápisu odpadá
+  (schválené zápisy mění jen Průvodce).
+- ✅ **Úprava postavy podle pravidel:** Postup (úroveň, zdatnost, schopnosti), zkušenosti, Jizvy a jejich hojení, kontrola
+  postavy bez balíčku (`skeleton.json`, `check.ts`), ilustrace postav v zařízení.
+- ✅ **Audiogram:** přenos zvukem (QPSK 1200, BPSK 800, další režimy), společná zkouška zvuku (0.4.6).
+- ✅ **Obsah:** balíčky se stahují z webu aplikace, mapy a obrázky v balíčku (WebP, přiblížení), rejstřík pojmů, omezení
+  počtu odkazů v textu (nastavení „Odkazy v textu“ ve Více), O aplikaci s poděkováním a licencemi (0.4.7).
+- ✅ **PWA:** aktualizace s pruhem „Obnovit“, instalace (Android, iOS návod), ikony.
+- ✅ **Převod SRD v zařízení (bookmarklet):** odstraněn v 0.4.5, balíčky se stahují hotové.
+- ✅ **Tvorba postavy:** výbava bez balíčku, generátor jmen.

@@ -3,8 +3,9 @@
 Offline-first webová aplikace (PWA) pro vypravěče i hráče Dračího doupěte 2: tvorba a deník postav se
 záznamem změn, bestiář a pravidla po ruce. Bez serveru, data zůstávají ve vašem zařízení. Mobile-first, česky.
 
-Stav: **rané stadium vývoje**. V plánu jsou ještě družiny, sdílený žurnál dobrodružství a sdílení deníků
-kódem nebo QR.
+Stav: **před první beta verzí** (0.4.x). Hotové jsou postavy s deníkem revizí, družiny a sdílený žurnál, bestiář,
+pravidla po ruce, Grimoár a pomůcky (výroba, léčení, kouzla, nástrahy) a sdílení kódem, QR, souborem i zvukem.
+Otevřené úkoly jsou v `TODO.md`.
 
 ## Zásady
 
