@@ -6,6 +6,31 @@ export interface Book {
   id: string
   name: string
   chapters: Chapter[]
+  /** kapitoly po částech knihy (viz `groupsOf`) */
+  groups: ChapterGroup[]
+}
+
+/** Skupina kapitol knihy (část); `name` chybí u kapitol bez části. */
+export interface ChapterGroup {
+  id: string
+  name?: string
+  chapters: Chapter[]
+}
+
+/**
+ * Kapitoly knihy po částech podle `manifest.parts` (pořadí částí z balíčku, kapitoly v části podle ID). Kapitoly
+ * bez části nebo s neznámou částí jdou na konec bez nadpisu. Bez částí je jedna skupina bez nadpisu.
+ */
+export function groupsOf(pack: ContentPack): ChapterGroup[] {
+  const sorted = [...(pack.chapters ?? [])].sort((a, b) => a.id.localeCompare(b.id))
+  const parts = pack.manifest.parts ?? []
+  const groups: ChapterGroup[] = parts
+    .map((p) => ({ id: p.id, name: p.name, chapters: sorted.filter((c) => c.part === p.id) }))
+    .filter((g) => g.chapters.length)
+  const known = new Set(parts.map((p) => p.id))
+  const rest = sorted.filter((c) => !c.part || !known.has(c.part))
+  if (rest.length) groups.push({ id: '', chapters: rest })
+  return groups
 }
 
 const rank = (p: ContentPack) => p.manifest.order ?? (p.professions?.length ? 10 : 50)
@@ -18,6 +43,7 @@ export function booksOf(packs: ContentPack[]): Book[] {
       id: p.manifest.id,
       name: p.manifest.name,
       chapters: [...(p.chapters ?? [])].sort((a, b) => a.id.localeCompare(b.id)),
+      groups: groupsOf(p),
     }))
 }
 

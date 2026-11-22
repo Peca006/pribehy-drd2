@@ -4,11 +4,29 @@
   "id": "drd2-pravidla-2",
   "name": "Dračí doupě 2 – Pravidla (SRD)",
   "version": "2.0.0",
-  "build": 2,
+  "build": 3,
   "source": {
    "book": "Dračí doupě 2: Pravidla (SRD, drd2srd.d20.cz)",
    "edition": "2"
-  }
+  },
+  "parts": [
+   {
+    "id": "uvod",
+    "name": "Úvod do hry"
+   },
+   {
+    "id": "tvorba",
+    "name": "Tvorba postav"
+   },
+   {
+    "id": "hrani",
+    "name": "Hraní hry"
+   },
+   {
+    "id": "vypraveni",
+    "name": "Vyprávění příběhů"
+   }
+  ]
  },
  "chapters": [
   {
@@ -111,7 +129,8 @@
       }
      ]
     }
-   ]
+   ],
+   "part": "uvod"
   },
   {
    "id": "12-priklad-hry",
@@ -649,7 +668,8 @@
      "type": "p",
      "text": "DRAČÍ DOUPĚ se otevírá. Staňte se hrdiny. ***Je čas pozvednout meč!***"
     }
-   ]
+   ],
+   "part": "uvod"
   },
   {
    "id": "21-dobrodruzi",
@@ -695,7 +715,8 @@
      "type": "p",
      "text": "Většina dobrodruhů přesto hledá domov, nebo alespoň útočiště na zimu. Když jsou horské průsmyky neprůchodné a cesty zapadají sněhem, cestuje se velmi těžko. Tuláci a dobrodruhové se většinou stáhnou do nějakého úkrytu. Může jít o opuštěný hostinec, starou polorozpadlou tvrz v lesích, nebo jim může útočiště poskytnout výměnou za práci nějaký sedlák na svém statku. Mohou se také uchýlit k příbuzným nebo dobrým přátelům, mají-li nějaké."
     }
-   ]
+   ],
+   "part": "tvorba"
   },
   {
    "id": "22-ukazkove-postavy",
@@ -1038,7 +1059,8 @@
      "type": "p",
      "text": "A nyní se již můžeme podívat, jak si podobnou postavu, jako je Hrun, Borri nebo Žira můžete vytvořit sami podle svých představ."
     }
-   ]
+   ],
+   "part": "tvorba"
   },
   {
    "id": "23-tvorba-hrdiny",
@@ -2042,7 +2064,8 @@
      "type": "p",
      "text": "Toto je místo na veškeré poznámky z aktuální výpravy i minulých dobrodružství."
     }
-   ]
+   ],
+   "part": "tvorba"
   },
   {
    "id": "24-rasy",
@@ -2886,7 +2909,8 @@
      "type": "p",
      "text": "Pamatujte si, že právě pročítaná kniha je knihou pravidel, která můžete používat při odehrávání příběhů v mnoha různých světech, ať už si je vypůjčíte z knížek či filmů nebo si vymyslíte vlastní. Proto se nenechte popisy a podobou ras, které jsme vám představili, svazovat. Ve vaší hře vždycky budou jen ty rasy, které tam chcete, a budou se chovat tak, jak se to líbí vám. Texty uvedené u jednotlivých ras proto berte především jako inspiraci, jaké různé postavy se mohou vašimi světy potulovat. Když se vám nějaká z popsaných kultur nebo i celá rasa nebude líbit, klidně si ji upravte podle svého nebo rovnou škrtněte. A naopak – pokud toužíte po nějaké, která vám zde chybí, nebojte se si ji sami vymyslet a přidělte jí třeba některé ze zde popsaných zvláštních schopností ostatních ras."
     }
-   ]
+   ],
+   "part": "tvorba"
   },
   {
    "id": "25-zakladni-povolani",
@@ -4612,7 +4636,8 @@
      "type": "p",
      "text": "S touto obsahovou pravomocí může hráč stanovit, že určitá bytost je členem stejného okultního, náboženského či magického spolku jako jeho postava. (***Aktivace*** 1 ***Vliv***)"
     }
-   ]
+   ],
+   "part": "tvorba"
   },
   {
    "id": "26-pokrocila-povolani",
@@ -8261,7 +8286,8 @@
      "type": "p",
      "text": "Hráč může popsat, proč *rozumný* tvor, který je pomocníkem jeho hrdiny, má obsah své charakteristiky rozšířen o jednu magickou dovednost, nebo má o jednu zvláštní schopnost magických povolání více, než je pro obdobné bytosti obvyklé."
     }
-   ]
+   ],
+   "part": "tvorba"
   },
   {
    "id": "31-zakladni-pravidla",
@@ -10644,7 +10670,8 @@
      "type": "p",
      "text": "Obecně lze tedy říci, že Rychlá hra nedává během konfliktů tolik prostoru k taktizování v rámci systému a neodlišuje od sebe příliš postavy po stránce pravidel, ale je snadná na naučení i provedení a může vám přinést spoustu zábavy."
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "32-slozitejsi-situace",
@@ -11717,7 +11744,8 @@
      "type": "p",
      "text": "Při hraní se nesnažte využívat tohoto pravidla pro ospravedlnění protiakce na libovolnou akci protivníka. To, že váš společník dostal ošklivou ránu od skřeta, sice zhorší vaše celkové šance v konfliktu, ale vás to bezprostředně neohrožuje."
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "33-vybaveni",
@@ -13163,7 +13191,8 @@
      "type": "p",
      "text": "Postava hrající na tuto flétnu dokáže s pomocí *Umění* (*kejklíř*) očarovat libovolný provaz, takže se začne chovat jako omámený had a může sám vyšplhat na zeď, uškrtit nepřítele nebo naopak rozvázat uzly na sobě."
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "34-pomocnici-a-site",
@@ -13659,7 +13688,8 @@
      "type": "p",
      "text": "**Sítě kontaktů jsou zvláštním druhem pomocníků. Popisujeme je pomocí charakteristiky, zvláštní schopnosti,** ***Pouta*** **a** ***Platby*** **(nemají tedy hranice ani *Sudbu*). Z hlediska pravidel jednají jako samostatná postava ovládaná hráčem, v příběhu však vždy vystupují jako jeden celek plnící zadaný úkol.**"
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "35-pouzivani-dovednosti",
@@ -14884,7 +14914,8 @@
      "type": "p",
      "text": "Kromě stávajících dovedností a zvláštních schopností však postava může získat dovednosti a zvláštní schopnosti nové, vyplývající z podoby proměněného těla, případně může začít využívat přirozených zbraní a zbrojí. Takovýmto způsobem může získat toliko dovednosti a zvláštní schopnosti spadající pod ***Tělo***. V případě bytostí to znamená, že o získané dovednosti rozšíří svou charakteristiku. Hrdinové si o danou dovednost rozšíří obsah povolání, díky kterému se proměnili -- například *šaman* proměněný v medvěda si bude při boji s pomocí medvědího těla počítat v hodu svou úroveň *šamana*. Pokud takovou dovednost neovládají (například protože je proměnil někdo jiný), nebudou si v rámci ***hodu*** přičítat nic."
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "36-kouzla-nastrahy-leceni",
@@ -18651,7 +18682,8 @@
      "type": "p",
      "text": "Ty nejzávažnější ***Jizvy***, které už hraničí s vyřazením, můžete výjimečně řešit pomocí pravidel pro opakovaně spouštěnou nástrahu. Pokud tedy někdo velmi rychle neošetří zraněnému silné krvácení nebo neuklidní postavu podléhající návalům nezvladatelné hrůzy či paniky, může takto postižený dobrodruh podstupovat opakovaně ***výzvu***, přičemž při neúspěchu se jeho ***Jizva*** pokaždé o stupeň zhorší."
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "37-zvlastni-schopnosti",
@@ -18917,7 +18949,8 @@
       }
      ]
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "38-zkusenosti-a-zlepsovani-postavy",
@@ -19103,7 +19136,8 @@
      "type": "p",
      "text": "**Žádné povolání nemůže mít vyšší úroveň než 5. Aby se postava naučila první úroveň pokročilého povolání, musí mít v součtu 6 úrovní v základních povoláních, ze kterých toto pokročilé povolání vychází.**"
     }
-   ]
+   ],
+   "part": "hrani"
   },
   {
    "id": "41-priprava-a-vedeni-hry",
@@ -21331,7 +21365,8 @@
      "type": "p",
      "text": "Důvodem je mimo jiné to, že jádrem DRAČÍHO DOUPĚTE je hra o ***Zdroje*** a o úspěchu či neúspěchu vašich ***výprav*** bude rozhodovat především to, jak si hrdinové povedou ve vyhodnocování napříč ***výpravou*** souhrnně a jak se budou rozhodovat, zda přijmou či nepřijmou dílčí neúspěchy. To v celkovém počtu hodů rozdíly mezi hodnotami obtížností stírá."
     }
-   ]
+   ],
+   "part": "vypraveni"
   },
   {
    "id": "42-inspirace-pro-dobrodruzstvi",
@@ -22669,7 +22704,8 @@
       }
      ]
     }
-   ]
+   ],
+   "part": "vypraveni"
   },
   {
    "id": "43-bestiar",
@@ -27274,7 +27310,8 @@
       }
      ]
     }
-   ]
+   ],
+   "part": "vypraveni"
   },
   {
    "id": "44-navrat-do-bileho-hradu",
@@ -28345,7 +28382,8 @@
      "type": "p",
      "text": "Využijte přidělování těchto bodů zkušenosti k tomu, abyste si připomněli nejlepší a nejzábavnější okamžiky příběhu, zajímavé akce jednotlivých hrdinů i dobré nápady hráčů při řešení problematických situací. Průvodce by se měl snažit získat od hráčů informace o tom, co se jim líbilo a co nikoliv. A před rozchodem domů se samozřejmě dohodněte, kdy se sejdete příště. S DRAČÍM DOUPĚTEM vás totiž čeká ještě mnoho hodin zábavy... tak si je užijte."
     }
-   ]
+   ],
+   "part": "vypraveni"
   }
  ],
  "professions": [

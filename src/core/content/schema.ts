@@ -19,6 +19,8 @@ export interface PackManifest {
   source: { book: string; edition: string }
   /** pořadí knihy v příručce (menší první); bez něj pravidla (s povoláními) před ostatními */
   order?: number
+  /** části knihy (ČÁST I …) pro seskupení kapitol v příručce; kapitola se na část odkazuje polem `part` */
+  parts?: { id: string; name: string }[]
   /** číslo sestavení balíčku z převodníku SRD (viz `builds.ts`); starší balíček aplikace nabídne převést znovu */
   build?: number
   /** balíčky, jejichž obsah tento balíček předpokládá */
@@ -89,6 +91,8 @@ export interface Chapter {
   title: string
   /** kapitola popisuje druh bytostí (ID druhu z `creatureKinds`); čtenář k ní nabídne seznam bytostí */
   kind?: string
+  /** ID části z `manifest.parts`; kapitoly bez části se v příručce ukáží bez nadpisu */
+  part?: string
   blocks: Block[]
 }
 

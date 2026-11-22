@@ -142,11 +142,24 @@
     {#each books() as book (book.id)}
       <section class="book">
         <h2 id={'kniha-' + book.id}>{book.name}</h2>
-        <ul class="chapters">
-          {#each book.chapters as c (c.id)}
-            <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
-          {/each}
-        </ul>
+        {#each book.groups as g (g.id)}
+          {#if g.name}
+            <details class="part" open>
+              <summary>{g.name}</summary>
+              <ul class="chapters">
+                {#each g.chapters as c (c.id)}
+                  <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
+                {/each}
+              </ul>
+            </details>
+          {:else}
+            <ul class="chapters">
+              {#each g.chapters as c (c.id)}
+                <li><a class="btn" href={'#/ctenar/' + c.id}>{c.title}</a></li>
+              {/each}
+            </ul>
+          {/if}
+        {/each}
       </section>
     {:else}
       {#if !professionBooks().length}
@@ -184,6 +197,11 @@
     padding: 0;
     display: grid;
     gap: 0.5rem;
+  }
+  .part summary {
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0.75rem 0 0.5rem;
   }
   .book h2 {
     font-size: 1.1rem;

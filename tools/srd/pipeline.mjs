@@ -112,6 +112,14 @@ export async function embedImagesWith(chapters, load) {
   return cache.size
 }
 
+/** Části Základní příručky podle prvního znaku ID kapitoly (názvy z menu SRD). */
+export const RULES_PARTS = [
+  { id: 'uvod', name: 'Úvod do hry', digit: '1' },
+  { id: 'tvorba', name: 'Tvorba postav', digit: '2' },
+  { id: 'hrani', name: 'Hraní hry', digit: '3' },
+  { id: 'vypraveni', name: 'Vyprávění příběhů', digit: '4' },
+]
+
 /** Základní příručka: `pages` = { '25-zakladni-povolani': html, … }. Obrázky se doplní až `embedImagesWith`. */
 export function buildRulesChapters(pages) {
   const names = Object.keys(pages).sort()
@@ -120,6 +128,10 @@ export function buildRulesChapters(pages) {
     ...parseProfessions(pages['26-pokrocila-povolani'], 'pokrocile'),
   ]
   const chapters = names.map((n) => parseChapter(pages[n], n))
+  for (const ch of chapters) {
+    const part = RULES_PARTS.find((p) => p.digit === ch.id[0])
+    if (part) ch.part = part.id
+  }
   // bytosti z kapitoly Bestiář (kratší popisy; prostředí u nich kniha neuvádí)
   const creatures = pages['43-bestiar'] ? parseRulesCreatures(pages['43-bestiar'], RULES_ID) : []
   return { professions, chapters, creatures }
@@ -141,6 +153,7 @@ export function finishRulesPack({ professions, chapters, creatures = [] }) {
       version: '2.0.0',
       build: PACK_BUILD,
       source: { book: 'Dračí doupě 2: Pravidla (SRD, drd2srd.d20.cz)', edition: '2' },
+      parts: RULES_PARTS.filter((p) => chapters.some((c) => c.part === p.id)).map(({ id, name }) => ({ id, name })),
     },
     chapters,
     professions,

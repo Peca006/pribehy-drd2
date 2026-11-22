@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { booksOf, professionBooksOf, shortBookName } from './books'
+import { booksOf, groupsOf, professionBooksOf, shortBookName } from './books'
 import type { ContentPack } from './content/schema'
 
 const pack = (id: string, chapters: string[], extra: Partial<ContentPack> = {}): ContentPack =>
@@ -25,6 +25,29 @@ describe('booksOf', () => {
     const b = pack('b', ['1'])
     b.manifest.order = 1
     expect(booksOf([a, b]).map((x) => x.id)).toEqual(['b', 'a'])
+  })
+})
+
+describe('groupsOf', () => {
+  it('kapitoly po částech v pořadí z balíčku, zbytek na konec bez nadpisu', () => {
+    const p = pack('kniha', ['31-c', '11-a', '21-b', '99-z'])
+    p.manifest.parts = [
+      { id: 'dva', name: 'Druhá' },
+      { id: 'jedna', name: 'První' },
+      { id: 'prazdna', name: 'Prázdná' },
+    ]
+    for (const [id, part] of [['11-a', 'jedna'], ['21-b', 'dva'], ['31-c', 'neznama']])
+      p.chapters!.find((c) => c.id === id)!.part = part
+    expect(groupsOf(p).map((g) => [g.name, g.chapters.map((c) => c.id)])).toEqual([
+      ['Druhá', ['21-b']],
+      ['První', ['11-a']],
+      [undefined, ['31-c', '99-z']],
+    ])
+  })
+  it('bez částí je jedna skupina bez nadpisu', () => {
+    expect(groupsOf(pack('k', ['2', '1'])).map((g) => [g.name, g.chapters.map((c) => c.id)])).toEqual([
+      [undefined, ['1', '2']],
+    ])
   })
 })
 
