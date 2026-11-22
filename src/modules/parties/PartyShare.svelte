@@ -3,7 +3,7 @@
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
   import { encodeBundle } from '../../core/character/share'
-  import { slugify } from '../../core/creatures/bundle'
+  import { shareFileName } from '../../core/shareFile'
   import { QR_CHUNK, splitForQr } from '../../core/character/qr'
   import { roleOf, type Party } from '../../core/party/model'
   import { buildPartyBundle } from '../../core/party/share'
@@ -70,14 +70,14 @@
   function download() {
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' }))
-    a.download = `druzina-${slugify(party?.name ?? '') || 'drd2'}.drd2.txt`
+    a.download = shareFileName('druzina', party?.name ?? '')
     a.click()
     URL.revokeObjectURL(a.href)
     void sent()
   }
   const canShare = typeof navigator !== 'undefined' && 'share' in navigator
   async function share() {
-    const file = new File([code], 'druzina.drd2.txt', { type: 'text/plain' })
+    const file = new File([code], shareFileName('druzina', party?.name ?? ''), { type: 'text/plain' })
     try {
       if (navigator.canShare?.({ files: [file] }))
         await navigator.share({ title: `Družina ${party?.name}`, files: [file] })
