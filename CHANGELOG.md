@@ -1,5 +1,11 @@
 # Změny
 
+## 0.4.11 (22. 11. 2026)
+
+- **Záloha a obnova dat (Více):** všechna data do jednoho souboru `drd2-zaloha-RRRR-MM-DD.json`: postavy, družiny, bytosti, předpisy, rozpracované úpravy a zdroje, volitelně ilustrace. Obnova „Doplnit“ nic nepřepíše, „Přepsat“ nahradí záznamy se stejným ID (s potvrzením). Soubor se při čtení očistí; cizí, poškozený nebo novější soubor se odmítne srozumitelnou hláškou. Balíčky pravidel se nezálohují.
+- **`FORMAT.md`:** popis uložených dat, `schema` a migrací, přenosů a zálohy, pravidla změn formátu a historie. Každou změnu formátu zapisovat sem i do tohoto souboru.
+- **Pod kapotou:** `core/backup.ts` (sestavení, čtení a obnova zálohy), `rawRecords` v `db.ts`, nápověda „?“ k záloze; nové unit testy a E2E zkouška zálohy.
+
 ## 0.4.10 (22. 11. 2026)
 
 - **Průběžná kontrola postavy:** v úpravě postavy jsou povolání, na která postava nemá podmínky (pokročilá), v nabídce zašedlá s důvodem a nejdou přidat; tlačítko „+“ se zastaví na 5. úrovni. U schopností každého povolání je vidět „vybráno N z M“ a zvýrazní se, když jich je víc, než úroveň dovoluje. Kontrola postavy je i nahoře a označuje nové problémy.

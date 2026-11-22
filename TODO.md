@@ -2,7 +2,7 @@
 
 Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
 
-## Otevřené úkoly (stav k verzi 0.4.10, 22. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.4.11, 22. 11. 2026)
 
 ### Další práce
 
