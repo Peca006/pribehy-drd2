@@ -2,7 +2,7 @@
 
 Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
 
-## Otevřené úkoly (stav k verzi 0.4.7, 22. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.4.8, 22. 11. 2026)
 
 ### Další práce
 
@@ -63,8 +63,8 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - ✅ **Úprava postavy podle pravidel:** Postup (úroveň, zdatnost, schopnosti), zkušenosti, Jizvy a jejich hojení, kontrola
   postavy bez balíčku (`skeleton.json`, `check.ts`), ilustrace postav v zařízení.
 - ✅ **Audiogram:** přenos zvukem (QPSK 1200, BPSK 800, další režimy), společná zkouška zvuku (0.4.6).
-- ✅ **Obsah:** kapitoly Příručky po částech (nevydáno), ikony prostředí a filtry Bestiáře (druh, prostředí), balíčky se stahují z webu aplikace, mapy a obrázky v balíčku (WebP, přiblížení), rejstřík pojmů, omezení
+- ✅ **Obsah:** kapitoly Příručky po částech, ikony prostředí a filtry Bestiáře (druh, prostředí), balíčky se stahují z webu aplikace, mapy a obrázky v balíčku (WebP, přiblížení), rejstřík pojmů, omezení
   počtu odkazů v textu (nastavení „Odkazy v textu“ ve Více), O aplikaci s poděkováním a licencemi (0.4.7).
 - ✅ **PWA:** aktualizace s pruhem „Obnovit“, instalace (Android, iOS návod), ikony.
-- ✅ **Převod SRD v zařízení (bookmarklet):** UI odstraněno v 0.4.5, zbytky kódu a sestavení (`tools/srd/browser`, `vite.srd.config.ts`) (nevydáno); balíčky se stahují hotové.
+- ✅ **Převod SRD v zařízení (bookmarklet):** UI odstraněno v 0.4.5, zbytky kódu a sestavení (`tools/srd/browser`, `vite.srd.config.ts`); balíčky se stahují hotové.
 - ✅ **Tvorba postavy:** výbava bez balíčku, generátor jmen.
