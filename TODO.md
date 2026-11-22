@@ -2,7 +2,7 @@
 
 Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
 
-## Otevřené úkoly (stav k verzi 0.4.8, 22. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.4.9, 22. 11. 2026)
 
 ### Další práce
 
@@ -31,11 +31,6 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
 - **Drobnosti.** Jména testerů do O aplikace (až budou).
-- **Nápověda napříč aplikací.** 🚧 Hotová etapa 1 až 3 (komponenty `HelpButton`, `HelpPanel`, `HelpHeading`, registr témat
-  `src/core/help.ts`, „?“ u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výroby, nástrah, kouzel, Grimoáru, Postupu, Jizev, sezení, konfliktu, žurnálu, sdílení a importu). Rozhodnutí:
-  panel pod prvkem (ne hover), vlastní stručné výtahy s odkazem do příručky nebo SRD, kroky a návody v registru na jednom místě.
-  Zbývá: etapa 4 Příručka, Bestiář a Více (balíčky, zvuk, zkouška zvuku), etapa 5 stránka **Nápověda** ve Více (seznam všech témat s hledáním
-  a krátký úvod do aplikace). Patří sem i odkaz na konkrétní dovednost v SRD (v kostře je `srd` jen u povolání a schopností).
 - **Nápad: skiny s obrázkovou mapou ovládacích prvků (později).** Prvky (tlačítko, popis, výstup) definované souřadnicemi
   na obrázku; pixelartová varianta (inspirace Truhlice) nebo klasická. Předpoklad: uklidit stránky a navigaci.
 
@@ -67,3 +62,6 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - ✅ **PWA:** aktualizace s pruhem „Obnovit“, instalace (Android, iOS návod), ikony.
 - ✅ **Převod SRD v zařízení (bookmarklet):** UI odstraněno v 0.4.5, zbytky kódu a sestavení (`tools/srd/browser`, `vite.srd.config.ts`); balíčky se stahují hotové.
 - ✅ **Tvorba postavy:** výbava bez balíčku, generátor jmen.
+- ✅ **Nápověda napříč aplikací (0.4.9):** tlačítko „?“ s panelem pod prvkem u pomůcek, postavy a družiny, Příručky, Bestiáře a Více;
+  registr témat `src/core/help.ts` (kroky, návody, odkazy do příručky nebo SRD, kotvy hlídá test); stránka Nápověda ve Více
+  (úvod, hledání, všechna témata). Zbývá jen odkaz na konkrétní dovednost v SRD (v kostře je `srd` jen u povolání a schopností).

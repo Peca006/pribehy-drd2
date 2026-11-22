@@ -362,6 +362,34 @@ export const TOPICS_APP: Card[] = [
 
 /** Všechna témata nápovědy (kroky vyhodnocení, složitější situace, pomůcky). */
 export const helpTopics = (): Card[] => [...BASIC, ...SITUATIONS, ...TOPICS, ...TOPICS_PARTY, ...TOPICS_APP]
+export interface HelpGroup {
+  id: 'navody' | 'pravidla' | 'situace'
+  title: string
+  topics: Card[]
+}
+
+/** Témata pro stránku Nápověda: návody k aplikaci, pravidla po ruce a složitější situace. */
+export const helpGroups = (): HelpGroup[] => {
+  const base = [...BASIC, ...TOPICS, ...TOPICS_PARTY, ...TOPICS_APP]
+  return [
+    { id: 'navody', title: 'Jak aplikaci používat', topics: base.filter((c) => c.kind === 'navod') },
+    { id: 'pravidla', title: 'Pravidla po ruce', topics: base.filter((c) => c.kind !== 'navod') },
+    { id: 'situace', title: 'Složitější situace', topics: SITUATIONS },
+  ]
+}
+
+const fold = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+
+/** Témata, jejichž název, úvod nebo kroky obsahují všechna slova dotazu (bez ohledu na diakritiku a velikost písmen). */
+export const searchHelp = (topics: Card[], query: string): Card[] => {
+  const words = fold(query).split(/\s+/).filter(Boolean)
+  if (!words.length) return topics
+  return topics.filter((c) => {
+    const hay = fold([c.title, c.text ?? '', ...c.steps].join(' '))
+    return words.every((w) => hay.includes(w))
+  })
+}
+
 export const helpTopic = (id: string): Card | undefined => helpTopics().find((c) => c.id === id)
 
 export const SITUATIONS: Card[] = [

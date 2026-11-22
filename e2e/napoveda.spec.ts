@@ -58,3 +58,19 @@ test('nápověda u importu a žurnálu družiny', async ({ page }) => {
   await page.getByRole('button', { name: 'Nápověda: Žurnál dobrodružství' }).click()
   await expect(page.getByRole('region', { name: 'Nápověda: Žurnál družiny' })).toContainText('Průvodce')
 })
+
+test('stránka Nápověda ve Více: úvod, hledání a téma', async ({ page }) => {
+  await page.goto('/#/knihovna')
+  await page.getByRole('link', { name: 'Nápověda a návody' }).click()
+  await expect(page.getByRole('heading', { name: 'Nápověda', exact: true })).toBeVisible()
+  await expect(page.getByText('funguje i bez připojení')).toBeVisible()
+
+  await page.getByLabel('Hledat v nápovědě').fill('halere')
+  await expect(page.getByText('Nalezeno: ')).toBeVisible()
+  const topic = page.locator('details.topic', { hasText: 'Hotovost' })
+  await expect(topic).toBeVisible()
+  await expect(topic).toContainText('Dukáty, groše a haléře')
+
+  await page.getByLabel('Hledat v nápovědě').fill('xyzxyz')
+  await expect(page.getByText('Nic nenalezeno.')).toBeVisible()
+})

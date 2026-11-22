@@ -1,9 +1,10 @@
 # Změny
 
-## Nevydáno
+## 0.4.9 (22. 11. 2026)
 
-- **Nápověda „?“ u pomůcek:** tlačítko „?“ otevře pod prvkem krátké vysvětlení s kroky a odkazem do příručky (bez balíčku do SRD). Je u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výrobků, nástrah, kouzel, Grimoáru, Postupu postavy, Jizev, sezení, konfliktu, žurnálu družiny, sdílení postavy a družiny a importu a v jejich dialozích. Karty postupu (zkouška, střet, léčení, …) a nová témata jsou v jednom registru, kotvy odkazů hlídá test proti balíčku pravidel.
-- **Pod kapotou:** `guide.ts` přesunut do `core/help.ts`, `CardHelp` je `ui/HelpPanel`; nové `HelpButton` a `HelpHeading`; E2E zkouška nápovědy.
+- **Nápověda „?“:** tlačítko „?“ otevře pod prvkem krátké vysvětlení s kroky a odkazem do příručky (bez balíčku do SRD). Je u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výrobků, nástrah, kouzel a Grimoáru, u Postupu postavy, Jizev, sezení, konfliktu, žurnálu družiny, sdílení postavy a družiny a importu, u Příručky, Rejstříku, Bestiáře, Nastavení, balíčků, zvuku a Aplikace i v jejich dialozích.
+- **Stránka Nápověda (Více):** úvod do aplikace a všechna témata (návody, pravidla po ruce, složitější situace) s hledáním bez ohledu na diakritiku.
+- **Pod kapotou:** karty postupu a nová témata jsou v jednom registru `core/help.ts` (dřív `guide.ts`), `CardHelp` je `ui/HelpPanel`, nové `HelpButton` a `HelpHeading`; test hlídá jedinečná ID i kotvy odkazů proti balíčku pravidel; E2E zkoušky nápovědy.
 
 ## 0.4.8 (22. 11. 2026)
 

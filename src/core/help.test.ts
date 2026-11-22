@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { BASIC, chapterOf, helpTopic, helpTopics, linkOf, skillsOf, srdOf } from './help'
+import { BASIC, chapterOf, helpGroups, helpTopic, helpTopics, linkOf, searchHelp, skillsOf, srdOf } from './help'
 
 const card = (id: string) => BASIC.find((c) => c.id === id)!
 
@@ -75,5 +75,21 @@ describe('registr témat nápovědy', () => {
       expect(byId.has(chapter), `${c.id}: kapitola ${chapter}`).toBe(true)
       if (anchor) expect(byId.get(chapter)!.has(anchor), `${c.id}: kotva ${anchor}`).toBe(true)
     }
+  })
+})
+
+describe('stránka Nápověda: skupiny a hledání', () => {
+  it('skupiny obsahují všechna témata přesně jednou', () => {
+    const ids = helpGroups().flatMap((g) => g.topics.map((c) => c.id))
+    expect(ids.sort()).toEqual(helpTopics().map((c) => c.id).sort())
+    expect(helpGroups().find((g) => g.id === 'navody')!.topics.every((c) => c.kind === 'navod')).toBe(true)
+  })
+
+  it('hledání ignoruje diakritiku a velikost písmen a vyžaduje všechna slova', () => {
+    const all = helpTopics()
+    expect(searchHelp(all, '  ').length).toBe(all.length)
+    expect(searchHelp(all, 'HALERE').map((c) => c.id)).toContain('hotovost')
+    expect(searchHelp(all, 'surovin lektvar').map((c) => c.id)).toContain('lektvary')
+    expect(searchHelp(all, 'xyzxyz')).toEqual([])
   })
 })
