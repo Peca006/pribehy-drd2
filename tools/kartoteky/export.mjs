@@ -140,11 +140,15 @@ for (const b of inv.items.filter((i) => i.type === 'bestiar-definice')) {
   });
 }
 // ---- dovednosti ----
-const areaType = { 'combat-melee': 'Boj', 'combat-ranged': 'Boj', 'combat-vs-kind': 'Boj', 'magic-school': 'Magie', 'craft-production': 'Výroba', 'craft-use': 'Výroba', healing: 'Léčení' };
+// dials dovedností (dovednosti.mjs, schváleno 22. 11. 2026): type = domain, environment, target = target-kind, target-attribute
+const ENV = { Divočina: 'wilderness', Město: 'city' };
+const skillDials = new Map(rd('kartoteky-dovednosti-dials.json').map((r) => [r.id, r]));
 for (const s of prev.skills) {
   const o = originOf(s.source);
+  const d = skillDials.get(s.id.replace('dovednost:', ''));
   cards.push({
     type: 'skill', id: slug(s.name), name: s.name, source: 'srd', rulebook: 'Příručka', origin: o, attribute: attrId(s.attribute),
+    domain: d.type, environment: d.env.map((e) => ENV[e]), targetKind: d.target, targetAttribute: attrId(d.targetAttr),
     area: s.area, text: s.items.map((i) => `- ${md(i)}`).join('\n'), labels: 'auto',
   });
 }
@@ -172,10 +176,11 @@ const zsMd = cards.filter((c) => c.type === 'zs').map((c) => {
     c.flavor ? flavorMd(c.flavor) + '\n' : '', md(c.text), '', '</drd2-zs>', ''].filter((x) => x !== null).join('\n');
 }).join('\n');
 const skillMd = cards.filter((c) => c.type === 'skill').map((c) => {
-  const type = [...new Set(c.area.map((a) => areaType[a]).filter(Boolean))].join(', ');
+  const envCs = Object.fromEntries(Object.entries(ENV).map(([k, v]) => [v, k]));
   return ['<drd2-skill', dial('name', c.name), dial('rulebook', 'Základní příručka'), dial('attribute', ATTRIBUTE[c.attribute] ?? ''),
-    dial('level', c.origin.kind === 'class-basic' ? 'základní' : 'pokročilá'), dial('source-zs', ''), dial('environment', ''), dial('target', ''), dial('target-attribute', ''),
-    dial('type', type), dial('class-basic', c.origin.kind === 'class-basic' ? c.origin.name : ''), dial('class-advanced', c.origin.kind === 'class-advanced' ? c.origin.name : ''),
+    dial('level', c.origin.kind === 'class-basic' ? 'základní' : 'pokročilá'), dial('source-zs', ''), dial('environment', c.environment.map((e) => envCs[e]).join(', ')),
+    dial('target', kostka(TARGET_KIND, c.targetKind).join(', ')), dial('target-attribute', ATTRIBUTE[c.targetAttribute] ?? ''),
+    dial('type', kostka(DOMAIN, c.domain).join(', ')), dial('class-basic', c.origin.kind === 'class-basic' ? c.origin.name : ''), dial('class-advanced', c.origin.kind === 'class-advanced' ? c.origin.name : ''),
     dial('class-expert', ''), '>', '', c.text, '', '</drd2-skill>', ''].filter((x) => x !== null).join('\n');
 }).join('\n');
 
