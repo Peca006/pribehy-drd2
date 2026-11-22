@@ -70,3 +70,11 @@ Nejsou to odkazy, ale hodnoty zapsané přímo; zatím zmapováno, nezpracováno
 - Zbývá: `domain` (u 72 ZS prázdné; Fafrin tam má hlavně Jednání, Jizvy, Skrývání, Magie), dovednosti nemají
   `environment`, `target`, `target-attribute`, `source-zs`; bestiářová pravidla `group-rule` / `against-being` čekají na schválení.
 - Export je jen lokální (v `reference/work/`, ignorováno); do repa se nedávají.
+
+### Domain u ZS (22. 11. 2026)
+- Odvození v `export.mjs`: oblast související dovednosti (s výjimkami `SKILL_DOMAIN`), klíčová slova v textu (skrývání, magie, jednání,
+  boj), u Vlivu jednání pro pravomoci a obranné mechanismy. „Jizvy“ se do `purpose` přidává jen při exportu (u nás je to mechanismus).
+- Výsledek: oblast se přesně shoduje s Fafrinovým `purpose` (jen oblasti, bez cílů a předmětů) u 71 z 86 karet; bez `domain` zůstává
+  27 z 206 ZS (hlavně rasové smysly a ochrany, bestiářová pravidla se do toho nepočítají).
+- Zbylé rozdíly jsou převážně úsudkové (Styky, Odznaky hrdinství, Přečtení soupeře, Bystrost); `purpose` u Fafrina je navíc u
+  pokročilých povolání nevyplněné, takže tam není s čím porovnat.

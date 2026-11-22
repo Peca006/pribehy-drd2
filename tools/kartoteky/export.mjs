@@ -43,18 +43,29 @@ const subjectOf = (t) => Object.entries({
 }).filter(([, re]) => re.test(t)).map(([k]) => k);
 const AREA_TO_DOMAIN = { 'combat-melee': 'combat', 'combat-ranged': 'combat', 'combat-vs-kind': 'combat', 'social-direct': 'social', 'social-network': 'social',
   leadership: 'social', knowledge: 'knowledge', 'magic-school': 'magic', 'craft-production': 'craft', 'craft-use': 'craft', healing: 'healing', 'movement-survival': 'movement', secrecy: 'stealth' };
+// výjimky z hrubé oblasti dovednosti (podle toho, k čemu se dovednost ve hře opravdu používá)
+const SKILL_DOMAIN = { 'orientace-v-divocine': ['knowledge', 'stealth'], 'orientace-ve-meste': ['knowledge', 'stealth'], tabornictvi: ['craft', 'knowledge'],
+  sila: [], 'odolnost-a-vydrz': [], vule: [], pohyblivost: ['movement'], 'triky-a-kejkle': ['stealth'], 'prevleky-a-predstirani': ['social', 'stealth'],
+  'osetrovani-lidskeho-tela': ['healing', 'knowledge'], 'masti-a-bezne-jedy': ['craft', 'healing'] };
 const skillArea = new Map(prev.skills.map((s) => [s.id.replace('dovednost:', ''), s.area]));
 const domainOf = (z, t) => {
   const d = new Set();
-  for (const sid of z.skills) for (const a of skillArea.get(sid) ?? []) if (AREA_TO_DOMAIN[a]) d.add(AREA_TO_DOMAIN[a]);
-  if (z.mech.includes('stealth-evasion') || /ukryt|skryt|plizit|setrast/.test(t)) d.add('stealth');
+  for (const sid of z.skills) {
+    if (SKILL_DOMAIN[sid.split('/')[1]]) { SKILL_DOMAIN[sid.split('/')[1]].forEach((x) => d.add(x)); continue; }
+    for (const a of skillArea.get(sid) ?? []) if (AREA_TO_DOMAIN[a]) d.add(AREA_TO_DOMAIN[a]);
+  }
+  if (z.mech.includes('stealth-evasion') || /ukryt|ukryv|skryt|skryv|plizit|setrast|tichoslap|\bskryta\b/.test(t + ' ' + fold(z.name))) d.add('stealth');
+  if (/\bmagi[ei]\b|kouzl\w*|ritual\w*|zarikan|znameni/.test(t)) d.add('magic');
+  // Vliv: jednání, pokud jde o akce či pravomoci vůči lidem (ne o Jizvy a léčení)
+  if (z.attribute === 'Vliv' && z.mech.some((m) => ['narrative-authority', 'free-maneuver', 'free-defense', 'defend-others', 'grant-resources', 'natural-protection', 'aptitude'].includes(m)) && !d.has('stealth')) d.add('social');
+  if (/\bjedn(a|ani|at)\w*|spadajici pod vliv/.test(t)) d.add('social');
   if (z.mech.some((m) => ['spell-enhance', 'ward-sign'].includes(m))) d.add('magic');
   if (z.mech.includes('craft')) d.add('craft');
   if (z.mech.includes('heal')) d.add('healing');
   if (z.mech.includes('companion')) d.add('companions');
   if (z.mech.includes('assess-abilities')) d.add('assessment');
   if (!d.size) {
-    if (/\b(boj|zbran|zbroj|utok|strel|vrh|telesn)\w*/.test(t)) d.add('combat');
+    if (/\b(boj|zbran|zbroj|utok|strel|stril|vrh|telesn)\w*/.test(t)) d.add('combat');
     if (/zastrasov|presvedc|ovlivn|jednani|vyjedn|akc\w+ spadajici pod vliv|duvera|fam/.test(t)) d.add('social');
   }
   return [...d];
@@ -109,7 +120,8 @@ const costText = (c) => (c.length ? [...new Set(c.map((x) => `${RESOURCE[x.resou
 const dial = (k, v) => `${k}="${v ?? ''}"`;
 const zsMd = cards.filter((c) => c.type === 'zs').map((c) => {
   const eff = kostka(MECHANISM, c.mechanism).join(', ');
-  const purpose = [...kostka(DOMAIN, c.domain), ...kostka(SUBJECT, c.subject), ...kostka(TARGET_KIND, c.targetKind)].join(', ');
+  // Kostka zná „Jizvy“ jako účel; u nás je to mechanismus, proto se přidává jen při exportu
+  const purpose = [...new Set([...kostka(DOMAIN, c.domain), ...(c.mechanism.includes('scar-effect') ? ['Jizvy'] : []), ...kostka(SUBJECT, c.subject), ...kostka(TARGET_KIND, c.targetKind)])].join(', ');
   const cb = c.origin.kind === 'class-basic' ? c.origin.name : '';
   const ca = c.origin.kind === 'class-advanced' ? c.origin.name : '';
   return ['<drd2-zs', dial('name', c.name), dial('rulebook', c.rulebook === 'Příručka' ? 'Základní příručka' : c.rulebook),
