@@ -14,8 +14,8 @@
   } from '../../core/character/healing'
   import { potionLabel, potionsFor } from '../../core/character/potions'
   import type { Spent } from '../../core/character/play'
-  import CardHelp from './CardHelp.svelte'
-  import { BASIC } from './guide'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
+  import HelpButton from '../../ui/HelpButton.svelte'
 
   // Zmírnění Jizvy léčením: Jizva se rovnou sníží o 1, dá se upravit popis a závažnost (nejníž na 1, nejvýš o 1 méně než dosud).
   // Ukáže celkové snížení (k porovnání se silou magického okamžiku) a cenu 5 Zdrojů za stupeň. Zdroje z lektvaru se odečtou
@@ -104,17 +104,9 @@
 <dialog bind:this={dialog} {onclose} aria-label="Zmírnění Jizvy">
   <div class="head">
     <h2>Zmírnit Jizvu</h2>
-    <button
-      class:primary={help}
-      onclick={() => (help = !help)}
-      aria-label="Nápověda k léčení"
-      aria-expanded={help}
-      title="Nápověda">?</button
-    >
+    <HelpButton bind:open={help} label="Nápověda k léčení" />
   </div>
-  {#if help}
-    <div class="help"><CardHelp card={BASIC.find((c) => c.id === 'leceni')!} /></div>
-  {/if}
+  <HelpPanel topic="leceni" open={help} />
   {#if scar && limit >= 1}
     <p><strong>{scar.attribute}</strong>, dosud závažnost {scar.severity}</p>
     <input type="text" bind:value={note} maxlength="300" placeholder="Popis Jizvy" aria-label="Popis Jizvy" />
@@ -192,13 +184,6 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 0.5rem;
-  }
-  .help {
-    border: 1px solid var(--drd-muted);
-    border-radius: var(--drd-radius);
-    padding: 0 0.75rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
   }
   .row {
     display: flex;

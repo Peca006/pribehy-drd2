@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import { onDestroy } from 'svelte'
   import { ask } from '../../core/confirm.svelte'
   import {
@@ -63,10 +65,12 @@
   onDestroy(() => {
     if (work) void flush()
   })
+  let helpOpen = $state(false)
 </script>
 
 <div class="cash" aria-label="Hotovost">
-  <strong>Hotovost</strong>
+  <span><strong>Hotovost</strong> <HelpButton bind:open={helpOpen} label="Nápověda: Hotovost" /></span>
+  <HelpPanel topic="hotovost" open={helpOpen} />
   <div class="grid">
     {#each UNIT_ORDER as u}
       <div class="col">

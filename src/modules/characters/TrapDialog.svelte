@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { untrack } from 'svelte'
   import type { Character, Trap } from '../../core/character/model'
   import { removeTrap, saveTrap, trapCost, trapCostLines, trapSummary, trapFrom } from '../../core/character/traps'
@@ -55,7 +56,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Nástraha">
-  <h2>{id ? 'Upravit nástrahu' : 'Nová nástraha'}</h2>
+  <HelpHeading title={id ? 'Upravit nástrahu' : 'Nová nástraha'} topic="nastrahy" />
   {#if !id}
     <RecipeSuggest
       kind="nastraha"
@@ -95,9 +96,6 @@
   }
   dialog::backdrop {
     background: rgb(0 0 0 / 0.6);
-  }
-  h2 {
-    margin-top: 0;
   }
   .row {
     display: flex;

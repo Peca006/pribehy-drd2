@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { untrack } from 'svelte'
   import { ATTRIBUTES, type Character } from '../../core/character/model'
   import { MAX_NAME, MAX_NOTE, MAX_SCAR_TEXT, potionLabel, removePotion, savePotion } from '../../core/character/potions'
@@ -50,7 +51,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Lektvar">
-  <h2>{id ? 'Upravit lektvar' : 'Nový lektvar'}</h2>
+  <HelpHeading title={id ? 'Upravit lektvar' : 'Nový lektvar'} topic="lektvary" />
   {#if !id}
     <RecipeSuggest
       kind="lektvar"
@@ -102,9 +103,6 @@
   }
   dialog::backdrop {
     background: rgb(0 0 0 / 0.6);
-  }
-  h2 {
-    margin-top: 0;
   }
   .seg {
     display: flex;

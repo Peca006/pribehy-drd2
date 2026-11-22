@@ -1,10 +1,15 @@
-import { srdChapterUrl } from '../../core/srd'
-// Stručný postup vyhodnocení (vlastní heslovitý výtah, ne text pravidel). Podrobnosti jsou v příručce.
+import { srdChapterUrl } from './srd'
+// Témata nápovědy (vlastní heslovitý výtah a návody k aplikaci, ne text pravidel). Podrobnosti jsou v příručce.
+// Zobrazuje je `HelpPanel` (tlačítko „?“ u prvků) a panel Postup vyhodnocení.
 export interface Card {
   id: string
   title: string
+  /** `pravidlo` (výtah s odkazem do příručky) nebo `navod` (jak aplikaci používat); chybí-li, je to pravidlo */
+  kind?: 'pravidlo' | 'navod'
+  /** úvodní věta nebo dvě nad kroky */
+  text?: string
   steps: string[]
-  /** kotva v kapitole příručky `32-slozitejsi-situace` nebo celé ID kapitoly `kapitola#kotva` */
+  /** kotva v kapitole `32-slozitejsi-situace`, nebo `kapitola` či `kapitola#kotva` (`35-pouzivani-dovednosti#suroviny`) */
   link?: string
   /** dovednosti související s kartou (ID bez `dovednost:`); názvy se berou z balíčku, bez něj se odkáže do SRD */
   skills?: string[]
@@ -69,7 +74,7 @@ export const BASIC: Card[] = [
       'Lektvar nebo mast ušetří Zdroje (1 Surovina = 1 Zdroj). Výhodou ani další Jizvou platit nejde.',
       'Léčit se lze i samotnému, ale při neúspěchu platí vyčerpání i Zdroje.',
     ],
-    link: '36-kouzla-nastrahy-leceni',
+    link: '36-kouzla-nastrahy-leceni#leceni',
     skills: ['mastickar/masti-a-bezne-jedy', 'alchymista/vyroba-elixiru', 'alchymista/pouzivani-elixiru'],
   },
   {
@@ -81,7 +86,7 @@ export const BASIC: Card[] = [
       'Mezi výpravami se spotřebují jen Suroviny. Na výpravě zkouška: neúspěch obvykle propálí Suroviny, přerušení je střet.',
       'Výrobou nelze zasadit Jizvu. Kvalitní předměty jen s bravurní dovedností.',
     ],
-    link: '35-pouzivani-dovednosti',
+    link: '35-pouzivani-dovednosti#vyroba',
     skills: ['alchymista/vyroba-elixiru', 'mastickar/masti-a-bezne-jedy', 'saman/vyroba-omamnych-latek-a-odvaru', 'alchymista/vyroba-traskavin-ziravin-a-plynnych-jedu', 'lupic/vyroba-kontaktnich-jedu'],
   },
   {
@@ -94,8 +99,9 @@ export const BASIC: Card[] = [
       'Zkouška nebo střet jako u jiné akce. Zmařené kouzlo propadne vložené Zdroje.',
       'Obrana soupeře: přerušení rituálu, únik z dosahu, zrušení účinků, vyčkání, protikouzlo.',
     ],
-    link: '36-kouzla-nastrahy-leceni',
-  },  {
+    link: '36-kouzla-nastrahy-leceni#ritualy-kouzel',
+  },
+  {
     id: 'nastrahy',
     title: 'Nástrahy',
     steps: [
@@ -104,10 +110,87 @@ export const BASIC: Card[] = [
       'Ukrytá nástraha: bez šance si všimnout se spustí hned, při šanci je odhalení výzva, při cíleném hledání zkouška.',
       'Přímo ovládaná nástraha je nástroj vlastní akce (hodí ovládající s dovedností, kterou nástrahu vyrobil), jed se do protiakce hodí zřídka.',
     ],
-    link: '36-kouzla-nastrahy-leceni',
+    link: '36-kouzla-nastrahy-leceni#nastrahy',
     skills: ['alchymista/vyroba-traskavin-ziravin-a-plynnych-jedu', 'alchymista/pouzivani-traskavin-ziravin-a-plynnych-jedu', 'lupic/vyroba-kontaktnich-jedu', 'lupic/pouziti-kontaktnich-jedu'],
   },
 ]
+
+/** Témata k prvkům pomůcek: Hod, Zdroje, Suroviny, Hotovost, lektvary a Grimoár. */
+export const TOPICS: Card[] = [
+  {
+    id: 'hod',
+    title: 'Hod',
+    text: 'Panel Hod vyhodnotí zkoušku, výzvu nebo střet; rozhodnutí zůstává na hráči a Průvodci.',
+    steps: [
+      'Hod 2k6 + úroveň povolání použité dovednosti (bez povolání 0). Úspěch je od 9.',
+      'Kostky lze hodit v aplikaci, nebo zadat z fyzických.',
+      'Ohrožení je počítadlo jen ve hře (není v deníku revizí). Vyčerpání po neúspěchu stojí Zdroje podle Ohrožení, nejméně 1.',
+      'Manévry se platí 1 Zdrojem až při použití a nesčítají se.',
+    ],
+    link: '31-zakladni-pravidla#hod-kostkami',
+  },
+  {
+    id: 'zdroje',
+    title: 'Zdroje',
+    text: 'Zdroje jsou Tělo, Duše a Vliv. Čerpají se při vyčerpání, platbách a manévrech.',
+    steps: [
+      'Zdroje vlastnosti odpovídají její hodnotě; Jizva část z nich zablokuje.',
+      'Čerpání škrtá Zdroje, „Obnovit“ je vrátí. Stav čerpání je jen v zařízení, ne v deníku revizí.',
+      'Zdroje ze sebezasazené Jizvy jsou dočasné a čerpají se jako první.',
+      'Výhoda funguje jako „žolíkový“ Zdroj a platí se první.',
+    ],
+    link: '31-zakladni-pravidla#zdroje',
+  },
+  {
+    id: 'suroviny',
+    title: 'Suroviny',
+    text: 'Druhá „měna“ vedle Peněz: vzácnější materiál pro výrobu, opravy a léčení.',
+    steps: [
+      'V deníku se vede celkový počet. Volitelně druhy (značka a název), u každé postavy zvlášť; druh s nenulovým počtem nejde smazat.',
+      'Výroba, oprava nebo léčení škrtnou tolik Surovin, kolik stojí. Máš-li druhy, vybereš, z jakého se odečte.',
+      'Mezi výpravami platí 1 Surovina = 1 groš.',
+    ],
+    link: '35-pouzivani-dovednosti#suroviny',
+  },
+  {
+    id: 'hotovost',
+    title: 'Hotovost',
+    kind: 'navod',
+    text: 'Dukáty, groše a haléře se evidují zvlášť. 1 groš = 10 haléřů, 1 dukát = 10 grošů.',
+    steps: [
+      'Nic se samo nepřevádí do vyššího řádu.',
+      'Čerpání pod nulu rozmění minci z vyššího řádu (rozměnění dukátu se zeptá).',
+      'Rychlá klepání na ± se zapíšou jako jedna revize.',
+    ],
+    link: '35-pouzivani-dovednosti#penize-a-nakupy-vybaveni',
+  },
+  {
+    id: 'lektvary',
+    title: 'Lektvary a masti',
+    text: 'Lektvar, mast, odvar nebo nektar je zásobník Surovin pro jeden druh Jizvy.',
+    steps: [
+      'Každá vložená Surovina ušetří 1 Zdroj při léčení Jizvy stejné vlastnosti.',
+      'Eviduje se vlastnost, druh Jizvy, počet Surovin a poznámka (např. platnost do slunovratu nebo rovnodennosti).',
+      'Zásobník lze použít postupně na víc pacientů. Nouzové lektvary Zdroje neušetří a neevidují se.',
+    ],
+    link: '36-kouzla-nastrahy-leceni#lektvary',
+  },
+  {
+    id: 'grimoar',
+    title: 'Grimoár',
+    kind: 'navod',
+    text: 'Sklad předpisů (kouzla, lektvary, nástrahy, výrobky) na tomto zařízení; používání je nepovinné.',
+    steps: [
+      'Postavy se na předpis odkazují. Úprava se projeví u všech; „Uložit jako novou variantu“ vytvoří kopii.',
+      'Při přenosu postavy jdou předpisy s ní. Stejný obsah se použije existující, jiný se vloží jako nový.',
+      'Kouzlo lze seslat ad hoc bez ukládání. Mazání použitého předpisu vypíše postavy, které ho mají.',
+    ],
+  },
+]
+
+/** Všechna témata nápovědy (kroky vyhodnocení, složitější situace, pomůcky). */
+export const helpTopics = (): Card[] => [...BASIC, ...SITUATIONS, ...TOPICS]
+export const helpTopic = (id: string): Card | undefined => helpTopics().find((c) => c.id === id)
 
 export const SITUATIONS: Card[] = [
   {
@@ -182,7 +265,7 @@ export const SITUATIONS: Card[] = [
 /** Cíl odkazu do příručky. */
 export const linkOf = (c: Card) =>
   c.link?.includes('-') && /^\d\d-/.test(c.link)
-    ? `#/ctenar/${c.link}`
+    ? `#/ctenar/${c.link.replace('#', '/')}`
     : c.link
       ? `#/ctenar/32-slozitejsi-situace/${c.link}`
       : undefined

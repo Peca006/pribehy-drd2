@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import { onMount } from 'svelte'
   import type { Character } from '../../core/character/model'
   import { professions } from '../../core/library.svelte'
@@ -91,13 +93,15 @@
       return err instanceof Error ? err.message : 'Uložení se nepovedlo.'
     }
   }
+  let helpOpen = $state(false)
 </script>
 
 <div class="spells">
   <div class="head">
-    <strong>Kouzla</strong>
+    <span><strong>Kouzla</strong> <HelpButton bind:open={helpOpen} label="Nápověda: Kouzla" /></span>
     <button onclick={() => (dialog = {})}>Seslat / nové…</button>
   </div>
+  <HelpPanel topic="kouzla" open={helpOpen} />
   {#if list.length}
     <ul>
       {#each list as l (l.linkId)}

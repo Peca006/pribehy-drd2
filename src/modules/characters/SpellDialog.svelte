@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HelpHeading from '../../ui/HelpHeading.svelte'
   import { untrack } from 'svelte'
   import { foldName } from '../../core/recipes/find'
   import { MAX_NAME, type Recipe } from '../../core/recipes/model'
@@ -63,7 +64,7 @@
 </script>
 
 <dialog bind:this={dialog} {onclose} aria-label="Kouzlo">
-  <h2>{recipe ? 'Upravit kouzlo' : 'Kouzlo'}</h2>
+  <HelpHeading title={recipe ? 'Upravit kouzlo' : 'Kouzlo'} topic="kouzla" />
   {#if !recipe}<p class="muted">Bez uložení se kouzlo jen vyhodnotí, název ani popis není potřeba.</p>{/if}
   <input type="text" bind:value={name} maxlength={MAX_NAME} placeholder="Název (jen pro uložení)" aria-label="Název kouzla" />
   <div class="row">
@@ -153,9 +154,6 @@
   }
   dialog::backdrop {
     background: rgb(0 0 0 / 0.6);
-  }
-  h2 {
-    margin-top: 0;
   }
   fieldset {
     margin: 0.5rem 0;

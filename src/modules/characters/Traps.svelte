@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import { onDestroy } from 'svelte'
   import type { Character } from '../../core/character/model'
   import { adjustTrap, trapList, trapSummary, useTrap } from '../../core/character/traps'
@@ -60,13 +62,15 @@
   onDestroy(() => {
     if (Object.keys(pending).length) void flush()
   })
+  let helpOpen = $state(false)
 </script>
 
 <div class="traps">
   <div class="head">
-    <strong>Nástrahy</strong>
+    <span><strong>Nástrahy</strong> <HelpButton bind:open={helpOpen} label="Nápověda: Nástrahy" /></span>
     <button onclick={() => open('new')} aria-label="Přidat nástrahu">+ Přidat</button>
   </div>
+  <HelpPanel topic="nastrahy" open={helpOpen} />
   {#if list.length}
     <ul>
       {#each list as { id, trap } (id)}

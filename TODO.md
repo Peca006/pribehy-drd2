@@ -31,12 +31,12 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
 - **Drobnosti.** Jména testerů do O aplikace (až budou).
-- **Nápověda napříč aplikací (úplně na konec, po všech drobnostech).** Dnes je „?“ jen u léčení Jizvy (karta Postup
-  s dovednostmi z balíčku a odkazem do příručky nebo SRD; `CardHelp.svelte`, `guide.ts`). Zobecnit: malá plovoucí
-  vysvětlení (hint, tooltip) pravidel a řešení všude, kde dává smysl (výroba, nástrahy, kouzla, Grimoár, Hotovost, Suroviny,
-  Zdroje, Hod …), s odkazem do příručky nebo SRD, místy i návod k použití aplikace. Patří sem i názvy dovedností z balíčku
-  a odkaz do SRD v dialozích výroby a nástrah a odkaz na konkrétní dovednost v SRD (v kostře je `srd` jen u povolání
-  a schopností). K návrhu: jednotná komponenta, texty na jednom místě, bez balíčku odkaz do SRD.
+- **Nápověda napříč aplikací.** 🚧 Hotová etapa 1 a 2 (komponenty `HelpButton`, `HelpPanel`, `HelpHeading`, registr témat
+  `src/core/help.ts`, „?“ u Hodu, Zdrojů, Surovin, Hotovosti, lektvarů, výroby, nástrah, kouzel a Grimoáru). Rozhodnutí:
+  panel pod prvkem (ne hover), vlastní stručné výtahy s odkazem do příručky nebo SRD, kroky a návody v registru na jednom místě.
+  Zbývá: etapa 3 postava a družina (Postup, Jizvy, sezení, konflikt, sdílení a import včetně „moje / jejich“), etapa 4
+  Grimoár, Příručka, Bestiář a Více (balíčky, zvuk), etapa 5 stránka **Nápověda** ve Více (seznam všech témat s hledáním
+  a krátký úvod do aplikace). Patří sem i odkaz na konkrétní dovednost v SRD (v kostře je `srd` jen u povolání a schopností).
 - **Nápad: skiny s obrázkovou mapou ovládacích prvků (později).** Prvky (tlačítko, popis, výstup) definované souřadnicemi
   na obrázku; pixelartová varianta (inspirace Truhlice) nebo klasická. Předpoklad: uklidit stránky a navigaci.
 

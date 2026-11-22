@@ -1,4 +1,6 @@
 <script lang="ts">
+  import HelpButton from '../../ui/HelpButton.svelte'
+  import HelpPanel from '../../ui/HelpPanel.svelte'
   import { ATTRIBUTES, type Character } from '../../core/character/model'
   import type { Attribute } from '../../core/content/schema'
   import {
@@ -42,14 +44,16 @@
     onspent({ Tělo: 0, Duše: 0, Vliv: 0 })
     onbonus(emptyBonus())
   }
+  let helpOpen = $state(false)
 </script>
 
 <section class="panel" aria-label="Zdroje">
   <div class="inner" style:--cols={cols}>
     <div class="head">
-      <strong>Zdroje</strong>
+      <span><strong>Zdroje</strong> <HelpButton bind:open={helpOpen} label="Nápověda: Zdroje" /></span>
       <button onclick={rest}>Obnovit</button>
     </div>
+    <HelpPanel topic="zdroje" open={helpOpen} />
     {#each ATTRIBUTES as a}
       {@const blocked = character.attributes[a] - max[a]}
       <div class="row">
