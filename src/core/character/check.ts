@@ -24,6 +24,15 @@ export interface CheckContext {
 const MAX_LEVEL = 5
 const MAX_SCAR = 5
 
+/** Kolik schopností navíc postava smí mít za zlepšení zdatnosti (zdatnost nad body z tvorby postavy). */
+export function extraAbilities(c: Pick<Character, 'attributes'>, rules: CreationRules): number {
+  const attrSum = ATTRIBUTES.reduce(
+    (s, a) => s + (Number.isFinite(c.attributes[a]) ? c.attributes[a] : 0),
+    0,
+  )
+  return Math.max(0, attrSum - rules.attributePoints)
+}
+
 export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[] {
   const out: CharacterCheck[] = []
   const err = (text: string) => out.push({ level: 'chyba', text })
@@ -90,11 +99,7 @@ export function checkCharacter(c: Character, ctx: CheckContext): CharacterCheck[
     else warn(`Rasová schopnost „${id}“ nepatří k rase postavy.`)
   }
   // zlepšení zdatnosti (o 1 nad body z tvorby postavy) dává jednu schopnost rasy nebo povolání navíc
-  const attrSum = ATTRIBUTES.reduce(
-    (s, a) => s + (Number.isFinite(c.attributes[a]) ? c.attributes[a] : 0),
-    0,
-  )
-  const extra = Math.max(0, attrSum - rules.attributePoints)
+  const extra = extraAbilities(c, rules)
   const extraNote = extra ? ` (a ${extra} navíc za zlepšení zdatnosti)` : ''
   for (const [pid, n] of perProfession) {
     const p = known.get(pid)!

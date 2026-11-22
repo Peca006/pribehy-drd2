@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import type { Ability, Profession, Race } from '../content/schema'
+import type { Ability, CreationRules, Profession, Race } from '../content/schema'
 import { emptyCharacter } from './model'
 import {
   abilityGroups,
   effectiveAttributes,
   orphanAbilities,
+  professionUsage,
   toggleAbility,
   withItem,
   withNewScar,
@@ -53,5 +54,20 @@ describe('úprava postavy', () => {
     const c = emptyCharacter('c')
     expect(withItem(c, ' ')).toBe(c)
     expect(withItem(c, ' lano ').equipment).toEqual(['lano'])
+  })
+
+  it('počet schopností povolání: málo, přesně, moc; zlepšení zdatnosti přidává navíc', () => {
+    const rules = { abilitiesPerLevel: 1, attributePoints: 15 } as unknown as CreationRules
+    const p = { ...prof('a'), abilities: [ab('a1'), ab('a2'), ab('a3')] } as Profession
+    const base = { ...emptyCharacter('c'), professions: { a: 2 } }
+    const at = (abilities: string[], bonus = 0) => ({
+      ...base,
+      abilities,
+      attributes: { Tělo: 5 + bonus, Duše: 5, Vliv: 5 },
+    })
+    expect(professionUsage(at(['a1']), p, rules)).toEqual({ have: 1, allowed: 2, state: 'under' })
+    expect(professionUsage(at(['a1', 'a2']), p, rules).state).toBe('ok')
+    expect(professionUsage(at(['a1', 'a2', 'a3']), p, rules).state).toBe('over')
+    expect(professionUsage(at(['a1', 'a2', 'a3'], 1), p, rules).state).toBe('ok')
   })
 })

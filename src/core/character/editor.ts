@@ -1,6 +1,7 @@
 // Úprava postavy po vytvoření (logika CharacterEditor): změny návrhu postavy bez závislosti na vzhledu.
-import type { Ability, Profession, Race } from '../content/schema'
+import type { Ability, CreationRules, Profession, Race } from '../content/schema'
 import type { Attribute } from '../content/schema'
+import { extraAbilities } from './check'
 import { ATTRIBUTES, newId, type Character } from './model'
 
 export const MAX_PROFESSION_LEVEL = 5
@@ -8,6 +9,8 @@ export const MAX_PROFESSION_LEVEL = 5
 export interface AbilityGroup {
   title: string
   abilities: Ability[]
+  /** povolání, ze kterého skupina je (rasová skupina ho nemá) */
+  professionId?: string
 }
 
 /** Nabídky dovedností: rasa (se společnými rasovými) a povolání, která postava má. */
@@ -19,8 +22,27 @@ export function abilityGroups(
 ): AbilityGroup[] {
   const out: AbilityGroup[] = []
   if (race) out.push({ title: `Rasa: ${race.name}`, abilities: [...race.abilities, ...common] })
-  for (const p of all) if ((c.professions[p.id] ?? 0) > 0) out.push({ title: p.name, abilities: p.abilities })
+  for (const p of all) if ((c.professions[p.id] ?? 0) > 0) out.push({ title: p.name, abilities: p.abilities, professionId: p.id })
   return out
+}
+
+export interface Usage {
+  have: number
+  allowed: number
+  /** `over` = víc, než dovolují pravidla; `under` = ještě chybí; `ok` = sedí */
+  state: 'ok' | 'over' | 'under'
+}
+
+/** Kolik schopností povolání má postava a kolik jich úroveň dovoluje (zlepšení zdatnosti přidává navíc). */
+export function professionUsage(
+  c: Pick<Character, 'professions' | 'abilities' | 'attributes'>,
+  p: Profession,
+  rules: CreationRules,
+): Usage {
+  const have = p.abilities.filter((a) => c.abilities.includes(a.id)).length
+  const allowed = (c.professions[p.id] ?? 0) * rules.abilitiesPerLevel
+  const state = have > allowed + extraAbilities(c, rules) ? 'over' : have < allowed ? 'under' : 'ok'
+  return { have, allowed, state }
 }
 
 /** Dovednosti postavy, které žádná nabídka nezná (po změně rasy či povolání). */

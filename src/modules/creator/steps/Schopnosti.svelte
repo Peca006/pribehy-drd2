@@ -74,7 +74,12 @@
 {#each learning as p}
   {@const lvl = draft.levels[p.id]}
   {@const n = abilitiesIn(p, draft.abilities)}
-  <h3>{p.name} <span class="muted">– vybráno {n} z {lvl}</span></h3>
+  <h3>
+    {p.name}
+    <span class={n === lvl ? 'muted' : n > lvl ? 'error' : 'warn'}
+      >– vybráno {n} z {lvl}{n > lvl ? ' (víc, než úroveň dovoluje – některou odškrtněte)' : ''}</span
+    >
+  </h3>
   {#each p.abilities as a}
     {@const on = draft.abilities.includes(a.id)}
     <div class="panel" class:sel={on}>
@@ -106,6 +111,9 @@
 <style>
   .sel {
     outline: 2px solid var(--drd-accent);
+  }
+  .warn {
+    color: var(--drd-accent);
   }
   .radio {
     display: flex;
