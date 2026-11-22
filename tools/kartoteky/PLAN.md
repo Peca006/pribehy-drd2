@@ -60,3 +60,13 @@ Nejsou to odkazy, ale hodnoty zapsané přímo; zatím zmapováno, nezpracováno
 ## Otevřené otázky
 - Fafrinovy hodnoty jako referenci, nebo jeden z názorů? (rozhodne uživatel po porovnání)
 - Má smysl diff proti 1. vydání příruček? Nejdřív zjistit obsah `reference/rozdily-*.md`.
+
+## Bod 4 – slovník a export (22. 11. 2026)
+- `slovnik.mjs`: id, český popisek a alias na hodnotu Kostky (mechanism, domain, subject, target-kind, zdroje, rasy).
+- `export.mjs`: plochá JSON karta (`reference/work/kartoteky-karty.json`) a export ve formátu Kostky (`drd2-zs.md`, `drd2-skill.md`);
+  206 ZS Příručky + 27 bestiářových (návrh, `labels: auto-draft`) + 77 dovedností.
+- `overeni.mjs`: kontrola exportu proti Fafrinovým 86 kartám. Shoda: attribute, level, class-basic, race, rulebook 86/86,
+  activation-cost 86/86, related-skill 83/86 (3 rozdíly jsou chyby zápisu u Fafrina nebo jeho úsudek), purpose přesně 40/86.
+- Zbývá: `domain` (u 72 ZS prázdné; Fafrin tam má hlavně Jednání, Jizvy, Skrývání, Magie), dovednosti nemají
+  `environment`, `target`, `target-attribute`, `source-zs`; bestiářová pravidla `group-rule` / `against-being` čekají na schválení.
+- Export je jen lokální (v `reference/work/`, ignorováno); do repa se nedávají.
