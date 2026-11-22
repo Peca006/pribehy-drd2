@@ -10,6 +10,7 @@
   import { creationData } from './data'
   import { Draft } from './draft.svelte'
   import { clearDraft, hasContent, loadDraft, saveDraft } from './draftData'
+  import { problems } from './rules'
   import { steps } from './steps'
 
   let { params }: { params: string[] } = $props()
@@ -56,6 +57,14 @@
   )
   const step = $derived(steps[index])
   const goto = (id: string) => go('tvorba', id)
+  // kroky, ve kterých ještě něco chybí nebo nesedí; průběžně se ukazuje u kroků, které už člověk prošel
+  const stepOf = (id: string) => steps.findIndex((s) => s.id === id)
+  const passed = $derived(
+    (data && draft ? problems(data.rules, data.professions, draft) : []).filter(
+      (p) => stepOf(p.step) < index,
+    ),
+  )
+  const textsOf = (id: string) => passed.filter((p) => p.step === id).map((p) => p.text)
 
   async function finish() {
     if (!draft) return
@@ -94,11 +103,22 @@
         <a
           href={'#/tvorba/' + s.id}
           aria-current={i === index ? 'step' : undefined}
-          class:done={i < index}>{i + 1}. {s.title}</a
+          class:done={i < index}
+          class:bad={textsOf(s.id).length > 0}
+          title={textsOf(s.id).join(' ') || undefined}
+          >{i + 1}. {s.title}{#if textsOf(s.id).length}
+            <span aria-hidden="true">⚠</span><span class="sr-only"> (něco nesedí)</span>{/if}</a
         >
       </li>
     {/each}
   </ol>
+
+  {#if passed.length}
+    <p class="panel warnbox" role="status">
+      V předchozích krocích ještě něco nesedí:
+      {#each passed as p}<a href={'#/tvorba/' + p.step}>{p.text}</a>{' '}{/each}
+    </p>
+  {/if}
 
   {@const Step = step.component}
   <Step {draft} {data} {goto} {finish} />
@@ -141,6 +161,19 @@
   }
   .progress a.done {
     color: var(--drd-text);
+  }
+  .progress a.bad {
+    outline: 2px solid var(--drd-accent);
+  }
+  .warnbox {
+    border-left: 4px solid var(--drd-accent);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
   }
   .resumed {
     display: flex;

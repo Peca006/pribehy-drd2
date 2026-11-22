@@ -16,19 +16,23 @@
   } from '../../core/character/model'
   import { changesBetween } from '../../core/character/revisions'
   import { appendEvents, getLog } from '../../core/character/store'
-  import { commonRaceAbilities, professions, races } from '../../core/library.svelte'
+  import { commonRaceAbilities, creationRules, professions, races } from '../../core/library.svelte'
   import { go } from '../../core/router.svelte'
   import { setAuthor, settings } from '../../core/settings.svelte'
   import {
     abilityGroups,
     effectiveAttributes,
+    MAX_PROFESSION_LEVEL,
     orphanAbilities,
+    professionUsage,
     toggleAbility,
     withItem,
     withNewScar,
     withProfessionLevel,
   } from '../../core/character/editor'
   import { UNIT_LABEL, UNIT_ORDER } from '../../core/character/cash'
+  import { levelProblems } from '../../core/character/advance'
+  import type { CheckContext } from '../../core/character/check'
   import CheckList from './CheckList.svelte'
   import { describeChange, nameOf, pathLabel } from './describe'
 
@@ -72,7 +76,24 @@
   const commonAbilities = $derived(commonRaceAbilities())
   const groups = $derived(draft ? abilityGroups(draft, race, commonAbilities, professions()) : [])
   const orphan = $derived(draft ? orphanAbilities(draft, groups) : [])
-  const addable = $derived(professions().filter((p) => draft && !(p.id in draft.professions)))
+  const rules = $derived(creationRules())
+  const ctx = $derived<CheckContext | undefined>(
+    rules ? { rules, professions: professions(), races: races(), commonAbilities } : undefined,
+  )
+  // nabídka nových povolání: ta, na která postava (ještě) nemá, zůstanou vidět, ale zašedlá a s důvodem
+  const addable = $derived(
+    professions()
+      .filter((p) => draft && !(p.id in draft.professions))
+      .map((p) => ({
+        p,
+        problems: draft && ctx && p.kind !== 'mistrovske' ? levelProblems(draft, ctx, p.id) : [],
+      })),
+  )
+  const addProblems = $derived(addable.find((x) => x.p.id === adding)?.problems ?? [])
+  const usage = (pid: string) => {
+    const p = professions().find((x) => x.id === pid)
+    return draft && rules && p ? professionUsage(draft, p, rules) : undefined
+  }
   let adding = $state('')
   let newItem = $state('')
 
@@ -129,6 +150,8 @@
     </p>
   {/if}
 
+  <CheckList character={draft} baseline={current} title="Kontrola postavy (průběžně)" />
+
   <h2>Základ</h2>
   <label>Jméno <input bind:value={draft.name} /></label>
   <label>Koncept <input bind:value={draft.concept} /></label>
@@ -148,8 +171,13 @@
         >−</button
       >
       <strong>{draft.professions[pid]}</strong>
-      <button onclick={() => setLevel(pid, draft!.professions[pid] + 1)} aria-label="Zvýšit úroveň"
-        >+</button
+      <button
+        onclick={() => setLevel(pid, draft!.professions[pid] + 1)}
+        disabled={draft.professions[pid] >= MAX_PROFESSION_LEVEL}
+        aria-label="Zvýšit úroveň"
+        title={draft.professions[pid] >= MAX_PROFESSION_LEVEL
+          ? `Nejvyšší úroveň povolání je ${MAX_PROFESSION_LEVEL}.`
+          : undefined}>+</button
       >
     </div>
   {/each}
@@ -157,10 +185,14 @@
     <div class="row">
       <select bind:value={adding} aria-label="Přidat povolání">
         <option value="">Přidat povolání…</option>
-        {#each addable as p}<option value={p.id}>{p.name}</option>{/each}
+        {#each addable as { p, problems }}
+          <option value={p.id} disabled={problems.length > 0}
+            >{p.name}{problems.length ? ' – zatím nelze (' + p.requires?.map((r) => nameOf(r)).join(' + ') + ')' : ''}</option
+          >
+        {/each}
       </select>
       <button
-        disabled={!adding}
+        disabled={!adding || addProblems.length > 0}
         onclick={() => {
           setLevel(adding, 1)
           adding = ''
@@ -171,7 +203,15 @@
 
   <h2>Zvláštní schopnosti</h2>
   {#each groups as g}
-    <h3>{g.title}</h3>
+    {@const u = g.professionId ? usage(g.professionId) : undefined}
+    <h3>
+      {g.title}
+      {#if u}
+        <span class={u.state === 'ok' ? 'muted' : u.state === 'over' ? 'error' : 'warn'}
+          >– vybráno {u.have} z {u.allowed}{u.state === 'over' ? ' (víc, než úroveň dovoluje)' : ''}</span
+        >
+      {/if}
+    </h3>
     {#each g.abilities as a (a.id)}
       <label class="check">
         <input
@@ -280,7 +320,7 @@
   {:else}
     <p class="muted">Zatím žádná změna proti postavě.</p>
   {/if}
-  <CheckList character={draft} title="Kontrola upravené postavy" />
+  <CheckList character={draft} baseline={current} title="Kontrola upravené postavy" />
   <label>
     Popis změny (povinný) <input
       bind:value={note}
@@ -345,6 +385,9 @@
   .check input {
     width: auto;
     min-height: 0;
+  }
+  .warn {
+    color: var(--drd-accent);
   }
   .preview {
     list-style: none;
