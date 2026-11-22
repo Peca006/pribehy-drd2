@@ -1,5 +1,9 @@
 # Změny
 
+## Nevydáno
+
+- **Příručka po částech:** kapitoly Základní příručky jsou seskupené do čtyř sbalitelných částí podle SRD (Úvod do hry, Tvorba postav, Hraní hry, Vyprávění příběhů). Balíček má nepovinné `manifest.parts` a u kapitoly `part`; knihy bez částí zůstávají plochým seznamem. Číslo sestavení balíčků je 3, aplikace nabídne stažení nového balíčku.
+
 ## 0.4.7 (22. 11. 2026)
 
 - **Družina: „změnil Průvodce“:** když hráč přijme novou kopii družiny a Průvodce mezitím změnil název nebo text schváleného zápisu, zápis má značku a tlačítko „Beru na vědomí“. Značka je jen místní informace, vlastní návrhy ji nemají.
