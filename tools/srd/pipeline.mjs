@@ -1,6 +1,5 @@
-// Sestavení balíčků ze stránek SRD jako čisté funkce nad řetězci HTML (bez souborů a bez `sharp`), aby je mohl
-// použít jak Node nástroj (`build.mjs`, `build-bestiar.mjs`), tak bookmarklet běžící na stránce SRD v prohlížeči.
-// Texty SRD tak nikdy neopouštějí zařízení uživatele.
+// Sestavení balíčků ze stránek SRD jako čisté funkce nad řetězci HTML (bez souborů a bez `sharp`); používají je
+// Node nástroje `build.mjs` a `build-bestiar.mjs`.
 import buildNumber from '../../src/data/pack-build.json' with { type: 'json' }
 import { parseProfessions } from './parse-povolani.mjs'
 import { parse } from 'node-html-parser'
@@ -21,37 +20,8 @@ const RULES_ID = 'drd2-pravidla-2'
 /** Číslo sestavení balíčků; musí odpovídat `EXPECTED_BUILD` v `src/core/content/builds.ts` (hlídá test). */
 export const PACK_BUILD = buildNumber.build
 
-/** Stránky Základní příručky a Bestiáře (název souboru bez `.html`), kdyby je nešlo zjistit z navigace. */
-export const RULES_PAGES = [
-  '11-co-jsou-hry-na-hrdiny',
-  '12-priklad-hry',
-  '21-dobrodruzi',
-  '22-ukazkove-postavy',
-  '23-tvorba-hrdiny',
-  '24-rasy',
-  '25-zakladni-povolani',
-  '26-pokrocila-povolani',
-  '31-zakladni-pravidla',
-  '32-slozitejsi-situace',
-  '33-vybaveni',
-  '34-pomocnici-a-site',
-  '35-pouzivani-dovednosti',
-  '36-kouzla-nastrahy-leceni',
-  '37-zvlastni-schopnosti',
-  '38-zkusenosti-a-zlepsovani-postavy',
-  '41-priprava-a-vedeni-hry',
-  '42-inspirace-pro-dobrodruzstvi',
-  '43-bestiar',
-  '44-navrat-do-bileho-hradu',
-]
-export const BESTIAR_PAGES = [
-  '01-uvod',
-  '02-lide',
-  '03-zvirata',
-  '04-nemrtvi',
-  '05-besi',
-  '06-netvori',
-]
+/** Stránky Bestiáře (název souboru bez `.html`). */
+export const BESTIAR_PAGES = ['01-uvod', '02-lide', '03-zvirata', '04-nemrtvi', '05-besi', '06-netvori']
 
 // Opravy SRD podle tištěné knihy (drd2-pravidla.pdf); viz `npm run compare:srd`. Počet zásahů je pevně daný.
 /** @type {[string, string, number][]} */
@@ -68,20 +38,6 @@ const HTML_FIXES = [
     'naposledy. Neuváženě jsem se vysmívala lidským bůžkům, a když',
   ],
 ]
-
-/**
- * Názvy stránek sekce SRD z odkazů na stránce (`/sekce/NN-nazev.html`); když jich je méně než známých,
- * platí pevný seznam `fallback`.
- */
-export function discoverPages(hrefs, section, fallback) {
-  const re = new RegExp(`/${section}/(\\d\\d-[a-z0-9-]+)\\.html`)
-  const found = new Set()
-  for (const h of hrefs) {
-    const m = (h ?? '').match(re)
-    if (m) found.add(m[1])
-  }
-  return found.size >= fallback.length ? [...found].sort() : fallback
-}
 
 export const basename = (p) => p.split('/').pop().split(/[?#]/)[0]
 

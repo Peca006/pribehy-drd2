@@ -3,7 +3,6 @@
 // publikuje), `drd2-pravidla-2.json` je konečný balíček s vloženými obrázky (k ručnímu načtení do aplikace).
 // `--force-images` znovu vytvoří WebP (změnil se zdrojový obrázek).
 // Použití: node tools/srd/build.mjs
-// Totéž dělá bookmarklet přímo v prohlížeči (viz tools/srd/browser/entry.mjs), obě cesty sdílí `pipeline.mjs`.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs'
 import { buildRulesChapters, embedImagesWith, finishRulesPack } from './pipeline.mjs'
 import { fileImageLoader, missingImages } from './images.mjs'

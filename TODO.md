@@ -28,13 +28,9 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   formátu balíčků. Postup: build, `tools/srd/publish.mjs`, commit, nasazení `main`; při změně formátu zvýšit `PACK_BUILD`
   a `EXPECTED_BUILD`. Svolení Altaru: `content-packs/srd/SVOLENI.md` (Her mocných a Hotfixu se netýká).
 - **K ověření na telefonu.** Dialogy (léčení, výroba, lektvary, nástrahy, kouzla), Hotovost, Grimoár, ilustrace, značka
-  „změnil Průvodce“, volba „moje / jejich“ při importu, aktualizace PWA (nasadit A, otevřít, nasadit B: má přijít pruh
-  „Je dostupná nová verze“), příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
+  „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
-- **K rozhodnutí.** Ikonky prostředí v Bestiáři; přehled „kapitoly, druhy, bytosti“. (Seskupení kapitol v Příručce do částí
-  je ✅ hotové, nevydáno.)
-- **Drobnosti.** Jména testerů do O aplikace (až budou). Úklid: zbytky bookmarkletu (`tools/srd/browser`,
-  `vite.srd.config.ts`, `globIgnores` ve `vite.config.ts`), UI už je pryč.
+- **Drobnosti.** Jména testerů do O aplikace (až budou).
 - **Nápověda napříč aplikací (úplně na konec, po všech drobnostech).** Dnes je „?“ jen u léčení Jizvy (karta Postup
   s dovednostmi z balíčku a odkazem do příručky nebo SRD; `CardHelp.svelte`, `guide.ts`). Zobecnit: malá plovoucí
   vysvětlení (hint, tooltip) pravidel a řešení všude, kde dává smysl (výroba, nástrahy, kouzla, Grimoár, Hotovost, Suroviny,
@@ -67,8 +63,8 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - ✅ **Úprava postavy podle pravidel:** Postup (úroveň, zdatnost, schopnosti), zkušenosti, Jizvy a jejich hojení, kontrola
   postavy bez balíčku (`skeleton.json`, `check.ts`), ilustrace postav v zařízení.
 - ✅ **Audiogram:** přenos zvukem (QPSK 1200, BPSK 800, další režimy), společná zkouška zvuku (0.4.6).
-- ✅ **Obsah:** kapitoly Příručky po částech (nevydáno), balíčky se stahují z webu aplikace, mapy a obrázky v balíčku (WebP, přiblížení), rejstřík pojmů, omezení
+- ✅ **Obsah:** kapitoly Příručky po částech (nevydáno), ikony prostředí a filtry Bestiáře (druh, prostředí), balíčky se stahují z webu aplikace, mapy a obrázky v balíčku (WebP, přiblížení), rejstřík pojmů, omezení
   počtu odkazů v textu (nastavení „Odkazy v textu“ ve Více), O aplikaci s poděkováním a licencemi (0.4.7).
 - ✅ **PWA:** aktualizace s pruhem „Obnovit“, instalace (Android, iOS návod), ikony.
-- ✅ **Převod SRD v zařízení (bookmarklet):** odstraněn v 0.4.5, balíčky se stahují hotové.
+- ✅ **Převod SRD v zařízení (bookmarklet):** UI odstraněno v 0.4.5, zbytky kódu a sestavení (`tools/srd/browser`, `vite.srd.config.ts`) (nevydáno); balíčky se stahují hotové.
 - ✅ **Tvorba postavy:** výbava bez balíčku, generátor jmen.

@@ -2,6 +2,7 @@
 
 ## Nevydáno
 
+- **Pod kapotou:** odstraněn nepoužívaný převodník SRD v prohlížeči (bookmarklet): `tools/srd/browser`, `vite.srd.config.ts`, `public/srd-import.user.js`, krok sestavení před `dev` a `build` a související test. Balíčky se dál staví Node nástroji.
 - **Příručka po částech:** kapitoly Základní příručky jsou seskupené do čtyř sbalitelných částí podle SRD (Úvod do hry, Tvorba postav, Hraní hry, Vyprávění příběhů). Balíček má nepovinné `manifest.parts` a u kapitoly `part`; knihy bez částí zůstávají plochým seznamem. Číslo sestavení balíčků je 3, aplikace nabídne stažení nového balíčku.
 
 ## 0.4.7 (22. 11. 2026)
