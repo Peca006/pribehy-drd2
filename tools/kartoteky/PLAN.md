@@ -52,7 +52,11 @@ Nejsou to odkazy, ale hodnoty zapsané přímo; zatím zmapováno, nezpracováno
 ## Chyby ve zdroji
 - V balíčku pravidel odkazuje „Hrůza a děs“ u jednoho tvora na `#neschopnost` (chapter:43-bestiar). Ověřit proti SRD.
 
+## Rozhodnutí (22. 11. 2026)
+- Text karty dovednosti = odrážky z `items` jako markdown, beze změny zdroje (heslovitý popis pro představu hráče).
+- Rozsah karet zatím: 206 ZS Příručky, 77 dovedností, 27 bestiářových schopností. Talenty, nástrahy, jedy a ostatní textové statistiky tvorů zatím bez karet.
+- Nezranitelnost, Zranitelnost, Neschopnost: typ `zs` s příznakem `monster` (jako u Kostky).
+
 ## Otevřené otázky
 - Fafrinovy hodnoty jako referenci, nebo jeden z názorů? (rozhodne uživatel po porovnání)
 - Má smysl diff proti 1. vydání příruček? Nejdřív zjistit obsah `reference/rozdily-*.md`.
-- Co je text karty dovednosti (zatím jen seznam `items`).
