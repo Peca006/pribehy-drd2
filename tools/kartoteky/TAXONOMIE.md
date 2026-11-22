@@ -110,3 +110,18 @@ Ve zdrojovém souboru chybí u karty „Zaříkávač koní“ uzavírací tag `
   Léčení 7, Jizvy 8, Výroba 5, Pohyb 2), druh cíle (Lidé 7, Zvířata 6, Nemrtví, Běsi, Netvoři, Oživení) a předmět
   (Obrazce 5, Jedy 4, Pasti, Masti, Trofeje, Zřídla, Rituální předměty). Moje taxonomie má druh cíle (`target-kind`),
   ale pro ZS nemá oblast; u dovedností ji mám (`area`).
+
+### Rozhodnutí po porovnání (22. 11. 2026)
+
+1. ZS dostanou tři oddělená pole: `domain` (oblast: boj, jednání, skrývání, znalosti, magie, léčení, výroba, pohyb, …),
+   `target-kind` (druh cíle) a `subject` (předmět: obrazce, jedy, pasti, masti, trofeje, zřídla, rituální předměty).
+   „Jizvy“ není oblast, ale mechanismus (`scar-effect`). `domain` se odvozuje ze související dovednosti a z textu.
+2. `free-maneuver` se dělí na `free-maneuver`, `free-defense` (obrana zdarma) a `free-approach` (přístup zdarma);
+   `defend-others` zůstává zvlášť.
+3. Něco z ničeho, Umění improvizace, Dar tvoření: `craft` + `gain-resources`.
+4. **Aktivace:** prázdné pole `activation-cost` znamená „bez aktivace“; zvláštní příznak ani nulová cena se nezavádí.
+   Karta s pasivní a aktivovanou částí (Lovčí, Čtení v duši, Síla osobnosti, Něco z ničeho, Umění improvizace) má
+   jen cenu aktivované části; pasivní část vyplývá z mechanismu (např. `skill-proficiency`). Fafrinovo
+   „Bez aktivace, Duše: 1“ u těchto 5 karet je pravděpodobně zmatení dvou atributů a v kontrole se hlásí jako
+   rozpor. Při exportu pro Kostku se „Bez Aktivace“ vypíše jen když je pole prázdné.
+5. Fafrin je reference a jeden z názorů. Kde se `effect` zdroje nehodí, mapují se hodnoty při exportu.
