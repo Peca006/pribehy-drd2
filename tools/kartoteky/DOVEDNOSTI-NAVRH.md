@@ -32,7 +32,7 @@ Příručky patří povolání, žádná není podmíněna konkrétní ZS. `targ
 | Ošetřování lidské duše | zakladni / Zaříkávač | Léčení | – | Lidé ? | Duše |
 | Vůle | zakladni / Zaříkávač | – | – | – | – |
 | Zaříkání | zakladni / Zaříkávač | Magie | – | Lidé, Zvířata ? | – |
-| Vyjednávání s nadpřirozenem | zakladni / Zaříkávač | Jednání | – | – | – |
+| Vyjednávání s nadpřirozenem | zakladni / Zaříkávač | Jednání | – | Netvoři, Nemrtví a neživí, Běsi ? | – |
 | Jízdní boj zblízka | pokrocile / Válečník | Boj | – | – | – |
 | Kovářství | pokrocile / Válečník | Výroba | – | – | – |
 | Válečnické znalosti | pokrocile / Válečník | Znalosti | – | – | – |
@@ -67,9 +67,9 @@ Příručky patří povolání, žádná není podmíněna konkrétní ZS. `targ
 | Vedení lidí mimo boj | pokrocile / Zvěd | Jednání | – | Lidé | – |
 | Obnovování lidského vlivu | pokrocile / Zvěd | Léčení | – | Lidé | Vliv |
 | Boj zblízka proti neživým | pokrocile / Vědmák | Boj | – | – | – |
-| Vědmácké znalosti | pokrocile / Vědmák | Znalosti | – | Neživí ? | – |
-| Znamení | pokrocile / Vědmák | Magie | – | Neživí ? | – |
-| Ovlivňování neživých | pokrocile / Vědmák | Jednání | – | Neživí | – |
+| Vědmácké znalosti | pokrocile / Vědmák | Znalosti | – | Nemrtví a neživí ? | – |
+| Znamení | pokrocile / Vědmák | Magie | – | Nemrtví a neživí ? | – |
+| Ovlivňování neživých | pokrocile / Vědmák | Jednání | – | Nemrtví a neživí | – |
 | Alchymické znalosti | pokrocile / Alchymista | Znalosti | – | – | – |
 | Výroba třaskavin, žíravin a plynných jedů | pokrocile / Alchymista | Výroba | – | – | – |
 | Používání třaskavin, žíravin a plynných jedů | pokrocile / Alchymista | Výroba | – | – | – |

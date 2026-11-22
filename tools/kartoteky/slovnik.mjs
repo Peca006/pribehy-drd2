@@ -47,8 +47,7 @@ export const SUBJECT = {
 };
 export const TARGET_KIND = {
   people: { cs: 'Lidé', kostka: ['Lidé'] }, animals: { cs: 'Zvířata', kostka: ['Zvířata'] }, monsters: { cs: 'Netvoři', kostka: ['Netvoři'] },
-  undead: { cs: 'Nemrtví', kostka: ['Nemrtví'] }, fiends: { cs: 'Běsi', kostka: ['Běsi'] }, constructs: { cs: 'Oživení', kostka: ['Oživení'] },
-  inanimate: { cs: 'Neživí', kostka: ['Neživí'] },
+  undead: { cs: 'Nemrtví a neživí', kostka: ['Nemrtví a neživí', 'Nemrtví', 'Neživí'] }, fiends: { cs: 'Běsi', kostka: ['Běsi'] }, constructs: { cs: 'Oživení', kostka: ['Oživení'] },
 };
 export const ATTRIBUTE = { body: 'Tělo', soul: 'Duše', influence: 'Vliv' };
 // zdroje: id, jména v exportu (Kostka: „Duše: 1“)

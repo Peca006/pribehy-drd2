@@ -73,8 +73,8 @@ const partsOf = (z) => {
   return groups.map(({ mechanism, activationCost }) => ({ mechanism, activationCost }));
 };
 const kindsOf = (t) => Object.entries({
-  people: /\b(lid|clovek|lidem|lidi|lidsk)\w*/, animals: /zvir\w+/, monsters: /netvor\w*/, undead: /nemrtv\w*/,
-  fiends: /\bbes(i|y|u|um|ech)?\b/, constructs: /oziven\w*/, inanimate: /\bnezi\w*/,
+  people: /\b(lid|clovek|lidem|lidi|lidsk)\w*/, animals: /zvir\w+/, monsters: /netvor\w*/, undead: /nemrtv\w*|\bnezi\w*/,
+  fiends: /\bbes(i|y|u|um|ech)?\b/, constructs: /oziven\w*/,
 }).filter(([, re]) => re.test(t)).map(([k]) => k);
 const subjectOf = (t) => Object.entries({
   wards: /obraz[ce]c/, poisons: /\bjed(y|u|em|ech|um|ove|ovy\w*)?\b|protijed/, traps: /\bpast\w*/, salves: /\bmast\w*/, trophies: /trofej\w*/, springs: /zridl\w*/, 'ritual-items': /ritualn\w+ predmet/,

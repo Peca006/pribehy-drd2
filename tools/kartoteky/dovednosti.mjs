@@ -19,8 +19,8 @@ const TYPE_OVERRIDE = { sila: [], 'odolnost-a-vydrz': [], vule: [], 'triky-a-kej
   'osetrovani-lidske-duse': ['healing'], 'leceni-zvirat': ['healing'], 'obnovovani-lidskeho-vlivu': ['healing'], nektary: ['healing', 'craft'], 'vyroba-omamnych-latek-a-odvaru': ['craft', 'healing'],
   'pusobeni-v-podsveti': ['social'], 'utajovani-informaci': ['stealth', 'knowledge'] };
 
-const KINDS = [['animals', /zvir/], ['monsters', /netvor/], ['inanimate', /nezivych|nezivi/], ['people', /\blid(i|em|mi|sk\w*)\b|lidu|clovek/], ['constructs', /ozivene|umely zivot/], ['undead', /nemrtv/], ['fiends', /\bbes(i|y|u|um)\b/]];
-const KIND_CS = { people: 'Lidé', animals: 'Zvířata', monsters: 'Netvoři', undead: 'Nemrtví', constructs: 'Oživení', fiends: 'Běsi', inanimate: 'Neživí' };
+const KINDS = [['animals', /zvir/], ['monsters', /netvor/], ['people', /\blid(i|em|mi|sk\w*)\b|lidu|clovek/], ['constructs', /ozivene|umely zivot/], ['undead', /nemrtv|nezivych|nezivi/], ['fiends', /\bbes(i|y|u|um)\b/]];
+const KIND_CS = { people: 'Lidé', animals: 'Zvířata', monsters: 'Netvoři', undead: 'Nemrtví a neživí', constructs: 'Oživení', fiends: 'Běsi' };
 const TARGET_ATTR = { 'osetrovani-lidskeho-tela': 'Tělo', 'leceni-zvirat': 'Tělo', 'osetrovani-lidske-duse': 'Duše', 'obnovovani-lidskeho-vlivu': 'Vliv', nektary: 'Vliv' };
 
 const rows = prev.skills.map((s) => {
@@ -30,7 +30,7 @@ const rows = prev.skills.map((s) => {
   // prostředí: jen z názvu („v divočině“, „ve městě“) a dvě výslovné výjimky (pohyb a táboření v divočině)
   const env = [/divocin/.test(name) || ['cestovani', 'tabornictvi'].includes(key) ? 'Divočina' : null, /\bve meste\b/.test(name) ? 'Město' : null].filter(Boolean);
   // cíl: z názvu; výjimky podle toho, na koho se dovednost opravdu zaměřuje (obecné „proti běžným protivníkům“ cíl není)
-  const MANUAL_TARGET = { 'lovecke-znalosti': ['animals'], 'hraniarske-znalosti': ['monsters'], 'hranicarske-znalosti': ['monsters'], 'vedmacke-znalosti': ['inanimate'], znameni: ['inanimate'],
+  const MANUAL_TARGET = { 'lovecke-znalosti': ['animals'], 'hraniarske-znalosti': ['monsters'], 'hranicarske-znalosti': ['monsters'], 'vedmacke-znalosti': ['undead'], znameni: ['undead'], 'vyjednavani-s-nadprirozenem': ['monsters', 'undead', 'fiends'],
     'magie-mysli': ['people'], zarikani: ['people', 'animals'], 'osetrovani-lidske-duse': ['people'], 'vyroba-omamnych-latek-a-odvaru': ['people', 'animals'], 'podavani-omamnych-latek': ['people', 'animals'] };
   const kindsName = KINDS.filter(([, re]) => re.test(name)).map(([k]) => k);
   const target = MANUAL_TARGET[key] ?? kindsName;
