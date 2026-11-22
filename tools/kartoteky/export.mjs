@@ -44,6 +44,33 @@ const costWithTarget = (z) => {
   }));
   return all;
 };
+// Části karty: odstavce textu seskupené podle ceny aktivace (stejná cena = jedna část; první výskyt určuje pořadí).
+// Odstavec bez mechanismu a bez ceny nic nového neříká a přeskakuje se. Mechanismy karty, které žádný odstavec nezachytil,
+// se přidají do první části, aby části vždy pokrývaly celou kartu.
+const partsOf = (z) => {
+  const mechs = normMech(z.mech);
+  const groups = [];
+  String(z.text ?? '').split(/\n\s*\n/).forEach((p, idx) => {
+    const m = normMech(z.paraMech?.[idx] ?? []).filter((x) => x !== 'special-effect' || mechs.includes('special-effect'));
+    const cost = costOf(p);
+    if (!m.length && !cost.length) return;
+    const sig = JSON.stringify([...new Map(cost.map((c) => [`${c.resource}${c.amount}`, c])).values()]);
+    let g = groups.find((x) => x.sig === sig);
+    if (!g) groups.push((g = { sig, mechanism: [], activationCost: JSON.parse(sig) }));
+    for (const x of m) if (!g.mechanism.includes(x)) g.mechanism.push(x);
+  });
+  // úrovně téže schopnosti (stejné mechanismy, různé ceny aktivace) tvoří jednu část s cenami oddělenými čárkou
+  for (let a = 0; a < groups.length; a++) for (let b = groups.length - 1; b > a; b--) {
+    const A = groups[a], B = groups[b];
+    if (A.activationCost.length && B.activationCost.length && [...A.mechanism].sort().join() === [...B.mechanism].sort().join()) {
+      A.activationCost.push(...B.activationCost.filter((c) => !A.activationCost.some((x) => x.resource === c.resource && x.amount === c.amount)));
+      groups.splice(b, 1);
+    }
+  }
+  if (!groups.length) groups.push({ sig: '[]', mechanism: [], activationCost: [] });
+  for (const x of mechs) if (!groups.some((g) => g.mechanism.includes(x))) groups[0].mechanism.push(x);
+  return groups.map(({ mechanism, activationCost }) => ({ mechanism, activationCost }));
+};
 const kindsOf = (t) => Object.entries({
   people: /\b(lid|clovek|lidem|lidi|lidsk)\w*/, animals: /zvir\w+/, monsters: /netvor\w*/, undead: /nemrtv\w*/,
   fiends: /\bbes(i|y|u|um|ech)?\b/, constructs: /oziven\w*/, inanimate: /\bnezi\w*/,
@@ -94,7 +121,7 @@ for (const z of prev.zs) {
   cards.push({
     type: 'zs', id: slug(z.name), name: z.name, source: 'srd', rulebook: 'Příručka', origin: o,
     attribute: attrId(z.attribute), mechanism: normMech(z.mech), domain: domainOf(z, t), subject: subjectOf(t), targetKind: kindsOf(t),
-    mass: z.area === 'area' || undefined, activationCost: costWithTarget(z),
+    mass: z.area === 'area' || undefined, activationCost: costWithTarget(z), parts: partsOf(z),
     relatedSkill: z.skills.map((id) => ({ id, name: skillName.get(id) })),
     quickPick: z.quickPickLevel ?? z.quickPickCulture ?? undefined, monster: false, flavor: z.flavor ?? undefined, text: z.text, labels: 'auto',
   });
@@ -108,7 +135,7 @@ for (const b of inv.items.filter((i) => i.type === 'bestiar-definice')) {
   const mech = BESTIARY_FORCED[name] ? [BESTIARY_FORCED[name]] : null;
   cards.push({
     type: 'zs', id: slug(name), name, source: 'srd', rulebook: 'Bestiář', origin: { kind: 'bestiary', name: 'Bestiář' }, attribute: attrId(attr) ?? null,
-    mechanism: mech ?? [], domain: [], subject: [], targetKind: kindsOf(t), activationCost: [], relatedSkill: [], monster: true, text: b.text, labels: 'auto',
+    mechanism: mech ?? [], parts: [{ mechanism: mech ?? [], activationCost: [] }], domain: [], subject: [], targetKind: kindsOf(t), activationCost: [], relatedSkill: [], monster: true, text: b.text, labels: 'auto',
   });
 }
 // ---- dovednosti ----
@@ -130,7 +157,8 @@ const costText = (c) => (c.length ? [...new Set(c.map((x) => `${RESOURCE[x.resou
 // prázdné atributy se ve výstupu vynechávají (null se před spojením odfiltruje)
 const dial = (k, v) => (v ? `${k}="${v}"` : null);
 const zsMd = cards.filter((c) => c.type === 'zs').map((c) => {
-  const eff = kostka(MECHANISM, c.mechanism).join(', ');
+  // části karty se oddělují středníkem (pozičně v `effect` i `activation-cost`), hodnoty uvnitř části čárkou
+  const eff = c.parts.map((p) => kostka(MECHANISM, p.mechanism).join(', ') || 'Jiný').join('; ');
   // Kostka zná „Jizvy“ jako účel; u nás je to mechanismus, proto se přidává jen při exportu
   const purpose = [...new Set([...kostka(DOMAIN, c.domain), ...(c.mechanism.includes('scar-effect') ? ['Jizvy'] : []), ...kostka(SUBJECT, c.subject), ...kostka(TARGET_KIND, c.targetKind)])].join(', ');
   const cb = c.origin.kind === 'class-basic' ? c.origin.name : '';
@@ -138,7 +166,7 @@ const zsMd = cards.filter((c) => c.type === 'zs').map((c) => {
   return ['<drd2-zs', dial('name', c.name), dial('rulebook', c.rulebook === 'Příručka' ? 'Základní příručka' : c.rulebook),
     dial('level', c.origin.kind === 'class-basic' ? 'základní' : c.origin.kind === 'class-advanced' ? 'pokročilá' : ''),
     dial('attribute', ATTRIBUTE[c.attribute] ?? ''), dial('related-skill', c.relatedSkill.map((r) => r.name).join(', ')), dial('effect', eff), dial('purpose', purpose),
-    dial('activation-cost', costText(c.activationCost)), dial('class-basic', cb), dial('class-advanced', ca), dial('class-expert', ''),
+    dial('activation-cost', c.parts.map((p) => costText(p.activationCost)).join('; ')), dial('class-basic', cb), dial('class-advanced', ca), dial('class-expert', ''),
     dial('race', c.origin.kind === 'race' ? (RACE[c.origin.name.replace(/^rasa:/, '')] ?? '') : ''), dial('monster', c.monster ? 'ano' : ''), '>', '',
     c.flavor ? flavorMd(c.flavor) + '\n' : '', md(c.text), '', '</drd2-zs>', ''].filter((x) => x !== null).join('\n');
 }).join('\n');

@@ -20,8 +20,8 @@ for (const f of fa) {
   const chk = (k, ok, info) => { stat[k] = (stat[k] ?? 0) + (ok ? 1 : 0); if (!ok) (bad[k] ??= []).push(`${f.name}: F="${info[0]}" | já="${info[1]}"`); };
   for (const k of ['attribute', 'level', 'class-basic', 'race', 'rulebook']) chk(k, (f[k] ?? '') === (e[k] ?? ''), [f[k], e[k]]);
   chk('related-skill', eq(set(f['related-skill']), set(e['related-skill'])), [f['related-skill'], e['related-skill']]);
-  const fc = f['activation-cost'].replace(/^Bez aktivace, /i, '').replace(/^Bez Aktivace$/i, 'Bez Aktivace');
-  chk('activation-cost', fc.toLowerCase() === e['activation-cost'].toLowerCase(), [f['activation-cost'], e['activation-cost']]);
+  const fc = f['activation-cost'];
+  chk('activation-cost', fc.toLowerCase() === e['activation-cost'].replace(/; /g, ', ').toLowerCase(), [f['activation-cost'], e['activation-cost']]);
   const fp = set(f.purpose), ep = set(e.purpose);
   chk('purpose (shodná množina)', eq(fp, ep), [f.purpose, e.purpose]);
   chk('purpose (já ⊆ Fafrin)', [...ep].every((x) => fp.has(x)), [f.purpose, e.purpose]);

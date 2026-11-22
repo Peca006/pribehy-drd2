@@ -84,3 +84,12 @@ Nejsou to odkazy, ale hodnoty zapsané přímo; zatím zmapováno, nezpracováno
 - Export pro Kostku vynechává prázdné atributy (related-skill, class-advanced, class-expert, race, monster, …).
 - Cena aktivace má u karet s víc mechanismy vazbu `for` na mechanismus, jehož odstavec ji uvádí (např. Lovčí: 1 Duše patří
   `assess-abilities`, `skill-proficiency` je bez ceny). Formát Kostky to nevyjádří, tam zůstává jen „Duše: 1“; plochá karta to ví.
+
+### Části karty v exportu (22. 11. 2026)
+- Pravidlo: v `effect` a `activation-cost` odděluje středník části karty (pozičně), čárka hodnoty uvnitř části. Části vznikají
+  seskupením odstavců textu podle ceny aktivace; úrovně téže schopnosti (stejné mechanismy, různé ceny, např. „Suroviny: 1, Suroviny: 3“)
+  jsou jedna část. Plochá karta má pole `parts` (`mechanism`, `activationCost`).
+- Zjištění: Fafrin tentýž princip použil u Lovčího, Čtení v duši a Síly osobnosti („Bez aktivace, Duše: 1“ se dvěma efekty), jen s čárkou.
+- 14 karet má středník nebo víc cen. K ruční kontrole: Něco z ničeho a Umění improvizace mají v obou částech stejné efekty
+  („Zisk zdrojů, Posílení dovednosti“) a opačné pořadí než u Fafrina (cena Duše první); Živá voda a Lamač nadpřirozena mají
+  druhou část odvozenou z odstavce o přirozené ochraně a léčení.
