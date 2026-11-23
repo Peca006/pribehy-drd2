@@ -111,7 +111,9 @@ const domainOf = (z, t) => {
 const BESTIARY_FORCED = { 'Vůdce skupiny': 'group-rule', 'Člen skupiny': 'group-rule', 'Boj či ovlivňování ve skupině': 'group-rule', Dav: 'group-rule', 'Živá vlna': 'group-rule',
   'Triumfální příchod': 'group-rule', Nezranitelnost: 'against-being', Zranitelnost: 'against-being', Neschopnost: 'against-being', Nezastavitelný: 'against-being', Nesmrtelný: 'against-being',
   // sleva na vyčerpání proti určitému účinku = přirozená ochrana, jako u Jater ze žuly a Hrdinského ducha (rozhodnutí 23. 11. 2026)
-  'Játra z křemene': 'natural-protection', 'Ocelová vůle': 'natural-protection', 'Srdce gryfa': 'natural-protection', 'Nos na lumpárny': 'natural-protection' };
+  'Játra z křemene': 'natural-protection', 'Ocelová vůle': 'natural-protection', 'Srdce gryfa': 'natural-protection', 'Nos na lumpárny': 'natural-protection',
+  'Hrůza a děs': 'aptitude', Diplomat: 'aptitude', 'Bulíky na nos': 'aptitude', 'Nelidská rychlost': ['free-approach', 'free-defense'], 'Ztělesněná zkáza': 'free-maneuver', Masakr: 'free-maneuver',
+  'Oživlá hora': 'special-effect', 'Třetí oko': 'special-effect', Autorita: 'special-effect' };
 const BESTIARY_SUBJECT = { 'Játra z křemene': ['substances'] };
 const BESTIARY27 = 'Játra z křemene|Ocelová vůle|Srdce gryfa|Nos na lumpárny|Ve zbroji jako v kůži|Oživlá hora|Třetí oko|Autorita|Hrůza a děs|Diplomat|Bulíky na nos|Rozsévač|Triumfální příchod|Boj či ovlivňování ve skupině|Vůdce skupiny|Člen skupiny|Živá vlna|Nelidská rychlost|Ztělesněná zkáza|Masakr|Nezastavitelný|Prastarý|Dav|Nesmrtelný|Nezranitelnost|Zranitelnost|Neschopnost'.split('|');
 
@@ -144,7 +146,7 @@ for (const b of inv.items.filter((i) => i.type === 'bestiar-definice')) {
   if (!BESTIARY27.includes(name)) continue;
   const attr = b.name.match(/\((Tělo|Duše|Vliv)\)/)?.[1];
   const t = fold(b.text);
-  const mech = BESTIARY_FORCED[name] ? [BESTIARY_FORCED[name]] : null;
+  const mech = BESTIARY_FORCED[name] ? [].concat(BESTIARY_FORCED[name]) : null;
   cards.push({
     type: 'zs', id: slug(name), name, source: 'srd', rulebook: 'Bestiář', origin: { kind: 'bestiary', name: 'Bestiář' }, attribute: attrId(attr) ?? null,
     mechanism: mech ?? [], parts: [{ mechanism: mech ?? [], activationCost: [] }], domain: [], subject: BESTIARY_SUBJECT[name] ?? [], targetKind: kindsOf(t), activationCost: [], relatedSkill: [], monster: true, text: b.text, labels: 'auto',
