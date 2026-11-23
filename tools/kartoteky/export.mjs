@@ -137,6 +137,10 @@ const manual = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta
 for (const c of cards) {
   const m = manual[c.name]; if (!m) continue;
   for (const k of ['domain', 'subject', 'targetKind']) if (m[k]) c[k] = m[k];
+  // doplnění chyby ve zdroji (atribut, aktivace): označí se v poli supplemented, aby bylo vidět, že hodnota není ze zdroje
+  if (m.attribute) c.attribute = m.attribute;
+  if (m.activationCost) { c.activationCost = m.activationCost; c.parts[0].activationCost = m.activationCost; }
+  if (m.supplemented) c.supplemented = m.supplemented;
   if (m.relatedSkill) c.relatedSkill = m.relatedSkill.map((n) => ({ id: [...skillName].find(([, v]) => v === n)?.[0], name: n }));
   c.labels = 'manual';
 }

@@ -615,6 +615,17 @@
  "Zloději těl": {
   "domain": [
    "knowledge"
+  ],
+  "attribute": "soul",
+  "activationCost": [
+   {
+    "resource": "soul",
+    "amount": 1
+   }
+  ],
+  "supplemented": [
+   "attribute",
+   "activation-cost"
   ]
  },
  "Lamač nadpřirozena": {
