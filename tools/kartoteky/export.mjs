@@ -113,7 +113,7 @@ const BESTIARY_FORCED = { 'Vůdce skupiny': 'group-rule', 'Člen skupiny': 'grou
   // sleva na vyčerpání proti určitému účinku = přirozená ochrana, jako u Jater ze žuly a Hrdinského ducha (rozhodnutí 23. 11. 2026)
   'Játra z křemene': 'natural-protection', 'Ocelová vůle': 'natural-protection', 'Srdce gryfa': 'natural-protection', 'Nos na lumpárny': 'natural-protection',
   'Hrůza a děs': 'aptitude', Diplomat: 'aptitude', 'Bulíky na nos': 'aptitude', 'Nelidská rychlost': ['free-approach', 'free-defense'], 'Ztělesněná zkáza': 'free-maneuver', Masakr: 'free-maneuver',
-  'Oživlá hora': 'special-effect', 'Třetí oko': 'special-effect', Autorita: 'special-effect' };
+  'Ve zbroji jako v kůži': 'special-effect', Rozsévač: 'special-effect', Prastarý: 'special-effect', 'Oživlá hora': 'special-effect', 'Třetí oko': 'special-effect', Autorita: 'special-effect' };
 const BESTIARY_SUBJECT = { 'Játra z křemene': ['substances'] };
 const BESTIARY27 = 'Játra z křemene|Ocelová vůle|Srdce gryfa|Nos na lumpárny|Ve zbroji jako v kůži|Oživlá hora|Třetí oko|Autorita|Hrůza a děs|Diplomat|Bulíky na nos|Rozsévač|Triumfální příchod|Boj či ovlivňování ve skupině|Vůdce skupiny|Člen skupiny|Živá vlna|Nelidská rychlost|Ztělesněná zkáza|Masakr|Nezastavitelný|Prastarý|Dav|Nesmrtelný|Nezranitelnost|Zranitelnost|Neschopnost'.split('|');
 
