@@ -465,6 +465,9 @@
  "Zloděj": {
   "relatedSkill": [
    "Triky a kejkle"
+  ],
+  "domain": [
+   "stealth"
   ]
  },
  "Talent": {
@@ -516,6 +519,9 @@
  "Umělá duše": {
   "relatedSkill": [
    "Umělý život"
+  ],
+  "domain": [
+   "magic"
   ]
  },
  "Živá voda": {
@@ -536,6 +542,106 @@
  "Kapitán": {
   "relatedSkill": [
    "Vedení lidí mimo boj"
+  ]
+ },
+ "Bojový výcvik": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Znalec netvorů": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Jazyk poutníků": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Ohař": {
+  "domain": [
+   "movement",
+   "knowledge"
+  ]
+ },
+ "Slavný stvůrobijce": {
+  "targetKind": [
+   "monsters"
+  ],
+  "domain": [
+   "social"
+  ]
+ },
+ "Znalec krajiny": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Čarovné nápoje": {
+  "subject": [
+   "substances"
+  ],
+  "domain": [
+   "craft"
+  ]
+ },
+ "Měnič podob": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Vůdce smečky": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Šedá eminence": {
+  "domain": [
+   "stealth",
+   "knowledge",
+   "social",
+   "healing"
+  ]
+ },
+ "Znamení Tiwaz": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Znalec démonů": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Zloději těl": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Lamač nadpřirozena": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Pán golemů": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Stvořitel": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Přeludy": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Davová psychóza": {
+  "domain": [
+   "magic"
   ]
  }
 }
