@@ -6,7 +6,7 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 
 ### Další práce
 
-- **Výpravy (další milník).** Sekce pro vypravěče: podklady pro tažení, výpravy a dobrodružství, vazba na družiny a žurnál,
+- **Výpravy (další milník, rozpracováno: návrh v `PLAN-VYPRAVY.md`, větev `worktree-vypravy`).** Sekce pro vypravěče: podklady pro tažení, výpravy a dobrodružství, vazba na družiny a žurnál,
   ukázkové dobrodružství a skupiny bytostí do ukázkových dat. Počká na reakce testerů a zkoušku 0.4.x na telefonu.
 - **Kořist (11e).** Patří k Výpravám: vypravěč si kořist předdefinuje, při odhalení upřesní, zafixuje a rozdělí postavám
   (Peníze, Suroviny s druhem, výbava). Hráč zvláštní panel nepotřebuje. Trofeje jen název a poznámka.
