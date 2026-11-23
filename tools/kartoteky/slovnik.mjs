@@ -42,7 +42,7 @@ export const DOMAIN = {
 };
 export const SUBJECT = {
   wards: { cs: 'Obrazce', kostka: ['Obrazce'] }, poisons: { cs: 'Jedy', kostka: ['Jedy'] }, traps: { cs: 'Pasti', kostka: ['Pasti'] },
-  salves: { cs: 'Masti', kostka: ['Masti'] }, substances: { cs: 'Substance (mimo třaskaviny)', kostka: ['Substance'] }, trophies: { cs: 'Trofeje', kostka: ['Trofeje'] }, springs: { cs: 'Zřídla', kostka: ['Zřídla'] },
+  salves: { cs: 'Masti', kostka: ['Masti'] }, substances: { cs: 'Substance', kostka: ['Substance'] }, trophies: { cs: 'Trofeje', kostka: ['Trofeje'] }, springs: { cs: 'Zřídla', kostka: ['Zřídla'] },
   'ritual-items': { cs: 'Rituální předměty', kostka: ['Rituální předměty'] },
 };
 export const TARGET_KIND = {
