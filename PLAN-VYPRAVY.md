@@ -1,6 +1,6 @@
 # Výpravy: návrh (rešerše pravidel SRD a plán)
 
-Stav (24. 11. 2026): **návrh k posouzení**, nic zatím není naprogramované. Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
+Stav (24. 11. 2026): **návrh k posouzení** (druhá verze: tři vrstvy dobrodružství / výprava / vedení), nic zatím není naprogramované. Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
 etapách s vlastními commity a jedním PR na konci (nebo po etapách, podle domluvy). Navazuje na `TODO.md` (Výpravy, Kořist 11e) a
 `PLAN-POMUCKY.md`. Odkazy v závorkách vedou do příručky (kapitola a kotva).
 
@@ -55,7 +55,7 @@ a finty). Konce výprav a důležitá rozhodnutí směřovat ke konci sezení, a
 
 | je hotové | využití u Výprav |
 | --- | --- |
-| Družiny: role Průvodce, členové, žurnál, sezení s rozdělením zkušeností | Výprava patří družině; zápis do žurnálu po výpravě |
+| Družiny: role Průvodce, členové, žurnál, sezení s rozdělením zkušeností | Družina „vede“ rozehranou výpravu; zápis do žurnálu po výpravě |
 | Konflikt družiny (iniciativa, kola, bytosti) | Příhoda může „spustit konflikt“ s předvyplněnými bytostmi |
 | Bestiář s vlastními bytostmi a ilustracemi | Cizí postavy a protivníci v příhodách (odkaz na bytost) |
 | Peníze, Suroviny s druhy, výbava, předpisy v Grimoáru | Kořist (11e): přidělení postavám |
@@ -65,59 +65,93 @@ a finty). Konce výprav a důležitá rozhodnutí směřovat ke konci sezení, a
 
 Chybí všechno okolo **přípravy a vedení** výpravy: nikde nejde zapsat výpravu, příhody a uzlové body, ani sledovat, co už se odehrálo.
 
+### Dobrodružství v pravidlech
+SRD dobrodružství **nerozepisuje jako strukturu**, jen jako zastřešení: uzavřená kapitola s významným cílem, tři způsoby tvorby (*Čisté plátno*,
+*Korálky na niti*, *Čekající svět*) a rada je zkombinovat v *Od dobrodružství k výpravám* (pevný začátek, volný konec, cestu a pořadí výprav určí hrdinové).
+Jednotkou přípravy je výprava. Ukázkové dobrodružství *Návrat do Bílého hradu* samo sebe nazývá „krátkou výpravou“ a končí částí *Královské dělení*,
+kde se z výsledků jedné výpravy rozvíjejí další. Proto je dobrodružství v návrhu lehký kontejner, ne vlastní „stroj“.
+
 ## 3. Návrh
 
 ### Zásady
-1. **Podle pravidel, ne místo nich.** Aplikace drží přípravu tak, jak ji SRD popisuje (zápletka, cíl, uzlové body, příhody v balíčcích, „kdykoli“), a při hře ukazuje, co je na řadě.
-2. **Soukromé u Průvodce.** Pozadí, tajemství a příhody se nesdílejí hráčům. Sdílení „zápletky“ a výsledků až později.
-3. **Příprava je opora, ne vlak:** žádné vynucené pořadí, příhody jdou nasadit kdykoli; nepoužité zůstávají k dispozici.
-4. **Nic nehodnotí hráče.** Ukazatel Zdrojů a tempa je jen pomůcka pro Průvodce, žádná „obtížnost“.
-5. Vlastní text jen ten, který napíše uživatel nebo my; příklady SRD se neopisují do aplikace, jen se na ně odkazuje.
+1. **Příprava a vedení jsou oddělené.** Příprava (dobrodružství a výprava) je obsah, který se píše jednou; **vedení** je rozehraná hra jedné družiny s jednou výpravou a drží jen stav.
+   Díky tomu jde jednu výpravu vést víc družinám a jedna družina může mít rozehráno víc výprav.
+2. **Podle pravidel, ne místo nich.** Příprava drží kostru z SRD (zápletka, cíl, uzlové body, příhody v balíčcích, „kdykoli“), při hře se ukazuje, co je na řadě.
+3. **Soukromé u Průvodce.** Pozadí, tajemství a příhody se hráčům nesdílejí. Sdílení jen vybraných částí až později.
+4. **Příprava je opora, ne vlak:** žádné vynucené pořadí; příhody jdou nasadit kdykoli, nepoužité zůstávají; improvizace za hry je běžná a podporovaná.
+5. **Nic nehodnotí hráče.** Ukazatel Zdrojů a tempa je jen pomůcka Průvodci, žádná „obtížnost“.
+6. Vlastní text jen ten, který napíše uživatel nebo my; příklady SRD se neopisují do aplikace, jen se na ně odkazuje.
 
-### Data (nové úložiště `expeditions`, schéma 1)
-```
-Expedition { id, name, theme, background /*tajné*/, hook /*zápletka pro postavy*/, goal,
-             style: 'domino' | 'puzzle', status: 'priprava' | 'probiha' | 'hotova' | 'odlozena',
-             partyId?, nodes: Node[], incidents: Incident[], resolution, notes, created, updated }
-Node       { id, title, text, kind?: 'zvrat' | 'odpocinek' }          // uzlový bod, pořadí = pole
-Incident   { id, title, text, stage: '' | nodeId | 'kdykoli',          // před prvním uzlem / po uzlu / kdykoli
-             place?, cast: [{ creatureId? , name }], conditions, ifSuccess, ifFailure,
-             state: 'priprava' | 'nasazena' | 'odehrana' | 'odlozena', outcome?: 'uspech'|'neuspech'|'jinak', result, loot: Loot[] }
-Loot       { id, kind: 'penize'|'suroviny'|'vybava'|'trofej', label, amount?, state: 'ukryta'|'odhalena'|'rozdelena', to? }
-```
-`stage` vyjadřuje balíčky ze SRD: příhody po uzlu *n* patří do „balíčku n“, `kdykoli` je samostatný balíček. Pozn.: pole kořisti (`loot`)
-se přidá až v etapě Kořist; zapíše se bez zvýšení čísla schématu (volitelné pole). Záloha a `FORMAT.md` se doplní s úložištěm.
+### Tři vrstvy
+| vrstva | co to je | drží |
+| --- | --- | --- |
+| **Dobrodružství** | lehký kontejner, „kampaň nebo kapitola“ | název, téma, pozadí, poznámky k propojení, volný seznam výprav (pořadí je jen doporučené) |
+| **Výprava** | příprava jedné výpravy, **bez stavu a bez družiny** | zápletka, cíl, styl, uzlové body, příhody (s kořistí, cizími postavami a poznámkami), rozuzlení |
+| **Vedení** (rozehraná hra) | družina + výprava | co je odehráno, výsledky, aktuální uzlový bod, kořist, improvizované příhody, poznámky ze sezení |
 
-### Obrazovky
-1. **Seznam výprav** (modul Výpravy, jen pro družiny s rolí Průvodce, nebo i bez družiny jako příprava): název, družina, stav, počet příhod odehraných / celkem.
-2. **Příprava výpravy** (jedna stránka se sbalitelnými částmi podle kostry SRD): Téma a pozadí, Zápletka pro postavy, Cíl, Styl (domino / puzzle s vysvětlením a „?“), Uzlové body, Příhody v balíčcích (před prvním uzlem, po uzlech, kdykoli), Rozuzlení a poznámky.
-   Editace příhody: název, text, místo (puzzle), cizí postavy (výběr z Bestiáře nebo text), předpoklady, „když uspějí / když neuspějí“, kořist.
-3. **Při hře**: balíčky jako lístky, aktuální balíček podle dosaženého uzlového bodu, tlačítka *Nasadit*, *Odehráno* (výsledek úspěch / neúspěch / jinak + poznámka), *Odložit*; *Uzlový bod nastal* posune balíček; vedle toho stručné pozadí a zápletka, **počet příhod do dalšího uzlu / odpočinku**
+Dobrodružství je nepovinné (výprava může stát sama). Výprava může patřit nejvýš jednomu dobrodružství.
+
+### Data (nová úložiště, každé se `schema` 1)
+```
+Adventure  { id, name, theme, background /*tajné*/, notes, expeditionIds: string[], created, updated }
+
+Expedition { id, name, adventureId?, theme, background /*tajné*/, hook /*zápletka pro postavy*/, goal,
+             style: 'domino' | 'puzzle', nodes: Node[], incidents: Incident[], resolution, notes, created, updated }
+Node       { id, title, text, kind?: 'zvrat' | 'odpocinek' }            // uzlový bod, pořadí = pořadí v poli
+Incident   { id, title, text, stage: '' | nodeId | 'kdykoli',            // před prvním uzlem / po uzlu / kdykoli
+             place?, cast: [{ creatureId?, name }], conditions, ifSuccess, ifFailure, loot?: Loot[] }
+Loot       { id, kind: 'penize' | 'suroviny' | 'vybava' | 'trofej', label, amount? }
+
+Run        { id, name, partyId, expeditionId, status: 'probiha' | 'hotova' | 'odlozena',
+             reachedNodes: string[], incidents: Record<incidentId, RunIncident>, extra: Incident[] /*improvizované*/,
+             loot: Record<lootId, { state: 'ukryta' | 'odhalena' | 'rozdelena', to? }>, notes, started, updated }
+RunIncident{ state: 'nasazena' | 'odehrana' | 'odlozena', outcome?: 'uspech' | 'neuspech' | 'jinak', result }
+```
+- `Incident.stage` vyjadřuje balíčky ze SRD (příhody po uzlu *n* = „balíček n“, `kdykoli` = samostatný balíček).
+- Vedení odkazuje na přípravu **živě podle `id`** (bez kopie): úprava přípravy se projeví i v rozehrané hře; příhoda bez záznamu je „připravená“.
+  Smazaná příhoda s odehraným stavem se v historii vedení nechá jako název z `result`. Improvizace ze hry se ukládá do `Run.extra` a jde jedním klepnutím **uložit do přípravy**.
+- Pole kořisti i `kind` uzlu jsou volitelná, zapisují se bez zvýšení `schema`. Záloha (`RECORD_STORES`), `FORMAT.md` a migrace se doplní s úložišti (DB v8).
+- Vazby: `Run.partyId` → družina (jen s rolí Průvodce), `cast.creatureId` → bytost (Bestiář nebo vlastní), `Expedition.adventureId` → dobrodružství.
+
+### Navigace a obrazovky
+Dvě vstupní místa, stejný obsah:
+1. **Výpravy** (hlavní navigace, příprava): seznam dobrodružství s výpravami (a výpravy bez dobrodružství), tlačítka *Nové dobrodružství* / *Nová výprava*.
+   Stránka **dobrodružství**: téma, pozadí, poznámky, seznam výprav (přidat, řadit, doporučené pořadí).
+   Stránka **výpravy** (sbalitelné části podle SRD): Téma a pozadí, Zápletka pro postavy, Cíl, Styl (domino / puzzle, s „?“), Uzlové body, Příhody v balíčcích
+   (před prvním uzlem, po uzlech, kdykoli), Rozuzlení a poznámky. Dole **Vedení této výpravy**: rozehrané hry s družinami a *Začít s družinou…*.
+   Editace příhody: název, text, místo (puzzle), cizí postavy (Bestiář nebo text), předpoklady, „když uspějí / neuspějí“, kořist.
+2. **Vedení** (v Družinách): u družiny nová část **Rozehrané výpravy** (aktivní a hotové, *Začít výpravu* → výběr z přípravy). Přehled „co teď vedu“ přes všechny družiny
+   jako první záložka Výprav.
+3. **Při hře** (stránka vedení): balíčky jako lístky, aktuální balíček podle dosaženého uzlového bodu; *Nasadit*, *Odehráno* (úspěch / neúspěch / jinak + poznámka),
+   *Odložit*, *Uzlový bod nastal*; *Přidat vlastní příhodu* (improvizace). Vedle zápletka a pozadí a **počet příhod do dalšího uzlu nebo odpočinku**
    (ukazatel „Hrajete o Zdroje“ s odkazem na pravidlo). Příhoda může **spustit konflikt** (bytosti předvyplněné) a otevřít odkaz do příručky.
-4. **Uzavření výpravy**: shrnutí z odehraných příhod jako **návrh zápisu do žurnálu družiny** (Průvodce upraví a schválí), přepnutí „Mezi výpravami“; kořist k rozdělení.
-5. **Inspirace v přípravě** (jen čtení): u družiny koncept, „jak se stali hrdiny“ a cíle místních postav (přípravná pomůcka dle `#prubezna-priprava`), odkazy na kapitolu Inspirace pro dobrodružství a Bestiář.
+4. **Uzavření**: shrnutí z odehraných příhod jako **návrh zápisu do žurnálu družiny** (Průvodce upraví a schválí), stav „hotová“, kořist k rozdělení; pak nabídka
+   další výpravy z dobrodružství (*Královské dělení*: z výsledků vyvodit další výpravu).
+5. **Inspirace v přípravě** (jen čtení): u družiny koncept, „jak se stali hrdiny“ a cíle místních postav (`#prubezna-priprava`), odkazy na kapitolu Inspirace a Bestiář.
 
-### Kořist (11e) v rámci Výprav
-Kořist je u příhody (nebo výpravy) předdefinovaná jako seznam; při odhalení se upřesní, zafixuje a **rozdělí**. Peníze a Suroviny (i s druhem) a výbava se zapíšou
-postavám na tomto zařízení jako změna postavy s poznámkou „Kořist: …“ (stejný mechanismus jako postup); u postav z jiných zařízení vznikne **zápis do žurnálu**
-a později přenos (kandidát na budoucí typ přenosu). Trofeje: jen název a poznámka. Hráč zvláštní panel nepotřebuje.
+### Kořist (11e)
+Kořist je u příhody **předdefinovaná v přípravě**, ve vedení se odhalí, upřesní a zafixuje a **rozdělí**. Peníze a Suroviny (i s druhem) a výbava se zapíšou postavám na tomto
+zařízení jako změna postavy s poznámkou „Kořist: …“ (stejný mechanismus jako Postup); u postav z jiných zařízení vznikne **zápis do žurnálu** a později přenos (kandidát na
+nový typ přenosu). Trofeje: jen název a poznámka. Hráč zvláštní panel nepotřebuje.
 
 ## 4. Etapy (každá vlastní commit/y, po etapě zelené testy)
 
 | etapa | obsah | ověření |
 | --- | --- | --- |
-| 1 | Model, úložiště `expeditions` (DB v8), zálohování, `FORMAT.md`; seznam výprav a základ přípravy (pozadí, zápletka, cíl, styl) | unit testy, E2E vytvoření a uložení |
-| 2 | Uzlové body a příhody v balíčcích (`stage`), úprava příhody, pořadí | unit testy řazení, E2E |
-| 3 | Při hře: nasazení, odehráno, výsledek, posun uzlového bodu, ukazatel tempa; odkaz na konflikt a příručku | unit testy stavů, E2E |
-| 4 | Uzavření: návrh zápisu do žurnálu, přepnutí „Mezi výpravami“, vazba na družinu | E2E |
+| 1 | Model a tři úložiště (`adventures`, `expeditions`, `runs`, DB v8, schéma 1), záloha, `FORMAT.md`; modul Výpravy: seznam, dobrodružství (kontejner), základ výpravy (pozadí, zápletka, cíl, styl) | unit testy, E2E vytvoření a uložení |
+| 2 | Uzlové body a příhody v balíčcích (`stage`), úprava příhody, řazení | unit testy řazení, E2E |
+| 3 | Vedení: začít s družinou, Při hře (nasazení, odehráno, výsledek, uzlové body, improvizace, ukazatel tempa), část „Rozehrané výpravy“ u družiny | unit testy stavů, E2E |
+| 4 | Uzavření: návrh zápisu do žurnálu, stav „hotová“, nabídka další výpravy; odkaz na konflikt a příručku | E2E |
 | 5 | Kořist (11e) a zápis postavám | unit testy, E2E |
-| 6 | Inspirace z postav družiny, vlastní ukázková výprava v ukázkových datech (vlastní text), nápověda „?“, odkazy, `CHANGELOG.md`, vydání | E2E, ověření na telefonu |
+| 6 | Inspirace z postav družiny, vlastní ukázková výprava v ukázkových datech (vlastní text), nápověda „?“, `CHANGELOG.md`, vydání | E2E, ověření na telefonu |
+| později | Export a import výpravy nebo dobrodružství souborem (sdílení příprav mezi Průvodci, přenos mezi zařízeními) | |
 
-## 5. Otevřené otázky (potřebuji rozhodnutí po prostudování pravidel)
+## 5. Otevřené otázky
 
-1. **Kde Výpravy bydlí:** samostatný oddíl v hlavní navigaci, nebo uvnitř Družiny (u družiny záložka „Výpravy“)? Navrhuji **uvnitř družiny** (výprava vždy patří družině, Průvodce ji tam otevře) a jen odkaz z přehledu.
-2. **Hráči:** má hráč v družině vidět aspoň „zápletku“ a výsledky odehraných příhod (tj. sdílení)? Navrhuji **zatím ne**, jen zápis do žurnálu.
-3. **Uzlový bod „odpočinek“** (příležitost k odpočinku): je to dobrý způsob, jak do tempa zapojit Zdroje, nebo to stačí jako poznámka?
-4. **Kořist u postav z jiných zařízení:** stačí zápis do žurnálu, nebo chcete hned nový typ přenosu „odměna“?
-5. **Dobrodružství** (nadřazené výpravám) zatím neděláme: výprava je samostatná, dobrodružství je jen volný štítek (název kampaně). Souhlas?
-6. **Příklady SRD** (*Perlík vzpoury*, *Tajemství černého vína*) nechat jen jako odkazy do příručky; ukázkovou výpravu v aplikaci napsat vlastní. Souhlas?
+1. **Dvě vstupní místa** (příprava ve Výpravách, vedení v Družině a přehled „co teď vedu“): vyhovuje, nebo chceš vedení jen na jednom místě?
+2. **Živé propojení vedení s přípravou** (bez kopie, improvizace v `Run.extra`): souhlasíš? Alternativa je kopie výpravy při zahájení (úpravy přípravy se pak do rozehrané hry nepromítnou).
+3. Smí **jedna výprava běžet souběžně u víc družin** (ano v návrhu) a smí vedení vzniknout **bez družiny** (např. pro zkoušku)? Navrhuji, aby družina byla povinná.
+4. **Hráči:** má hráč v družině vidět aspoň zápletku a výsledky odehraných příhod? Navrhuji zatím ne, jen zápis do žurnálu.
+5. **Uzlový bod „odpočinek“** (příležitost k odpočinku) jako součást tempa Zdrojů: užitečné, nebo stačí poznámka?
+6. **Kořist u postav z jiných zařízení:** stačí zápis do žurnálu, nebo chceš hned nový typ přenosu „odměna“?
+7. **Příklady SRD** (*Perlík vzpoury*, *Tajemství černého vína*) nechat jen jako odkazy do příručky a ukázkovou výpravu napsat vlastní. Souhlas?
