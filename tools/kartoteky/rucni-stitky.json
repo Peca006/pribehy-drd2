@@ -648,5 +648,21 @@
   "domain": [
    "knowledge"
   ]
+ },
+ "Výrobce elixírů": {
+  "subject": [
+   "substances"
+  ]
+ },
+ "Posílení elixíru": {
+  "subject": [
+   "substances"
+  ]
+ },
+ "Znamení Berkano": {
+  "targetKind": []
+ },
+ "Znamení Othala": {
+  "targetKind": []
  }
 }
