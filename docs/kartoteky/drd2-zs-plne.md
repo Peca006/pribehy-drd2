@@ -5127,3 +5127,329 @@ labels="automaticky"
 Některé bytosti ztrácejí za určitých okolností část své moci. Podobně jako _Zranitelnost_ má i _Neschopnost_ vždy nějakou podmínku, napsanou v závorce. Pokud je naplněna, bytost do nejbližšího východu nebo západu slunce nesmí používat **_manévry_**. Někdy je podmínka uvedena vzhledem k určité osobě — potom se _Neschopnost_ projeví pouze v akcích, které tuto osobu ovlivňují. _Neschopnost_ najdete především u bytostí, které dokážou využívat **_manévry_** zadarmo — tím se totiž zároveň otevírá slabé místo dávající protivníkům možnost je této výhody zbavit.
 
 </drd2-zs>
+
+<drd2-zs
+id="velka-selma"
+name="Velká šelma"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní při obraně svých mláďat a je-li rozzuřený nebo vyhladovělý) [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Medvěd"
+labels="automaticky"
+>
+
+_Bravurní_ při obraně svých mláďat a je-li rozzuřený nebo vyhladovělý.
+
+</drd2-zs>
+
+<drd2-zs
+id="mala-selma"
+name="Malá šelma"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Zběhlost v dovednosti"
+parts="Zběhlost v dovednosti (zběhlost při obraně svých mláďat a je-li vyhladovělý) [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Vlk"
+labels="automaticky"
+>
+
+_Zběhlost_ při obraně svých mláďat a je-li vyhladovělý.
+
+</drd2-zs>
+
+<drd2-zs
+id="citlivy-cenich"
+name="Citlivý čenich"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Duše"
+mechanism="Neobvyklý smysl"
+parts="Neobvyklý smysl [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="neobvyklý smysl"
+used-by="Pes, Vlkodlak"
+labels="automaticky"
+>
+
+Dokáže se orientovat a rozpoznávat postavy i místa podle pachů.
+
+</drd2-zs>
+
+<drd2-zs
+id="urazena-pycha"
+name="Uražená pýcha"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní, pokud se mstí za to, že byla podvedena nebo uražena) [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Čarodějnice"
+labels="automaticky"
+>
+
+_Bravurní_, pokud se mstí za to, že byla podvedena nebo uražena.
+
+</drd2-zs>
+
+<drd2-zs
+id="fanatik"
+name="Fanatik"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní při obraně cti, víry nebo zájmů panovníka) [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Rytíř"
+labels="automaticky"
+>
+
+_Bravurní_ při obraně cti, víry nebo zájmů panovníka.
+
+</drd2-zs>
+
+<drd2-zs
+id="teplo-zivota"
+name="Teplo života"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Duše"
+mechanism="Neobvyklý smysl"
+parts="Neobvyklý smysl [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="neobvyklý smysl"
+used-by="Duch, Kostlivec, Smrtonoš, Umrlec, Moronoš, Upír"
+labels="automaticky"
+>
+
+V šeru, tmě a chladu cítí život tak zřetelně, jako by ho viděl, jasné sluneční světlo ho mate a oslepuje.
+
+</drd2-zs>
+
+<drd2-zs
+id="cerna-duse"
+name="Černá duše"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti, Zběhlost v dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní od soumraku do rozbřesku) [Bez Aktivace]; Zběhlost v dovednosti (zběhlost na akce proti tomu, kdo se ho dobrovolně dotkne svým tělem) [Bez Aktivace]"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Upír"
+labels="automaticky"
+>
+
+_Bravurní_ od soumraku do rozbřesku; _zběhlost_ na akce proti tomu, kdo se ho dobrovolně dotkne svým tělem.
+
+</drd2-zs>
+
+<drd2-zs
+id="bes-lesa"
+name="Běs lesa"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti, Zběhlost v dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní v divočině) [Bez Aktivace]; Zběhlost v dovednosti (zběhlý, dotýká-li se jakoukoliv částí těla planého stromu) [Bez Aktivace]"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Hejkal"
+labels="automaticky"
+>
+
+_Bravurní_ v _divočině_; _zběhlý_, dotýká-li se jakoukoliv částí těla planého stromu.
+
+</drd2-zs>
+
+<drd2-zs
+id="ohnivy-bes"
+name="Ohnivý běs"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti, Zběhlost v dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní na dohled plamene nebo doutnajících uhlíků) [Bez Aktivace]; Zběhlost v dovednosti (zběhlý, když v okolí včetně sousedních domů hoří alespoň tři ohně) [Bez Aktivace]"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Ohnivec"
+labels="automaticky"
+>
+
+_Bravurní_ na dohled plamene nebo doutnajících uhlíků; _zběhlý_, když v okolí včetně sousedních domů hoří alespoň tři ohně.
+
+</drd2-zs>
+
+<drd2-zs
+id="polni-bes"
+name="Polní běs"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti, Zběhlost v dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní na obdělávané půdě) [Bez Aktivace]; Zběhlost v dovednosti (zběhlá, je-li slunce vidět vysoko na obloze) [Bez Aktivace]"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Polednice"
+labels="automaticky"
+>
+
+_Bravurní_ na obdělávané půdě; _zběhlá_, je-li slunce vidět vysoko na obloze.
+
+</drd2-zs>
+
+<drd2-zs
+id="bes-usvitu"
+name="Běs úsvitu"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti, Zběhlost v dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní, dokud nevyschne ranní rosa) [Bez Aktivace]; Zběhlost v dovednosti (zběhlý, jestliže ji cíl dosud nespatřil) [Bez Aktivace]"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Víla"
+labels="automaticky"
+>
+
+_Bravurní_, dokud nevyschne ranní rosa; _zběhlý_, jestliže ji cíl dosud nespatřil.
+
+</drd2-zs>
+
+<drd2-zs
+id="bes-soumraku"
+name="Běs soumraku"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti, Zběhlost v dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní v noci, za úplňku) [Bez Aktivace]; Zběhlost v dovednosti (zběhlý, je-li na obloze dorůstající měsíc) [Bez Aktivace]"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Vlkodlak"
+labels="automaticky"
+>
+
+_Bravurní_ v noci, za úplňku; _zběhlý_, je-li na obloze dorůstající měsíc.
+
+</drd2-zs>
+
+<drd2-zs
+id="vodni-bes"
+name="Vodní běs"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti, Zběhlost v dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní ve vodě či za deště) [Bez Aktivace]; Zběhlost v dovednosti (zběhlý nad hlubinou, kde člověk nedosáhne dna) [Bez Aktivace]"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Vodník"
+labels="automaticky"
+>
+
+_Bravurní_ ve vodě či za deště; _zběhlý_ nad hlubinou, kde člověk nedosáhne dna.
+
+</drd2-zs>
+
+<drd2-zs
+id="kral-netvoru"
+name="Král netvorů"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní kdykoliv a kdekoliv) [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Drak, Ledový drak, Vícehlavá saň"
+labels="automaticky"
+>
+
+_Bravurní_ kdykoliv a kdekoliv.
+
+</drd2-zs>
+
+<drd2-zs
+id="letavec"
+name="Létavec"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní, je-li ve vzduchu) [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Wyverna, Gryf"
+labels="automaticky"
+>
+
+_Bravurní_, je-li ve vzduchu.
+
+</drd2-zs>
+
+<drd2-zs
+id="vibrace-v-pavucinach"
+name="Vibrace v pavučinách"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Duše"
+mechanism="Neobvyklý smysl"
+parts="Neobvyklý smysl [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="neobvyklý smysl"
+used-by="Obří pavouk"
+labels="automaticky"
+>
+
+Z vibrací v pavučině dokáže poznat, kde přesně se kdo v pavučině nachází, a orientovat se podle nich.
+
+</drd2-zs>
+
+<drd2-zs
+id="cekajici"
+name="Čekající"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+mechanism="Bravurní ovládání dovednosti"
+parts="Bravurní ovládání dovednosti (bravurní, má-li políčeno na kořist) [Bez Aktivace]"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="talent"
+used-by="Obří pavouk"
+labels="automaticky"
+>
+
+_Bravurní_, má-li políčeno na kořist.
+
+</drd2-zs>

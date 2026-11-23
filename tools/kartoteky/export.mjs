@@ -159,6 +159,33 @@ for (const b of inv.items.filter((i) => i.type === 'bestiar-definice')) {
     mechanism: mech ?? [], parts: [{ mechanism: mech ?? [], activationCost: [] }], domain: [], subject: BESTIARY_SUBJECT[name] ?? [], targetKind: kindsOf(t), activationCost: [], relatedSkill: [], monster: true, text: b.text, labels: 'auto',
   });
 }
+// ---- talenty a neobvyklé smysly tvorů (z řádků statistik v Bestiáři; 23. 11. 2026) ----
+// Jeden záznam na název. Talent = podmíněná zběhlost nebo bravura (části oddělené středníkem), smysl = neobvyklý smysl (Duše).
+// „Noční oči“ je rasová ZS (tvorové na ni jen odkazují), proto se znovu nevytváří.
+{
+  const creatures = Object.values(JSON.parse(readFileSync(resolve(root, 'content-packs/srd/drd2-pravidla-2.json'), 'utf8')).creatures);
+  const found = new Map();
+  for (const cr of creatures) for (const s of cr.stats) {
+    const kind = /^Talenty/.test(s.label) ? 'talent' : /^Neobvyklé smysly/.test(s.label) ? 'sense' : null; if (!kind) continue;
+    for (const x of s.value.matchAll(/(?<!\[)\*([^*()]+)\*\s*\(((?:[^()]|\([^)]*\))*)\)/g)) {
+      const name = x[1].trim(); if (cards.some((c) => c.name === name)) continue;
+      const e = found.get(name) ?? { kind, variants: new Map(), usedBy: [] };
+      const txt = x[2].replace(/\s+/g, ' ').trim(); e.variants.set(txt, (e.variants.get(txt) ?? 0) + 1);
+      if (!e.usedBy.includes(cr.name)) e.usedBy.push(cr.name); found.set(name, e);
+    }
+  }
+  for (const [name, e] of found) {
+    const desc = [...e.variants].sort((a, b) => b[1] - a[1])[0][0];
+    const text = desc.replace(/^\*?[a-zěščřžýáíéúůďťňó]/i, (m) => m.toUpperCase()) + '.';
+    const parts = e.kind === 'sense' ? [{ mechanism: ['unusual-sense'], activationCost: [] }]
+      : desc.split(';').map((p) => ({ mechanism: [/bravurn/i.test(p) ? 'skill-mastery' : 'skill-proficiency'], activationCost: [], condition: p.replace(/\*/g, '').trim() }));
+    cards.push({
+      type: 'zs', id: slug(name), name, source: 'srd', rulebook: 'Bestiář', origin: { kind: 'bestiary', name: 'Bestiář' }, attribute: e.kind === 'sense' ? 'soul' : null,
+      mechanism: [...new Set(parts.flatMap((p) => p.mechanism))], domain: [], subject: [], targetKind: [], activationCost: [], parts, relatedSkill: [],
+      monster: true, bestiaryKind: e.kind, usedBy: e.usedBy, text, labels: 'auto',
+    });
+  }
+}
 // ---- dovednosti ----
 // dials dovedností (dovednosti.mjs, schváleno 22. 11. 2026): type = domain, environment, target = target-kind, target-attribute
 const ENV = { Divočina: 'wilderness', Město: 'city' };

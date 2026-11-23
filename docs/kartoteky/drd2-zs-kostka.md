@@ -4037,3 +4037,227 @@ monster="ano"
 Některé bytosti ztrácejí za určitých okolností část své moci. Podobně jako _Zranitelnost_ má i _Neschopnost_ vždy nějakou podmínku, napsanou v závorce. Pokud je naplněna, bytost do nejbližšího východu nebo západu slunce nesmí používat **_manévry_**. Někdy je podmínka uvedena vzhledem k určité osobě — potom se _Neschopnost_ projeví pouze v akcích, které tuto osobu ovlivňují. _Neschopnost_ najdete především u bytostí, které dokážou využívat **_manévry_** zadarmo — tím se totiž zároveň otevírá slabé místo dávající protivníkům možnost je této výhody zbavit.
 
 </drd2-zs>
+
+<drd2-zs
+name="Velká šelma"
+rulebook="Bestiář"
+effect="Bravura"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ při obraně svých mláďat a je-li rozzuřený nebo vyhladovělý.
+
+</drd2-zs>
+
+<drd2-zs
+name="Malá šelma"
+rulebook="Bestiář"
+effect="Zběhlost"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+_Zběhlost_ při obraně svých mláďat a je-li vyhladovělý.
+
+</drd2-zs>
+
+<drd2-zs
+name="Citlivý čenich"
+rulebook="Bestiář"
+attribute="Duše"
+effect="Neobvyklý smysl"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+Dokáže se orientovat a rozpoznávat postavy i místa podle pachů.
+
+</drd2-zs>
+
+<drd2-zs
+name="Uražená pýcha"
+rulebook="Bestiář"
+effect="Bravura"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_, pokud se mstí za to, že byla podvedena nebo uražena.
+
+</drd2-zs>
+
+<drd2-zs
+name="Fanatik"
+rulebook="Bestiář"
+effect="Bravura"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ při obraně cti, víry nebo zájmů panovníka.
+
+</drd2-zs>
+
+<drd2-zs
+name="Teplo života"
+rulebook="Bestiář"
+attribute="Duše"
+effect="Neobvyklý smysl"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+V šeru, tmě a chladu cítí život tak zřetelně, jako by ho viděl, jasné sluneční světlo ho mate a oslepuje.
+
+</drd2-zs>
+
+<drd2-zs
+name="Černá duše"
+rulebook="Bestiář"
+effect="Bravura; Zběhlost"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ od soumraku do rozbřesku; _zběhlost_ na akce proti tomu, kdo se ho dobrovolně dotkne svým tělem.
+
+</drd2-zs>
+
+<drd2-zs
+name="Běs lesa"
+rulebook="Bestiář"
+effect="Bravura; Zběhlost"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ v _divočině_; _zběhlý_, dotýká-li se jakoukoliv částí těla planého stromu.
+
+</drd2-zs>
+
+<drd2-zs
+name="Ohnivý běs"
+rulebook="Bestiář"
+effect="Bravura; Zběhlost"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ na dohled plamene nebo doutnajících uhlíků; _zběhlý_, když v okolí včetně sousedních domů hoří alespoň tři ohně.
+
+</drd2-zs>
+
+<drd2-zs
+name="Polní běs"
+rulebook="Bestiář"
+effect="Bravura; Zběhlost"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ na obdělávané půdě; _zběhlá_, je-li slunce vidět vysoko na obloze.
+
+</drd2-zs>
+
+<drd2-zs
+name="Běs úsvitu"
+rulebook="Bestiář"
+effect="Bravura; Zběhlost"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_, dokud nevyschne ranní rosa; _zběhlý_, jestliže ji cíl dosud nespatřil.
+
+</drd2-zs>
+
+<drd2-zs
+name="Běs soumraku"
+rulebook="Bestiář"
+effect="Bravura; Zběhlost"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ v noci, za úplňku; _zběhlý_, je-li na obloze dorůstající měsíc.
+
+</drd2-zs>
+
+<drd2-zs
+name="Vodní běs"
+rulebook="Bestiář"
+effect="Bravura; Zběhlost"
+activation-cost="Bez Aktivace; Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ ve vodě či za deště; _zběhlý_ nad hlubinou, kde člověk nedosáhne dna.
+
+</drd2-zs>
+
+<drd2-zs
+name="Král netvorů"
+rulebook="Bestiář"
+effect="Bravura"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_ kdykoliv a kdekoliv.
+
+</drd2-zs>
+
+<drd2-zs
+name="Létavec"
+rulebook="Bestiář"
+effect="Bravura"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_, je-li ve vzduchu.
+
+</drd2-zs>
+
+<drd2-zs
+name="Vibrace v pavučinách"
+rulebook="Bestiář"
+attribute="Duše"
+effect="Neobvyklý smysl"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+Z vibrací v pavučině dokáže poznat, kde přesně se kdo v pavučině nachází, a orientovat se podle nich.
+
+</drd2-zs>
+
+<drd2-zs
+name="Čekající"
+rulebook="Bestiář"
+effect="Bravura"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+_Bravurní_, má-li políčeno na kořist.
+
+</drd2-zs>

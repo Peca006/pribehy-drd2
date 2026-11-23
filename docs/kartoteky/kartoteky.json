@@ -9545,6 +9545,680 @@
   "labels": "auto"
  },
  {
+  "type": "zs",
+  "id": "velka-selma",
+  "name": "Velká šelma",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní při obraně svých mláďat a je-li rozzuřený nebo vyhladovělý"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Medvěd"
+  ],
+  "text": "*Bravurní* při obraně svých mláďat a je-li rozzuřený nebo vyhladovělý.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "mala-selma",
+  "name": "Malá šelma",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlost při obraně svých mláďat a je-li vyhladovělý"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Vlk"
+  ],
+  "text": "*Zběhlost* při obraně svých mláďat a je-li vyhladovělý.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "citlivy-cenich",
+  "name": "Citlivý čenich",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "soul",
+  "mechanism": [
+   "unusual-sense"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "unusual-sense"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "sense",
+  "usedBy": [
+   "Pes",
+   "Vlkodlak"
+  ],
+  "text": "Dokáže se orientovat a rozpoznávat postavy i místa podle pachů.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "urazena-pycha",
+  "name": "Uražená pýcha",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní, pokud se mstí za to, že byla podvedena nebo uražena"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Čarodějnice"
+  ],
+  "text": "*Bravurní*, pokud se mstí za to, že byla podvedena nebo uražena.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "fanatik",
+  "name": "Fanatik",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní při obraně cti, víry nebo zájmů panovníka"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Rytíř"
+  ],
+  "text": "*Bravurní* při obraně cti, víry nebo zájmů panovníka.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "teplo-zivota",
+  "name": "Teplo života",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "soul",
+  "mechanism": [
+   "unusual-sense"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "unusual-sense"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "sense",
+  "usedBy": [
+   "Duch",
+   "Kostlivec",
+   "Smrtonoš",
+   "Umrlec",
+   "Moronoš",
+   "Upír"
+  ],
+  "text": "V šeru, tmě a chladu cítí život tak zřetelně, jako by ho viděl, jasné sluneční světlo ho mate a oslepuje.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "cerna-duse",
+  "name": "Černá duše",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery",
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní od soumraku do rozbřesku"
+   },
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlost na akce proti tomu, kdo se ho dobrovolně dotkne svým tělem"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Upír"
+  ],
+  "text": "*Bravurní* od soumraku do rozbřesku; *zběhlost* na akce proti tomu, kdo se ho dobrovolně dotkne svým tělem.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "bes-lesa",
+  "name": "Běs lesa",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery",
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní v divočině"
+   },
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlý, dotýká-li se jakoukoliv částí těla planého stromu"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Hejkal"
+  ],
+  "text": "*Bravurní* v *divočině*; *zběhlý*, dotýká-li se jakoukoliv částí těla planého stromu.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "ohnivy-bes",
+  "name": "Ohnivý běs",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery",
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní na dohled plamene nebo doutnajících uhlíků"
+   },
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlý, když v okolí včetně sousedních domů hoří alespoň tři ohně"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Ohnivec"
+  ],
+  "text": "*Bravurní* na dohled plamene nebo doutnajících uhlíků; *zběhlý*, když v okolí včetně sousedních domů hoří alespoň tři ohně.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "polni-bes",
+  "name": "Polní běs",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery",
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní na obdělávané půdě"
+   },
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlá, je-li slunce vidět vysoko na obloze"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Polednice"
+  ],
+  "text": "*Bravurní* na obdělávané půdě; *zběhlá*, je-li slunce vidět vysoko na obloze.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "bes-usvitu",
+  "name": "Běs úsvitu",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery",
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní, dokud nevyschne ranní rosa"
+   },
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlý, jestliže ji cíl dosud nespatřil"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Víla"
+  ],
+  "text": "*Bravurní*, dokud nevyschne ranní rosa; *zběhlý*, jestliže ji cíl dosud nespatřil.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "bes-soumraku",
+  "name": "Běs soumraku",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery",
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní v noci, za úplňku"
+   },
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlý, je-li na obloze dorůstající měsíc"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Vlkodlak"
+  ],
+  "text": "*Bravurní* v noci, za úplňku; *zběhlý*, je-li na obloze dorůstající měsíc.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "vodni-bes",
+  "name": "Vodní běs",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery",
+   "skill-proficiency"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní ve vodě či za deště"
+   },
+   {
+    "mechanism": [
+     "skill-proficiency"
+    ],
+    "activationCost": [],
+    "condition": "zběhlý nad hlubinou, kde člověk nedosáhne dna"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Vodník"
+  ],
+  "text": "*Bravurní* ve vodě či za deště; *zběhlý* nad hlubinou, kde člověk nedosáhne dna.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "kral-netvoru",
+  "name": "Král netvorů",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní kdykoliv a kdekoliv"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Drak",
+   "Ledový drak",
+   "Vícehlavá saň"
+  ],
+  "text": "*Bravurní* kdykoliv a kdekoliv.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "letavec",
+  "name": "Létavec",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní, je-li ve vzduchu"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Wyverna",
+   "Gryf"
+  ],
+  "text": "*Bravurní*, je-li ve vzduchu.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "vibrace-v-pavucinach",
+  "name": "Vibrace v pavučinách",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "soul",
+  "mechanism": [
+   "unusual-sense"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "unusual-sense"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "sense",
+  "usedBy": [
+   "Obří pavouk"
+  ],
+  "text": "Z vibrací v pavučině dokáže poznat, kde přesně se kdo v pavučině nachází, a orientovat se podle nich.",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "cekajici",
+  "name": "Čekající",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": null,
+  "mechanism": [
+   "skill-mastery"
+  ],
+  "domain": [],
+  "subject": [],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "skill-mastery"
+    ],
+    "activationCost": [],
+    "condition": "bravurní, má-li políčeno na kořist"
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "talent",
+  "usedBy": [
+   "Obří pavouk"
+  ],
+  "text": "*Bravurní*, má-li políčeno na kořist.",
+  "labels": "auto"
+ },
+ {
   "type": "skill",
   "id": "bezny-boj-zblizka",
   "name": "Běžný boj zblízka",
