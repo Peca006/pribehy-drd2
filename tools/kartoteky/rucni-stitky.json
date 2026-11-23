@@ -1,0 +1,691 @@
+{
+ "Styky": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Vznešenost": {
+  "domain": [
+   "healing"
+  ]
+ },
+ "Jsme jedné krve": {
+  "domain": [
+   "social"
+  ],
+  "subject": [],
+  "targetKind": [
+   "animals"
+  ]
+ },
+ "Paměť rodu": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Nezdolnost": {
+  "domain": [
+   "healing"
+  ]
+ },
+ "Játra ze žuly": {
+  "domain": [],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": []
+ },
+ "Šestý smysl": {
+  "domain": [
+   "stealth"
+  ]
+ },
+ "Dobrá nálada": {
+  "domain": [
+   "healing"
+  ]
+ },
+ "Odznaky hrdinství": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Kořeny magie": {
+  "domain": [
+   "magic"
+  ],
+  "subject": [
+   "springs"
+  ],
+  "targetKind": []
+ },
+ "Silák": {
+  "domain": []
+ },
+ "Skald": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Skvělý taktik": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Přečtení soupeře": {
+  "domain": [
+   "social",
+   "combat"
+  ]
+ },
+ "Zálesák": {
+  "domain": [
+   "craft",
+   "knowledge"
+  ]
+ },
+ "Průzkumník": {
+  "domain": [
+   "stealth",
+   "knowledge"
+  ]
+ },
+ "Průvodce": {
+  "domain": [
+   "movement",
+   "stealth",
+   "knowledge"
+  ]
+ },
+ "Lovčí": {
+  "domain": [
+   "assessment",
+   "knowledge"
+  ],
+  "subject": [
+   "trophies"
+  ],
+  "targetKind": [
+   "animals"
+  ]
+ },
+ "Něco z ničeho": {
+  "domain": [
+   "craft"
+  ],
+  "subject": [
+   "traps"
+  ],
+  "targetKind": [],
+  "partNotes": {
+   "1": "1 Duše za každou vloženou nouzovou Surovinu"
+  }
+ },
+ "Jedno oko otevřené": {
+  "domain": [
+   "stealth"
+  ]
+ },
+ "Krotitel": {
+  "domain": [
+   "social"
+  ],
+  "subject": [],
+  "targetKind": [
+   "animals"
+  ]
+ },
+ "Cvičitel": {
+  "domain": [
+   "social",
+   "companions"
+  ],
+  "subject": [],
+  "targetKind": [
+   "animals"
+  ]
+ },
+ "Zaříkávač koní": {
+  "domain": [
+   "social"
+  ],
+  "subject": [],
+  "targetKind": [
+   "animals"
+  ]
+ },
+ "Špeh": {
+  "domain": [
+   "stealth",
+   "knowledge"
+  ]
+ },
+ "Psí oči": {
+  "domain": [
+   "social",
+   "stealth"
+  ]
+ },
+ "Dryjáčník": {
+  "domain": [
+   "healing",
+   "craft"
+  ],
+  "subject": [
+   "poisons",
+   "salves"
+  ],
+  "targetKind": []
+ },
+ "Ranhojič": {
+  "domain": [
+   "healing"
+  ],
+  "subject": [],
+  "targetKind": [
+   "people"
+  ]
+ },
+ "Čtení v duši": {
+  "domain": [
+   "assessment",
+   "knowledge"
+  ],
+  "subject": [],
+  "targetKind": [
+   "people"
+  ]
+ },
+ "Umění improvizace": {
+  "domain": [
+   "craft"
+  ],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": [],
+  "partNotes": {
+   "1": "1 Duše za každou vloženou nouzovou Surovinu"
+  }
+ },
+ "Neobvyklé jedy": {
+  "domain": [
+   "craft"
+  ],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": []
+ },
+ "Ostrý jazyk": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Lazebník": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Knihomol": {
+  "domain": [
+   "knowledge"
+  ],
+  "subject": [
+   "springs"
+  ],
+  "targetKind": []
+ },
+ "Síla osobnosti": {
+  "domain": [
+   "healing"
+  ],
+  "subject": [],
+  "targetKind": [
+   "people"
+  ]
+ },
+ "Bystrost": {
+  "domain": []
+ },
+ "Dar tvoření": {
+  "domain": [
+   "magic",
+   "craft"
+  ],
+  "subject": [
+   "wards",
+   "ritual-items"
+  ],
+  "targetKind": []
+ },
+ "Zřící stráže": {
+  "domain": [
+   "magic"
+  ],
+  "subject": [
+   "wards"
+  ],
+  "targetKind": []
+ },
+ "Čarovné stráže": {
+  "domain": [
+   "magic",
+   "craft"
+  ],
+  "subject": [
+   "wards"
+  ],
+  "targetKind": []
+ },
+ "Pán symbolů": {
+  "domain": [
+   "magic"
+  ],
+  "subject": [
+   "wards"
+  ],
+  "targetKind": []
+ },
+ "Divoký talent": {
+  "domain": [
+   "magic"
+  ],
+  "subject": [],
+  "targetKind": [
+   "people",
+   "animals"
+  ]
+ },
+ "Povolávač": {
+  "domain": [
+   "social"
+  ],
+  "subject": [],
+  "targetKind": [
+   "fiends",
+   "undead",
+   "monsters"
+  ]
+ },
+ "Modlitby a uřknutí": {
+  "domain": [
+   "magic"
+  ],
+  "subject": [],
+  "targetKind": [
+   "people"
+  ]
+ },
+ "Mystický kruh": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Věže a chrámy": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Rodová zbraň": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Jménem krále": {
+  "domain": []
+ },
+ "Idol žen či mužů": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Lví srdce": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Tesknota": {
+  "domain": []
+ },
+ "Plášť soumraku": {
+  "domain": [
+   "stealth"
+  ]
+ },
+ "Noční oči": {
+  "domain": []
+ },
+ "Síla přísahy": {
+  "domain": []
+ },
+ "Pouto krve": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Takový prcek!": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Tichošlápek": {
+  "domain": [
+   "stealth"
+  ]
+ },
+ "Labužník": {
+  "domain": []
+ },
+ "Netopýří sluch": {
+  "domain": []
+ },
+ "Zběsilost": {
+  "domain": []
+ },
+ "Zubří kůže": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Cit pro zbraň": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Gladiátor": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Osobní strážce": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Kruhový sek": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Pádný úder": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Hlava nehlava": {
+  "domain": [
+   "combat"
+  ],
+  "mechanism": [
+   "gain-resources"
+  ]
+ },
+ "Rameno na rameno": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Šampión": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Dobrá muška": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Ostrostřelec": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Déšť střel": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Děsivá přesnost": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Akrobat": {
+  "domain": [
+   "movement"
+  ]
+ },
+ "Vrhač": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Plášť": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Smršť dýk": {
+  "domain": [
+   "combat"
+  ]
+ },
+ "Zloděj": {
+  "relatedSkill": [
+   "Triky a kejkle"
+  ],
+  "domain": [
+   "stealth"
+  ]
+ },
+ "Talent": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Komediant": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Změna tváře": {
+  "domain": [
+   "social",
+   "stealth"
+  ]
+ },
+ "Skrytá kapsa": {
+  "domain": [
+   "stealth"
+  ]
+ },
+ "Vyjednavač": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Působivý řečník": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Kluzký jako úhoř": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Moudrý rádce": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Hojivý dotek": {
+  "domain": [
+   "healing"
+  ]
+ },
+ "Umělá duše": {
+  "relatedSkill": [
+   "Umělý život"
+  ],
+  "domain": [
+   "magic"
+  ]
+ },
+ "Živá voda": {
+  "relatedSkill": [
+   "Masti a běžné jedy"
+  ],
+  "targetKind": [
+   "people",
+   "animals"
+  ]
+ },
+ "Ohněstrůjce": {
+  "relatedSkill": [
+   "Výroba třaskavin, žíravin a plynných jedů",
+   "Používání třaskavin, žíravin a plynných jedů"
+  ]
+ },
+ "Kapitán": {
+  "relatedSkill": [
+   "Vedení lidí mimo boj"
+  ]
+ },
+ "Bojový výcvik": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Znalec netvorů": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Jazyk poutníků": {
+  "domain": [
+   "social"
+  ]
+ },
+ "Ohař": {
+  "domain": [
+   "movement",
+   "knowledge"
+  ]
+ },
+ "Slavný stvůrobijce": {
+  "targetKind": [
+   "monsters"
+  ],
+  "domain": [
+   "social"
+  ]
+ },
+ "Znalec krajiny": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Čarovné nápoje": {
+  "subject": [
+   "substances"
+  ],
+  "domain": [
+   "craft"
+  ]
+ },
+ "Měnič podob": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Vůdce smečky": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Šedá eminence": {
+  "domain": [
+   "social",
+   "stealth"
+  ]
+ },
+ "Znamení Tiwaz": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Znalec démonů": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Zloději těl": {
+  "domain": [
+   "knowledge"
+  ],
+  "attribute": "soul",
+  "activationCost": [
+   {
+    "resource": "soul",
+    "amount": 1
+   }
+  ],
+  "supplemented": [
+   "attribute",
+   "activation-cost"
+  ]
+ },
+ "Lamač nadpřirozena": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Pán golemů": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Stvořitel": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Přeludy": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Davová psychóza": {
+  "domain": [
+   "magic"
+  ]
+ },
+ "Stopy zvěře": {
+  "domain": [
+   "knowledge"
+  ]
+ },
+ "Výrobce elixírů": {
+  "subject": [
+   "substances"
+  ]
+ },
+ "Posílení elixíru": {
+  "subject": [
+   "substances"
+  ]
+ },
+ "Znamení Berkano": {
+  "targetKind": []
+ },
+ "Znamení Othala": {
+  "targetKind": []
+ },
+ "Nouzové střely": {
+  "mechanism": [
+   "gain-resources"
+  ]
+ }
+}

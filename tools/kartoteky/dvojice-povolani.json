@@ -1,0 +1,42 @@
+{
+ "Válečník": [
+  "Bojovník",
+  "Kejklíř"
+ ],
+ "Hraničář": [
+  "Bojovník",
+  "Lovec"
+ ],
+ "Šaman": [
+  "Lovec",
+  "Mastičkář"
+ ],
+ "Druid": [
+  "Lovec",
+  "Zaříkávač"
+ ],
+ "Lupič": [
+  "Kejklíř",
+  "Mastičkář"
+ ],
+ "Zvěd": [
+  "Kejklíř",
+  "Lovec"
+ ],
+ "Vědmák": [
+  "Mastičkář",
+  "Bojovník"
+ ],
+ "Alchymista": [
+  "Mastičkář",
+  "Zaříkávač"
+ ],
+ "Čaroděj": [
+  "Zaříkávač",
+  "Bojovník"
+ ],
+ "Mág": [
+  "Zaříkávač",
+  "Kejklíř"
+ ]
+}
