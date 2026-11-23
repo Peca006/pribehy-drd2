@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const rd = (f) => JSON.parse(readFileSync(resolve(root, 'reference/work', f), 'utf8'));
 const fa = rd('kartoteky-fafrin.json');
-const mine = new Map(rd('kartoteky-karty.json').filter((c) => c.type === 'zs').map((c) => [c.name.toLowerCase(), c]));
 const parse = (md) => new Map([...md.matchAll(/<drd2-zs\s*\n([\s\S]*?)\n>/g)].map((m) => {
   const d = {}; for (const l of m[1].matchAll(/^([\w-]+)="(.*)"$/gm)) d[l[1]] = l[2]; return [d.name.toLowerCase(), d];
 }));

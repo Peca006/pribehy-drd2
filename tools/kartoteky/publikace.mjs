@@ -3,7 +3,7 @@
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MECHANISM, DOMAIN, SUBJECT, TARGET_KIND, ATTRIBUTE, RESOURCE, MANEUVER, RACE } from './slovnik.mjs';
+import { MECHANISM, DOMAIN, SUBJECT, TARGET_KIND, ATTRIBUTE, RESOURCE } from './slovnik.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const work = (f) => resolve(root, 'reference/work', f);

@@ -16,5 +16,7 @@
     "strict": true,
     "noImplicitAny": false
   },
-  "include": ["tools/**/*.mjs", "tools/**/*.ts"]
+  "include": ["tools/**/*.mjs", "tools/**/*.ts"],
+  // datové skripty kartoték (tools/kartoteky) generují karty ze SRD a nejsou součástí aplikace; typově se nekontrolují
+  "exclude": ["tools/kartoteky/**"]
 }

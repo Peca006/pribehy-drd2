@@ -25,7 +25,7 @@ const TARGET_ATTR = { 'osetrovani-lidskeho-tela': 'Tělo', 'leceni-zvirat': 'Tě
 
 const rows = prev.skills.map((s) => {
   const key = s.id.split('/')[1];
-  const name = fold(s.name), first = fold(s.items[0] ?? ''), all = fold(s.items.join(' '));
+  const name = fold(s.name), all = fold(s.items.join(' '));
   const type = TYPE_OVERRIDE[key] ?? [...new Set(s.area.map((a) => AREA_TO_TYPE[a]).filter(Boolean))];
   // prostředí: jen z názvu („v divočině“, „ve městě“) a dvě výslovné výjimky (pohyb a táboření v divočině)
   const env = [/divocin/.test(name) || ['cestovani', 'tabornictvi'].includes(key) ? 'Divočina' : null, /\bve meste\b/.test(name) ? 'Město' : null].filter(Boolean);
