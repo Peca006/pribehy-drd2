@@ -19,7 +19,7 @@ export const MECHANISM = {
   'ward-sign': { cs: 'Ochranný obrazec', kostka: ['Posílení dovednosti'] },
   'unusual-sense': { cs: 'Neobvyklý smysl', kostka: ['Neobvyklý smysl'] },
   'gain-advantage': { cs: 'Zisk Výhod', kostka: ['Zisk zdrojů'] },
-  'gain-resources': { cs: 'Zisk Zdrojů (Surovin)', kostka: ['Zisk zdrojů'] },
+  'gain-resources': { cs: 'Zisk Zdrojů', kostka: ['Zisk zdrojů'] },
   'assess-abilities': { cs: 'Odhad zvláštních schopností', kostka: ['Posílení dovednosti'] },
   heal: { cs: 'Léčení', kostka: ['Posílené léčení'] },
   companion: { cs: 'Pomocník', kostka: ['Jiný'] },

@@ -410,6 +410,9 @@
  "Hlava nehlava": {
   "domain": [
    "combat"
+  ],
+  "mechanism": [
+   "gain-resources"
   ]
  },
  "Rameno na rameno": {
@@ -673,5 +676,10 @@
  },
  "Znamení Othala": {
   "targetKind": []
+ },
+ "Nouzové střely": {
+  "mechanism": [
+   "gain-resources"
+  ]
  }
 }
