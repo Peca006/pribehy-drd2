@@ -142,6 +142,8 @@ for (const c of cards) {
   if (m.mechanism) { c.mechanism = m.mechanism; c.parts[0].mechanism = m.mechanism; }
   if (m.activationCost) { c.activationCost = m.activationCost; c.parts[0].activationCost = m.activationCost; }
   if (m.supplemented) c.supplemented = m.supplemented;
+  // poznámka k platbě části karty, která není Aktivací (např. 1 Duše za každou vloženou Surovinu); do exportu pro Kostku nejde
+  if (m.partNotes) for (const [i, n] of Object.entries(m.partNotes)) c.parts[i].note = n;
   if (m.relatedSkill) c.relatedSkill = m.relatedSkill.map((n) => ({ id: [...skillName].find(([, v]) => v === n)?.[0], name: n }));
   c.labels = 'manual';
 }

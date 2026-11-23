@@ -116,7 +116,10 @@
   "subject": [
    "traps"
   ],
-  "targetKind": []
+  "targetKind": [],
+  "partNotes": {
+   "1": "1 Duše za každou vloženou nouzovou Surovinu"
+  }
  },
  "Jedno oko otevřené": {
   "domain": [
@@ -200,7 +203,10 @@
   "subject": [
    "poisons"
   ],
-  "targetKind": []
+  "targetKind": [],
+  "partNotes": {
+   "1": "1 Duše za každou vloženou nouzovou Surovinu"
+  }
  },
  "Neobvyklé jedy": {
   "domain": [
