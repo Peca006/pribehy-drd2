@@ -1,7 +1,8 @@
 # Audiogram: přenos kódu zvukem (experiment)
 
-Stav (22. 11. 2026): sloučeno do `main`, v aplikaci jako „přenos zvukem“ (Vysílat / Přijímat zvukem, společná Zkouška zvuku ve Více);
+Stav (23. 11. 2026): sloučeno do `main`, v aplikaci jako „přenos zvukem“ (Vysílat / Přijímat zvukem, společná Zkouška zvuku ve Více);
 režimy QPSK 1200 a BPSK 800 fungují mezi skutečnými zařízeními, ostatní a společná zkouška (0.4.6) čekají na testery.
+Při sezení 22. 11. 2026 se několik přenosů povedlo i za hovoru a ruchu v místnosti (viz „Výsledky zkoušek na skutečných zařízeních“).
 Přenos kódu `DRD2:…` postavy nebo družiny
 mezi dvěma zařízeními reproduktorem a mikrofonem, bez serveru. Texty v kódu jsou česky, `TODO.md` se nemění.
 
@@ -139,9 +140,25 @@ Volba se přenese ve volání, příjemce ji převezme (nezpomaluje a při volá
    Automatický režim ukáže u příjemce naměřený odstup signálu: porovnat s prahy v tabulce a případně opravit `minSnrDb` v `modes.ts` (reálný kanál bude horší než bílý šum).
 5. Při selhání zkusit: větší hlasitost, menší vzdálenost, vypnout zvukové efekty/„zesílení hlasu“ telefonu, zakrýt okolní hluk.
 
+## Výsledky zkoušek na skutečných zařízeních
+
+| datum | situace | výsledek |
+| --- | --- | --- |
+| 22. 11. 2026, sezení | Přenos postavy z telefonu do telefonu v jedné místnosti, telefony těsně u sebe (reproduktor jednoho u mikrofonu druhého), během hovoru lidí a běžného ruchu | Několik přenosů fungovalo slušně; konverzace a ruch je nerozbily. |
+
+Závěr (předběžný): při malé vzdálenosti telefonů přenos projde i v nepříliš tiché místnosti. Pravděpodobné vysvětlení (neměřeno): signál
+u mikrofonu je při těsném přiložení mnohem silnější než okolní hluk. Hovor leží z velké části v pásmu 100 až 3 000 Hz, kde je i handshake
+(AFSK 300), a přesto přenos prošel. Pro sdílení postavy po sezení je funkce použitelná; na větší vzdálenost je to třeba ověřit.
+
+Nezapsáno a nezměřeno (u dalších zkoušek doplnit): přesné modely telefonů, zda běžel automatický režim nebo vynucený, který režim byl
+zvolen a naměřený odstup signálu z handshake, počet kol a celková doba přenosu, velikost přenášené zprávy, případné neúspěšné pokusy.
+Pro porovnání s prahy v tabulce `MODES` jsou nejcennější právě naměřený odstup a zvolený režim; Zkouška zvuku ve Více (0.4.6) je vypíše.
+
+Dosud neověřeno: větší vzdálenost (desítky cm a víc), jiný typ zařízení (notebook, starší telefon), společná Zkouška zvuku mezi dvěma zařízeními.
+
 ## Co zůstalo nedodělané / neověřeno
 
-- **Skutečný zvuk stále nebyl vyzkoušen.** Vše je ověřeno jen simulovaným kanálem (bílý šum, zpoždění, zesílení, výpadky, rozdíl taktu). Reproduktor a mikrofon
+- **Skutečný zvuk byl vyzkoušen jen omezeně** (viz výsledky výše: blízko u sebe, několik přenosů). Zbytek je ověřen jen simulovaným kanálem (bílý šum, zpoždění, zesílení, výpadky, rozdíl taktu). Reproduktor a mikrofon
   mají nerovnou frekvenční odezvu, ozvěnu místnosti (vícecestné šíření), AGC; mobilní prohlížeče mohou mikrofon předzpracovávat navzdory vypnutým volbám.
   Prahy v `modes.ts` jsou z bílého šumu a budou u skutečných zařízení horší, hlavně u 8-PSK, 16-QAM a OFDM (citlivé na ozvěnu a nerovnou odezvu).
   Je třeba ladit `minSnrDb`, amplitudu `AMPLITUDE` (OFDM `OFDM_RMS`), délku ticha `LEAD`/`GAP`, `quiet` v `listenForBurst`.

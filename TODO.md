@@ -20,8 +20,9 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   (ID postav z jiných zařízení). Více Průvodců se nedělá.
 - **Ilustrace postav (rozhodnutí).** Jen v souboru se sdílením, v celkovém exportu a později přes WebRTC. Do kódu, QR, zvuku
   a jiných malých přenosů nikdy.
-- **Audiogram.** DSP (zúžení pásma, LDPC) a další zkoušky čekají na testery a zařízení; zkouška zvuku mezi dvěma zařízeními
-  (0.4.6) je neověřená. Viz `AUDIOGRAM.md`.
+- **Audiogram.** Na sezení 22. 11. 2026 prošlo několik přenosů blízko u sebe i za hovoru a ruchu (`AUDIOGRAM.md`, výsledky). DSP
+  (zúžení pásma, LDPC) a další zkoušky (vzdálenost, jiná zařízení, naměřený odstup a zvolený režim) čekají na testery; zkouška zvuku
+  mezi dvěma zařízeními (0.4.6) je neověřená.
 - **Postava.** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
 - **Hry mocných.** Jen pro vlastní interní účely (lokální balíček, větev `hry-mocnych`), do veřejných balíčků až po zařazení
   do SRD. Nechat až po všech milnících.
