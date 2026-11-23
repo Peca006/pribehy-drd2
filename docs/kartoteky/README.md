@@ -1,7 +1,7 @@
 # Kartotéky DrD2: karty ZS a dovedností
 
 Karty zvláštních schopností (ZS) a dovedností z Příručky a Bestiáře Dračího doupěte 2 (SRD), ve formátu navazujícím na Kartotéky Kostky.
-Obsah: 206 ZS Příručky, 44 ZS Bestiáře, 77 dovedností.
+Obsah: 206 ZS Příručky, 51 ZS Bestiáře, 77 dovedností.
 
 ## Soubory
 
@@ -27,7 +27,7 @@ Kostka má pro účinek jednu hodnotu (`effect`) a pro „účel“ směs oblast
 - Jizvy jsou u nás mechanismus (`scar-effect`, „Účinek na Jizvy“); do pole `purpose` pro Kostku se přidávají při exportu.
 - Zdroj je vždy `SRD` (rulebook Příručka nebo Bestiář). Název karty je klíč, `id` je stabilní slug.
 - **quick-pick**: číslo „rychlého výběru“ ze zdroje (úroveň povolání, u ras kultura). **monster**: ano = schopnost z Bestiáře.
-- **bestiary-kind** a **used-by**: u záznamů z řádků statistik tvorů v Bestiáři. „talent“ je podmíněná zběhlost nebo bravura (každá podmínka je samostatná část v `parts`, v závorce), „neobvyklý smysl“ je neobvyklý smysl (Duše). `used-by` jsou tvorové, kteří záznam mají. Rasová ZS Noční oči se u tvorů znovu nevytváří.
+- **bestiary-kind** a **used-by**: u záznamů z řádků statistik tvorů v Bestiáři. „talent“ je podmíněná zběhlost nebo bravura (každá podmínka je samostatná část v `parts`, v závorce), „neobvyklý smysl“ je neobvyklý smysl (Duše). `used-by` jsou tvorové, kteří záznam mají. Rasová ZS Noční oči se u tvorů znovu nevytváří. „přirozená nástraha“ je zkrácený zápis nástrahy tvora (spouštěč, druh nástrahy, zdroj, úprava, účinek, vzhled); druh a úprava jsou v `trap-kind` a `trap-modifier`, zdroj nástrahy je atribut karty, zbytek je v textu karty.
 
 ## Slovník hodnot
 
@@ -61,11 +61,12 @@ Zdroje v cenách: `body` = Tělo, `soul` = Duše, `influence` = Vliv, `material`
 | `stealth-evasion` | Ukrytí a únik | Posílení dovednosti |
 | `mark-detect` | Označení či odhalení | Jiný |
 | `dominate` | Ovládnutí | Posílení dovednosti |
+| `natural-trap` | Přirozená nástraha | Jiný |
 | `special-effect` | Zvláštní účinek (jednotlivé případy) | Jiný |
 | `group-rule` | Skupinové pravidlo bytostí | Jiný |
 | `against-being` | Pravidlo „proti bytosti“ | Jiný |
 
-Počty karet: skill-proficiency 48, skill-mastery 47, aptitude 12, free-maneuver 18, free-defense 8, free-approach 2, defend-others 6, grant-resources 8, natural-protection 11, scar-effect 14, narrative-authority 23, craft 13, spell-enhance 13, ward-sign 11, unusual-sense 8, gain-advantage 4, gain-resources 5, assess-abilities 4, heal 9, companion 8, stealth-evasion 4, mark-detect 2, dominate 2, special-effect 15, group-rule 6, against-being 5.
+Počty karet: skill-proficiency 48, skill-mastery 47, aptitude 12, free-maneuver 18, free-defense 8, free-approach 2, defend-others 6, grant-resources 8, natural-protection 11, scar-effect 14, narrative-authority 23, craft 13, spell-enhance 13, ward-sign 11, unusual-sense 8, gain-advantage 4, gain-resources 5, assess-abilities 4, heal 9, companion 8, stealth-evasion 4, mark-detect 2, dominate 2, natural-trap 7, special-effect 15, group-rule 6, against-being 5.
 
 ### Doména (domain)
 | id | Česky | Hodnota v Kostce |

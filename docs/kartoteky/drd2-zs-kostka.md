@@ -4261,3 +4261,129 @@ monster="ano"
 _Bravurní_, má-li políčeno na kořist.
 
 </drd2-zs>
+
+<drd2-zs
+name="Morová nákaza"
+rulebook="Bestiář"
+attribute="Tělo"
+effect="Jiný"
+purpose="Pasti, Lidé, Zvířata"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+- Spouštěč: všichni _lidé_ a _zvířata_ do vzdálenosti 12 kroků od moronoše nebo již nakaženého _člověka_ či _zvířete_
+- Nástraha: past > Tělo + _velmi lstivě_
+- Účinek: nakažení morem — způsobení **_Jizvy_** + _chabě_ na činnosti vyžadující vytrvalost
+- Vzhled: zápach a viditelné boláky
+
+</drd2-zs>
+
+<drd2-zs
+name="Svádění do bažin"
+rulebook="Bestiář"
+attribute="Vliv"
+effect="Jiný"
+purpose="Jedy, Lidé"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+- Spouštěč: _lidé_ hledící na bludičku
+- Nástraha: rychlý jed > Vliv
+- Účinek: bezmyšlenkovité sledování bludičky — zvýšení **_Ohrožení_** + _hloupě_ na _Cestování_ a _Orientaci v divočině_
+- Vzhled: světýlka na blatech
+
+</drd2-zs>
+
+<drd2-zs
+name="Jedový výtok"
+rulebook="Bestiář"
+attribute="Tělo"
+effect="Jiný"
+purpose="Jedy, Lidé, Zvířata, Netvoři"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+- Spouštěč: _lidé_, _zvířata_ a _netvoři_, kteří pozřou otrávenou vodu
+- Nástraha: jed > Tělo + neovladatelná třesavka
+- Účinek: zvýšení **_Ohrožení_** + vyřazení + _nepřesně_ na střelbu a vrh
+- Vzhled: voda zapáchá
+
+</drd2-zs>
+
+<drd2-zs
+name="Ochromující pohled"
+rulebook="Bestiář"
+attribute="Duše"
+effect="Jiný"
+purpose="Jedy"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+- Spouštěč: ti, kteří pohlédnou baziliškovi do očí
+- Nástraha: rychlý jed > Duše
+- Účinek: neschopnost pohybu — zvýšení **_Ohrožení_** + vyřazení + _hloupě_ na _Pohyblivost_
+- Vzhled: výrazné pulzující oči
+
+</drd2-zs>
+
+<drd2-zs
+name="Jedovatý ocas"
+rulebook="Bestiář"
+attribute="Tělo"
+effect="Jiný"
+purpose="Jedy, Lidé, Zvířata, Netvoři"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+- Spouštěč: _lidé_, _zvířata_ a _netvoři_ bodnutí ocasem
+- Nástraha: jed > Tělo + _mocně_
+- Účinek: smrt — zvýšení **_Ohrožení_** + vyřazení + _chabě_ na všechny druhy boje
+- Vzhled: jedové váčky pod ocasem
+
+</drd2-zs>
+
+<drd2-zs
+name="Pavoučí jed"
+rulebook="Bestiář"
+attribute="Tělo"
+effect="Jiný"
+purpose="Jedy, Lidé, Zvířata"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+- Spouštěč: _lidé_ a _zvířata_ pokousaní kusadly
+- Nástraha: rychlý jed > Tělo
+- Účinek: malátnost — zvýšení **_Ohrožení_** + _nepřesně_ na _Pohyblivost_
+- Vzhled: odkapávající jedové sliny
+
+</drd2-zs>
+
+<drd2-zs
+name="Pavučina"
+rulebook="Bestiář"
+attribute="Tělo"
+effect="Jiný"
+purpose="Pasti"
+activation-cost="Bez Aktivace"
+monster="ano"
+>
+
+
+- Spouštěč: dotyk s vlákny
+- Nástraha: past > Tělo
+- Účinek: přilepení se — zvýšení **_Ohrožení_**
+- Vzhled: lesklá lepkavá vlákna
+
+</drd2-zs>

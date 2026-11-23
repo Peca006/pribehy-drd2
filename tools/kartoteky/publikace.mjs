@@ -34,7 +34,7 @@ const zsFull = cards.filter((c) => c.type === 'zs').map((c) => [
   dial('mechanism', cs(MECHANISM, c.mechanism)), dial('parts', c.parts.map(part).join('; ')), dial('domain', cs(DOMAIN, c.domain)), dial('subject', cs(SUBJECT, c.subject)),
   dial('target-kind', cs(TARGET_KIND, c.targetKind)), dial('activation-cost', c.parts.map((p) => cost(p.activationCost)).join('; ')),
   dial('related-skill', c.relatedSkill.map((r) => r.name).join(', ')), dial('mass', c.mass ? 'ano' : ''),
-  dial('quick-pick', c.quickPick), dial('monster', c.monster ? 'ano' : ''), dial('bestiary-kind', { talent: 'talent', sense: 'neobvyklý smysl' }[c.bestiaryKind] ?? ''), dial('used-by', (c.usedBy ?? []).join(', ')), dial('labels', c.labels === 'manual' ? 'ruční revize' : 'automaticky'),
+  dial('quick-pick', c.quickPick), dial('monster', c.monster ? 'ano' : ''), dial('bestiary-kind', { talent: 'talent', sense: 'neobvyklý smysl', trap: 'přirozená nástraha' }[c.bestiaryKind] ?? ''), dial('used-by', (c.usedBy ?? []).join(', ')), dial('trap-kind', c.trap?.kind), dial('trap-modifier', c.trap?.modifier), dial('labels', c.labels === 'manual' ? 'ruční revize' : 'automaticky'),
   dial('supplemented', (c.supplemented ?? []).join(', ')), '>', '', zsBody.get(c.name) ?? '', '', '</drd2-zs>', ''].filter((x) => x !== null).join('\n')).join('\n');
 const skFull = cards.filter((c) => c.type === 'skill').map((c) => [
   '<drd2-skill', dial('id', c.id), dial('name', c.name), dial('source', 'SRD'), dial('rulebook', c.rulebook), dial('origin-kind', ORIGIN[c.origin.kind]), dial('origin', c.origin.name),
@@ -81,7 +81,7 @@ Kostka má pro účinek jednu hodnotu (\`effect\`) a pro „účel“ směs obla
 - Jizvy jsou u nás mechanismus (\`scar-effect\`, „Účinek na Jizvy“); do pole \`purpose\` pro Kostku se přidávají při exportu.
 - Zdroj je vždy \`SRD\` (rulebook Příručka nebo Bestiář). Název karty je klíč, \`id\` je stabilní slug.
 - **quick-pick**: číslo „rychlého výběru“ ze zdroje (úroveň povolání, u ras kultura). **monster**: ano = schopnost z Bestiáře.
-- **bestiary-kind** a **used-by**: u záznamů z řádků statistik tvorů v Bestiáři. „talent“ je podmíněná zběhlost nebo bravura (každá podmínka je samostatná část v \`parts\`, v závorce), „neobvyklý smysl“ je neobvyklý smysl (Duše). \`used-by\` jsou tvorové, kteří záznam mají. Rasová ZS Noční oči se u tvorů znovu nevytváří.
+- **bestiary-kind** a **used-by**: u záznamů z řádků statistik tvorů v Bestiáři. „talent“ je podmíněná zběhlost nebo bravura (každá podmínka je samostatná část v \`parts\`, v závorce), „neobvyklý smysl“ je neobvyklý smysl (Duše). \`used-by\` jsou tvorové, kteří záznam mají. Rasová ZS Noční oči se u tvorů znovu nevytváří. „přirozená nástraha“ je zkrácený zápis nástrahy tvora (spouštěč, druh nástrahy, zdroj, úprava, účinek, vzhled); druh a úprava jsou v \`trap-kind\` a \`trap-modifier\`, zdroj nástrahy je atribut karty, zbytek je v textu karty.
 
 ## Slovník hodnot
 

@@ -26,6 +26,7 @@ export const MECHANISM = {
   'stealth-evasion': { cs: 'Ukrytí a únik', kostka: ['Posílení dovednosti'] },
   'mark-detect': { cs: 'Označení či odhalení', kostka: ['Jiný'] },
   dominate: { cs: 'Ovládnutí', kostka: ['Posílení dovednosti'] },
+  'natural-trap': { cs: 'Přirozená nástraha', kostka: ['Jiný'] },
   'special-effect': { cs: 'Zvláštní účinek (jednotlivé případy)', kostka: ['Jiný'] },
   // bestiářové schopnosti (schváleno 22. 11. 2026)
   'group-rule': { cs: 'Skupinové pravidlo bytostí', kostka: ['Jiný'] },

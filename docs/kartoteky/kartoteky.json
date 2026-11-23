@@ -10219,6 +10219,337 @@
   "labels": "auto"
  },
  {
+  "type": "zs",
+  "id": "morova-nakaza",
+  "name": "Morová nákaza",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "body",
+  "mechanism": [
+   "natural-trap"
+  ],
+  "domain": [],
+  "subject": [
+   "traps"
+  ],
+  "targetKind": [
+   "people",
+   "animals"
+  ],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "natural-trap"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "trap",
+  "usedBy": [
+   "Moronoš"
+  ],
+  "trap": {
+   "trigger": "všichni lidé a zvířata do vzdálenosti 12 kroků od moronoše nebo již nakaženého člověka či zvířete",
+   "kind": "past",
+   "attribute": "body",
+   "modifier": "velmi lstivě",
+   "effect": "nakažení morem — způsobení Jizvy + chabě na činnosti vyžadující vytrvalost",
+   "appearance": "zápach a viditelné boláky"
+  },
+  "text": "- Spouštěč: všichni *lidé* a *zvířata* do vzdálenosti 12 kroků od moronoše nebo již nakaženého *člověka* či *zvířete*\n- Nástraha: past > Tělo + *velmi lstivě*\n- Účinek: nakažení morem — způsobení ***Jizvy*** + *chabě* na činnosti vyžadující vytrvalost\n- Vzhled: zápach a viditelné boláky",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "svadeni-do-bazin",
+  "name": "Svádění do bažin",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "influence",
+  "mechanism": [
+   "natural-trap"
+  ],
+  "domain": [],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": [
+   "people"
+  ],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "natural-trap"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "trap",
+  "usedBy": [
+   "Bludička"
+  ],
+  "trap": {
+   "trigger": "lidé hledící na bludičku",
+   "kind": "rychlý jed",
+   "attribute": "influence",
+   "modifier": "",
+   "effect": "bezmyšlenkovité sledování bludičky — zvýšení Ohrožení + hloupě na Cestování a Orientaci v divočině",
+   "appearance": "světýlka na blatech"
+  },
+  "text": "- Spouštěč: *lidé* hledící na bludičku\n- Nástraha: rychlý jed > Vliv\n- Účinek: bezmyšlenkovité sledování bludičky — zvýšení ***Ohrožení*** + *hloupě* na *Cestování* a *Orientaci v divočině*\n- Vzhled: světýlka na blatech",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "jedovy-vytok",
+  "name": "Jedový výtok",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "body",
+  "mechanism": [
+   "natural-trap"
+  ],
+  "domain": [],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": [
+   "people",
+   "animals",
+   "monsters"
+  ],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "natural-trap"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "trap",
+  "usedBy": [
+   "Bazilišek"
+  ],
+  "trap": {
+   "trigger": "lidé, zvířata a netvoři, kteří pozřou otrávenou vodu",
+   "kind": "jed",
+   "attribute": "body",
+   "modifier": "neovladatelná třesavka",
+   "effect": "zvýšení Ohrožení + vyřazení + nepřesně na střelbu a vrh",
+   "appearance": "voda zapáchá"
+  },
+  "text": "- Spouštěč: *lidé*, *zvířata* a *netvoři*, kteří pozřou otrávenou vodu\n- Nástraha: jed > Tělo + neovladatelná třesavka\n- Účinek: zvýšení ***Ohrožení*** + vyřazení + *nepřesně* na střelbu a vrh\n- Vzhled: voda zapáchá",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "ochromujici-pohled",
+  "name": "Ochromující pohled",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "soul",
+  "mechanism": [
+   "natural-trap"
+  ],
+  "domain": [],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "natural-trap"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "trap",
+  "usedBy": [
+   "Bazilišek"
+  ],
+  "trap": {
+   "trigger": "ti, kteří pohlédnou baziliškovi do očí",
+   "kind": "rychlý jed",
+   "attribute": "soul",
+   "modifier": "",
+   "effect": "neschopnost pohybu — zvýšení Ohrožení + vyřazení + hloupě na Pohyblivost",
+   "appearance": "výrazné pulzující oči"
+  },
+  "text": "- Spouštěč: ti, kteří pohlédnou baziliškovi do očí\n- Nástraha: rychlý jed > Duše\n- Účinek: neschopnost pohybu — zvýšení ***Ohrožení*** + vyřazení + *hloupě* na *Pohyblivost*\n- Vzhled: výrazné pulzující oči",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "jedovaty-ocas",
+  "name": "Jedovatý ocas",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "body",
+  "mechanism": [
+   "natural-trap"
+  ],
+  "domain": [],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": [
+   "people",
+   "animals",
+   "monsters"
+  ],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "natural-trap"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "trap",
+  "usedBy": [
+   "Mantikora"
+  ],
+  "trap": {
+   "trigger": "lidé, zvířata a netvoři bodnutí ocasem",
+   "kind": "jed",
+   "attribute": "body",
+   "modifier": "mocně",
+   "effect": "smrt — zvýšení Ohrožení + vyřazení + chabě na všechny druhy boje",
+   "appearance": "jedové váčky pod ocasem"
+  },
+  "text": "- Spouštěč: *lidé*, *zvířata* a *netvoři* bodnutí ocasem\n- Nástraha: jed > Tělo + *mocně*\n- Účinek: smrt — zvýšení ***Ohrožení*** + vyřazení + *chabě* na všechny druhy boje\n- Vzhled: jedové váčky pod ocasem",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "pavouci-jed",
+  "name": "Pavoučí jed",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "body",
+  "mechanism": [
+   "natural-trap"
+  ],
+  "domain": [],
+  "subject": [
+   "poisons"
+  ],
+  "targetKind": [
+   "people",
+   "animals"
+  ],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "natural-trap"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "trap",
+  "usedBy": [
+   "Obří pavouk"
+  ],
+  "trap": {
+   "trigger": "lidé a zvířata pokousaní kusadly",
+   "kind": "rychlý jed",
+   "attribute": "body",
+   "modifier": "",
+   "effect": "malátnost — zvýšení Ohrožení + nepřesně na Pohyblivost",
+   "appearance": "odkapávající jedové sliny"
+  },
+  "text": "- Spouštěč: *lidé* a *zvířata* pokousaní kusadly\n- Nástraha: rychlý jed > Tělo\n- Účinek: malátnost — zvýšení ***Ohrožení*** + *nepřesně* na *Pohyblivost*\n- Vzhled: odkapávající jedové sliny",
+  "labels": "auto"
+ },
+ {
+  "type": "zs",
+  "id": "pavucina",
+  "name": "Pavučina",
+  "source": "srd",
+  "rulebook": "Bestiář",
+  "origin": {
+   "kind": "bestiary",
+   "name": "Bestiář"
+  },
+  "attribute": "body",
+  "mechanism": [
+   "natural-trap"
+  ],
+  "domain": [],
+  "subject": [
+   "traps"
+  ],
+  "targetKind": [],
+  "activationCost": [],
+  "parts": [
+   {
+    "mechanism": [
+     "natural-trap"
+    ],
+    "activationCost": []
+   }
+  ],
+  "relatedSkill": [],
+  "monster": true,
+  "bestiaryKind": "trap",
+  "usedBy": [
+   "Obří pavouk"
+  ],
+  "trap": {
+   "trigger": "dotyk s vlákny",
+   "kind": "past",
+   "attribute": "body",
+   "modifier": "",
+   "effect": "přilepení se — zvýšení Ohrožení",
+   "appearance": "lesklá lepkavá vlákna"
+  },
+  "text": "- Spouštěč: dotyk s vlákny\n- Nástraha: past > Tělo\n- Účinek: přilepení se — zvýšení ***Ohrožení***\n- Vzhled: lesklá lepkavá vlákna",
+  "labels": "auto"
+ },
+ {
   "type": "skill",
   "id": "bezny-boj-zblizka",
   "name": "Běžný boj zblízka",

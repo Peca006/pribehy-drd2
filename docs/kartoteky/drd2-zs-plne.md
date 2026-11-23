@@ -5453,3 +5453,186 @@ labels="automaticky"
 _Bravurní_, má-li políčeno na kořist.
 
 </drd2-zs>
+
+<drd2-zs
+id="morova-nakaza"
+name="Morová nákaza"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Tělo"
+mechanism="Přirozená nástraha"
+parts="Přirozená nástraha [Bez Aktivace]"
+subject="Pasti"
+target-kind="Lidé, Zvířata"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="přirozená nástraha"
+used-by="Moronoš"
+trap-kind="past"
+trap-modifier="velmi lstivě"
+labels="automaticky"
+>
+
+- Spouštěč: všichni _lidé_ a _zvířata_ do vzdálenosti 12 kroků od moronoše nebo již nakaženého _člověka_ či _zvířete_
+- Nástraha: past > Tělo + _velmi lstivě_
+- Účinek: nakažení morem — způsobení **_Jizvy_** + _chabě_ na činnosti vyžadující vytrvalost
+- Vzhled: zápach a viditelné boláky
+
+</drd2-zs>
+
+<drd2-zs
+id="svadeni-do-bazin"
+name="Svádění do bažin"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Vliv"
+mechanism="Přirozená nástraha"
+parts="Přirozená nástraha [Bez Aktivace]"
+subject="Jedy"
+target-kind="Lidé"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="přirozená nástraha"
+used-by="Bludička"
+trap-kind="rychlý jed"
+labels="automaticky"
+>
+
+- Spouštěč: _lidé_ hledící na bludičku
+- Nástraha: rychlý jed > Vliv
+- Účinek: bezmyšlenkovité sledování bludičky — zvýšení **_Ohrožení_** + _hloupě_ na _Cestování_ a _Orientaci v divočině_
+- Vzhled: světýlka na blatech
+
+</drd2-zs>
+
+<drd2-zs
+id="jedovy-vytok"
+name="Jedový výtok"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Tělo"
+mechanism="Přirozená nástraha"
+parts="Přirozená nástraha [Bez Aktivace]"
+subject="Jedy"
+target-kind="Lidé, Zvířata, Netvoři"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="přirozená nástraha"
+used-by="Bazilišek"
+trap-kind="jed"
+trap-modifier="neovladatelná třesavka"
+labels="automaticky"
+>
+
+- Spouštěč: _lidé_, _zvířata_ a _netvoři_, kteří pozřou otrávenou vodu
+- Nástraha: jed > Tělo + neovladatelná třesavka
+- Účinek: zvýšení **_Ohrožení_** + vyřazení + _nepřesně_ na střelbu a vrh
+- Vzhled: voda zapáchá
+
+</drd2-zs>
+
+<drd2-zs
+id="ochromujici-pohled"
+name="Ochromující pohled"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Duše"
+mechanism="Přirozená nástraha"
+parts="Přirozená nástraha [Bez Aktivace]"
+subject="Jedy"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="přirozená nástraha"
+used-by="Bazilišek"
+trap-kind="rychlý jed"
+labels="automaticky"
+>
+
+- Spouštěč: ti, kteří pohlédnou baziliškovi do očí
+- Nástraha: rychlý jed > Duše
+- Účinek: neschopnost pohybu — zvýšení **_Ohrožení_** + vyřazení + _hloupě_ na _Pohyblivost_
+- Vzhled: výrazné pulzující oči
+
+</drd2-zs>
+
+<drd2-zs
+id="jedovaty-ocas"
+name="Jedovatý ocas"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Tělo"
+mechanism="Přirozená nástraha"
+parts="Přirozená nástraha [Bez Aktivace]"
+subject="Jedy"
+target-kind="Lidé, Zvířata, Netvoři"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="přirozená nástraha"
+used-by="Mantikora"
+trap-kind="jed"
+trap-modifier="mocně"
+labels="automaticky"
+>
+
+- Spouštěč: _lidé_, _zvířata_ a _netvoři_ bodnutí ocasem
+- Nástraha: jed > Tělo + _mocně_
+- Účinek: smrt — zvýšení **_Ohrožení_** + vyřazení + _chabě_ na všechny druhy boje
+- Vzhled: jedové váčky pod ocasem
+
+</drd2-zs>
+
+<drd2-zs
+id="pavouci-jed"
+name="Pavoučí jed"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Tělo"
+mechanism="Přirozená nástraha"
+parts="Přirozená nástraha [Bez Aktivace]"
+subject="Jedy"
+target-kind="Lidé, Zvířata"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="přirozená nástraha"
+used-by="Obří pavouk"
+trap-kind="rychlý jed"
+labels="automaticky"
+>
+
+- Spouštěč: _lidé_ a _zvířata_ pokousaní kusadly
+- Nástraha: rychlý jed > Tělo
+- Účinek: malátnost — zvýšení **_Ohrožení_** + _nepřesně_ na _Pohyblivost_
+- Vzhled: odkapávající jedové sliny
+
+</drd2-zs>
+
+<drd2-zs
+id="pavucina"
+name="Pavučina"
+source="SRD"
+rulebook="Bestiář"
+origin-kind="Bestiář"
+attribute="Tělo"
+mechanism="Přirozená nástraha"
+parts="Přirozená nástraha [Bez Aktivace]"
+subject="Pasti"
+activation-cost="Bez Aktivace"
+monster="ano"
+bestiary-kind="přirozená nástraha"
+used-by="Obří pavouk"
+trap-kind="past"
+labels="automaticky"
+>
+
+- Spouštěč: dotyk s vlákny
+- Nástraha: past > Tělo
+- Účinek: přilepení se — zvýšení **_Ohrožení_**
+- Vzhled: lesklá lepkavá vlákna
+
+</drd2-zs>

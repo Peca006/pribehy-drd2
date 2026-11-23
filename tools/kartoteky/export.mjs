@@ -186,6 +186,28 @@ for (const b of inv.items.filter((i) => i.type === 'bestiar-definice')) {
     });
   }
 }
+// ---- přirozené jedy a nástrahy tvorů (zkrácený zápis nástrahy: spouštěč / druh > zdroj + úprava / účinek / vzhled; 23. 11. 2026) ----
+{
+  const creatures = Object.values(JSON.parse(readFileSync(resolve(root, 'content-packs/srd/drd2-pravidla-2.json'), 'utf8')).creatures);
+  const KIND_BY = { lidé: 'people', zvířata: 'animals', netvoři: 'monsters', člověku: 'people', člověka: 'people', zvířete: 'animals' };
+  for (const cr of creatures) for (const s of cr.stats.filter((s) => /^Přirozen\S* (jed|nástrah)/.test(s.label))) {
+    for (const x of s.value.matchAll(/([^()]+?)\s*\(([^()]+)\)/g)) {
+      const name = x[1].replace(/^[\s;,.]+/, '').trim(); const f = x[2].split(' / ').map((p) => p.replace(/\s+/g, ' ').trim());
+      if (f.length !== 4) { console.error('NÁSTRAHA: neočekávaný zápis', cr.name, name, f.length); continue; }
+      const m = f[1].match(/^\*?([^*>]+?)\*?\s*>\s*\*{3}(Tělo|Duše|Vliv)\*{3}(?:\s*\+\s*(.+))?$/);
+      if (!m) { console.error('NÁSTRAHA: druh/zdroj', cr.name, name, f[1]); continue; }
+      const kind = m[1].trim(), attr = attrId(m[2]), modifier = (m[3] ?? '').trim();
+      const targets = [...new Set([...f[0].matchAll(/\*([^*]+)\*/g)].map((y) => KIND_BY[y[1].toLowerCase()]).filter(Boolean))];
+      cards.push({
+        type: 'zs', id: slug(name), name, source: 'srd', rulebook: 'Bestiář', origin: { kind: 'bestiary', name: 'Bestiář' }, attribute: attr,
+        mechanism: ['natural-trap'], domain: [], subject: /past/.test(kind) ? ['traps'] : ['poisons'], targetKind: targets, activationCost: [],
+        parts: [{ mechanism: ['natural-trap'], activationCost: [] }], relatedSkill: [], monster: true, bestiaryKind: 'trap', usedBy: [cr.name],
+        trap: Object.fromEntries(Object.entries({ trigger: f[0], kind, attribute: attr, modifier, effect: f[2], appearance: f[3] }).map(([k, v]) => [k, v.replace(/\*/g, '')])),
+        text: `- Spouštěč: ${f[0]}\n- Nástraha: ${kind} > ${m[2]}${modifier ? ' + ' + modifier : ''}\n- Účinek: ${f[2]}\n- Vzhled: ${f[3]}`, labels: 'auto',
+      });
+    }
+  }
+}
 // ---- dovednosti ----
 // dials dovedností (dovednosti.mjs, schváleno 22. 11. 2026): type = domain, environment, target = target-kind, target-attribute
 const ENV = { Divočina: 'wilderness', Město: 'city' };
