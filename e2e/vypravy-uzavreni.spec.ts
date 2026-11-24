@@ -16,6 +16,7 @@ test('uzavření výpravy uloží zápis do žurnálu a nabídne další výprav
   await page.goto('/#/vypravy')
   await page.getByLabel('Název nového dobrodružství').fill('Bílý hrad')
   await page.getByRole('button', { name: 'Nové dobrodružství' }).click()
+  await expect(page.getByRole('heading', { name: 'Dobrodružství', level: 1 })).toBeVisible()
   await page.getByLabel('Název nové výpravy').fill('Cesta')
   await page.getByRole('button', { name: 'Nová výprava', exact: true }).click()
   await page.getByRole('button', { name: 'Přidat příhodu: Na začátku (před prvním uzlovým bodem)' }).click()
