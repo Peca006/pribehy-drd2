@@ -88,12 +88,12 @@ describe('úložiště Hávů', () => {
 describe('installSkinFile', () => {
   it('nainstaluje platný soubor', async () => {
     const r = await installSkinFile(
-      await writeSkinFile(make('pergamen', 'Pergamen', { scheme: 'light' })),
+      await writeSkinFile(make('svitek', 'Pergamen', { scheme: 'light' })),
       {},
       42,
     )
-    expect(r).toMatchObject({ ok: true, replaced: false, skin: { id: 'pergamen' } })
-    expect(await getSkin('pergamen')).toMatchObject({ addedAt: 42 })
+    expect(r).toMatchObject({ ok: true, replaced: false, skin: { id: 'svitek' } })
+    expect(await getSkin('svitek')).toMatchObject({ addedAt: 42 })
   })
 
   it('opětovná instalace téhož id je náhrada', async () => {

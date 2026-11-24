@@ -138,4 +138,9 @@ do mnoha komponent a vedle se vyvíjejí výpravy).
   `.drdskin` (i několika souborů, s výpisem chyb a varování) a náhled na zařízeních (telefon na výšku a šířku, tablet
   na výšku a šířku). Náhled je aplikace v `<iframe>` ve skutečných rozměrech zařízení; Háv se do něj předává přes `?hav=…`,
   takže se dá prohlížet bez aktivace. E2E: `e2e/satnik.spec.ts`.
-- 🚧 Tři Hávy (Pergamen, Noc, retro RPG).
+- ✅ Tři vestavěné Hávy (`src/themes/havy.ts`): **Pergamen** (světlý, teplý papír a inkoust), **Noc** (tmavý, půlnoční modř)
+  a **Podzemí** (retro PC RPG: ametystové plochy, zlatý akcent, měděné okraje, nulové zaoblení, tvrdý stín bez rozostření,
+  Verdana). Jsou to obyčejné manifesty `.drdskin`, při načtení se zvalidují jako Háv ze souboru a musí projít bez chyb i
+  varování; text na plochách má kontrast aspoň 7:1. Id jsou vyhrazená (`RESERVED_IDS`), Háv ze souboru je nezastíní. Nejdou
+  smazat, ale jde z nich uložit vzor (Exportovat jako vzor); import takového souboru vyžaduje jiné `id`.
+- 🚧 **M1 je hotový.** Dál: M2 (textury a rámování; pro Podzemí mramor, kování, pixelartové gemy a embos, token pro stín textu).

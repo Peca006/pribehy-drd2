@@ -9,8 +9,15 @@ export const SKIN_SCHEMA = 1
 export const SKIN_EXTENSION = '.drdskin'
 export const MAX_MANIFEST_BYTES = 64 * 1024
 export const MAX_VARIANTS = 16
-/** id výchozích skinů; Háv je nesmí zastínit */
-export const RESERVED_IDS = ['system', 'default-dark', 'default-light'] as const
+/** id výchozích skinů a vestavěných Hávů (`src/themes/havy.ts`); Háv ze souboru je nesmí zastínit */
+export const RESERVED_IDS = [
+  'system',
+  'default-dark',
+  'default-light',
+  'pergamen',
+  'noc',
+  'podzemi',
+] as const
 
 export type WidthClass = 'compact' | 'medium' | 'expanded'
 export type Orientation = 'portrait' | 'landscape'
@@ -204,6 +211,8 @@ function olderThan(a: [number, number, number], b: [number, number, number]): bo
 export interface ValidateOptions {
   /** verze aplikace pro kontrolu `minApp` */
   appVersion?: string
+  /** povolit vyhrazená id (jen pro vestavěné Hávy, které si aplikace validuje sama) */
+  allowReserved?: boolean
 }
 
 export function validateSkin(raw: unknown, options: ValidateOptions = {}): SkinValidation {
@@ -245,7 +254,8 @@ export function validateSkin(raw: unknown, options: ValidateOptions = {}): SkinV
 
   const id = text('id', 40)
   if (id && !ID.test(id)) error('id', 'jen malá písmena, číslice a pomlčky (např. pergamen-noc)')
-  else if ((RESERVED_IDS as readonly string[]).includes(id)) error('id', `id „${id}“ je vyhrazené`)
+  else if (!options.allowReserved && (RESERVED_IDS as readonly string[]).includes(id))
+    error('id', `id „${id}“ patří vestavěnému vzhledu; v manifestu zvolte jiné id`)
   const name = text('name', 60)
   const version = text('version', 20)
   if (version && !SEMVER.test(version)) error('version', 'verze ve tvaru x.y.z')
