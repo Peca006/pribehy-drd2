@@ -1,11 +1,50 @@
 // Ukázkové dobrodružství a výpravy (vlastní vymyšlený text, ne příklady ze SRD). Slouží k vyzkoušení Výprav a jdou smazat;
 // ve Více se dají obnovit. Všechna ID mají předponu `demo-`, takže se odstraní společně s ostatními ukázkovými daty.
-import { ANYTIME, type Adventure, type Expedition, type Incident } from '../core/expedition/model'
+import { ANYTIME, type Adventure, type Expedition, type Incident, type Npc } from '../core/expedition/model'
 
 export const DEMO_ADVENTURE_ID = 'demo-dobrodruzstvi-karavan'
 export const DEMO_EXPEDITION_IDS = ['demo-vyprava-karavan', 'demo-vyprava-brod'] as const
 
 const NOW = () => new Date().toISOString()
+
+const npc = (id: string, p: Partial<Npc> & Pick<Npc, 'name'>): Npc => ({
+  id: `demo-cp-${id}`,
+  look: '',
+  conduct: '',
+  knowledge: '',
+  motive: '',
+  group: '',
+  notes: '',
+  ...p,
+})
+
+/** Cizí postavy ukázkového dobrodružství (vlastní vymyšlený text). */
+export const demoCast = (): Npc[] => [
+  npc('hubert', {
+    name: 'Celník Hubert',
+    group: 'Celnice',
+    look: 'Suchý muž s pečlivě zastřiženým knírem, mluví úředně a nikdy nezvýší hlas.',
+    conduct: 'Nesnáší, když ho někdo popohání. Rád se vymlouvá na předpisy, ale slušnost cení.',
+    knowledge: 'Ví, kdy a kudy karavan vyjel, a vede knihu převozů.',
+    motive: 'chce zachovat pořádek a nepřijít o místo',
+  }),
+  npc('jarka', {
+    name: 'Jarka',
+    group: 'Karavan',
+    look: 'Mladá vozka s popálenými rukávy, plachá a rychle se červená.',
+    conduct: 'Bojí se obvinění, proto se skrývá. Důvěřuje tomu, kdo se k ní zachová laskavě.',
+    knowledge: 'Viděla, kdo karavan odklonil, ale neví proč.',
+    motive: 'chce se zbavit viny a vrátit se domů',
+  }),
+  npc('ondrej', {
+    name: 'Ondřej převozník',
+    group: 'Převoz',
+    look: 'Široký a mlčenlivý, ruce jako lopaty.',
+    conduct: 'Nejdřív mlčí, pak vybuchne. Pokud se s ním jedná jako s rovným, je ochoten vyjednávat.',
+    knowledge: 'Ví o dluhu všechno a ví, kde je karavan.',
+    motive: 'chce dostat zaplaceno za roky převozu',
+  }),
+]
 
 const inc = (id: string, stage: string, p: Partial<Incident> & Pick<Incident, 'title' | 'text'>): Incident => ({
   id: `demo-p-${id}`,
@@ -24,6 +63,7 @@ export const demoAdventure = (): Adventure => ({
   background:
     'Obchodník Radimír Solný dluží převozníkovi Ondřejovi za roky převozu a platit nechce. Ondřej proto nechal Radimírův karavan odklonit na starou uhlířskou stezku, aby ho k placení donutil. Spor se vymkl a vozka Jarka se z viny skrývá.',
   notes: 'První výprava hledá karavan, druhá řeší spor o dluh, který se tím odhalí. Pořadí je jen doporučené.',
+  cast: demoCast(),
   expeditionIds: [...DEMO_EXPEDITION_IDS],
   created: NOW(),
   updated: NOW(),
@@ -34,6 +74,7 @@ export const demoExpeditions = (): Expedition[] => [
     id: DEMO_EXPEDITION_IDS[0],
     name: 'Hledání karavanu',
     adventureId: DEMO_ADVENTURE_ID,
+    castIds: ['demo-cp-hubert', 'demo-cp-jarka', 'demo-cp-ondrej'],
     theme: 'komu věřit',
     background:
       'Karavan nezmizel: stojí neporušený u opuštěného milíře na staré uhlířské stezce. Převozník Ondřej tam právě tajně přeprodává část soli, vozka Jarka se ukrývá v lese ze strachu, že ji obviní.',
@@ -50,7 +91,7 @@ export const demoExpeditions = (): Expedition[] => [
         text: 'Stezka se dělí a celník tvrdí, že karavan nahoru nešel. Hrdinové musí rozhodnout, komu věřit: celníkovi, nebo čerstvým stopám.',
         ifSuccess: 'Najdou stopy kol zahnuté na uhlířskou stezku.',
         ifFailure: 'Ztratí den po hlavní stezce, stopy se objeví až o kus dál. Cesta se prodlouží, nezastaví.',
-        cast: [{ name: 'Celník Hubert' }],
+        cast: [{ name: 'Celník Hubert', npcId: 'demo-cp-hubert' }],
       }),
       inc('potok', '', {
         title: 'Rozvodněný potok',
@@ -64,14 +105,14 @@ export const demoExpeditions = (): Expedition[] => [
         conditions: 'Po nalezení stop na uhlířské stezce.',
         ifSuccess: 'Svěří se, co se stalo, a ukáže cestu k vozům.',
         ifFailure: 'Uteče do lesa; k vozům vede stopa přes její úkryt.',
-        cast: [{ name: 'Jarka' }],
+        cast: [{ name: 'Jarka', npcId: 'demo-cp-jarka' }],
       }),
       inc('milir', 'demo-uzel-noc', {
         title: 'Uhelný milíř',
         text: 'Vozy stojí neporušené. Převozník Ondřej právě nakládá část soli pro sebe. Družina může bojovat, vyjednávat, nebo ho udat.',
         ifSuccess: 'Ondřej ustoupí a prozradí, proč karavan odklonil.',
         ifFailure: 'Ondřej uteče s částí zboží a vozy zůstanou bez dozoru.',
-        cast: [{ name: 'Ondřej převozník' }],
+        cast: [{ name: 'Ondřej převozník', npcId: 'demo-cp-ondrej' }],
         loot: [
           { id: 'demo-l-kasicka', kind: 'penize', label: 'převozníkova kasička', amount: 12, unit: 'grose' },
           { id: 'demo-l-sul', kind: 'suroviny', label: 'sůl', mark: '🧂', amount: 3 },
@@ -102,6 +143,7 @@ export const demoExpeditions = (): Expedition[] => [
     id: DEMO_EXPEDITION_IDS[1],
     name: 'Dluh v Mlžném brodě',
     adventureId: DEMO_ADVENTURE_ID,
+    castIds: ['demo-cp-hubert', 'demo-cp-ondrej'],
     theme: 'spravedlnost, nebo mír',
     background: 'Starostka Mlžného brodu chce spor o dluh rozhodnout, než se do něj zapojí celá ves. Každá strana mluví jen o své křivdě.',
     hook: 'Po návratu s karavanem prosí starostka družinu, aby před shromážděním vsi rozhodla spor mezi Radimírem a převozníkem.',

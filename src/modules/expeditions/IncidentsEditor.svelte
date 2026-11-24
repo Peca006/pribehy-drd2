@@ -10,13 +10,14 @@
     setStage,
     stageLabels,
   } from '../../core/expedition/deck'
+  import { castNpc, resolveCast } from '../../core/expedition/cast'
   import { UNIT_LABEL, UNIT_ORDER } from '../../core/character/cash'
   import { LOOT_KINDS, emptyLoot } from '../../core/expedition/loot'
-  import type { Expedition, Incident, LootKind } from '../../core/expedition/model'
+  import type { Expedition, Incident, LootKind, Npc } from '../../core/expedition/model'
   import { allCreatures, bestiary, refreshBestiary } from '../bestiar/state.svelte'
 
   // Příhody výpravy v balíčcích podle uzlových bodů. Příhoda má víc vyústění: neúspěch příběh rozvíjí, nikdy nezastaví.
-  let { exp = $bindable(), onstructure }: { exp: Expedition; onstructure: () => void } = $props()
+  let { exp = $bindable(), npcs = [], onstructure }: { exp: Expedition; npcs?: Npc[]; onstructure: () => void } = $props()
 
   // nově přidané příhody se při vzniku rozbalí a už se samy nezavírají (neřízená množina: čte se jen při vykreslení)
   const opened = new Set<string>()
@@ -61,6 +62,10 @@
       loot: (x.loot ?? []).map((l) => (l.id === lootId ? { ...emptyLoot(kind), id: l.id } : l)),
     }))
   }
+  function pickNpc(i: Incident, id: string) {
+    const n = npcs.find((x) => x.id === id)
+    if (n) patch(i.id, (x) => castNpc(x, n))
+  }
   function pickCreature(i: Incident, id: string) {
     const c = creatures.find((x) => x.id === id)
     if (c) pushCast(i, c.name, c.id)
@@ -77,7 +82,7 @@
   <h3>{d.title} <span class="muted">({d.incidents.length})</span></h3>
   {#each d.incidents as i, idx (i.id)}
     <details class="panel incident" open={opened.has(i.id)}>
-      <summary><strong>{i.title || '(bez názvu)'}</strong>{#if i.cast.length}<span class="muted"> · {i.cast.map((c) => c.name).join(', ')}</span>{/if}</summary>
+      <summary><strong>{i.title || '(bez názvu)'}</strong>{#if i.cast.length}<span class="muted"> · {resolveCast(i, npcs).map((c) => c.name).join(', ')}</span>{/if}</summary>
       <label>Název <input bind:value={i.title} aria-label="Název příhody" /></label>
       <label>
         Co se děje
@@ -101,8 +106,8 @@
 
       <fieldset>
         <legend>Cizí postavy a protivníci</legend>
-        {#each i.cast as c, ci}
-          <span class="chip">{c.name}{#if c.creatureId} <span class="muted">(Bestiář)</span>{/if}
+        {#each resolveCast(i, npcs) as c, ci}
+          <span class="chip">{c.name}{#if c.npc} <span class="muted">(CP)</span>{/if}{#if c.creatureId} <span class="muted">(Bestiář)</span>{/if}
             <button onclick={() => patch(i.id, (x) => removeCast(x, ci))} aria-label={`Odebrat ${c.name}`}>✕</button></span>
         {/each}
         <div class="row">
@@ -114,6 +119,12 @@
           />
           <button onclick={() => pushCast(i, castName[i.id] ?? '')}>Přidat</button>
         </div>
+        {#if npcs.some((n) => !i.cast.some((c) => c.npcId === n.id))}
+          <select value="" onchange={(e) => { pickNpc(i, e.currentTarget.value); e.currentTarget.value = '' }} aria-label="Přidat cizí postavu z přípravy">
+            <option value="">Přidat cizí postavu z přípravy…</option>
+            {#each npcs.filter((n) => !i.cast.some((c) => c.npcId === n.id)) as n}<option value={n.id}>{n.name}</option>{/each}
+          </select>
+        {/if}
         {#if creatures.length}
           <select value="" onchange={(e) => { pickCreature(i, e.currentTarget.value); e.currentTarget.value = '' }} aria-label="Přidat bytost z Bestiáře">
             <option value="">Přidat bytost z Bestiáře…</option>

@@ -7,6 +7,9 @@
   import { STYLES, type Adventure, type Expedition } from '../../core/expedition/model'
   import { getExpedition, listAdventures, removeExpedition, saveExpeditionIn } from '../../core/expedition/store'
   import { go } from '../../core/router.svelte'
+  import { castOf, dropNpc, togglePick, usage } from '../../core/expedition/cast'
+  import type { Npc } from '../../core/expedition/model'
+  import NpcEditor from './NpcEditor.svelte'
   import ExpeditionRuns from './ExpeditionRuns.svelte'
   import IncidentsEditor from './IncidentsEditor.svelte'
   import InspirationPanel from './InspirationPanel.svelte'
@@ -24,6 +27,7 @@
   onMount(async () => {
     const loadedExp = await getExpedition(id)
     exp = loadedExp && normalize(loadedExp)
+    if (exp) exp.cast ??= []
     adventures = (await listAdventures()).sort((a, b) => a.name.localeCompare(b.name, 'cs'))
     adventureId = exp?.adventureId ?? ''
     loaded = true
@@ -39,6 +43,22 @@
     queue = queue.then(() => saveExpeditionIn(snapshot, target))
   }
 
+  const adventure = $derived(adventures.find((a) => a.id === adventureId))
+  const npcs = $derived(exp ? castOf(exp, adventure) : [])
+  const picked = (id: string) => !!exp?.castIds?.includes(id)
+  function toggle(id: string) {
+    if (exp) exp = togglePick($state.snapshot(exp) as Expedition, id)
+  }
+  const ownUses = (id: string) => {
+    const u = exp ? usage(id, [exp]) : { incidents: 0 }
+    return u.incidents ? `příhod: ${u.incidents}` : 'zatím v žádné příhodě'
+  }
+  async function removeOwn(npc: Npc) {
+    if (!exp) return
+    if (!(await ask('Cizí postava se smaže, v příhodách zůstane jen její jméno.', { title: `Smazat cizí postavu „${npc.name}“?`, ok: 'Smazat' }))) return
+    exp = dropNpc($state.snapshot(exp) as Expedition, npc.id)
+    save()
+  }
   async function remove() {
     if (!exp) return
     if (
@@ -101,10 +121,25 @@
       {/each}
     </fieldset>
 
+    <h2>Cizí postavy</h2>
+    {#if adventure?.cast?.length}
+      <p class="muted">Kdo z postav dobrodružství „{adventure.name}“ ve výpravě vystupuje. Podrobnosti a nové postavy se upravují u dobrodružství.</p>
+      {#each adventure.cast as n (n.id)}
+        <label class="radio">
+          <input type="checkbox" checked={picked(n.id)} onchange={() => toggle(n.id)} aria-label={`Ve výpravě: ${n.name}`} />
+          <span><strong>{n.name}</strong>{#if n.group}<span class="muted"> · {n.group}</span>{/if}{#if n.motive}<span class="muted"> · {n.motive}</span>{/if}</span>
+        </label>
+      {/each}
+    {/if}
+    <p class="muted">Vlastní cizí postavy výpravy{adventure ? '' : ' (výprava není v dobrodružství)'}.</p>
+    {#if exp.cast}
+      <NpcEditor bind:npcs={exp.cast} uses={ownUses} onsave={save} onremove={removeOwn} />
+    {/if}
+
     <InspirationPanel />
 
     <NodesEditor bind:exp onstructure={save} />
-    <IncidentsEditor bind:exp onstructure={save} />
+    <IncidentsEditor bind:exp {npcs} onstructure={save} />
 
     <label>
       Možné rozuzlení

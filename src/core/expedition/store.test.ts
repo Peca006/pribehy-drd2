@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto'
 import { IDBFactory } from 'fake-indexeddb'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { closeDb } from '../db'
+import { addNpc, castNpc, togglePick } from './cast'
 import {
   assignExpedition,
   emptyAdventure,
@@ -17,6 +18,7 @@ import {
   listAdventures,
   listExpeditions,
   removeAdventure,
+  removeAdventureNpc,
   removeExpedition,
   saveAdventure,
   saveExpedition,
@@ -104,5 +106,31 @@ describe('úložiště výprav', () => {
     const left = await listExpeditions()
     expect(left).toHaveLength(1)
     expect(left[0].adventureId).toBeUndefined()
+  })
+})
+
+describe('cizí postavy dobrodružství', () => {
+  it('smazání postavy ji odebere z dobrodružství, výběru výprav a odkazů v příhodách', async () => {
+    const adv = { ...emptyAdventure('Hrad'), cast: addNpc(addNpc(undefined, 'Hubert'), 'Jarka') }
+    const [hubert, jarka] = adv.cast
+    await saveAdventure(adv)
+    let e = togglePick(togglePick(emptyExpedition('Cesta', adv.id), hubert.id), jarka.id)
+    e = {
+      ...e,
+      incidents: [
+        { id: 'i1', title: 'A', text: '', stage: 'kdykoli', cast: [], conditions: '', ifSuccess: '', ifFailure: '' },
+      ],
+    }
+    e.incidents[0] = castNpc(e.incidents[0], hubert)
+    await saveExpeditionIn(e, adv.id)
+    const other = await saveExpeditionIn(togglePick(emptyExpedition('Jiná'), hubert.id), undefined)
+
+    await removeAdventureNpc(adv.id, hubert.id)
+    expect((await getAdventure(adv.id))!.cast!.map((n) => n.name)).toEqual(['Jarka'])
+    const saved = (await getExpedition(e.id))!
+    expect(saved.castIds).toEqual([jarka.id])
+    expect(saved.incidents[0].cast).toEqual([{ name: 'Hubert' }])
+    // výpravy mimo dobrodružství se nedotknou
+    expect((await getExpedition(other.id))!.castIds).toEqual([hubert.id])
   })
 })

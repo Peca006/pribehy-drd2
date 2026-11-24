@@ -55,6 +55,9 @@ Tři vrstvy (návrh: `PLAN-VYPRAVY.md`), vše jen u Průvodce, nikam se nesdíl�
   příprava bez stavu a bez družiny. `style` je `domino` nebo `puzzle`. Uzlový bod `{ id, title, text, kind? }`, příhoda `{ id, title, text, stage,
   place?, cast[], conditions, ifSuccess, ifFailure, loot? }`, kde `stage` je `''` (před prvním uzlem), ID uzlu (po něm) nebo `kdykoli`.
   Výprava patří nejvýš jednomu dobrodružství; `adventureId` a `expeditionIds` se drží ve shodě (`saveExpeditionIn`).
+- **Cizí postavy** (volitelná pole, bez zvýšení `schema`): `Adventure.cast[]` je zásoba postav dobrodružství, `Expedition.castIds[]` výběr z ní a `Expedition.cast[]` vlastní
+  postavy výpravy (samostatné výpravy). Postava `{ id, name, look, conduct, knowledge, motive, group, creatureId?, notes }`; příhoda na ni odkazuje volitelným
+  `cast[].npcId` (jméno zůstává jako text, takže po smazání postavy příhoda jméno neztratí). Smazání postavy dobrodružství uklidí odkazy (`removeAdventureNpc`).
 - **Vedení** `{ id, name, partyId, expeditionId, status, reachedNodes[], incidents{}, extra[], loot{}, notes, started, updated }`: rozehraná hra
   jedné družiny s jednou výpravou, odkazuje na přípravu živě podle `id`. Výprava s vedením se nemaže.
 

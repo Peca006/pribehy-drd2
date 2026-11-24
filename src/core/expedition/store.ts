@@ -1,4 +1,5 @@
 import { repo } from '../db'
+import { dropNpc } from './cast'
 import { assignExpedition, type Adventure, type Expedition, type Run } from './model'
 
 const adventures = repo<Adventure>('adventures')
@@ -56,4 +57,16 @@ export async function removeAdventure(id: string): Promise<void> {
       await saveExpedition(rest)
     }
   await deleteAdventure(id)
+}
+
+/** Smaže cizí postavu dobrodružství a uklidí odkazy na ni ve výpravách (příhody si ponechají jméno jako text). */
+export async function removeAdventureNpc(adventureId: string, npcId: string): Promise<void> {
+  const a = await getAdventure(adventureId)
+  if (!a) return
+  await saveAdventure({ ...a, cast: (a.cast ?? []).filter((n) => n.id !== npcId) })
+  for (const e of await listExpeditions()) {
+    if (e.adventureId !== adventureId) continue
+    const next = dropNpc(e, npcId)
+    if (next !== e) await saveExpedition(next)
+  }
 }

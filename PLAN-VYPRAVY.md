@@ -1,6 +1,6 @@
 # Výpravy: návrh (rešerše pravidel SRD a plán)
 
-Stav (24. 11. 2026): návrh schválen (tři vrstvy dobrodružství / výprava / vedení). **Hotové etapy: 1 (úložiště, přehled, základ výpravy), 2 (uzlové body a příhody), 3 (vedení a Při hře), 4 (uzavření, zápis do žurnálu, další výprava, bytost do konfliktu), 5 (Kořist 11e), 6 (inspirace z postav, ukázková výprava, nápověda).** Zbývá 7 (cizí postavy v dobrodružství). Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
+Stav (24. 11. 2026): návrh schválen (tři vrstvy dobrodružství / výprava / vedení). **Hotové etapy: 1 (úložiště, přehled, základ výpravy), 2 (uzlové body a příhody), 3 (vedení a Při hře), 4 (uzavření, zápis do žurnálu, další výprava, bytost do konfliktu), 5 (Kořist 11e), 6 (inspirace z postav, ukázková výprava, nápověda), 7 (cizí postavy v dobrodružství).** Vedení zatím neeviduje, zda družina postavu potkala a jaký k ní má postoj (nepovinné, odloženo). Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
 etapách s vlastními commity a jedním PR na konci (nebo po etapách, podle domluvy). Navazuje na `TODO.md` (Výpravy, Kořist 11e) a
 `PLAN-POMUCKY.md`. Odkazy v závorkách vedou do příručky (kapitola a kotva).
 
@@ -144,7 +144,7 @@ nový typ přenosu). Trofeje: jen název a poznámka. Hráč zvláštní panel n
 | ✅ 4 | Uzavření: návrh zápisu do žurnálu, stav „hotová“, nabídka další výpravy; odkaz na konflikt a příručku | E2E |
 | ✅ 5 | Kořist (11e) a zápis postavám | unit testy, E2E |
 | ✅ 6 | Inspirace z postav družiny, vlastní ukázková výprava v ukázkových datech (vlastní text), nápověda „?“, `CHANGELOG.md`, vydání | E2E, ověření na telefonu |
-| 7 | **Cizí postavy (CP) v dobrodružství**: zásoba CP u dobrodružství, přidělování k výpravám a příhodám, motivace, příslušnost ke skupinám, vazba na Bestiář (viz níže) | unit testy, E2E |
+| ✅ 7 | **Cizí postavy (CP) v dobrodružství**: zásoba CP u dobrodružství, přidělování k výpravám a příhodám, motivace, příslušnost ke skupinám, vazba na Bestiář (viz níže) | unit testy, E2E |
 | později | Export a import výpravy nebo dobrodružství souborem (sdílení příprav mezi Průvodci, přenos mezi zařízeními) | |
 
 ### Cizí postavy (CP, NPC) v dobrodružství (etapa 7, poznámka z 24. 11. 2026)

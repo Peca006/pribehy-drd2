@@ -61,6 +61,24 @@ export interface RunLoot {
   note?: string
 }
 
+/**
+ * Cizí postava (CP) u dobrodružství nebo u samostatné výpravy. Tajná, patří Průvodci.
+ * Podle části Cizí postavy v SRD: vzhled a povaha, jednání a vztahy, vědomosti; k tomu motivace a příslušnost ke skupině.
+ * `creatureId` je volitelná vazba na bytost (číselné údaje a karta v Bestiáři).
+ */
+export interface Npc {
+  id: string
+  name: string
+  look: string
+  conduct: string
+  knowledge: string
+  motive: string
+  /** skupina: frakce, rod, cech… (stejný název = stejná skupina) */
+  group: string
+  creatureId?: string
+  notes: string
+}
+
 export interface Incident {
   id: string
   title: string
@@ -70,7 +88,7 @@ export interface Incident {
   /** místo (u dílků puzzle) */
   place?: string
   /** cizí postavy a protivníci: bytost z Bestiáře, nebo jen jméno */
-  cast: { creatureId?: string; name: string }[]
+  cast: { creatureId?: string; npcId?: string; name: string }[]
   conditions: string
   ifSuccess: string
   ifFailure: string
@@ -86,6 +104,8 @@ export interface Adventure {
   /** příběhové pozadí (tajné) */
   background: string
   notes: string
+  /** cizí postavy dobrodružství; výpravy si z nich vybírají (`Expedition.castIds`) */
+  cast?: Npc[]
   /** výpravy v doporučeném pořadí */
   expeditionIds: string[]
   created: string
@@ -105,6 +125,10 @@ export interface Expedition {
   style: ExpeditionStyle
   nodes: Node[]
   incidents: Incident[]
+  /** cizí postavy vybrané z dobrodružství (ID v `Adventure.cast`) */
+  castIds?: string[]
+  /** vlastní cizí postavy výpravy (hlavně u samostatných výprav) */
+  cast?: Npc[]
   /** možná rozuzlení; není jediné možné */
   resolution: string
   notes: string

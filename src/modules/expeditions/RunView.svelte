@@ -3,7 +3,8 @@
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import HelpHeading from '../../ui/HelpHeading.svelte'
-  import type { Expedition, Outcome, Run, RunStatus } from '../../core/expedition/model'
+  import { byGroup, castOf, resolveCast } from '../../core/expedition/cast'
+  import type { Expedition, Npc, Outcome, Run, RunStatus } from '../../core/expedition/model'
   import {
     OUTCOMES,
     addExtra,
@@ -22,7 +23,7 @@
   } from '../../core/expedition/run'
   import { journalDraft } from '../../core/expedition/closing'
   import { STATUS_LABEL, beginRun, closeRun, nextExpeditions } from '../../core/expedition/runs'
-  import { deleteRun, getExpedition, getRun, saveExpedition, saveRun } from '../../core/expedition/store'
+  import { deleteRun, getAdventure, getExpedition, getRun, saveExpedition, saveRun } from '../../core/expedition/store'
   import type { Party } from '../../core/party/model'
   import { addToConflict, fromCreature } from '../../core/party/conflict'
   import { getParty } from '../../core/party/store'
@@ -37,6 +38,7 @@
   let run = $state<Run | undefined>(undefined)
   let exp = $state.raw<Expedition | undefined>(undefined)
   let party = $state.raw<Party | undefined>(undefined)
+  let npcs = $state.raw<Npc[]>([])
   let loaded = $state(false)
   let extraTitle = $state('')
   let conflictMsg = $state('')
@@ -55,6 +57,8 @@
     if (run) {
       for (const [iid, r] of Object.entries(run.incidents)) if (r.state === 'nasazena') ensureDraft(iid)
       exp = await getExpedition(run.expeditionId)
+      const adv = exp?.adventureId ? await getAdventure(exp.adventureId) : undefined
+      npcs = exp ? castOf(exp, adv) : []
       party = await getParty(run.partyId)
     }
     if (run?.status === 'hotova') follow = await nextExpeditions(run)
@@ -149,6 +153,17 @@
   }
 </script>
 
+{#snippet npcCard(n: Npc)}
+  <div class="npc">
+    <strong>{n.name}</strong>{#if n.group}<span class="muted"> · {n.group}</span>{/if}
+    {#if n.motive}<div><em>Chce:</em> {n.motive}</div>{/if}
+    {#if n.look}<div><em>Vzhled a povaha:</em> {n.look}</div>{/if}
+    {#if n.conduct}<div><em>Jednání a vztahy:</em> {n.conduct}</div>{/if}
+    {#if n.knowledge}<div><em>Ví:</em> {n.knowledge}</div>{/if}
+    {#if n.notes}<div class="muted">{n.notes}</div>{/if}
+  </div>
+{/snippet}
+
 {#snippet card(item: PlayItem)}
   {@const i = item.incident}
   <details class="panel" class:done={item.state === 'odehrana'} class:live={item.state === 'nasazena'}>
@@ -160,13 +175,17 @@
     {#if i.place}<p><strong>Místo:</strong> {i.place}</p>{/if}
     {#if i.conditions}<p><strong>Předpoklady:</strong> {i.conditions}</p>{/if}
     {#if i.cast.length}
+      {@const cast = resolveCast(i, npcs)}
       <p>
         <strong>Postavy:</strong>
-        {i.cast.map((c) => c.name).join(', ')}
+        {cast.map((c) => c.name).join(', ')}
       </p>
-      {#if i.cast.some((c) => c.creatureId)}
+      {#each cast.filter((c) => c.npc) as c}
+        {@render npcCard(c.npc!)}
+      {/each}
+      {#if cast.some((c) => c.creatureId)}
         <p class="btns">
-          {#each i.cast.filter((c) => c.creatureId) as c}
+          {#each cast.filter((c) => c.creatureId) as c}
             <button onclick={() => toConflict(c.creatureId!)} aria-label={`Do konfliktu: ${c.name}`}>Do konfliktu: {c.name}</button>
           {/each}
         </p>
@@ -257,6 +276,16 @@
     {#if exp.resolution}<p class="text"><strong>Možné rozuzlení:</strong> {exp.resolution}</p>{/if}
     {#if !exp.hook && !exp.goal && !exp.background && !exp.resolution}<p class="muted">V přípravě zatím nic není.</p>{/if}
   </details>
+
+  {#if npcs.length}
+    <details class="panel">
+      <summary><strong>Cizí postavy výpravy ({npcs.length})</strong></summary>
+      {#each byGroup(npcs) as g}
+        {#if g.group}<h3>{g.group}</h3>{/if}
+        {#each g.members as n (n.id)}{@render npcCard(n)}{/each}
+      {/each}
+    </details>
+  {/if}
 
   {#if tempo}
     <section class="panel" aria-label="Hrajete o Zdroje">
@@ -400,6 +429,11 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     align-items: baseline;
+  }
+  .npc {
+    margin: 0.4rem 0;
+    padding-left: 0.5rem;
+    border-left: 2px solid var(--drd-border, currentColor);
   }
   .badge {
     font-size: 0.8rem;

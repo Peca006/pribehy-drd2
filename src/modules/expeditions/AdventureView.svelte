@@ -16,10 +16,14 @@
     listAdventures,
     listExpeditions,
     removeAdventure,
+    removeAdventureNpc,
     saveAdventure,
     saveExpeditionIn,
   } from '../../core/expedition/store'
   import { go } from '../../core/router.svelte'
+  import { usage } from '../../core/expedition/cast'
+  import type { Npc } from '../../core/expedition/model'
+  import NpcEditor from './NpcEditor.svelte'
 
   // Dobrodružství: lehký kontejner (téma, pozadí, poznámky) a výpravy v doporučeném pořadí.
   let { id }: { id: string } = $props()
@@ -33,6 +37,7 @@
 
   async function load() {
     adventure = await getAdventure(id)
+    if (adventure) adventure.cast ??= []
     all = await listExpeditions()
     others = await listAdventures()
     loaded = true
@@ -75,6 +80,20 @@
     await saveExpeditionIn(e, id)
     go('vypravy', 'vyprava', e.id)
   }
+  const npcUses = (npcId: string) => {
+    const u = usage(npcId, mine)
+    return u.expeditions ? `výprav: ${u.expeditions}, příhod: ${u.incidents}` : 'zatím v žádné výpravě'
+  }
+  async function removeNpc(npc: Npc) {
+    if (!adventure) return
+    const u = usage(npc.id, mine)
+    const where = u.expeditions ? ` Odebere se i z výprav (${u.expeditions}) a z příhod (${u.incidents}); v příhodách zůstane jen jméno.` : ''
+    if (!(await ask(`Cizí postava se smaže.${where}`, { title: `Smazat cizí postavu „${npc.name}“?`, ok: 'Smazat' }))) return
+    await queue
+    await removeAdventureNpc(id, npc.id)
+    adventure.cast = (adventure.cast ?? []).filter((n) => n.id !== npc.id)
+    all = await listExpeditions()
+  }
   async function remove() {
     if (!adventure) return
     if (
@@ -107,6 +126,15 @@
       Poznámky k propojení výprav
       <textarea rows="3" bind:value={adventure.notes}></textarea>
     </label>
+
+    <h2>Cizí postavy</h2>
+    <p class="muted">
+      Postavy, které družina v dobrodružství potkává. Výprava si z nich vybírá, kdo v ní vystupuje, a příhody na ně odkazují. Jsou tajné, vidí je jen
+      Průvodce.
+    </p>
+    {#if adventure.cast}
+      <NpcEditor bind:npcs={adventure.cast} uses={npcUses} onsave={save} onremove={removeNpc} />
+    {/if}
   </div>
 
   <h2>Výpravy</h2>
