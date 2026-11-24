@@ -88,6 +88,31 @@ assets/…             volitelné obrázky (od M2)
   Pod 3:1 je chyba (Háv se nedá aktivovat), pod 4,5:1 jen varování. Okraje nejsou text: chyba pod 1,5:1, varování pod 3:1.
   Kontroluje se po sloučení variant pro všech 12 kombinací viewportu, shodné výsledky se hlásí jednou.
 
+## Načítání, úložiště a volba
+
+- **ZIP bez závislostí** (`src/core/skin/zip.ts`): vlastní čtečka a zapisovač nad `DecompressionStream('deflate-raw')`.
+  Čte nedůvěryhodný vstup, proto: bez ZIP64, šifrování a vícedílných archivů; velikost se hlídá podle hlavičky i za běhu
+  rozbalení (hlavička může lhát, zip bomba); bezpečné názvy souborů; kontrola CRC-32. Limity: soubor 8 MB,
+  položka 2 MB, 64 položek, manifest 64 kB.
+- **Úložiště** (`store.ts`): samostatná databáze `drd2-wardrobe` (ne `drd2-data`, aby změna vzhledu neriskovala
+  migraci postav a družin). Každý Háv se při čtení znovu zvaliduje, neplatný se přeskočí. Nejvýše 30 Hávů, stejné `id` Háv
+  přepíše. Zahrnutí Hávů do celkového zálohování se rozhodne zvlášť.
+- **Volba** (`settings.skin`): `system` (výchozí), `default-light`, `default-dark`, nebo `id` nainstalovaného Hávu.
+  Smazaný či neplatný Háv spadne na „podle systému“, aplikace zůstane vždy použitelná.
+- **Viewport za běhu** (`runtime.ts`): přepočítává se při `resize` a `orientationchange` (s kontrolou po 250 ms, protože
+  některé prohlížeče pošlou událost dřív, než se přepočítají rozměry). Při psaní do pole se orientace a „nízký“ viewport
+  nemění, jinak by vysunutá klávesnice na telefonu přepnula vzhled.
+
+## Třetí Háv (retro PC RPG)
+
+Styl Eye of the Beholder 1–3, Legends of Kyrandia, Dungeon Master, Wizardry 7: pixelart, sytá „drahokamová“ paleta
+(tlačítka), pseudo zlaté, stříbrné a měděné kování, mramorové pozadí, čitelné písmo (nejlépe s embosem).
+Nemá napodobovat Truhlici.
+
+- **M1 (jen tokeny):** paleta drahokamů a kovů, ostré hrany (`radius` 0), čitelné písmo, tmavý základ.
+- **M2 (textury):** mramorové pozadí (dlaždice), kování jako 9-slice rámečky, pixelartové ikony a tlačítka-drahokamy;
+  pro embos přidat token pro stín textu (`--drd-text-shadow`), který zatím chybí.
+
 ## Milníky
 
 **M1: základ.** Formát a validace, úložiště Hávů v IndexedDB, volba aktivního Hávu v nastavení (výchozí „podle systému"),
@@ -107,4 +132,7 @@ do mnoha komponent a vedle se vyvíjejí výpravy).
 - ✅ Rozdělení rolí tokenů a vyčištění pevných barev (PR #13).
 - ✅ Formát a validace Hávu: `src/core/skin/` (`color.ts`, `tokens.ts`, `skin.ts`, testy). Světlý výchozí akcent ztmavnut
   na `#8a5e0e`, protože měl na pozadí jen 4,2:1.
-- 🚧 Načtení `.drdskin` (ZIP), úložiště v IndexedDB, aktivace a nastavení, modul Šatník (seznam, náhled, import/export), tři Hávy.
+- ✅ Čtení a zápis `.drdskin` (ZIP), úložiště v IndexedDB, volba Hávu v nastavení a použití za běhu podle viewportu
+  (`zip.ts`, `file.ts`, `store.ts`, `active.ts`, `runtime.ts`; ověřeno i v prohlížeči).
+- 🚧 Modul Šatník v sekci Více (seznam, náhled, aktivace, smazání, import a export souboru), tři Hávy
+  (Pergamen, Noc, retro RPG).
