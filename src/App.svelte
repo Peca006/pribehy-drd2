@@ -75,7 +75,7 @@
     display: flex;
     justify-content: space-around;
     background: var(--drd-surface);
-    border-top: 1px solid var(--drd-muted);
+    border-top: 1px solid var(--drd-border);
     padding-bottom: env(safe-area-inset-bottom);
   }
   .tabs a {
@@ -85,7 +85,7 @@
     align-items: center;
     padding: 0.4rem 0.25rem;
     min-height: 56px;
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
     text-decoration: none;
     font-size: 0.75rem;
   }

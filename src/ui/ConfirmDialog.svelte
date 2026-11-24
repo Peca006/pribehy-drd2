@@ -42,7 +42,7 @@
     width: min(26rem, 92vw);
   }
   dialog::backdrop {
-    background: rgb(0 0 0 / 0.6);
+    background: var(--drd-scrim);
   }
   h2 {
     margin: 0 0 0.5rem;

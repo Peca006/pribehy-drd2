@@ -223,7 +223,7 @@
     width: min(28rem, 94vw);
   }
   dialog::backdrop {
-    background: rgb(0 0 0 / 0.6);
+    background: var(--drd-scrim);
   }
   h2 {
     margin: 0 0 0.5rem;
@@ -253,10 +253,10 @@
     align-items: center;
   }
   .scar.bad {
-    color: #e88;
+    color: var(--drd-danger);
   }
   .flash {
-    color: #e8c070;
+    color: var(--drd-warning);
   }
   .actions {
     margin-top: 0.75rem;

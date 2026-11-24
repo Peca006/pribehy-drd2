@@ -274,7 +274,7 @@
     bottom: 4.5rem;
     transform: translateX(-50%);
     z-index: 20;
-    box-shadow: 0 2px 12px rgb(0 0 0 / 0.5);
+    box-shadow: var(--drd-shadow);
   }
   dialog {
     background: var(--drd-surface);
@@ -284,7 +284,7 @@
     width: min(28rem, 94vw);
   }
   dialog::backdrop {
-    background: rgb(0 0 0 / 0.6);
+    background: var(--drd-scrim);
   }
   .seg {
     display: flex;
