@@ -46,6 +46,28 @@ ${rivet(4, 4)}${rivet(32, 4)}${rivet(4, 32)}${rivet(32, 32)}`,
   )
 }
 
+/** Rám dialogu 48 × 48 (devítidílný, řez 16): zlaté pásmo s měděnou vložkou a rohové destičky s rubíny. Střed je průhledný. */
+export function dialogFrame(): string {
+  const corner = (x: number, y: number) =>
+    `<rect x="${x}" y="${y}" width="14" height="14" fill="url(#gd)" stroke="${COPPER.deep}"/>
+<rect x="${x + 1.5}" y="${y + 1.5}" width="11" height="11" fill="none" stroke="${GOLD.light}" stroke-opacity="0.55"/>
+<circle cx="${x + 7}" cy="${y + 7}" r="3.6" fill="url(#rb)" stroke="#2a0510" stroke-width="0.8"/>
+<circle cx="${x + 6}" cy="${y + 6}" r="1" fill="#fff" fill-opacity="0.7"/>`
+  return svg(
+    48,
+    48,
+    `<defs>
+<linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${GOLD.light}"/><stop offset="0.5" stop-color="${GOLD.mid}"/><stop offset="1" stop-color="${GOLD.dark}"/></linearGradient>
+<radialGradient id="rb" cx="0.35" cy="0.35" r="0.8"><stop offset="0" stop-color="#ff7a90"/><stop offset="1" stop-color="#7a0f26"/></radialGradient>
+</defs>
+<rect x="0.5" y="0.5" width="47" height="47" fill="none" stroke="${COPPER.deep}"/>
+<rect x="4" y="4" width="40" height="40" fill="none" stroke="url(#gd)" stroke-width="6"/>
+<rect x="8.5" y="8.5" width="31" height="31" fill="none" stroke="${COPPER.mid}" stroke-width="3"/>
+<rect x="11.5" y="11.5" width="25" height="25" fill="none" stroke="#000" stroke-opacity="0.5"/>
+${corner(1, 1)}${corner(33, 1)}${corner(1, 33)}${corner(33, 33)}`,
+  )
+}
+
 /** Tlačítko jako safírový drahokam ve zlaté objímce 24 × 24 (devítidílné, řez 8). */
 export function gemButton(): string {
   return svg(

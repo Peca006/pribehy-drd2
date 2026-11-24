@@ -5,6 +5,7 @@ import type { AssetFile } from '../core/skin/file'
 import { validateSkin, type Skin } from '../core/skin/skin'
 import {
   copperFrame,
+  dialogFrame,
   divider,
   gemButton,
   gemIcon,
@@ -88,6 +89,7 @@ const definitions = [
       klenot: { file: 'assets/klenot.svg' },
       lem: { file: 'assets/lem.svg' },
       ozdoba: { file: 'assets/ozdoba.svg' },
+      okno: { file: 'assets/okno.svg' },
       ...Object.fromEntries(
         ICON_MODULES.map((m) => [`ikona-${m}`, { file: `assets/ikona-${m}.svg` }]),
       ),
@@ -98,6 +100,7 @@ const definitions = [
       button: { image: 'klenot', mode: 'slice', slice: 8, width: 5 },
       tab: { image: 'lem', mode: 'slice', slice: [6, 0, 0, 0], edge: 'repeat', fill: false },
       divider: { image: 'ozdoba', mode: 'repeat-x', size: 48, height: 8 },
+      dialog: { image: 'okno', mode: 'slice', slice: 16, width: 12, fill: false },
     },
     icons: Object.fromEntries(ICON_MODULES.map((m) => [m, `ikona-${m}`])),
     tokens: {
@@ -142,6 +145,7 @@ export const BUILTIN_ASSETS: Readonly<Record<string, readonly AssetFile[]>> = {
     svgAsset('klenot', gemButton()),
     svgAsset('lem', tabRim()),
     svgAsset('ozdoba', divider()),
+    svgAsset('okno', dialogFrame()),
     ...ICON_MODULES.map((m) => svgAsset(`ikona-${m}`, gemIcon(m))),
   ],
 }

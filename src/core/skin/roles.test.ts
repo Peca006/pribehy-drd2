@@ -277,9 +277,39 @@ describe('roleVariables', () => {
         button: { image: 'frame', mode: 'stretch' },
         tab: { image: 'marble', mode: 'repeat-x' },
         divider: { image: 'marble', mode: 'repeat-x' },
+        dialog: { image: 'frame', mode: 'slice', slice: [16, 16, 16, 16] },
       },
       urls,
     )
     expect(Object.keys(v).every((k) => k.startsWith('--drd-'))).toBe(true)
+  })
+
+  it('role dialog: rámeček okna se vyjadřuje stejnými proměnnými jako ostatní role', () => {
+    const v = roleVariables(
+      {
+        dialog: {
+          image: 'frame',
+          mode: 'slice',
+          slice: [16, 16, 16, 16],
+          width: [12, 12, 12, 12],
+          fill: false,
+        },
+      },
+      urls,
+    )
+    expect(v).toEqual({
+      '--drd-dialog-bi-source': 'url("blob:http://localhost/bbb")',
+      '--drd-dialog-bi-slice': '16 16 16 16',
+      '--drd-dialog-bi-width': '12px 12px 12px 12px',
+      '--drd-dialog-bi-repeat': 'stretch',
+      '--drd-dialog-bw': '12px 12px 12px 12px',
+    })
+  })
+
+  it('role dialog z obrázku (ne rámečku) vyplní pozadí okna', () => {
+    const v = roleVariables({ dialog: { image: 'marble', mode: 'cover' } }, urls)
+    expect(v['--drd-dialog-image']).toBe('url("blob:http://localhost/aaa")')
+    expect(v['--drd-dialog-size']).toBe('cover')
+    expect(v).not.toHaveProperty('--drd-dialog-bw') // výchozí okraj okna zůstává
   })
 })

@@ -130,16 +130,6 @@
 </dialog>
 
 <style>
-  dialog {
-    background: var(--drd-surface);
-    color: var(--drd-text);
-    border: 1px solid var(--drd-accent);
-    border-radius: var(--drd-radius);
-    width: min(28rem, 94vw);
-  }
-  dialog::backdrop {
-    background: var(--drd-scrim);
-  }
   .row {
     display: flex;
     gap: 0.4rem;

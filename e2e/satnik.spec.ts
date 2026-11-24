@@ -8,6 +8,27 @@ import { expect, test, type Page } from '@playwright/test'
 const SKIN_MODULE = '/src/core/skin/skin.ts'
 const FILE_MODULE = '/src/core/skin/file.ts'
 const ZIP_MODULE = '/src/core/skin/zip.ts'
+const CONFIRM_MODULE = '/src/core/confirm.svelte.ts'
+
+/** Otevře potvrzovací dialog aplikace (stejný, jaký ukazuje např. mazání) a vrátí jeho vypočtený styl. */
+async function openDialog(page: Page) {
+  await page.evaluate(async (m) => {
+    const { ask } = await import(/* @vite-ignore */ m)
+    void ask('Zkouška okna', { title: 'Zkouška' })
+  }, CONFIRM_MODULE)
+  const dialog = page.locator('dialog[open]')
+  await expect(dialog).toBeVisible()
+  const style = () =>
+    dialog.evaluate((el) => {
+      const s = getComputedStyle(el)
+      return { width: s.borderTopWidth, style: s.borderTopStyle, image: s.borderImageSource }
+    })
+  const close = async () => {
+    await page.getByRole('button', { name: 'Zrušit' }).click()
+    await expect(dialog).toHaveCount(0)
+  }
+  return { style, close }
+}
 
 async function skinBytes(
   page: Page,
@@ -202,6 +223,25 @@ test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení
   await expect(html).toHaveAttribute('data-theme', 'podzemi')
   await expect(nav.locator('img.icon-img')).toHaveCount(7) // obrázky jsou hned po načtení
 
+  // rámy mají skutečnou šířku a styl okraje (ne jen obrázek přes nulový okraj): panel, tlačítko i dialog
+  const border = (selector: string) =>
+    page
+      .locator(selector)
+      .first()
+      .evaluate((el) => {
+        const s = getComputedStyle(el)
+        return { width: parseFloat(s.borderTopWidth), style: s.borderTopStyle }
+      })
+  expect(await border('.panel')).toMatchObject({ style: 'solid' })
+  expect((await border('.panel')).width).toBeGreaterThan(4)
+  expect((await border('button')).width).toBeGreaterThan(2)
+  const frame = await openDialog(page)
+  const framed = await frame.style()
+  expect(framed.style).toBe('solid')
+  expect(parseFloat(framed.width)).toBeGreaterThan(8)
+  expect(framed.image).toMatch(/^url\("blob:/)
+  await frame.close()
+
   // vestavěný Háv nejde smazat, ale jde z něj uložit vzor
   await expect(card(page, 'Podzemí').getByRole('button', { name: 'Smazat' })).toHaveCount(0)
   const download = page.waitForEvent('download')
@@ -217,6 +257,10 @@ test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení
   expect(await css('--drd-background-image')).toBe('')
   expect(await css('--drd-panel-bi-source')).toBe('')
   expect(await page.evaluate(() => getComputedStyle(document.body).textShadow)).toBe('none')
+  // dialog bez Hávu s obrázky má obyčejný okraj 1 px bez rámu
+  const plain = await openDialog(page)
+  expect(await plain.style()).toEqual({ width: '1px', style: 'solid', image: 'none' })
+  await plain.close()
 })
 
 test('Háv s obrázky: import, použití (pozadí, rámeček, ikona), reload a odebrání při přepnutí', async ({
