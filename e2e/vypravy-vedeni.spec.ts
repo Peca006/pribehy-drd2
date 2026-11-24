@@ -15,7 +15,7 @@ test('družina povede výpravu: příhody, uzlové body, tempo a improvizace př
   // výprava s uzlem a dvěma příhodami
   await page.goto('/#/vypravy')
   await page.getByLabel('Název nové výpravy').fill('Cesta')
-  await page.getByRole('button', { name: 'Nová výprava' }).click()
+  await page.getByRole('button', { name: 'Nová výprava', exact: true }).click()
   await page.getByRole('button', { name: 'Přidat uzlový bod' }).click()
   await page.getByLabel('Uzlový bod 1', { exact: true }).fill('Zvrat')
   await page.getByRole('button', { name: 'Přidat příhodu: Na začátku (před prvním uzlovým bodem)' }).click()

@@ -16,7 +16,7 @@ test('kořist se odhalí, upřesní a rozdělí; postava ji má v deníku a dru�
   // výprava s kořistí u příhody
   await page.goto('/#/vypravy')
   await page.getByLabel('Název nové výpravy').fill('Cesta')
-  await page.getByRole('button', { name: 'Nová výprava' }).click()
+  await page.getByRole('button', { name: 'Nová výprava', exact: true }).click()
   await page.getByRole('button', { name: 'Přidat příhodu: Na začátku (před prvním uzlovým bodem)' }).click()
   await page.getByLabel('Název příhody').first().fill('Zlobři')
   await page.getByRole('button', { name: /Přidat kořist k příhodě/ }).click()

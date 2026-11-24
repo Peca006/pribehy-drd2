@@ -19,7 +19,7 @@ test('dobrodružství a výprava: vytvoření, úprava, zařazení a smazání',
 
   // nová výprava přímo v dobrodružství
   await page.getByLabel('Název nové výpravy').fill('Cesta k hradu')
-  await page.getByRole('button', { name: 'Nová výprava' }).click()
+  await page.getByRole('button', { name: 'Nová výprava', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Příprava výpravy' })).toBeVisible()
   await expect(page.getByLabel('Dobrodružství')).toHaveValue(/.+/)
 

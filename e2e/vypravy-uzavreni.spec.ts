@@ -17,14 +17,14 @@ test('uzavření výpravy uloží zápis do žurnálu a nabídne další výprav
   await page.getByLabel('Název nového dobrodružství').fill('Bílý hrad')
   await page.getByRole('button', { name: 'Nové dobrodružství' }).click()
   await page.getByLabel('Název nové výpravy').fill('Cesta')
-  await page.getByRole('button', { name: 'Nová výprava' }).click()
+  await page.getByRole('button', { name: 'Nová výprava', exact: true }).click()
   await page.getByRole('button', { name: 'Přidat příhodu: Na začátku (před prvním uzlovým bodem)' }).click()
   await page.getByLabel('Název příhody').first().fill('Lavina')
   await page.getByLabel('Cíl výpravy').fill('Dojít k hradu')
   await page.getByLabel('Poznámky', { exact: true }).click() // uložení
   await page.getByRole('link', { name: /Dobrodružství/ }).first().click()
   await page.getByLabel('Název nové výpravy').fill('Hrad')
-  await page.getByRole('button', { name: 'Nová výprava' }).click()
+  await page.getByRole('button', { name: 'Nová výprava', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Příprava výpravy' })).toBeVisible()
   await page.getByLabel('Poznámky', { exact: true }).click() // uložení
 

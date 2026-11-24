@@ -8,7 +8,7 @@ test('uzlové body a příhody v balíčcích se řadí, přesouvají a přežij
   await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
   await page.goto('/#/vypravy')
   await page.getByLabel('Název nové výpravy').fill('Perlík')
-  await page.getByRole('button', { name: 'Nová výprava' }).click()
+  await page.getByRole('button', { name: 'Nová výprava', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Příprava výpravy' })).toBeVisible()
 
   // dva uzlové body
