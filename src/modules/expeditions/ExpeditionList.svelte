@@ -10,7 +10,9 @@
     type Expedition,
   } from '../../core/expedition/model'
   import { listAdventures, listExpeditions, saveAdventure, saveExpedition } from '../../core/expedition/store'
+  import { runRows, type RunRow } from '../../core/expedition/runs'
   import { go } from '../../core/router.svelte'
+  import RunList from './RunList.svelte'
 
   // Přehled příprav: dobrodružství s výpravami a výpravy bez dobrodružství.
   let adventures = $state.raw<Adventure[]>([])
@@ -18,10 +20,12 @@
   let adventureName = $state('')
   let expeditionName = $state('')
   let loaded = $state(false)
+  let running = $state.raw<RunRow[]>([])
 
   const load = async () => {
     adventures = (await listAdventures()).sort((a, b) => b.updated.localeCompare(a.updated))
     expeditions = await listExpeditions()
+    running = await runRows((r) => r.status === 'probiha')
     loaded = true
   }
   onMount(load)
@@ -45,6 +49,9 @@
   Příprava pro Průvodce: dobrodružství sdružují výpravy, výprava má zápletku, uzlové body a příhody. Vše je jen vaše, hráčům se nic
   nesdílí.
 </p>
+
+<h2>Co teď vedu</h2>
+<RunList rows={running} empty="Žádná výprava teď neběží. Začít ji můžete u výpravy nebo u družiny." />
 
 <h2>Dobrodružství</h2>
 {#each adventures as a (a.id)}

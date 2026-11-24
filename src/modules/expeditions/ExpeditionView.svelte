@@ -7,6 +7,7 @@
   import { STYLES, type Adventure, type Expedition } from '../../core/expedition/model'
   import { getExpedition, listAdventures, removeExpedition, saveExpeditionIn } from '../../core/expedition/store'
   import { go } from '../../core/router.svelte'
+  import ExpeditionRuns from './ExpeditionRuns.svelte'
   import IncidentsEditor from './IncidentsEditor.svelte'
   import NodesEditor from './NodesEditor.svelte'
 
@@ -109,6 +110,8 @@
     </label>
     <label>Poznámky <textarea rows="3" bind:value={exp.notes}></textarea></label>
   </div>
+
+  <ExpeditionRuns expeditionId={id} />
 
   <p><button onclick={remove}>Smazat výpravu</button></p>
   {#if message}<p role="alert" class="error">{message}</p>{/if}

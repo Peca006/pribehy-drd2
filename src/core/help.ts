@@ -350,6 +350,20 @@ export const TOPICS_APP: Card[] = [
     link: '41-priprava-a-vedeni-hry#dobrodruzstvi-vypravy-a-prihody',
   },
   {
+    id: 'vedeni',
+    title: 'Vedení výpravy (Při hře)',
+    kind: 'navod',
+    text: 'Rozehraná hra jedné družiny s jednou výpravou. Příprava zůstává beze změny, tady se drží jen stav: co je odehráno a s jakým výsledkem.',
+    steps: [
+      'Příhody jsou v balíčcích podle uzlových bodů. Aktuální balíček je ten po naposledy dosaženém uzlu; příhody „kdykoli“ lze uvést vždy.',
+      '„Nasadit do hry“ příhodu označí jako probíhající; po ní zvolíš výsledek (úspěch, neúspěch, jinak) a poznámku a klepneš na „Odehráno“.',
+      'Uzlový bod „Nastal“ posune hru do dalšího balíčku. Příprava není vlak: příhodu z jiného balíčku nasadit můžeš kdykoli.',
+      'Příhodu vymyslíš při hře tlačítkem „Přidat“; „Uložit do přípravy“ ji přidá do výpravy pro příště.',
+      'Ukazatel „Hrajete o Zdroje“ je jen pomůcka: hrdinům mají Zdroje vystačit tak akorát. Šetřící hráče netrestej dalšími příhodami.',
+    ],
+    link: '41-priprava-a-vedeni-hry#hrajete-o-zdroje',
+  },
+  {
     id: 'zaloha',
     title: 'Záloha a obnova dat',
     kind: 'navod',
