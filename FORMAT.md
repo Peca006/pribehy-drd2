@@ -7,7 +7,7 @@ a ukázky. **Každou změnu formátu zapište sem i do `CHANGELOG.md`.**
 
 | Co | Kde | Číslo formátu | Kód |
 | --- | --- | --- | --- |
-| Postavy, družiny, bytosti, předpisy | IndexedDB `drd2-data` | `schema` u každého záznamu | `src/core/db.ts` |
+| Postavy, družiny, bytosti, předpisy, dobrodružství, výpravy, vedení | IndexedDB `drd2-data` | `schema` u každého záznamu | `src/core/db.ts` |
 | Ilustrace postav a bytostí | IndexedDB `drd2-data` (`characterImages`, `creatureImages`) | bez čísla (binární data) | `src/core/character/images.ts`, `creatures/images.ts` |
 | Obsahové balíčky (pravidla, bestiář) | IndexedDB `drd2-content` | `PACK_BUILD`, `manifest.format` | `src/core/content/` |
 | Místní stav (zdroje, hrozba, návrhy…) | `localStorage` | bez čísla, čte se opatrně | viz „Místní stav“ |
@@ -21,7 +21,7 @@ zálohy při změně struktury souboru zálohy.
 ## Záznamy v úložišti a `schema`
 
 Každý záznam (postava, družina, bytost, předpis) se ukládá s polem `schema`; bez něj je to schéma 1. Aktuální schéma úložiště je
-počet jeho migrací + 1 (dnes 1 u všech čtyř). Při čtení se záznam převede řetězcem migrací (`MIGRATIONS[úložiště][i]` převádí schéma
+počet jeho migrací + 1 (dnes 1 u všech sedmi úložišť). Při čtení se záznam převede řetězcem migrací (`MIGRATIONS[úložiště][i]` převádí schéma
 `i+1` na `i+2`) a pole `schema` se odstraní, takže ven z úložiště (sdílení, export) nikdy nejde. Při změně tvaru se přidá migrace a
 zvýší `VERSION` databáze; při upgradu se převedou všechny záznamy v jedné transakci. Záznam s vyšším schématem, než aplikace zná, se
 nemění (a import ze zálohy ho přeskočí).
@@ -46,6 +46,20 @@ Postava je **deník změn**, ne objekt: `{ id, events: ChangeEvent[] }`. Stav vz
 
 `{ id, role?, name, notes, members[], journal[], rejected?, baseXp?, lastSent?, updated }`. Zápis žurnálu: `{ id, at, edited?, by, title,
 text, status?, session?, changed? }`; `status` je `navrh` nebo `zamitnuto`, chybí = schválený. `changed` je jen místní značka.
+
+### Dobrodružství, výprava a vedení (`adventures`, `expeditions`, `runs`)
+
+Tři vrstvy (návrh: `PLAN-VYPRAVY.md`), vše jen u Průvodce, nikam se nesdílí:
+- **Dobrodružství** `{ id, name, theme, background, notes, expeditionIds[], created, updated }`: lehký kontejner, `expeditionIds` je doporučené pořadí výprav.
+- **Výprava** `{ id, name, adventureId?, theme, background, hook, goal, style, nodes[], incidents[], resolution, notes, created, updated }`:
+  příprava bez stavu a bez družiny. `style` je `domino` nebo `puzzle`. Uzlový bod `{ id, title, text, kind? }`, příhoda `{ id, title, text, stage,
+  place?, cast[], conditions, ifSuccess, ifFailure, loot? }`, kde `stage` je `''` (před prvním uzlem), ID uzlu (po něm) nebo `kdykoli`.
+  Výprava patří nejvýš jednomu dobrodružství; `adventureId` a `expeditionIds` se drží ve shodě (`saveExpeditionIn`).
+- **Cizí postavy** (volitelná pole, bez zvýšení `schema`): `Adventure.cast[]` je zásoba postav dobrodružství, `Expedition.castIds[]` výběr z ní a `Expedition.cast[]` vlastní
+  postavy výpravy (samostatné výpravy). Postava `{ id, name, look, conduct, knowledge, motive, group, creatureId?, notes }`; příhoda na ni odkazuje volitelným
+  `cast[].npcId` (jméno zůstává jako text, takže po smazání postavy příhoda jméno neztratí). Smazání postavy dobrodružství uklidí odkazy (`removeAdventureNpc`).
+- **Vedení** `{ id, name, partyId, expeditionId, status, reachedNodes[], incidents{}, extra[], loot{}, notes, started, updated }`: rozehraná hra
+  jedné družiny s jednou výpravou, odkazuje na přípravu živě podle `id`. Výprava s vedením se nemaže.
 
 ### Bytost (`creatures`) a předpis (`recipes`)
 
@@ -83,9 +97,10 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 ```json
 {
   "format": "drd2-zaloha", "v": 1, "created": "2026-11-22T10:00:00.000Z", "app": "0.4.11",
-  "schemas": { "characters": 1, "parties": 1, "creatures": 1, "recipes": 1 },
+  "schemas": { "characters": 1, "parties": 1, "creatures": 1, "recipes": 1, "adventures": 1, "expeditions": 1, "runs": 1 },
   "characters": [ { "id": "…", "schema": 1, "events": [ … ] } ],
   "parties": [ … ], "creatures": [ … ], "recipes": [ … ],
+  "adventures": [ … ], "expeditions": [ … ], "runs": [ … ],
   "images": { "characters": [ { "id": "…", "owner": "<id postavy>", "added": 0, "mime": "image/webp", "data": "<base64>" } ],
               "creatures": [ … ] },
   "local": { "drd2-settings": "{…}", "drd2-char-play:<id>": "{…}" }
@@ -119,3 +134,4 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 | 0.4.0 | Úložiště předpisů (Grimoár), `recipeLinks` v postavě, předpisy v přenosu |
 | 0.4.x | Ilustrace postav (`characterImages`), přenos jen v souboru |
 | 0.4.11 | Záloha všech dat, `BACKUP_VERSION` 1 |
+| 0.5.0 | Úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1); záloha je nese jako volitelné seznamy (`BACKUP_VERSION` zůstává 1, starší soubory je nemají) |

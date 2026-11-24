@@ -2,14 +2,14 @@
 
 Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
 
-## Otevřené úkoly (stav k verzi 0.4.11, 22. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.5.0, 24. 11. 2026)
 
 ### Další práce
 
-- **Výpravy (další milník).** Sekce pro vypravěče: podklady pro tažení, výpravy a dobrodružství, vazba na družiny a žurnál,
-  ukázkové dobrodružství a skupiny bytostí do ukázkových dat. Počká na reakce testerů a zkoušku 0.4.x na telefonu.
-- **Kořist (11e).** Patří k Výpravám: vypravěč si kořist předdefinuje, při odhalení upřesní, zafixuje a rozdělí postavám
-  (Peníze, Suroviny s druhem, výbava). Hráč zvláštní panel nepotřebuje. Trofeje jen název a poznámka.
+- ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); zbývá zkouška na telefonu a export a import výprav souborem.
+- **Vedení hry, další milník po Výpravách.** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
+  stupnice, plánování podle délky sezení, rychlé přepínání mezi hráči (postavami) a krátký odpočet pro rychlé reakce. Zápis v `PLAN-VYPRAVY.md`.
+- ✅ **Kořist (11e, 0.5.0).** Příprava u příhody, odhalení, upřesnění a rozdělení postavám.
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
   včetně ilustrací). Zbývá projít migrace při první skutečné změně tvaru dat a ověřit zálohu a obnovu na telefonu (soubor přes
   e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`.
@@ -20,8 +20,9 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   (ID postav z jiných zařízení). Více Průvodců se nedělá.
 - **Ilustrace postav (rozhodnutí).** Jen v souboru se sdílením, v celkovém exportu a později přes WebRTC. Do kódu, QR, zvuku
   a jiných malých přenosů nikdy.
-- **Audiogram.** DSP (zúžení pásma, LDPC) a další zkoušky čekají na testery a zařízení; zkouška zvuku mezi dvěma zařízeními
-  (0.4.6) je neověřená. Viz `AUDIOGRAM.md`.
+- **Audiogram.** Na sezení 22. 11. 2026 prošlo několik přenosů blízko u sebe i za hovoru a ruchu (`AUDIOGRAM.md`, výsledky). DSP
+  (zúžení pásma, LDPC) a další zkoušky (vzdálenost, jiná zařízení, naměřený odstup a zvolený režim) čekají na testery; zkouška zvuku
+  mezi dvěma zařízeními (0.4.6) je neověřená.
 - **Postava.** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
 - **Hry mocných.** Jen pro vlastní interní účely (lokální balíček, větev `hry-mocnych`), do veřejných balíčků až po zařazení
   do SRD. Nechat až po všech milnících.

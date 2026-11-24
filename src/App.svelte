@@ -39,20 +39,23 @@
       <p>Stránka nenalezena. <a href={toHash(DEFAULT_MODULE)}>Domů</a></p>
     {/if}
   </main>
-  <AppBanners />
   <ConfirmDialog />
-  <nav class="tabs" aria-label="Hlavní navigace">
-    {#each tabs as m}
-      <a
-        href={tabHref(m.id, active?.id)}
-        onclick={() => active?.id !== m.id && markRestore()}
-        aria-current={active?.id === m.id ? 'page' : undefined}
-      >
-        <span class="icon" aria-hidden="true">{m.icon}</span>
-        <span>{m.title}</span>
-      </a>
-    {/each}
-  </nav>
+  <!-- pruhy a navigace jsou na konci stránky „lepivé“ (sticky): drží se u spodního okraje, ale zabírají místo, takže nezakrývají konec obsahu -->
+  <div class="bottom">
+    <AppBanners />
+    <nav class="tabs" aria-label="Hlavní navigace">
+      {#each tabs as m}
+        <a
+          href={tabHref(m.id, active?.id)}
+          onclick={() => active?.id !== m.id && markRestore()}
+          aria-current={active?.id === m.id ? 'page' : undefined}
+        >
+          <span class="icon" aria-hidden="true">{m.icon}</span>
+          <span>{m.title}</span>
+        </a>
+      {/each}
+    </nav>
+  </div>
 </div>
 
 <style>
@@ -67,15 +70,18 @@
     max-width: 44rem;
     margin: 0 auto;
     padding: var(--drd-gap);
-    padding-bottom: 5rem;
+    padding-bottom: 1.5rem;
+  }
+  .bottom {
+    position: sticky;
+    bottom: 0;
+    z-index: 40;
   }
   .tabs {
-    position: fixed;
-    inset: auto 0 0 0;
     display: flex;
     justify-content: space-around;
     background: var(--drd-surface);
-    border-top: 1px solid var(--drd-muted);
+    border-top: 1px solid var(--drd-border);
     padding-bottom: env(safe-area-inset-bottom);
   }
   .tabs a {
@@ -85,7 +91,7 @@
     align-items: center;
     padding: 0.4rem 0.25rem;
     min-height: 56px;
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
     text-decoration: none;
     font-size: 0.75rem;
   }

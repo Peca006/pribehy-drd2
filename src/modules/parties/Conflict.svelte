@@ -301,7 +301,7 @@
     gap: 0.4rem;
     margin: 0.3rem 0;
     padding: 0.3rem 0.5rem;
-    border: 1px solid var(--drd-muted);
+    border: 1px solid var(--drd-border);
     border-radius: var(--drd-radius);
   }
   .row.now {

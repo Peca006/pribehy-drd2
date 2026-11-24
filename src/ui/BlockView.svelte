@@ -103,10 +103,10 @@
   th,
   td {
     padding: 0.35rem 0.6rem;
-    border-bottom: 1px solid var(--drd-muted);
+    border-bottom: 1px solid var(--drd-border);
   }
   .image-note {
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
     font-style: italic;
   }
   h2,

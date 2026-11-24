@@ -94,7 +94,7 @@
     font-size: 0.75rem;
     padding: 0.05rem 0.45rem;
     border-radius: 1rem;
-    border: 1px solid var(--drd-muted);
+    border: 1px solid var(--drd-border);
     margin-left: 0.3rem;
     white-space: nowrap;
   }

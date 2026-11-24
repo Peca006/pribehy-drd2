@@ -24,7 +24,7 @@ button,
   font: inherit;
   color: var(--drd-text);
   background: var(--drd-surface);
-  border: 1px solid var(--drd-muted);
+  border: 1px solid var(--drd-border);
   border-radius: var(--drd-radius);
   padding: 0.3rem 0.7rem;
   min-height: 40px;
@@ -47,10 +47,10 @@ h3 {
   line-height: 1.25;
 }
 .muted {
-  color: var(--drd-muted);
+  color: var(--drd-text-muted);
 }
 .error {
-  color: #e66;
+  color: var(--drd-danger);
   white-space: pre-line;
 }
 input[type='text'],
@@ -60,7 +60,7 @@ select {
   font: inherit;
   color: var(--drd-text);
   background: var(--drd-surface);
-  border: 1px solid var(--drd-muted);
+  border: 1px solid var(--drd-border);
   border-radius: var(--drd-radius);
   padding: 0.5rem 0.75rem;
   min-height: 44px;

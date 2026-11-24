@@ -1,5 +1,6 @@
 <script lang="ts">
   import HelpHeading from '../../ui/HelpHeading.svelte'
+  import PartyRuns from '../expeditions/PartyRuns.svelte'
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
@@ -215,6 +216,8 @@
     {/each}
   {/if}
 
+  {#if gm}<PartyRuns partyId={party.id} />{/if}
+
   {#if overview.length}
     <h2>Přehled družiny</h2>
     <div class="scroll">
@@ -418,7 +421,7 @@
   td {
     text-align: left;
     padding: 0.25rem 0.4rem;
-    border-bottom: 1px solid var(--drd-muted);
+    border-bottom: 1px solid var(--drd-border);
   }
   .reduced {
     color: var(--drd-accent);
@@ -434,7 +437,7 @@
     white-space: nowrap;
   }
   .badge.off {
-    border-color: var(--drd-muted);
+    border-color: var(--drd-border);
     text-decoration: line-through;
   }
 </style>

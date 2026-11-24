@@ -34,7 +34,7 @@
       a.click()
       URL.revokeObjectURL(a.href)
       const s = summarize(b)
-      msg = `Záloha uložena: ${s.characters} postav, ${s.parties} družin, ${s.creatures} bytostí, ${s.recipes} předpisů, ${s.images} obrázků (${(blob.size / 1_000_000).toFixed(1)} MB).`
+      msg = `Záloha uložena: ${s.characters} postav, ${s.parties} družin, ${s.creatures} bytostí, ${s.recipes} předpisů, ${s.expeditions} výprav, ${s.images} obrázků (${(blob.size / 1_000_000).toFixed(1)} MB).`
     } catch (err) {
       msg = err instanceof Error ? err.message : String(err)
     } finally {
@@ -109,7 +109,7 @@
       {@const s = summarize(parsed.backup)}
       <div role="status">
         <strong>{fileName}</strong>: {s.characters} postav, {s.parties} družin, {s.creatures} bytostí, {s.recipes} předpisů,
-        {s.images} obrázků{parsed.backup.created ? `, vytvořeno ${new Date(parsed.backup.created).toLocaleString('cs-CZ')}` : ''}.
+        {s.expeditions} výprav, {s.images} obrázků{parsed.backup.created ? `, vytvořeno ${new Date(parsed.backup.created).toLocaleString('cs-CZ')}` : ''}.
         {#if dropNote(parsed)}<p class="muted">{dropNote(parsed)}</p>{/if}
       </div>
       <label class="check">
