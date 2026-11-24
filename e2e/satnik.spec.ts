@@ -138,3 +138,33 @@ test('vadné soubory se nepřidají a ukáže se proč', async ({ page }) => {
   await expect(page.getByText(/Háv nelze aktivovat/).first()).toBeVisible()
   await expect(card(page, 'Slepý')).toHaveCount(0)
 })
+
+test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení a jde exportovat jako vzor', async ({
+  page,
+}) => {
+  await page.goto('/#/satnik')
+  await expect(page.getByRole('heading', { name: 'Šatník', level: 1 })).toBeVisible()
+  for (const name of ['Pergamen', 'Noc', 'Podzemí'])
+    await expect(card(page, name)).toContainText('vestavěný')
+
+  await card(page, 'Podzemí').getByRole('button', { name: 'Použít' }).click()
+  const html = page.locator('html')
+  await expect(html).toHaveAttribute('data-theme', 'podzemi')
+  const css = (v: string) =>
+    page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), v)
+  expect(await css('--drd-radius')).toBe('0px')
+  expect(await css('--drd-accent')).toBe('#f2c14e')
+  await page.reload()
+  await expect(html).toHaveAttribute('data-theme', 'podzemi')
+
+  // vestavěný Háv nejde smazat, ale jde z něj uložit vzor
+  await expect(card(page, 'Podzemí').getByRole('button', { name: 'Smazat' })).toHaveCount(0)
+  const download = page.waitForEvent('download')
+  await card(page, 'Podzemí').getByRole('button', { name: 'Exportovat jako vzor' }).click()
+  expect((await download).suggestedFilename()).toBe('podzemi.drdskin')
+
+  // Pergamen je světlý
+  await card(page, 'Pergamen').getByRole('button', { name: 'Použít' }).click()
+  await expect(html).toHaveAttribute('data-theme', 'pergamen')
+  expect(await css('--drd-bg')).toBe('#efe3c8')
+})

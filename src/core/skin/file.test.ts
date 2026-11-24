@@ -6,7 +6,7 @@ import { writeZip } from './zip'
 const enc = new TextEncoder()
 const manifest = (extra: Record<string, unknown> = {}) => ({
   schema: 1,
-  id: 'noc',
+  id: 'nocni',
   name: 'Noc',
   version: '1.0.0',
   author: 'Test',
@@ -26,7 +26,7 @@ describe('readSkinFile', () => {
     const r = await readSkinFile(await zipOf(JSON.stringify(manifest())))
     expect(r.ok).toBe(true)
     expect(r.skin).toMatchObject({
-      id: 'noc',
+      id: 'nocni',
       scheme: 'dark',
       tokens: { '--drd-accent': '#ffcc33' },
     })

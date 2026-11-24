@@ -5,7 +5,8 @@
   import { BUILTIN_CHOICES, isBuiltinChoice, SYSTEM_CHOICE } from '../../core/skin/active'
   import { writeSkinFile } from '../../core/skin/file'
   import { previewChoice, reapplyTheme, refreshInstalledSkins } from '../../core/skin/runtime'
-  import { contrastIssues, SKIN_EXTENSION, type SkinIssue } from '../../core/skin/skin'
+  import { contrastIssues, SKIN_EXTENSION, type Skin, type SkinIssue } from '../../core/skin/skin'
+  import { BUILTIN_SKINS } from '../../themes/havy'
   import { deleteSkin, installSkinFile, listSkins, type StoredSkin } from '../../core/skin/store'
   import DevicePreview from './DevicePreview.svelte'
 
@@ -91,14 +92,14 @@
     }
   }
 
-  async function save(row: Row) {
+  async function save(skin: Skin) {
     try {
-      const bytes = await writeSkinFile(row.skin)
+      const bytes = await writeSkinFile(skin)
       const a = document.createElement('a')
       a.href = URL.createObjectURL(
         new Blob([bytes as Uint8Array<ArrayBuffer>], { type: 'application/zip' }),
       )
-      a.download = `${row.skin.id}${SKIN_EXTENSION}`
+      a.download = `${skin.id}${SKIN_EXTENSION}`
       a.click()
       URL.revokeObjectURL(a.href)
     } catch (err) {
@@ -142,16 +143,27 @@
 <h2>Vzhled</h2>
 <ul class="list">
   {#each BUILTIN_CHOICES as c (c.id)}
+    {@const built = BUILTIN_SKINS.find((s) => s.id === c.id)}
     <li class="panel" class:current={active === c.id}>
       <div class="head">
         <strong>{c.name}</strong>
-        <span class="muted">vestavěný</span>
+        <span class="muted">
+          vestavěný{built ? ` · ${schemeLabel(built.scheme)}` : ''}
+        </span>
       </div>
       <div class="actions">
         {#if active === c.id}
           <span class="badge" aria-current="true">používá se</span>
         {:else}
           <button type="button" onclick={() => use(c.id)}>Použít</button>
+        {/if}
+        {#if built}
+          <button
+            type="button"
+            onclick={() => save(built)}
+            title="Uloží soubor, který lze upravit a nahrát jako vlastní Háv (pod jiným id)"
+            >Exportovat jako vzor</button
+          >
         {/if}
       </div>
     </li>
@@ -181,7 +193,7 @@
         {:else}
           <button type="button" onclick={() => use(row.skin.id)}>Použít</button>
         {/if}
-        <button type="button" onclick={() => save(row)}>Exportovat</button>
+        <button type="button" onclick={() => save(row.skin)}>Exportovat</button>
         <button type="button" onclick={() => remove(row)}>Smazat</button>
       </div>
     </li>

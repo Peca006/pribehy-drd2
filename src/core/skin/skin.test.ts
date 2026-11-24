@@ -13,7 +13,7 @@ import {
 
 const minimal = (extra: Record<string, unknown> = {}) => ({
   schema: 1,
-  id: 'pergamen',
+  id: 'svitek',
   name: 'Pergamen',
   version: '1.0.0',
   author: 'Test',
@@ -62,7 +62,7 @@ describe('validateSkin: manifest', () => {
     const r = validateSkin(minimal())
     expect(r.ok).toBe(true)
     expect(r.issues).toEqual([])
-    expect(r.skin).toMatchObject({ id: 'pergamen', scheme: 'light', tokens: {}, variants: [] })
+    expect(r.skin).toMatchObject({ id: 'svitek', scheme: 'light', tokens: {}, variants: [] })
   })
 
   it('odmítne ne-objekt a špatné schema', () => {
@@ -260,7 +260,7 @@ describe('resolveTokens a skinTheme', () => {
 
   it('skinTheme dá id, název a schéma Hávu', () => {
     expect(skinTheme(skin, classifyViewport(360, 800))).toMatchObject({
-      id: 'pergamen',
+      id: 'svitek',
       name: 'Pergamen',
       scheme: 'dark',
     })

@@ -2,15 +2,17 @@
 // Čistá funkce, bez DOM; napojení na okno je v `runtime.ts`.
 import type { Theme } from '../theme'
 import { darkTheme, lightTheme } from '../../themes/default'
+import { BUILTIN_SKINS } from '../../themes/havy'
 import { skinTheme, type Skin, type Viewport } from './skin'
 
 export const SYSTEM_CHOICE = 'system'
 
-/** Vestavěné volby; ostatní hodnoty jsou `id` nainstalovaných Hávů. */
+/** Vestavěné volby (výchozí skiny a vestavěné Hávy); ostatní hodnoty jsou `id` nainstalovaných Hávů. */
 export const BUILTIN_CHOICES: { id: string; name: string }[] = [
   { id: SYSTEM_CHOICE, name: 'Podle systému' },
   { id: lightTheme.id, name: lightTheme.name },
   { id: darkTheme.id, name: darkTheme.name },
+  ...BUILTIN_SKINS.map((s) => ({ id: s.id, name: s.name })),
 ]
 
 export const isBuiltinChoice = (id: string) => BUILTIN_CHOICES.some((c) => c.id === id)
@@ -47,7 +49,8 @@ export function pickTheme(
 ): Theme {
   if (choice === lightTheme.id) return lightTheme
   if (choice === darkTheme.id) return darkTheme
-  const skin = installed.find((s) => s.id === choice)
+  // vestavěné Hávy mají přednost (Háv ze souboru jejich id nesmí mít, ale pro jistotu)
+  const skin = BUILTIN_SKINS.find((s) => s.id === choice) ?? installed.find((s) => s.id === choice)
   if (skin) return skinTheme(skin, viewport)
   // „podle systému“, ale i smazaný či neplatný Háv: aplikace musí vždy zůstat použitelná
   return system === 'light' ? lightTheme : darkTheme
