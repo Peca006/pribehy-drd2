@@ -73,11 +73,20 @@ assets/…             volitelné obrázky (od M2)
 ### Validace při importu
 
 - Povolené klíče tokenů jen z výše uvedené sady (`--drd-*`); neznámé se zahodí s upozorněním.
-- Hodnota podle typu: barva, délka, seznam písem (jen systémová písma), stín. Ověření přes `CSS.supports` a vlastní kontrola
-  (žádné `url()`, `;`, `{`, `}`, `\`, `/*`). V M1 žádné vlastní fonty ani obrázky.
-- Limity: velikost souboru, počet variant, délka hodnot.
-- Kontrast (WCAG): `text`/`bg`, `text`/`surface`, `text-muted`/`bg`, `accent`/`surface`, stavové barvy/`surface`.
-  Pod 3:1 se Háv nedá aktivovat, pod 4,5:1 se jen varuje. Kontrola se provádí i na každé variantě.
+- Hodnota podle typu, s vlastním přísným parserem (žádné `CSS.supports`, takže funguje i v testech a ve workeru):
+  - **barva:** `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, `rgb()`, `hsl()` (čárkový i mezerový zápis); pojmenované barvy ne.
+    `bg`, `surface`, text a akcent musí být neprůhledné, `scrim` smí mít průhlednost.
+  - **délka:** `px`, `rem`, `em` (1 rem = 16 px); `radius` 0–48 px, `gap` 4–32 px.
+  - **písmo:** 1–8 systémových písem, víceslovné názvy v uvozovkách, poslední musí být obecná rodina
+    (`sans-serif`, `serif`, `monospace`, `system-ui`). Žádné `@font-face`.
+  - **stín:** `none`, nebo 1–3 vrstvy s právě jednou barvou, 2–4 délkami (každá do 64 px), rozostření nezáporné.
+  - Nikdy `url()`, `var()`, `calc()`, `;`, `{`, `}`, `\`, `@`, `<`, `>`, komentáře ani řídicí znaky; hodnota nejvýše 200 znaků.
+  - V M1 žádné vlastní fonty ani obrázky (`assets` se ignoruje s varováním).
+- Limity: manifest nejvýše 64 KB, nejvýše 16 variant; `id` nesmí být `system`, `default-dark`, `default-light`.
+- Neznámé položky a tokeny se ignorují s varováním (kvůli budoucím verzím formátu), neplatné hodnoty jsou chyba.
+- Kontrast (WCAG) na `bg` i `surface`: `text`, `text-muted`, `accent`, `danger`, `success`, `warning`.
+  Pod 3:1 je chyba (Háv se nedá aktivovat), pod 4,5:1 jen varování. Okraje nejsou text: chyba pod 1,5:1, varování pod 3:1.
+  Kontroluje se po sloučení variant pro všech 12 kombinací viewportu, shodné výsledky se hlásí jednou.
 
 ## Milníky
 
@@ -95,5 +104,7 @@ do mnoha komponent a vedle se vyvíjejí výpravy).
 
 ## Stav
 
-- ✅ Rozdělení rolí tokenů a vyčištění pevných barev (`a3cfcd0`).
-- 🚧 Formát, validace, úložiště, modul Šatník.
+- ✅ Rozdělení rolí tokenů a vyčištění pevných barev (PR #13).
+- ✅ Formát a validace Hávu: `src/core/skin/` (`color.ts`, `tokens.ts`, `skin.ts`, testy). Světlý výchozí akcent ztmavnut
+  na `#8a5e0e`, protože měl na pozadí jen 4,2:1.
+- 🚧 Načtení `.drdskin` (ZIP), úložiště v IndexedDB, aktivace a nastavení, modul Šatník (seznam, náhled, import/export), tři Hávy.
