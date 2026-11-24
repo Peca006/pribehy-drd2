@@ -1,6 +1,6 @@
 # Výpravy: návrh (rešerše pravidel SRD a plán)
 
-Stav (24. 11. 2026): návrh schválen (tři vrstvy dobrodružství / výprava / vedení). **Hotové etapy: 1 (úložiště, přehled, základ výpravy), 2 (uzlové body a příhody), 3 (vedení a Při hře), 4 (uzavření, zápis do žurnálu, další výprava, bytost do konfliktu), 5 (Kořist 11e).** Zbývá 6 a 7. Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
+Stav (24. 11. 2026): návrh schválen (tři vrstvy dobrodružství / výprava / vedení). **Hotové etapy: 1 (úložiště, přehled, základ výpravy), 2 (uzlové body a příhody), 3 (vedení a Při hře), 4 (uzavření, zápis do žurnálu, další výprava, bytost do konfliktu), 5 (Kořist 11e), 6 (inspirace z postav, ukázková výprava, nápověda).** Zbývá 7 (cizí postavy v dobrodružství). Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
 etapách s vlastními commity a jedním PR na konci (nebo po etapách, podle domluvy). Navazuje na `TODO.md` (Výpravy, Kořist 11e) a
 `PLAN-POMUCKY.md`. Odkazy v závorkách vedou do příručky (kapitola a kotva).
 
@@ -143,7 +143,7 @@ nový typ přenosu). Trofeje: jen název a poznámka. Hráč zvláštní panel n
 | ✅ 3 | Vedení: začít s družinou, Při hře (nasazení, odehráno, výsledek, uzlové body, improvizace, ukazatel tempa), část „Rozehrané výpravy“ u družiny | unit testy stavů, E2E |
 | ✅ 4 | Uzavření: návrh zápisu do žurnálu, stav „hotová“, nabídka další výpravy; odkaz na konflikt a příručku | E2E |
 | ✅ 5 | Kořist (11e) a zápis postavám | unit testy, E2E |
-| 6 | Inspirace z postav družiny, vlastní ukázková výprava v ukázkových datech (vlastní text), nápověda „?“, `CHANGELOG.md`, vydání | E2E, ověření na telefonu |
+| ✅ 6 | Inspirace z postav družiny, vlastní ukázková výprava v ukázkových datech (vlastní text), nápověda „?“, `CHANGELOG.md`, vydání | E2E, ověření na telefonu |
 | 7 | **Cizí postavy (CP) v dobrodružství**: zásoba CP u dobrodružství, přidělování k výpravám a příhodám, motivace, příslušnost ke skupinám, vazba na Bestiář (viz níže) | unit testy, E2E |
 | později | Export a import výpravy nebo dobrodružství souborem (sdílení příprav mezi Průvodci, přenos mezi zařízeními) | |
 
@@ -166,6 +166,22 @@ Nápady na pomůcky pro vedení sezení. Nepatří do etap 1 až 7 Výprav, zaps
 - **Snadné přepínání mezi hráči (postavami)** během sezení: jedno klepnutí, kdo je právě na řadě; časomíra běží tomu, kdo je aktivní.
 - **Krátký odpočet (countdown)** pro rychlé reakce s omezeným časem (např. dilema, rychlé rozhodnutí), nezávislý na hlavní časomíře.
 - Vazby: vedení (`Run`) a sezení družiny (žurnál, rozdělení zkušeností); časy by byly volitelný záznam k sezení.
+
+### Nápady ke kořisti (rešerše článku, 24. 11. 2026)
+Zdroj: [Poklady, peníze a finance v RPG](https://www.d20.cz/clanky/svety/poklady-penize-a-finance-v-rpg.html) (sirien, d20.cz, 2023, CC BY; jen parafráze).
+Článek je převážně historický přehled (mince, směnky, bankovnictví, ceny šperků), **nedává postupy pro přípravu ani dělení kořisti** a o dělení mezi postavy nemluví vůbec.
+Použitelné podněty:
+- **Kořist nemusí být jen zlato:** záznamy o dluzích, směnky, zboží, slitky, stará měna. Dnes umíme Peníze, Suroviny, výbavu a trofej. Nápad: druh **„listina“**
+  (dluhopis, směnka, mapa, záznam o dluhu): jen název a poznámka jako trofej, ale zdroj zápletek (dědic, dluh vůči chrámu, zájem duchů).
+- **Hodnota není to, co za kořist dostanete:** šperky a drahokamy se špatně prodávají, překupník nabídne cenu materiálu nebo méně. Nápad: druh **„cennost“**
+  s odhadem hodnoty a pozdějším „prodat“, kdy Průvodce zvolí skutečnou cenu a vznikne kořist v penězích. Souvisí s příhodou *Hledání překupníka* v příručce (`42`).
+- **Bohatství bez postavení nestačí:** peníze často nejdou použít bez reputace, známostí a statusu. Hotovo v malém: **poznámka pro Průvodce** u každé kořisti
+  (podmínky využití, kde platí). Zobrazuje se jen v přípravě a ve vedení, do zápisu žurnálu ani do deníku postavy nejde (kromě trofeje).
+- **Přeprava:** těžké slitky a zboží se nedají snadno odnést. Nápad: příznak **„těžká kořist“** (komplikace při přesunu, námět na další příhodu, tempo).
+- **Měna s omezenou platností** (stará měna, jen pro určitou bytost): lze řešit poznámkou, případně druhem „listina“.
+- **Dělení mezi postavy:** článek nic neřeší, ukázka je v SRD (*Královské dělení*). Vlastní nápad mimo článek: pomůcka **rovným dílem** (Peníze a Suroviny mezi všechny členy,
+  zbytek ukázat Průvodci). Zatím se nedělá, rozdělení je volba Průvodce člen po členovi.
+Rozhodnutí o zařazení čeká na tebe; nic z toho kromě poznámky pro Průvodce zatím není hotové.
 
 ## 5. Otevřené otázky
 

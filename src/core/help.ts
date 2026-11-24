@@ -340,7 +340,7 @@ export const TOPICS_APP: Card[] = [
     id: 'vypravy',
     title: 'Výpravy: příprava dobrodružství',
     kind: 'navod',
-    text: 'Příprava pro Průvodce. Dobrodružství sdružuje výpravy; výprava má zápletku, cíl a (později) uzlové body a příhody. Vše je jen vaše.',
+    text: 'Příprava pro Průvodce. Dobrodružství sdružuje výpravy; výprava má zápletku, cíl, uzlové body a příhody s případnou kořistí. Vedení výpravy s družinou je u družiny. Vše je jen vaše.',
     steps: [
       'Výprava je kratší dobrodružství nebo jeho část s krátkodobým cílem. Na výpravě hrdinové hospodaří se Zdroji a skoro neodpočívají.',
       'Zápletka říká, proč se hrdinové na výpravu vydají (zisk, pomsta, slib, dluh…). Bez důvodu se nevydají.',

@@ -76,7 +76,7 @@
 {#each decksOf as d (d.key)}
   <h3>{d.title} <span class="muted">({d.incidents.length})</span></h3>
   {#each d.incidents as i, idx (i.id)}
-    <details class="panel" open={opened.has(i.id)}>
+    <details class="panel incident" open={opened.has(i.id)}>
       <summary><strong>{i.title || '(bez názvu)'}</strong>{#if i.cast.length}<span class="muted"> · {i.cast.map((c) => c.name).join(', ')}</span>{/if}</summary>
       <label>Název <input bind:value={i.title} aria-label="Název příhody" /></label>
       <label>
@@ -143,7 +143,11 @@
               placeholder={l.kind === 'penize' ? 'odkud (nepovinné)' : l.kind === 'suroviny' ? 'název druhu (nepovinné)' : l.kind === 'vybava' ? 'položka' : 'název trofeje'}
               aria-label="Popis kořisti"
             />
-            {#if l.kind === 'trofej'}<input bind:value={l.note} placeholder="poznámka" aria-label="Poznámka k trofeji" />{/if}
+            <input
+              bind:value={l.note}
+              placeholder={l.kind === 'trofej' ? 'poznámka' : 'poznámka pro Průvodce (podmínky, kde platí…)'}
+              aria-label="Poznámka ke kořisti"
+            />
             <button onclick={() => removeLoot(i, l.id)} aria-label="Odebrat kořist">✕</button>
           </div>
         {/each}

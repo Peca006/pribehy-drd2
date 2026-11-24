@@ -9,6 +9,7 @@
   import { go } from '../../core/router.svelte'
   import ExpeditionRuns from './ExpeditionRuns.svelte'
   import IncidentsEditor from './IncidentsEditor.svelte'
+  import InspirationPanel from './InspirationPanel.svelte'
   import NodesEditor from './NodesEditor.svelte'
 
   // Příprava výpravy: téma, pozadí, zápletka, cíl, styl, uzlové body, příhody v balíčcích a rozuzlení.
@@ -99,6 +100,8 @@
         </label>
       {/each}
     </fieldset>
+
+    <InspirationPanel />
 
     <NodesEditor bind:exp onstructure={save} />
     <IncidentsEditor bind:exp onstructure={save} />

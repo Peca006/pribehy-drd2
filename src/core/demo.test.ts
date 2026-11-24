@@ -19,6 +19,24 @@ vi.mock('./party/store', () => ({
   },
 }))
 
+const adventures: { id: string }[] = []
+const expeditions: { id: string }[] = []
+const runs: { id: string; partyId: string; expeditionId: string }[] = []
+const del = (list: { id: string }[], id: string) => {
+  const i = list.findIndex((x) => x.id === id)
+  if (i >= 0) list.splice(i, 1)
+}
+vi.mock('./expedition/store', () => ({
+  listAdventures: async () => [...adventures],
+  saveAdventure: async (a: { id: string }) => void adventures.push(a),
+  deleteAdventure: async (id: string) => del(adventures, id),
+  listExpeditions: async () => [...expeditions],
+  saveExpedition: async (e: { id: string }) => void expeditions.push(e),
+  deleteExpedition: async (id: string) => del(expeditions, id),
+  listRuns: async () => [...runs],
+  deleteRun: async (id: string) => del(runs, id),
+}))
+
 const recipes: { id: string }[] = []
 vi.mock('./recipes/store', () => ({
   listRecipes: async () => [...recipes],
@@ -47,6 +65,9 @@ beforeEach(() => {
   logs.length = 0
   parties.length = 0
   recipes.length = 0
+  adventures.length = 0
+  expeditions.length = 0
+  runs.length = 0
   store.clear()
 })
 
@@ -69,6 +90,8 @@ describe('ukázková data', () => {
     expect(logs).toHaveLength(3)
     expect(parties).toHaveLength(1)
     expect(recipes.length).toBeGreaterThanOrEqual(15)
+    expect(adventures).toHaveLength(1)
+    expect(expeditions).toHaveLength(2)
     const kinds = recipes.map((r) => (r as unknown as { kind: string }).kind)
     for (const k of ['kouzlo', 'lektvar', 'nastraha', 'vyrobek'])
       expect(kinds.filter((x) => x === k).length).toBeGreaterThanOrEqual(3)
@@ -78,7 +101,14 @@ describe('ukázková data', () => {
     logs.push({ id: 'moje-postava', events: [] })
     recipes.push({ id: 'moje-kouzlo' })
     parties.push({ id: 'moje-druzina' })
+    expeditions.push({ id: 'moje-vyprava' })
+    adventures.push({ id: 'moje-dobrodruzstvi' })
+    runs.push({ id: 'moje-vedeni', partyId: 'moje-druzina', expeditionId: 'moje-vyprava' })
+    runs.push({ id: 'vedeni-ukazky', partyId: 'demo-druzina', expeditionId: 'moje-vyprava' })
     await removeDemo()
+    expect(expeditions).toEqual([{ id: 'moje-vyprava' }])
+    expect(adventures).toEqual([{ id: 'moje-dobrodruzstvi' }])
+    expect(runs.map((r) => r.id)).toEqual(['moje-vedeni'])
     expect(logs).toEqual([{ id: 'moje-postava', events: [] }])
     expect(parties).toEqual([{ id: 'moje-druzina' }])
     expect(recipes).toEqual([{ id: 'moje-kouzlo' }])

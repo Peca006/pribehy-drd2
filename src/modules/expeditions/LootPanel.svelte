@@ -58,6 +58,7 @@
         <strong>{r.state === 'ukryta' ? 'Skrytá kořist' : describeLoot(r.now)}</strong>
         <span class="muted">z příhody „{r.incident.title || 'bez názvu'}“</span>
       </div>
+      {#if r.base.note && r.state !== 'odhalena'}<p class="muted">Poznámka: {r.now.note}</p>{/if}
       {#if r.state === 'ukryta'}
         <p class="btns"><button onclick={() => onchange(reveal(snap(), r.base.id))} aria-label={`Odhalit kořist z příhody ${r.incident.title}`}>Odhalit</button></p>
       {:else if r.state === 'odhalena'}
@@ -91,13 +92,11 @@
               {r.now.kind === 'vybava' ? 'Položka' : 'Název trofeje'}
               <input value={r.now.label} onchange={(e) => onchange(refine(snap(), r.base.id, { label: e.currentTarget.value }))} />
             </label>
-            {#if r.now.kind === 'trofej'}
-              <label>
-                Poznámka
-                <input value={r.now.note ?? ''} onchange={(e) => onchange(refine(snap(), r.base.id, { note: e.currentTarget.value }))} />
-              </label>
-            {/if}
           {/if}
+          <label>
+            {r.now.kind === 'trofej' ? 'Poznámka' : 'Poznámka pro Průvodce'}
+            <input value={r.now.note ?? ''} onchange={(e) => onchange(refine(snap(), r.base.id, { note: e.currentTarget.value }))} />
+          </label>
         </div>
         {#if problem(r.now)}<p class="error">{problem(r.now)}</p>{/if}
         <div class="row">

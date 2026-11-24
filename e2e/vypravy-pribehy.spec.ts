@@ -39,12 +39,12 @@ test('uzlové body a příhody v balíčcích se řadí, přesouvají a přežij
   // pořadí na začátku: Lavina, Zlobři; po posunu Zlobři, Lavina
   const lavina = page.locator('details', { hasText: 'Lavina' }).first()
   await lavina.getByRole('button', { name: /Posunout níže/ }).click()
-  const nadpisy = page.locator('details > summary strong')
+  const nadpisy = page.locator('details.incident > summary strong')
   await expect(nadpisy).toHaveText(['Zlobři', 'Lavina', 'Dřevorubci'])
 
   // po obnovení stránky je vše zachované
   await page.reload()
-  await expect(page.locator('details > summary strong')).toHaveText(['Zlobři', 'Lavina', 'Dřevorubci'])
+  await expect(page.locator('details.incident > summary strong')).toHaveText(['Zlobři', 'Lavina', 'Dřevorubci'])
   await expect(page.getByLabel('Uzlový bod 2', { exact: true })).toHaveValue('Rozuzlení')
   await expect(page.locator('details', { hasText: 'Harald' })).toHaveCount(1)
 
