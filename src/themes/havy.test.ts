@@ -108,10 +108,11 @@ describe('vestavěné Hávy', () => {
       }
     })
 
-    it('používá všech pět rolí a ikony pro všechny záložky', () => {
+    it('používá všech šest rolí a ikony pro všechny záložky', () => {
       expect(Object.keys(podzemi().roles).sort()).toEqual([
         'background',
         'button',
+        'dialog',
         'divider',
         'panel',
         'tab',
@@ -137,6 +138,8 @@ describe('vestavěné Hávy', () => {
         '--drd-panel-bi-source',
         '--drd-button-bi-source',
         '--drd-tab-bi-source',
+        '--drd-dialog-bi-source',
+        '--drd-dialog-bw',
         '--drd-divider-image',
         '--drd-text-shadow',
       ]) {

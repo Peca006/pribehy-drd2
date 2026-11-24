@@ -1,10 +1,10 @@
-// Role prvků (milník 2): Háv může dát obrázek pozadí, panelům, tlačítkům, spodní liště záložek a dělicí čáře.
+// Role prvků (milník 2): Háv může dát obrázek pozadí, panelům, tlačítkům, spodní liště záložek, dělicí čáře a oknům (dialogům).
 // Role se vždy převádí na CSS proměnné (`--drd-<role>-…`), které čtou globální styly v `app.css`; bez obrázku proměnné
 // nejsou a vzhled je dán jen barevnými tokeny. Do CSS se nikdy nevkládá text z manifestu, jen ověřená čísla,
 // pevná klíčová slova a adresa obrázku, kterou vyrobila aplikace (`blob:`).
 import type { ThemeTokens } from '../theme'
 
-export const ROLE_NAMES = ['background', 'panel', 'button', 'tab', 'divider'] as const
+export const ROLE_NAMES = ['background', 'panel', 'button', 'tab', 'divider', 'dialog'] as const
 export type RoleName = (typeof ROLE_NAMES)[number]
 
 export const ROLE_MODES = [

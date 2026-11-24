@@ -77,7 +77,7 @@ assets/…             obrázky (PNG, WebP, JPEG, SVG), jen ty, které manifest 
 
 ### Role prvků (M2)
 
-Role dá obrázek části aplikace. Pět rolí a prvek, na který se uplatní:
+Role dá obrázek části aplikace. Šest rolí a prvek, na který se uplatní:
 
 | Role | Prvek |
 |---|---|
@@ -86,6 +86,7 @@ Role dá obrázek části aplikace. Pět rolí a prvek, na který se uplatní:
 | `button` | `button`, `.btn` |
 | `tab` | spodní lišta záložek |
 | `divider` | `hr` |
+| `dialog` | okna (`dialog`): potvrzení a formuláře v oknech |
 
 Pole role: `image` (název z `assets`), `mode`, a podle režimu `size`, `position`, `slice`, `width`, `fill`, `edge`,
 `height` (jen `divider`), `pixelated` (jen `background`).
@@ -144,7 +145,7 @@ na obrázek; modul bez ikony i ikona, která se ještě nenačetla, zůstávají
   položka 2 MB, 64 položek, manifest 64 kB.
 - **Úložiště** (`store.ts`): samostatná databáze `drd2-wardrobe` (ne `drd2-data`, aby změna vzhledu neriskovala
   migraci postav a družin). Každý Háv se při čtení znovu zvaliduje, neplatný se přeskočí. Nejvýše 30 Hávů, stejné `id` Háv
-  přepíše. Zahrnutí Hávů do celkového zálohování se rozhodne zvlášť.
+  přepíše. Hávy **nepatří do celkové zálohy** (rozhodnuto): přenášejí se jen samostatným exportem a importem `.drdskin`.
 - **Volba** (`settings.skin`): `system` (výchozí), `default-light`, `default-dark`, nebo `id` nainstalovaného Hávu.
   Smazaný či neplatný Háv spadne na „podle systému“, aplikace zůstane vždy použitelná.
 - **Viewport za běhu** (`runtime.ts`): přepočítává se při `resize` a `orientationchange` (s kontrolou po 250 ms, protože
@@ -172,11 +173,14 @@ Nemá napodobovat Truhlici.
 tři vlastní Hávy. Změny potřebné pro skinování se slučují do `develop` už po M1 (a rozdělení tokenů hned, protože zasahuje
 do mnoha komponent a vedle se vyvíjejí výpravy).
 
-**M2: textury a rámování.** Role prvků (`background`, `panel`, `button`, `tab`, `divider`) s obrázkem a režimem
+**M2: textury a rámování.** Role prvků (`background`, `panel`, `button`, `tab`, `divider`, `dialog`) s obrázkem a režimem
 (`stretch`, `contain`, `cover`, `repeat`, `repeat-x`, `repeat-y`, `slice`). Ikonová sada Hávu s rezervou na emoji.
-Vše přes CSS bez změny struktury; jediná změna komponent je ikona záložek v `App.svelte`. Role `frame` pro dialogy
-zatím není: dialogy mají vlastní styly v 11 komponentách (a shorthand `border` v nich resetuje `border-image`), zavede se
-až se sjednotí.
+Vše přes CSS bez změny struktury; jediná změna komponent je ikona záložek v `App.svelte`.
+
+**Role `dialog`:** deset dialogů (potvrzení, výroba, Jizva, lektvar, kouzlo, nástraha, předpis, účastník, …) dřív opakovalo
+stejné pozadí, okraj a zástěnu ve vlastních stylech, a zkratka `border` v nich rušila `border-image`. Společný vzhled je teď
+jedno pravidlo `dialog` v `app.css`, komponenty mají jen vlastní šířku. Šířku okraje čte zvlášť `border-width`, protože zkratka
+`border` přijímá jen jednu hodnotu a rámeček z Hávu má čtyři (s proměnnou ve zkratce by se okraj tiše vypnul).
 
 **M3: layout.** Šablony rozložení (spodní, boční, horní lišta), kotvy a zóny, `clip-path` a maska pro dekorativní tvar uvnitř obdélníku.
 
@@ -203,4 +207,5 @@ až se sjednotí.
   `file.ts`/`store.ts` (obrázky v archivu a úložišti), `runtime.ts` (adresy `blob:` jen pro používaný Háv, rušení při
   přepnutí), `appearance.svelte.ts` (ikony), `applyTheme` odebírá staré proměnné, `app.css`, `App.svelte`. Podzemí má grafiku.
   E2E: `e2e/satnik.spec.ts`.
-- 🚧 **Dál:** role pro dialogy (`frame`), M3 (layout), editor Hávů, zahrnutí Hávů do celkové zálohy.
+- ✅ **Role `dialog`:** jednotný vzhled oken v `app.css`, role v Hávu, ozdobný zlatý rám s rubíny pro Podzemí.
+- 🚧 **Dál:** M3 (layout), editor Hávů.
