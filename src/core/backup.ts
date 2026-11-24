@@ -17,7 +17,15 @@ const MAX_IMAGES = 3000
 const MAX_LOCAL_VALUE = 500_000
 const IMAGE_MIMES = ['image/webp', 'image/png', 'image/jpeg']
 
-export const RECORD_STORES = ['characters', 'parties', 'creatures', 'recipes'] as const satisfies readonly DataStore[]
+export const RECORD_STORES = [
+  'characters',
+  'parties',
+  'creatures',
+  'recipes',
+  'adventures',
+  'expeditions',
+  'runs',
+] as const satisfies readonly DataStore[]
 type RecordStore = (typeof RECORD_STORES)[number]
 
 /** Místní stav v `localStorage`, který patří k datům (rozpracované úpravy, zdroje, nastavení…). */
@@ -57,6 +65,9 @@ export interface Backup {
   parties: Rec[]
   creatures: Rec[]
   recipes: Rec[]
+  adventures: Rec[]
+  expeditions: Rec[]
+  runs: Rec[]
   images: { characters: BackupImage[]; creatures: BackupImage[] }
   local: Record<string, string>
 }
@@ -111,6 +122,9 @@ export async function buildBackup({ withImages = true, storage = defaultStorage(
     parties: await recs('parties'),
     creatures: await recs('creatures'),
     recipes: await recs('recipes'),
+    adventures: await recs('adventures'),
+    expeditions: await recs('expeditions'),
+    runs: await recs('runs'),
     images: withImages
       ? { characters: await imagesOf('characterImages', 'characterId'), creatures: await imagesOf('creatureImages', 'creatureId') }
       : { characters: [], creatures: [] },
@@ -173,6 +187,15 @@ function sanitizeRecord(store: RecordStore, raw: unknown, dropped: Dropped): Rec
       return { ...r, id }
     case 'recipes':
       if (typeof r.name !== 'string' || typeof r.kind !== 'string') return void dropped.records++
+      return { ...r, id }
+    case 'adventures':
+      if (typeof r.name !== 'string' || !Array.isArray(r.expeditionIds)) return void dropped.records++
+      return { ...r, id }
+    case 'expeditions':
+      if (typeof r.name !== 'string' || !Array.isArray(r.nodes) || !Array.isArray(r.incidents)) return void dropped.records++
+      return { ...r, id }
+    case 'runs':
+      if (typeof r.partyId !== 'string' || typeof r.expeditionId !== 'string' || !obj(r.incidents)) return void dropped.records++
       return { ...r, id }
   }
 }
@@ -237,6 +260,9 @@ export function parseBackup(text: string): ParsedBackup {
     parties: list('parties'),
     creatures: list('creatures'),
     recipes: list('recipes'),
+    adventures: list('adventures'),
+    expeditions: list('expeditions'),
+    runs: list('runs'),
     images: {
       characters: sanitizeImages(images?.characters, dropped),
       creatures: sanitizeImages(images?.creatures, dropped),
@@ -251,6 +277,9 @@ export interface BackupSummary {
   parties: number
   creatures: number
   recipes: number
+  adventures: number
+  expeditions: number
+  runs: number
   images: number
 }
 
@@ -259,6 +288,9 @@ export const summarize = (b: Backup): BackupSummary => ({
   parties: b.parties.length,
   creatures: b.creatures.length,
   recipes: b.recipes.length,
+  adventures: b.adventures.length,
+  expeditions: b.expeditions.length,
+  runs: b.runs.length,
   images: b.images.characters.length + b.images.creatures.length,
 })
 
@@ -282,7 +314,7 @@ export async function restoreBackup(
   storage: KeyValueStorage | undefined = defaultStorage(),
 ): Promise<RestoreResult> {
   const result: RestoreResult = {
-    added: { characters: 0, parties: 0, creatures: 0, recipes: 0, images: 0 },
+    added: { characters: 0, parties: 0, creatures: 0, recipes: 0, adventures: 0, expeditions: 0, runs: 0, images: 0 },
     kept: 0,
     replaced: 0,
   }

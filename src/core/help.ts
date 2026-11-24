@@ -337,6 +337,19 @@ export const TOPICS_APP: Card[] = [
     ],
   },
   {
+    id: 'vypravy',
+    title: 'Výpravy: příprava dobrodružství',
+    kind: 'navod',
+    text: 'Příprava pro Průvodce. Dobrodružství sdružuje výpravy; výprava má zápletku, cíl a (později) uzlové body a příhody. Vše je jen vaše.',
+    steps: [
+      'Výprava je kratší dobrodružství nebo jeho část s krátkodobým cílem. Na výpravě hrdinové hospodaří se Zdroji a skoro neodpočívají.',
+      'Zápletka říká, proč se hrdinové na výpravu vydají (zisk, pomsta, slib, dluh…). Bez důvodu se nevydají.',
+      'Styl: kostky domina (cesta z místa na místo) nebo dílky puzzle (volný pohyb po prostředí).',
+      'Dobrodružství je nepovinné. Výprava může stát sama nebo patřit jednomu dobrodružství.',
+    ],
+    link: '41-priprava-a-vedeni-hry#dobrodruzstvi-vypravy-a-prihody',
+  },
+  {
     id: 'zaloha',
     title: 'Záloha a obnova dat',
     kind: 'navod',

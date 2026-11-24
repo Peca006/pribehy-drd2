@@ -10,7 +10,15 @@ beforeEach(async () => {
   globalThis.indexedDB = new IDBFactory()
 })
 
-const migs = (...m: Migration[]) => ({ characters: m, creatures: [], parties: [], recipes: [] })
+const migs = (...m: Migration[]) => ({
+  characters: m,
+  creatures: [],
+  parties: [],
+  recipes: [],
+  adventures: [],
+  expeditions: [],
+  runs: [],
+})
 
 describe('migrace záznamů (čistá funkce)', () => {
   it('záznam bez čísla je schéma 1 a po migraci nese aktuální číslo', () => {
