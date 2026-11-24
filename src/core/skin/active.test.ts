@@ -5,6 +5,7 @@ import {
   effectiveViewport,
   isBuiltinChoice,
   pickTheme,
+  previewChoiceFromSearch,
   SYSTEM_CHOICE,
 } from './active'
 import { classifyViewport, validateSkin } from './skin'
@@ -88,6 +89,23 @@ describe('effectiveViewport (klávesnice na telefonu)', () => {
     expect(effectiveViewport(squeezed, portrait, false)).toBe(squeezed)
     expect(effectiveViewport(squeezed, null, true)).toBe(squeezed)
   })
+})
+
+describe('previewChoiceFromSearch', () => {
+  it('přečte volbu z adresy', () => {
+    expect(previewChoiceFromSearch('?hav=noc')).toBe('noc')
+    expect(previewChoiceFromSearch('?a=1&hav=default-dark')).toBe('default-dark')
+  })
+  it.each([
+    '',
+    '?',
+    '?hav=',
+    '?hav=Noc',
+    '?hav=a b',
+    '?hav=../x',
+    `?hav=${'a'.repeat(41)}`,
+    '?other=noc',
+  ])('neplatné %j dá null', (s) => expect(previewChoiceFromSearch(s)).toBeNull())
 })
 
 describe('vestavěné volby', () => {

@@ -2,9 +2,13 @@
 // (otočení telefonu, změna velikosti okna) nebo systémového schématu. Zbytek logiky je v `active.ts`.
 import { settings } from '../settings.svelte'
 import { applyTheme } from '../theme'
-import { effectiveViewport, pickTheme, type SystemScheme } from './active'
+import { effectiveViewport, pickTheme, previewChoiceFromSearch, type SystemScheme } from './active'
 import { classifyViewport, type Skin, type Viewport } from './skin'
 import { listSkins } from './store'
+
+/** Aplikace běží jako náhled v rámečku zařízení (Šatník): volba z adresy má přednost před uloženou. */
+export const previewChoice: string | null =
+  typeof location === 'undefined' ? null : previewChoiceFromSearch(location.search)
 
 let installed: Skin[] = []
 let lastViewport: Viewport | null = null
@@ -29,7 +33,7 @@ function apply(force = false) {
   )
   if (!force && sameViewport(lastViewport, viewport)) return
   lastViewport = viewport
-  applyTheme(pickTheme(settings.skin, installed, systemScheme(), viewport))
+  applyTheme(pickTheme(previewChoice ?? settings.skin, installed, systemScheme(), viewport))
 }
 
 /** Znovu načte nainstalované Háv z úložiště a použije zvolený (po instalaci, smazání nebo změně volby). */

@@ -18,6 +18,15 @@ export const isBuiltinChoice = (id: string) => BUILTIN_CHOICES.some((c) => c.id 
 export type SystemScheme = 'light' | 'dark'
 
 /**
+ * Náhled Hávu v rámečku zařízení (Šatník): aplikace v `<iframe>` dostane `?hav=<volba>` a použije ji místo uložené
+ * volby, takže Háv jde prohlížet bez aktivace. Vrací volbu, nebo null (běžné spuštění či neplatná hodnota).
+ */
+export function previewChoiceFromSearch(search: string): string | null {
+  const v = new URLSearchParams(search).get('hav')
+  return v !== null && /^[a-z0-9-]{1,40}$/.test(v) ? v : null
+}
+
+/**
  * Viewport pro výběr vzhledu. Při psaní do pole se na telefonu vysune klávesnice a zmenší se výška okna; to nesmí
  * přepnout orientaci ani „nízký“ viewport (vzhled by se mihotal), takže se tyto dva údaje ponechají z posledního stavu.
  * Šířka se bere vždy z měření.

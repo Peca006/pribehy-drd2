@@ -7,5 +7,6 @@ import './parties'
 import './creator'
 import './reader'
 import './library'
+import './wardrobe'
 
 export const DEFAULT_MODULE = 'postavy'

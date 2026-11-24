@@ -286,6 +286,19 @@ describe('kontrast', () => {
     expect(r.ok).toBe(true)
   })
 
+  it('bez variant zpráva neuvádí viewport, s variantami ano', () => {
+    const plain = validateSkin(minimal({ tokens: { '--drd-text-muted': '#858585' } }))
+    expect(plain.issues.length).toBeGreaterThan(0)
+    expect(plain.issues.every((i) => !i.message.includes('úzký'))).toBe(true)
+    const varied = validateSkin(
+      minimal({
+        tokens: { '--drd-text-muted': '#858585' },
+        variants: [{ when: { width: 'compact' }, tokens: { '--drd-gap': '0.5rem' } }],
+      }),
+    )
+    expect(varied.issues.some((i) => i.message.includes('('))).toBe(true)
+  })
+
   it('kontroluje i varianty (špatný kontrast jen na úzkém viewportu)', () => {
     const r = validateSkin(
       minimal({

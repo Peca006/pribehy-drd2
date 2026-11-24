@@ -134,5 +134,8 @@ do mnoha komponent a vedle se vyvíjejí výpravy).
   na `#8a5e0e`, protože měl na pozadí jen 4,2:1.
 - ✅ Čtení a zápis `.drdskin` (ZIP), úložiště v IndexedDB, volba Hávu v nastavení a použití za běhu podle viewportu
   (`zip.ts`, `file.ts`, `store.ts`, `active.ts`, `runtime.ts`; ověřeno i v prohlížeči).
-- 🚧 Modul Šatník v sekci Více (seznam, náhled, aktivace, smazání, import a export souboru), tři Hávy
-  (Pergamen, Noc, retro RPG).
+- ✅ Modul Šatník (`src/modules/wardrobe/`, `#/satnik`, odkaz ve Více): seznam vzhledů, použití, smazání, export a import
+  `.drdskin` (i několika souborů, s výpisem chyb a varování) a náhled na zařízeních (telefon na výšku a šířku, tablet
+  na výšku a šířku). Náhled je aplikace v `<iframe>` ve skutečných rozměrech zařízení; Háv se do něj předává přes `?hav=…`,
+  takže se dá prohlížet bez aktivace. E2E: `e2e/satnik.spec.ts`.
+- 🚧 Tři Hávy (Pergamen, Noc, retro RPG).

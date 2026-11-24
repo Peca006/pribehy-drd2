@@ -154,7 +154,10 @@ export function contrastIssues(skin: Skin): SkinIssue[] {
       issues.push({
         level,
         path: `tokens.${p.fg}`,
-        message: `kontrast ${p.fg.slice(6)} na ${p.bg === 'bg' ? 'pozadí' : 'ploše'} je ${ratio.toFixed(1)}:1 (${viewportLabel(viewport)}); ${
+        message: `kontrast ${p.fg.slice(6)} na ${p.bg === 'bg' ? 'pozadí' : 'ploše'} je ${ratio.toFixed(1)}:1${
+          // označení viewportu má smysl jen tam, kde se vzhled podle něj mění
+          skin.variants.length ? ` (${viewportLabel(viewport)})` : ''
+        }; ${
           level === 'error'
             ? `minimum je ${p.min}:1, Háv nelze aktivovat`
             : `doporučeno aspoň ${p.warn}:1`
