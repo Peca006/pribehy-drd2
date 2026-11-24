@@ -134,4 +134,4 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 | 0.4.0 | Úložiště předpisů (Grimoár), `recipeLinks` v postavě, předpisy v přenosu |
 | 0.4.x | Ilustrace postav (`characterImages`), přenos jen v souboru |
 | 0.4.11 | Záloha všech dat, `BACKUP_VERSION` 1 |
-| 0.5.0 (rozpracováno) | Úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1); záloha je nese jako volitelné seznamy (`BACKUP_VERSION` zůstává 1, starší soubory je nemají) |
+| 0.5.0 | Úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1); záloha je nese jako volitelné seznamy (`BACKUP_VERSION` zůstává 1, starší soubory je nemají) |

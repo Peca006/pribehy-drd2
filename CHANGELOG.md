@@ -1,5 +1,18 @@
 # Změny
 
+## 0.5.0 (24. 11. 2026)
+
+- **Výpravy (nová sekce pro Průvodce):** tři vrstvy. *Dobrodružství* je lehký kontejner (téma, pozadí, poznámky, výpravy v doporučeném pořadí), *výprava* je příprava podle SRD (zápletka, cíl, styl, uzlové body, příhody v balíčcích před prvním uzlem, po uzlech a kdykoli, rozuzlení) a *vedení* je rozehraná hra jedné družiny s jednou výpravou. Vedení odkazuje na přípravu živě, takže úprava přípravy se projeví i v rozehrané hře. Pozadí a příhody jsou tajné a nikam se nesdílejí.
+- **Při hře:** stav příhod (nasadit, odehráno s úspěchem, neúspěchem nebo jinak, odložit), uzlové body, ukazatel tempa Zdrojů, improvizované příhody s uložením do přípravy a přechod do konfliktu s předvyplněnými bytostmi. U družiny jsou rozehrané výpravy a přehled „Co teď vedu“.
+- **Uzavření výpravy:** návrh zápisu do žurnálu družiny z odehraných příhod (Průvodce upraví a schválí), stav „hotová“ a nabídka další výpravy dobrodružství.
+- **Kořist (11e):** předdefinovaná u příhody (peníze, suroviny s druhem, výbava, trofeje), při hře se odhalí, upřesní a rozdělí členu družiny. Postavě na tomto zařízení se zapíše do deníku, jinak vznikne zápis v žurnálu.
+- **Cizí postavy:** zásoba postav u dobrodružství (vzhled a povaha, jednání a vztahy, vědomosti, motivace, skupina, vazba na bytost z Bestiáře), výběr do výprav, vlastní postavy samostatných výprav, odkaz z příhod a při hře karta s motivací a přehled podle skupin.
+- **Ukázka a inspirace:** vlastní ukázkové dobrodružství se dvěma výpravami a třemi cizími postavami v ukázkových datech; v přípravě jen pro čtení koncept družiny, příběhy postav a cíle místních postav.
+- **Šatník (Háv, `.drdskin`):** nový modul ve Více. Formát a validace Hávu (komunitní vstup se kontroluje, nic se neskládá do textu CSS), čtení a zápis souboru `.drdskin`, úložiště Hávů a volba vzhledu za běhu, obrazovka se seznamem vzhledů, importem, exportem a náhledem na třídách zařízení a tři vestavěné Hávy (Pergamen, Noc, Podzemí). Popis: `WARDROBE.md`.
+- **Skinování:** role tokenů rozdělené na border, text-muted, danger, success, warning, scrim a shadow; spodní pruhy a navigace jsou „lepivé“ (sticky) a nezakrývají konec stránky.
+- **Data:** nová úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1, bez migrace starých dat). Záloha je nese jako volitelné seznamy, `BACKUP_VERSION` zůstává 1 a starší zálohy se obnoví. Změny v `FORMAT.md`.
+- **Pod kapotou:** nástroje Kartotéky (`tools/kartoteky`: taxonomie, export karet a kontrola proti Fafrinově sadě) a zápis výsledků zkoušek Audiogramu; nové unit i E2E testy Výprav a Šatníku.
+
 ## 0.4.11 (22. 11. 2026)
 
 - **Záloha a obnova dat (Více):** všechna data do jednoho souboru `drd2-zaloha-RRRR-MM-DD.json`: postavy, družiny, bytosti, předpisy, rozpracované úpravy a zdroje, volitelně ilustrace. Obnova „Doplnit“ nic nepřepíše, „Přepsat“ nahradí záznamy se stejným ID (s potvrzením). Soubor se při čtení očistí; cizí, poškozený nebo novější soubor se odmítne srozumitelnou hláškou. Balíčky pravidel se nezálohují.
