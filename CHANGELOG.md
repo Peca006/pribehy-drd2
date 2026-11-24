@@ -1,5 +1,10 @@
 # Změny
 
+## 0.5.1 (25. 11. 2026)
+
+- **Anonymní měření (GoatCounter):** na ostrém webu se měří, kolik lidí aplikaci otevírá, v jaké verzi, kolik se stáhlo balíčků (`balicek/<id>`) a kolik nových verzí (`aktualizace`). Bez cookies a bez osobních údajů, z aplikace se neposílá žádný obsah ani postavy. Neměří se při vývoji a v testech, při nastaveném „Do Not Track“ ani offline; skript je z jiné domény a service worker ho neukládá. Informace je ve Více → Aplikace.
+- **Pod kapotou:** `core/stats.ts` (načtení skriptu, fronta událostí) s unit testy.
+
 ## 0.5.0 (24. 11. 2026)
 
 - **Výpravy (nová sekce pro Průvodce):** tři vrstvy. *Dobrodružství* je lehký kontejner (téma, pozadí, poznámky, výpravy v doporučeném pořadí), *výprava* je příprava podle SRD (zápletka, cíl, styl, uzlové body, příhody v balíčcích před prvním uzlem, po uzlech a kdykoli, rozuzlení) a *vedení* je rozehraná hra jedné družiny s jednou výpravou. Vedení odkazuje na přípravu živě, takže úprava přípravy se projeví i v rozehrané hře. Pozadí a příhody jsou tajné a nikam se nesdílejí.
