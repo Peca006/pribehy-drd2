@@ -46,7 +46,7 @@
 
 <style>
   .help {
-    border: 1px solid var(--drd-muted);
+    border: 1px solid var(--drd-border);
     border-radius: var(--drd-radius);
     padding: 0.25rem 0.75rem;
     margin: 0.4rem 0 0.5rem;

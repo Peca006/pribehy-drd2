@@ -608,7 +608,7 @@
     text-align: center;
   }
   .opp {
-    border-top: 1px solid var(--drd-muted);
+    border-top: 1px solid var(--drd-border);
     margin-top: 0.5rem;
     padding-top: 0.5rem;
   }
@@ -616,10 +616,10 @@
     font-size: 1.6rem;
   }
   .ok {
-    color: #7c7;
+    color: var(--drd-success);
   }
   .bad {
-    color: #e88;
+    color: var(--drd-danger);
   }
   .threat {
     margin-top: 0.5rem;

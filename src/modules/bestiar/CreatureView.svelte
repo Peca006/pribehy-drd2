@@ -89,7 +89,7 @@
   .glyphs {
     font-size: 0.6em;
     letter-spacing: 0.15em;
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
     font-weight: normal;
   }
   .facts {
@@ -103,7 +103,7 @@
   }
   .note {
     font-size: 0.85rem;
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
     max-width: 14rem;
   }
   dt {

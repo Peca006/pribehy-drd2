@@ -418,7 +418,7 @@
   td {
     text-align: left;
     padding: 0.25rem 0.4rem;
-    border-bottom: 1px solid var(--drd-muted);
+    border-bottom: 1px solid var(--drd-border);
   }
   .reduced {
     color: var(--drd-accent);
@@ -434,7 +434,7 @@
     white-space: nowrap;
   }
   .badge.off {
-    border-color: var(--drd-muted);
+    border-color: var(--drd-border);
     text-decoration: line-through;
   }
 </style>

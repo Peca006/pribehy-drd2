@@ -95,10 +95,10 @@
   }
   .culture {
     margin: 0 0 0.5rem 1.6rem;
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
   }
   fieldset {
-    border: 1px solid var(--drd-muted);
+    border: 1px solid var(--drd-border);
     border-radius: var(--drd-radius);
   }
 </style>
