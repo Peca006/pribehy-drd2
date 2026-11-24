@@ -73,11 +73,45 @@ assets/…             volitelné obrázky (od M2)
 ### Validace při importu
 
 - Povolené klíče tokenů jen z výše uvedené sady (`--drd-*`); neznámé se zahodí s upozorněním.
-- Hodnota podle typu: barva, délka, seznam písem (jen systémová písma), stín. Ověření přes `CSS.supports` a vlastní kontrola
-  (žádné `url()`, `;`, `{`, `}`, `\`, `/*`). V M1 žádné vlastní fonty ani obrázky.
-- Limity: velikost souboru, počet variant, délka hodnot.
-- Kontrast (WCAG): `text`/`bg`, `text`/`surface`, `text-muted`/`bg`, `accent`/`surface`, stavové barvy/`surface`.
-  Pod 3:1 se Háv nedá aktivovat, pod 4,5:1 se jen varuje. Kontrola se provádí i na každé variantě.
+- Hodnota podle typu, s vlastním přísným parserem (žádné `CSS.supports`, takže funguje i v testech a ve workeru):
+  - **barva:** `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, `rgb()`, `hsl()` (čárkový i mezerový zápis); pojmenované barvy ne.
+    `bg`, `surface`, text a akcent musí být neprůhledné, `scrim` smí mít průhlednost.
+  - **délka:** `px`, `rem`, `em` (1 rem = 16 px); `radius` 0–48 px, `gap` 4–32 px.
+  - **písmo:** 1–8 systémových písem, víceslovné názvy v uvozovkách, poslední musí být obecná rodina
+    (`sans-serif`, `serif`, `monospace`, `system-ui`). Žádné `@font-face`.
+  - **stín:** `none`, nebo 1–3 vrstvy s právě jednou barvou, 2–4 délkami (každá do 64 px), rozostření nezáporné.
+  - Nikdy `url()`, `var()`, `calc()`, `;`, `{`, `}`, `\`, `@`, `<`, `>`, komentáře ani řídicí znaky; hodnota nejvýše 200 znaků.
+  - V M1 žádné vlastní fonty ani obrázky (`assets` se ignoruje s varováním).
+- Limity: manifest nejvýše 64 KB, nejvýše 16 variant; `id` nesmí být `system`, `default-dark`, `default-light`.
+- Neznámé položky a tokeny se ignorují s varováním (kvůli budoucím verzím formátu), neplatné hodnoty jsou chyba.
+- Kontrast (WCAG) na `bg` i `surface`: `text`, `text-muted`, `accent`, `danger`, `success`, `warning`.
+  Pod 3:1 je chyba (Háv se nedá aktivovat), pod 4,5:1 jen varování. Okraje nejsou text: chyba pod 1,5:1, varování pod 3:1.
+  Kontroluje se po sloučení variant pro všech 12 kombinací viewportu, shodné výsledky se hlásí jednou.
+
+## Načítání, úložiště a volba
+
+- **ZIP bez závislostí** (`src/core/skin/zip.ts`): vlastní čtečka a zapisovač nad `DecompressionStream('deflate-raw')`.
+  Čte nedůvěryhodný vstup, proto: bez ZIP64, šifrování a vícedílných archivů; velikost se hlídá podle hlavičky i za běhu
+  rozbalení (hlavička může lhát, zip bomba); bezpečné názvy souborů; kontrola CRC-32. Limity: soubor 8 MB,
+  položka 2 MB, 64 položek, manifest 64 kB.
+- **Úložiště** (`store.ts`): samostatná databáze `drd2-wardrobe` (ne `drd2-data`, aby změna vzhledu neriskovala
+  migraci postav a družin). Každý Háv se při čtení znovu zvaliduje, neplatný se přeskočí. Nejvýše 30 Hávů, stejné `id` Háv
+  přepíše. Zahrnutí Hávů do celkového zálohování se rozhodne zvlášť.
+- **Volba** (`settings.skin`): `system` (výchozí), `default-light`, `default-dark`, nebo `id` nainstalovaného Hávu.
+  Smazaný či neplatný Háv spadne na „podle systému“, aplikace zůstane vždy použitelná.
+- **Viewport za běhu** (`runtime.ts`): přepočítává se při `resize` a `orientationchange` (s kontrolou po 250 ms, protože
+  některé prohlížeče pošlou událost dřív, než se přepočítají rozměry). Při psaní do pole se orientace a „nízký“ viewport
+  nemění, jinak by vysunutá klávesnice na telefonu přepnula vzhled.
+
+## Třetí Háv (retro PC RPG)
+
+Styl Eye of the Beholder 1–3, Legends of Kyrandia, Dungeon Master, Wizardry 7: pixelart, sytá „drahokamová“ paleta
+(tlačítka), pseudo zlaté, stříbrné a měděné kování, mramorové pozadí, čitelné písmo (nejlépe s embosem).
+Nemá napodobovat Truhlici.
+
+- **M1 (jen tokeny):** paleta drahokamů a kovů, ostré hrany (`radius` 0), čitelné písmo, tmavý základ.
+- **M2 (textury):** mramorové pozadí (dlaždice), kování jako 9-slice rámečky, pixelartové ikony a tlačítka-drahokamy;
+  pro embos přidat token pro stín textu (`--drd-text-shadow`), který zatím chybí.
 
 ## Milníky
 
@@ -95,5 +129,13 @@ do mnoha komponent a vedle se vyvíjejí výpravy).
 
 ## Stav
 
-- ✅ Rozdělení rolí tokenů a vyčištění pevných barev (`a3cfcd0`).
-- 🚧 Formát, validace, úložiště, modul Šatník.
+- ✅ Rozdělení rolí tokenů a vyčištění pevných barev (PR #13).
+- ✅ Formát a validace Hávu: `src/core/skin/` (`color.ts`, `tokens.ts`, `skin.ts`, testy). Světlý výchozí akcent ztmavnut
+  na `#8a5e0e`, protože měl na pozadí jen 4,2:1.
+- ✅ Čtení a zápis `.drdskin` (ZIP), úložiště v IndexedDB, volba Hávu v nastavení a použití za běhu podle viewportu
+  (`zip.ts`, `file.ts`, `store.ts`, `active.ts`, `runtime.ts`; ověřeno i v prohlížeči).
+- ✅ Modul Šatník (`src/modules/wardrobe/`, `#/satnik`, odkaz ve Více): seznam vzhledů, použití, smazání, export a import
+  `.drdskin` (i několika souborů, s výpisem chyb a varování) a náhled na zařízeních (telefon na výšku a šířku, tablet
+  na výšku a šířku). Náhled je aplikace v `<iframe>` ve skutečných rozměrech zařízení; Háv se do něj předává přes `?hav=…`,
+  takže se dá prohlížet bez aktivace. E2E: `e2e/satnik.spec.ts`.
+- 🚧 Tři Hávy (Pergamen, Noc, retro RPG).

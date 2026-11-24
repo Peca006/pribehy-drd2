@@ -41,7 +41,7 @@ export const lightTheme: Theme = {
     '--drd-text': '#2a2622',
     '--drd-text-muted': '#6b6254',
     '--drd-border': '#6b6254',
-    '--drd-accent': '#9a6b12',
+    '--drd-accent': '#8a5e0e', // dřív #9a6b12 (4,2:1 na pozadí); teď ≥ 4,5:1
     // tmavší odstíny: světlé varianty z tmavého skinu by na světlém pozadí neměly dost kontrastu
     '--drd-danger': '#b3261e',
     '--drd-success': '#2e7d32',

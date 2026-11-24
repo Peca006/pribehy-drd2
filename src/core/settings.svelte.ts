@@ -9,14 +9,20 @@ interface Settings {
   termLinks: LinkMode
   /** jméno, kterým se podepisují změny postav (hráč nebo vypravěč) */
   author: string
+  /** zvolený vzhled: `system`, výchozí skin, nebo `id` nainstalovaného Hávu */
+  skin: string
 }
 
+const SKIN_ID = /^[a-z0-9-]{1,40}$/
+
 function load(): Settings {
-  const s: Settings = { termLinks: 'first', author: 'hráč' }
+  const s: Settings = { termLinks: 'first', author: 'hráč', skin: 'system' }
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}')
     if (isLinkMode(raw.termLinks)) s.termLinks = raw.termLinks
-    if (typeof raw.author === 'string' && raw.author.trim()) s.author = raw.author.trim().slice(0, 60)
+    if (typeof raw.author === 'string' && raw.author.trim())
+      s.author = raw.author.trim().slice(0, 60)
+    if (typeof raw.skin === 'string' && SKIN_ID.test(raw.skin)) s.skin = raw.skin
   } catch {
     /* výchozí hodnoty */
   }
@@ -27,7 +33,14 @@ export const settings = $state(load())
 
 function save() {
   try {
-    localStorage.setItem(KEY, JSON.stringify({ termLinks: settings.termLinks, author: settings.author }))
+    localStorage.setItem(
+      KEY,
+      JSON.stringify({
+        termLinks: settings.termLinks,
+        author: settings.author,
+        skin: settings.skin,
+      }),
+    )
   } catch {
     /* nastavení platí aspoň do zavření stránky */
   }
@@ -35,6 +48,11 @@ function save() {
 
 export function setTermLinks(mode: LinkMode) {
   settings.termLinks = mode
+  save()
+}
+
+export function setSkin(id: string) {
+  settings.skin = SKIN_ID.test(id) ? id : 'system'
   save()
 }
 

@@ -19,7 +19,10 @@
   <HelpPage />
 {:else}
 <h1>Více</h1>
-<p><a class="btn" href="#/knihovna/napoveda">Nápověda a návody</a></p>
+<p>
+  <a class="btn" href="#/knihovna/napoveda">Nápověda a návody</a>
+  <a class="btn" href="#/satnik">Šatník (vzhled aplikace)</a>
+</p>
 
 <HelpHeading title="Nastavení" topic="nastaveni" />
 <div class="panel settings">
