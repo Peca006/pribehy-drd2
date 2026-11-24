@@ -1,6 +1,6 @@
 # Výpravy: návrh (rešerše pravidel SRD a plán)
 
-Stav (24. 11. 2026): návrh schválen (tři vrstvy dobrodružství / výprava / vedení). **Hotové etapy: 1 (úložiště, přehled, základ výpravy), 2 (uzlové body a příhody), 3 (vedení a Při hře).** Zbývá 4 až 7. Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
+Stav (24. 11. 2026): návrh schválen (tři vrstvy dobrodružství / výprava / vedení). **Hotové etapy: 1 (úložiště, přehled, základ výpravy), 2 (uzlové body a příhody), 3 (vedení a Při hře), 4 (uzavření, zápis do žurnálu, další výprava, bytost do konfliktu).** Zbývá 5 až 7. Větev `worktree-vypravy` (worktree `vypravy`), práce půjde po
 etapách s vlastními commity a jedním PR na konci (nebo po etapách, podle domluvy). Navazuje na `TODO.md` (Výpravy, Kořist 11e) a
 `PLAN-POMUCKY.md`. Odkazy v závorkách vedou do příručky (kapitola a kotva).
 
@@ -141,7 +141,7 @@ nový typ přenosu). Trofeje: jen název a poznámka. Hráč zvláštní panel n
 | ✅ 1 | Model a tři úložiště (`adventures`, `expeditions`, `runs`, DB v8, schéma 1), záloha, `FORMAT.md`; modul Výpravy: seznam, dobrodružství (kontejner), základ výpravy (pozadí, zápletka, cíl, styl) | unit testy, E2E vytvoření a uložení |
 | ✅ 2 | Uzlové body a příhody v balíčcích (`stage`), úprava příhody, řazení | unit testy řazení, E2E |
 | ✅ 3 | Vedení: začít s družinou, Při hře (nasazení, odehráno, výsledek, uzlové body, improvizace, ukazatel tempa), část „Rozehrané výpravy“ u družiny | unit testy stavů, E2E |
-| 4 | Uzavření: návrh zápisu do žurnálu, stav „hotová“, nabídka další výpravy; odkaz na konflikt a příručku | E2E |
+| ✅ 4 | Uzavření: návrh zápisu do žurnálu, stav „hotová“, nabídka další výpravy; odkaz na konflikt a příručku | E2E |
 | 5 | Kořist (11e) a zápis postavám | unit testy, E2E |
 | 6 | Inspirace z postav družiny, vlastní ukázková výprava v ukázkových datech (vlastní text), nápověda „?“, `CHANGELOG.md`, vydání | E2E, ověření na telefonu |
 | 7 | **Cizí postavy (CP) v dobrodružství**: zásoba CP u dobrodružství, přidělování k výpravám a příhodám, motivace, příslušnost ke skupinám, vazba na Bestiář (viz níže) | unit testy, E2E |
@@ -156,6 +156,16 @@ Nad rámec původního návrhu; zapsáno, aby se na to nezapomnělo, a záměrn�
   `Incident.cast` jen jméno a volitelná bytost; pole `npcId` se přidá později jako volitelné (bez migrace schématu).
 - **Samostatné výpravy** (bez dobrodružství) mohou mít CP přímo u výpravy; podrobnost se rozhodne při návrhu etapy 7.
 - Ve vedení se může u CP evidovat, zda je družina potkala a jaký k nim má postoj (nepovinné, rozhodnout později).
+
+### Další milník: vedení hry (čas a spravedlivý prostor), poznámka z 24. 11. 2026
+Nápady na pomůcky pro vedení sezení. Nepatří do etap 1 až 7 Výprav, zapsáno na další milník po nich.
+- **Časomíra:** sleduje, kolik času měl který hráč (postava) k dispozici.
+- **Spravedlivý herní prostor:** rozumné sledování, aby každý měl přibližně stejný prostor; upozornění, kdo je pozadu.
+- **Snadno porovnatelné stupnice:** viditelné zobrazení času a prostoru hráčů vedle sebe (např. pruhy ve stejném měřítku).
+- **Plánování podle délky sezení:** při plánované délce sezení (a počtu hráčů) ukázat, kolik času zbývá celkem a na jednoho hráče a kolik příhod se stihne.
+- **Snadné přepínání mezi hráči (postavami)** během sezení: jedno klepnutí, kdo je právě na řadě; časomíra běží tomu, kdo je aktivní.
+- **Krátký odpočet (countdown)** pro rychlé reakce s omezeným časem (např. dilema, rychlé rozhodnutí), nezávislý na hlavní časomíře.
+- Vazby: vedení (`Run`) a sezení družiny (žurnál, rozdělení zkušeností); časy by byly volitelný záznam k sezení.
 
 ## 5. Otevřené otázky
 

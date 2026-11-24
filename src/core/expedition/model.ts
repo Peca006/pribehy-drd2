@@ -95,6 +95,8 @@ export interface RunIncident {
   state: 'nasazena' | 'odehrana' | 'odlozena'
   outcome?: Outcome
   result: string
+  /** kdy byla příhoda odehrána (ISO); řadí shrnutí do žurnálu */
+  at?: string
 }
 
 export interface Run {
@@ -110,6 +112,8 @@ export interface Run {
   extra: Incident[]
   loot: Record<string, { state: 'ukryta' | 'odhalena' | 'rozdelena'; to?: string }>
   notes: string
+  /** zápis o výpravě, který Průvodce uložil do žurnálu družiny */
+  journalEntryId?: string
   started: string
   updated: string
 }

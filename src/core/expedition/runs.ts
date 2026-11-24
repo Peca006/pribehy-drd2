@@ -1,9 +1,11 @@
 // Přehledy vedení pro obrazovky a zahájení vedení (spojuje družiny, přípravu a stav hry).
-import { listParties } from '../party/store'
+import { newEntry, withEntry } from '../party/journal'
+import { listParties, saveParty } from '../party/store'
 import { roleOf, type Party } from '../party/model'
+import { followUps } from './closing'
 import { emptyRun, type Expedition, type Run, type RunStatus } from './model'
 import { pace } from './run'
-import { getExpedition, listExpeditions, listRuns, saveRun } from './store'
+import { getAdventure, getExpedition, getRun, listExpeditions, listRuns, saveRun } from './store'
 
 export const STATUS_LABEL: Record<RunStatus, string> = {
   probiha: 'probíhá',
@@ -53,4 +55,33 @@ export async function beginRun(expeditionId: string, partyId: string): Promise<R
   const run = emptyRun(`${expedition.name} – ${party.name}`, partyId, expeditionId)
   await saveRun(run)
   return run
+}
+
+/** Uloží zápis o výpravě do žurnálu družiny (schválený, jako zápis Průvodce) a vedení uzavře. */
+export async function closeRun(
+  runId: string,
+  entry: { title: string; text: string },
+  author: string,
+  options: { close?: boolean } = {},
+): Promise<{ run: Run; party: Party }> {
+  const run = await getRun(runId)
+  if (!run) throw new Error('Vedení neexistuje.')
+  const party = (await listParties()).find((p) => p.id === run.partyId)
+  if (!party) throw new Error('Družina neexistuje.')
+  if (roleOf(party) !== 'pruvodce') throw new Error('Do žurnálu této družiny smí zapisovat jen její Průvodce.')
+  const e = newEntry(author, true, entry.title, entry.text)
+  if (!e) throw new Error('Zápis je prázdný.')
+  const saved = withEntry(party, e)
+  await saveParty(saved)
+  const next: Run = { ...run, journalEntryId: e.id, ...(options.close === false ? {} : { status: 'hotova' as const }) }
+  await saveRun(next)
+  return { run: next, party: saved }
+}
+
+/** Další výpravy dobrodružství, které družina ještě nehrála. */
+export async function nextExpeditions(run: Run): Promise<Expedition[]> {
+  const exp = await getExpedition(run.expeditionId)
+  const adv = exp?.adventureId ? await getAdventure(exp.adventureId) : undefined
+  if (!exp || !adv) return []
+  return followUps(exp, adv.expeditionIds, await listExpeditions(), await listRuns(), run.partyId)
 }

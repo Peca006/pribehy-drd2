@@ -50,8 +50,8 @@ export const deploy = (run: Run, id: string): Run =>
   patchIncident(run, id, (c) => ({ result: c?.result ?? '', ...(c?.outcome ? { outcome: c.outcome } : {}), state: 'nasazena' }))
 
 /** Odehraná příhoda s výsledkem a poznámkou. */
-export const finish = (run: Run, id: string, outcome: Outcome, result: string): Run =>
-  patchIncident(run, id, () => ({ state: 'odehrana', outcome, result: result.trim() }))
+export const finish = (run: Run, id: string, outcome: Outcome, result: string, at = new Date().toISOString()): Run =>
+  patchIncident(run, id, () => ({ state: 'odehrana', outcome, result: result.trim(), at }))
 
 /** Odloží příhodu na později (zůstane k dispozici). */
 export const postpone = (run: Run, id: string): Run =>

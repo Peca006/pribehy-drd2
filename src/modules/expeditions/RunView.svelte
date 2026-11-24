@@ -20,11 +20,15 @@
     unreachNode,
     type PlayItem,
   } from '../../core/expedition/run'
-  import { STATUS_LABEL } from '../../core/expedition/runs'
+  import { journalDraft } from '../../core/expedition/closing'
+  import { STATUS_LABEL, beginRun, closeRun, nextExpeditions } from '../../core/expedition/runs'
   import { deleteRun, getExpedition, getRun, saveExpedition, saveRun } from '../../core/expedition/store'
   import type { Party } from '../../core/party/model'
+  import { addToConflict, fromCreature } from '../../core/party/conflict'
   import { getParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
+  import { settings } from '../../core/settings.svelte'
+  import { bestiary, findCreature, refreshBestiary } from '../bestiar/state.svelte'
 
   // Vedení (Při hře): balíčky příhod podle uzlových bodů, stav příhod, uzlové body, tempo Zdrojů, improvizace.
   let { id }: { id: string } = $props()
@@ -34,6 +38,11 @@
   let party = $state.raw<Party | undefined>(undefined)
   let loaded = $state(false)
   let extraTitle = $state('')
+  let conflictMsg = $state('')
+  let closing = $state(false)
+  let entry = $state({ title: '', text: '' })
+  let closeMsg = $state('')
+  let follow = $state.raw<Expedition[]>([])
   /** rozepsaný výsledek příhody (výsledek a vyústění), než se odehraje */
   let drafts = $state<Record<string, { outcome: Outcome; result: string }>>({})
   const ensureDraft = (iid: string) => {
@@ -47,6 +56,8 @@
       exp = await getExpedition(run.expeditionId)
       party = await getParty(run.partyId)
     }
+    if (run?.status === 'hotova') follow = await nextExpeditions(run)
+    if (!bestiary.loaded) void refreshBestiary()
     loaded = true
   })
 
@@ -85,6 +96,43 @@
     exp = r.expedition
     await change(r.run)
   }
+  function toConflict(creatureId: string) {
+    if (!run) return
+    const c = findCreature(creatureId)
+    if (!c) {
+      conflictMsg = 'Bytost se nepodařilo najít (chybí balíček Bestiáře?).'
+      return
+    }
+    addToConflict(run.partyId, fromCreature(c))
+    conflictMsg = `${c.name} je přidána do konfliktu družiny.`
+  }
+
+  function openClosing() {
+    if (!run || !exp) return
+    entry = journalDraft(exp, snap())
+    closeMsg = ''
+    closing = true
+  }
+  async function saveEntry(closeRunToo: boolean) {
+    if (!run) return
+    closeMsg = ''
+    try {
+      await queue
+      const r = await closeRun(id, { ...entry }, settings.author, { close: closeRunToo })
+      run = r.run
+      closing = false
+      closeMsg = 'Zápis je v žurnálu družiny. Hráči ho dostanou při dalším sdílení družiny.'
+      follow = closeRunToo ? await nextExpeditions(r.run) : []
+    } catch (e) {
+      closeMsg = e instanceof Error ? e.message : String(e)
+    }
+  }
+  async function beginNext(expeditionId: string) {
+    if (!run) return
+    const next = await beginRun(expeditionId, run.partyId)
+    go('vypravy', 'vedeni', next.id)
+  }
+
   async function removeRun() {
     if (!run) return
     if (
@@ -110,7 +158,19 @@
     {#if i.text}<p class="text">{i.text}</p>{/if}
     {#if i.place}<p><strong>Místo:</strong> {i.place}</p>{/if}
     {#if i.conditions}<p><strong>Předpoklady:</strong> {i.conditions}</p>{/if}
-    {#if i.cast.length}<p><strong>Postavy:</strong> {i.cast.map((c) => c.name).join(', ')}</p>{/if}
+    {#if i.cast.length}
+      <p>
+        <strong>Postavy:</strong>
+        {i.cast.map((c) => c.name).join(', ')}
+      </p>
+      {#if i.cast.some((c) => c.creatureId)}
+        <p class="btns">
+          {#each i.cast.filter((c) => c.creatureId) as c}
+            <button onclick={() => toConflict(c.creatureId!)} aria-label={`Do konfliktu: ${c.name}`}>Do konfliktu: {c.name}</button>
+          {/each}
+        </p>
+      {/if}
+    {/if}
     {#if i.ifSuccess}<p><strong>Když uspějí:</strong> {i.ifSuccess}</p>{/if}
     {#if i.ifFailure}<p><strong>Když neuspějí:</strong> {i.ifFailure}</p>{/if}
     {#if item.run?.result}<p class="result"><strong>Výsledek:</strong> {item.run.result}</p>{/if}
@@ -207,6 +267,7 @@
       </p>
       <p class="muted">
         Jen pomůcka: hrdinům mají Zdroje vystačit „tak akorát“. Hráče, kteří šetří, netrestejte dalšími příhodami.
+        <a href="#/ctenar/41-priprava-a-vedeni-hry/hrajete-o-zdroje">Pravidlo v příručce</a>
       </p>
     </section>
   {/if}
@@ -250,10 +311,45 @@
     <button onclick={addImprov} disabled={!extraTitle.trim()}>Přidat</button>
   </div>
 
+  {#if conflictMsg}
+    <p role="status">{conflictMsg} <a href={'#/druziny/' + run.partyId + '/konflikt'}>Otevřít konflikt</a></p>
+  {/if}
+
   <h2>Poznámky ze hry</h2>
   <div onchange={save} role="group" aria-label="Poznámky">
     <textarea rows="4" bind:value={run.notes} aria-label="Poznámky ze hry"></textarea>
   </div>
+
+  <h2>Uzavření výpravy</h2>
+  {#if party && party.role === 'hrac'}
+    <p class="muted">Tuto družinu vede jiný Průvodce, zápis do jejího žurnálu nelze vytvořit.</p>
+  {:else if closing}
+    <div class="panel">
+      <p class="muted">
+        Návrh zápisu z odehraných příhod. Zápis uvidí hráči po sdílení družiny, proto před uložením zkontrolujte, že neprozrazuje tajemství.
+      </p>
+      <label>Nadpis zápisu <input bind:value={entry.title} aria-label="Nadpis zápisu" /></label>
+      <label>Text zápisu <textarea rows="9" bind:value={entry.text} aria-label="Text zápisu"></textarea></label>
+      <p class="btns">
+        <button class="primary" onclick={() => saveEntry(true)}>Uložit do žurnálu a uzavřít výpravu</button>
+        <button onclick={() => saveEntry(false)}>Uložit do žurnálu, vedení nechat otevřené</button>
+        <button onclick={() => (closing = false)}>Zrušit</button>
+      </p>
+    </div>
+  {:else}
+    {#if run.journalEntryId}<p class="muted">Zápis o této výpravě už je v žurnálu družiny.</p>{/if}
+    <p><button class="primary" onclick={openClosing}>{run.journalEntryId ? 'Přidat další zápis do žurnálu' : 'Zapsat do žurnálu a uzavřít'}</button></p>
+  {/if}
+  {#if closeMsg}<p role="status">{closeMsg}</p>{/if}
+  {#if follow.length}
+    <h3>Další výprava v dobrodružství</h3>
+    {#each follow as f (f.id)}
+      <div class="panel node">
+        <strong>{f.name}</strong>
+        <button onclick={() => beginNext(f.id)} aria-label={`Začít výpravu ${f.name} s touto družinou`}>Začít s touto družinou</button>
+      </div>
+    {/each}
+  {/if}
 
   <p><button onclick={removeRun}>Smazat vedení</button></p>
 {/if}

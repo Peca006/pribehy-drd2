@@ -8,6 +8,8 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 
 - **Výpravy (další milník, rozpracováno: návrh v `PLAN-VYPRAVY.md`, větev `worktree-vypravy`).** Sekce pro vypravěče: podklady pro tažení, výpravy a dobrodružství, vazba na družiny a žurnál,
   ukázkové dobrodružství a skupiny bytostí do ukázkových dat. Počká na reakce testerů a zkoušku 0.4.x na telefonu.
+- **Vedení hry, další milník po Výpravách.** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
+  stupnice, plánování podle délky sezení, rychlé přepínání mezi hráči (postavami) a krátký odpočet pro rychlé reakce. Zápis v `PLAN-VYPRAVY.md`.
 - **Kořist (11e).** Patří k Výpravám: vypravěč si kořist předdefinuje, při odhalení upřesní, zafixuje a rozdělí postavám
   (Peníze, Suroviny s druhem, výbava). Hráč zvláštní panel nepotřebuje. Trofeje jen název a poznámka.
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`

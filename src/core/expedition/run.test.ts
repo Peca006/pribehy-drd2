@@ -46,8 +46,13 @@ describe('vedení výpravy', () => {
     expect(stateOf(run, ids.A)).toBe('priprava')
     let r = deploy(run, ids.A)
     expect(stateOf(r, ids.A)).toBe('nasazena')
-    r = finish(r, ids.A, 'neuspech', '  Utekli  ')
-    expect(r.incidents[ids.A]).toEqual({ state: 'odehrana', outcome: 'neuspech', result: 'Utekli' })
+    r = finish(r, ids.A, 'neuspech', '  Utekli  ', '2026-11-24T10:00:00.000Z')
+    expect(r.incidents[ids.A]).toEqual({
+      state: 'odehrana',
+      outcome: 'neuspech',
+      result: 'Utekli',
+      at: '2026-11-24T10:00:00.000Z',
+    })
     r = postpone(r, ids.B)
     expect(stateOf(r, ids.B)).toBe('odlozena')
     r = reset(r, ids.A)
