@@ -2,16 +2,14 @@
 
 Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
 
-## Otevřené úkoly (stav k verzi 0.4.11, 22. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.5.0, 24. 11. 2026)
 
 ### Další práce
 
-- **Výpravy (další milník, rozpracováno: návrh v `PLAN-VYPRAVY.md`, větev `worktree-vypravy`).** Sekce pro vypravěče: podklady pro tažení, výpravy a dobrodružství, vazba na družiny a žurnál,
-  ukázkové dobrodružství a skupiny bytostí do ukázkových dat. Počká na reakce testerů a zkoušku 0.4.x na telefonu.
+- ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); zbývá zkouška na telefonu a export a import výprav souborem.
 - **Vedení hry, další milník po Výpravách.** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
   stupnice, plánování podle délky sezení, rychlé přepínání mezi hráči (postavami) a krátký odpočet pro rychlé reakce. Zápis v `PLAN-VYPRAVY.md`.
-- **Kořist (11e).** Patří k Výpravám: vypravěč si kořist předdefinuje, při odhalení upřesní, zafixuje a rozdělí postavám
-  (Peníze, Suroviny s druhem, výbava). Hráč zvláštní panel nepotřebuje. Trofeje jen název a poznámka.
+- ✅ **Kořist (11e, 0.5.0).** Příprava u příhody, odhalení, upřesnění a rozdělení postavám.
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
   včetně ilustrací). Zbývá projít migrace při první skutečné změně tvaru dat a ověřit zálohu a obnovu na telefonu (soubor přes
   e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`.
