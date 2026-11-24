@@ -17,8 +17,15 @@ export function tokensToCss(tokens: ThemeTokens): string {
     .join('')
 }
 
+// Proměnné, které `applyTheme` posledně nastavil, aby šly při změně tématu odebrat: Háv s obrázky (role) nastavuje
+// proměnné, které jiný Háv nemá, a staré by jinak zůstaly viset a obrázky by zůstaly vidět.
+const applied = new WeakMap<HTMLElement, Set<string>>()
+
 export function applyTheme(theme: Theme, root: HTMLElement = document.documentElement): void {
   root.dataset.theme = theme.id
   root.style.colorScheme = theme.scheme
+  const previous = applied.get(root)
+  if (previous) for (const k of previous) if (!(k in theme.tokens)) root.style.removeProperty(k)
   for (const [k, v] of Object.entries(theme.tokens)) root.style.setProperty(k, v)
+  applied.set(root, new Set(Object.keys(theme.tokens)))
 }

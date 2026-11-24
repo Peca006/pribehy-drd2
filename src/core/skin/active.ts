@@ -41,17 +41,28 @@ export function effectiveViewport(
   return last && typing ? { ...measured, orientation: last.orientation, low: last.low } : measured
 }
 
+/** Háv podle volby: vestavěné mají přednost (Háv ze souboru jejich id nesmí mít, ale pro jistotu); jinak null. */
+export function findSkin(choice: string, installed: readonly Skin[]): Skin | null {
+  return (
+    BUILTIN_SKINS.find((s) => s.id === choice) ?? installed.find((s) => s.id === choice) ?? null
+  )
+}
+
+/**
+ * Téma pro volbu. `assetUrls` jsou adresy obrázků zvoleného Hávu (název → `blob:`); dokud nejsou načtené, použijí se
+ * jen barvy.
+ */
 export function pickTheme(
   choice: string,
   installed: readonly Skin[],
   system: SystemScheme,
   viewport: Viewport,
+  assetUrls: Readonly<Record<string, string>> = {},
 ): Theme {
   if (choice === lightTheme.id) return lightTheme
   if (choice === darkTheme.id) return darkTheme
-  // vestavěné Hávy mají přednost (Háv ze souboru jejich id nesmí mít, ale pro jistotu)
-  const skin = BUILTIN_SKINS.find((s) => s.id === choice) ?? installed.find((s) => s.id === choice)
-  if (skin) return skinTheme(skin, viewport)
+  const skin = findSkin(choice, installed)
+  if (skin) return skinTheme(skin, viewport, assetUrls)
   // „podle systému“, ale i smazaný či neplatný Háv: aplikace musí vždy zůstat použitelná
   return system === 'light' ? lightTheme : darkTheme
 }

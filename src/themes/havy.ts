@@ -1,7 +1,23 @@
 // Vestavěné Hávy (vzhledy aplikace): vždy dostupné, nedají se smazat a jejich `id` je vyhrazené (viz `RESERVED_IDS`).
 // Jsou to obyčejné manifesty ve formátu `.drdskin` (WARDROBE.md), takže se dají v Šatníku exportovat a sloužit jako vzor
 // pro vlastní Hávy. Při načtení se zvalidují stejně jako Háv ze souboru; neplatná definice je chyba programu.
+import type { AssetFile } from '../core/skin/file'
 import { validateSkin, type Skin } from '../core/skin/skin'
+import {
+  copperFrame,
+  divider,
+  gemButton,
+  gemIcon,
+  ICON_MODULES,
+  marble,
+  tabRim,
+} from './podzemi/art'
+
+const svgAsset = (name: string, source: string): AssetFile => ({
+  name,
+  type: 'image/svg+xml',
+  bytes: new TextEncoder().encode(source),
+})
 
 const MANIFEST = {
   schema: 1,
@@ -64,8 +80,28 @@ const definitions = [
     scheme: 'dark',
     // retro PC RPG (Eye of the Beholder, Dungeon Master, Legends of Kyrandia): tmavý kámen, ametystové plochy,
     // zlatý akcent a měděné okraje, sytě „drahokamové“ stavové barvy, žádné zaoblení a tvrdý stín bez rozostření.
-    // Mramorové pozadí, kování a embos textu přijdou až s obrázky (milník 2).
+    // Obrázky (mramorové pozadí, měděné kování panelů, tlačítka jako drahokamy, ornamentální lišta a ikony) jsou
+    // vyrobené programově v `podzemi/art.ts`; embos textu dělá stín textu.
+    assets: {
+      kamen: { file: 'assets/kamen.svg' },
+      kovani: { file: 'assets/kovani.svg' },
+      klenot: { file: 'assets/klenot.svg' },
+      lem: { file: 'assets/lem.svg' },
+      ozdoba: { file: 'assets/ozdoba.svg' },
+      ...Object.fromEntries(
+        ICON_MODULES.map((m) => [`ikona-${m}`, { file: `assets/ikona-${m}.svg` }]),
+      ),
+    },
+    roles: {
+      background: { image: 'kamen', mode: 'repeat', size: 256 },
+      panel: { image: 'kovani', mode: 'slice', slice: 12, width: 9, fill: false },
+      button: { image: 'klenot', mode: 'slice', slice: 8, width: 5 },
+      tab: { image: 'lem', mode: 'slice', slice: [6, 0, 0, 0], edge: 'repeat', fill: false },
+      divider: { image: 'ozdoba', mode: 'repeat-x', size: 48, height: 8 },
+    },
+    icons: Object.fromEntries(ICON_MODULES.map((m) => [m, `ikona-${m}`])),
     tokens: {
+      '--drd-text-shadow': '1px 1px 0 rgb(0 0 0 / 0.85), -1px -1px 0 rgb(255 255 255 / 0.08)',
       '--drd-bg': '#130d1c',
       '--drd-surface': '#221733',
       '--drd-text': '#f3e9d0',
@@ -97,3 +133,15 @@ function build(raw: unknown): Skin {
 }
 
 export const BUILTIN_SKINS: readonly Skin[] = definitions.map(build)
+
+/** Obrázky vestavěných Hávů podle id Hávu. Jsou součástí kódu (ne samostatné soubory), takže fungují i offline. */
+export const BUILTIN_ASSETS: Readonly<Record<string, readonly AssetFile[]>> = {
+  podzemi: [
+    svgAsset('kamen', marble()),
+    svgAsset('kovani', copperFrame()),
+    svgAsset('klenot', gemButton()),
+    svgAsset('lem', tabRim()),
+    svgAsset('ozdoba', divider()),
+    ...ICON_MODULES.map((m) => svgAsset(`ikona-${m}`, gemIcon(m))),
+  ],
+}

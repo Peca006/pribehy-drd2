@@ -15,6 +15,7 @@ export const TOKEN_NAMES = [
   '--drd-warning',
   '--drd-scrim',
   '--drd-shadow',
+  '--drd-text-shadow',
   '--drd-radius',
   '--drd-gap',
   '--drd-font',
@@ -27,6 +28,7 @@ type TokenSpec =
   | { kind: 'length'; /** meze v px (1 rem = 16 px) */ min: number; max: number }
   | { kind: 'font' }
   | { kind: 'shadow' }
+  | { kind: 'textShadow' }
 
 const COLOR = { kind: 'color', opaque: true } as const
 
@@ -42,6 +44,7 @@ export const TOKEN_SPECS: Record<TokenName, TokenSpec> = {
   '--drd-warning': COLOR,
   '--drd-scrim': { kind: 'color', opaque: false },
   '--drd-shadow': { kind: 'shadow' },
+  '--drd-text-shadow': { kind: 'textShadow' },
   '--drd-radius': { kind: 'length', min: 0, max: 48 },
   '--drd-gap': { kind: 'length', min: 4, max: 32 },
   '--drd-font': { kind: 'font' },
@@ -108,7 +111,8 @@ function fontError(value: string): string | null {
   return null
 }
 
-function shadowError(value: string): string | null {
+/** `text`: stín textu (`text-shadow`), který nezná `inset` a rozšíření, má tedy 2 až 3 délky. */
+function shadowError(value: string, text = false): string | null {
   if (value === 'none') return null
   const layers = splitTopLevel(value, (c) => c === ',')
   if (!layers || layers.length === 0 || layers.length > 3)
@@ -119,7 +123,10 @@ function shadowError(value: string): string | null {
     let colors = 0
     const lengths: number[] = []
     for (const p of parts) {
-      if (p === 'inset') continue
+      if (p === 'inset') {
+        if (text) return 'stín textu nemůže být vnitřní (inset)'
+        continue
+      }
       if (parseColor(p)) colors++
       else {
         const px = lengthPx(p)
@@ -128,8 +135,11 @@ function shadowError(value: string): string | null {
       }
     }
     if (colors !== 1) return 'každá vrstva stínu musí mít právě jednu barvu'
-    if (lengths.length < 2 || lengths.length > 4)
-      return 'vrstva stínu má mít 2 až 4 délky (posun x, y, rozostření, rozšíření)'
+    const maxLengths = text ? 3 : 4
+    if (lengths.length < 2 || lengths.length > maxLengths)
+      return text
+        ? 'vrstva stínu textu má mít 2 až 3 délky (posun x, y, rozostření)'
+        : 'vrstva stínu má mít 2 až 4 délky (posun x, y, rozostření, rozšíření)'
     if (lengths.some((n) => Math.abs(n) > 64)) return 'rozměry stínu mohou být nejvýše 64 px'
     if ((lengths[2] ?? 0) < 0) return 'rozostření stínu nesmí být záporné'
   }
@@ -164,5 +174,7 @@ export function tokenValueError(name: TokenName, value: unknown): string | null 
       return fontError(v)
     case 'shadow':
       return shadowError(v)
+    case 'textShadow':
+      return shadowError(v, true)
   }
 }

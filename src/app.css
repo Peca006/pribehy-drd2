@@ -14,8 +14,25 @@ body {
   font-family: var(--drd-font);
   font-size: 1rem;
   line-height: 1.5;
+  /* embos a jiné stíny textu z Hávu (výchozí žádný); dědí se na všechen text */
+  text-shadow: var(--drd-text-shadow, none);
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
     env(safe-area-inset-left);
+}
+
+/* Role „pozadí“ z Hávu: obrázek na pevné vrstvě za obsahem (nescrolluje se, nezatěžuje překreslování). Samostatná
+   vrstva také dovolí `image-rendering: pixelated` jen pro pozadí; na body by se zdědilo na všechny obrázky. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--drd-background-image, none);
+  background-size: var(--drd-background-size, auto);
+  background-repeat: var(--drd-background-repeat, repeat);
+  background-position: var(--drd-background-position, 0 0);
+  image-rendering: var(--drd-background-render, auto);
 }
 
 button,
@@ -24,7 +41,14 @@ button,
   font: inherit;
   color: var(--drd-text);
   background: var(--drd-surface);
-  border: 1px solid var(--drd-border);
+  background-image: var(--drd-button-image, none);
+  background-size: var(--drd-button-size, auto);
+  background-repeat: var(--drd-button-repeat, repeat);
+  background-position: var(--drd-button-position, 0 0);
+  border: var(--drd-button-bw, 1px) solid var(--drd-border);
+  /* devítidílný rámeček z Hávu; bez něj je zdroj `none` a platí obyčejný okraj */
+  border-image: var(--drd-button-bi-source, none) var(--drd-button-bi-slice, 100%) /
+    var(--drd-button-bi-width, 1) / 0 var(--drd-button-bi-repeat, stretch);
   border-radius: var(--drd-radius);
   padding: 0.3rem 0.7rem;
   min-height: 40px;
@@ -68,7 +92,30 @@ select {
 }
 .panel {
   background: var(--drd-surface);
+  background-image: var(--drd-panel-image, none);
+  background-size: var(--drd-panel-size, auto);
+  background-repeat: var(--drd-panel-repeat, repeat);
+  background-position: var(--drd-panel-position, 0 0);
+  /* bez rámečku z Hávu je okraj nulový, takže se rozložení nemění */
+  border: var(--drd-panel-bw, 0) solid transparent;
+  border-image: var(--drd-panel-bi-source, none) var(--drd-panel-bi-slice, 100%) /
+    var(--drd-panel-bi-width, 1) / 0 var(--drd-panel-bi-repeat, stretch);
   border-radius: var(--drd-radius);
   padding: 0.75rem 1rem;
   margin: 0.5rem 0;
+}
+
+/* dělicí čára (role „divider“ z Hávu) */
+hr {
+  border: 0 solid var(--drd-border);
+  /* výchozí je čára 1 px nahoře; rámeček z Hávu si šířku nastaví sám */
+  border-width: var(--drd-divider-bw, 1px 0 0 0);
+  border-image: var(--drd-divider-bi-source, none) var(--drd-divider-bi-slice, 100%) /
+    var(--drd-divider-bi-width, 1) / 0 var(--drd-divider-bi-repeat, stretch);
+  height: var(--drd-divider-height, 0);
+  background-image: var(--drd-divider-image, none);
+  background-size: var(--drd-divider-size, auto);
+  background-repeat: var(--drd-divider-repeat, repeat);
+  background-position: var(--drd-divider-position, 0 0);
+  margin: 0.75rem 0;
 }

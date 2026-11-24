@@ -2,7 +2,8 @@
 // a změna jeho schématu nesmí riskovat migraci postav a družin. Při čtení se každý Háv znovu zvaliduje
 // (databázi může změnit starší či novější verze aplikace i ruční zásah); neplatný záznam se přeskočí.
 import { connection } from '../idb'
-import { readSkinFile } from './file'
+import { readSkinFile, type AssetFile } from './file'
+import { inspectImage } from './image'
 import { validateSkin, type Skin, type SkinIssue, type ValidateOptions } from './skin'
 
 const DB = 'drd2-wardrobe'
@@ -20,6 +21,8 @@ interface Row {
   id: string
   skin: unknown
   addedAt: number
+  /** obrázky podle názvu (bajty jako ArrayBuffer, v IndexedDB nejspolehlivější) */
+  assets?: Record<string, { data: ArrayBuffer }>
 }
 
 const conn = connection(DB, VERSION, (req) => {
@@ -62,20 +65,68 @@ export async function deleteSkin(id: string): Promise<void> {
   await wrap((await store('readwrite')).delete(id))
 }
 
+/**
+ * Obrázky nainstalovaného Hávu (zkontrolované znovu při čtení: databázi mohl změnit někdo jiný). Chybějící nebo
+ * poškozený obrázek se vynechá, Háv se pak jen zobrazí bez něj.
+ */
+export async function getSkinAssets(id: string): Promise<AssetFile[]> {
+  const row = await wrap((await store('readonly')).get(id) as IDBRequest<Row | undefined>)
+  const stored = row ? toStored(row) : null
+  if (!row || !stored) return []
+  const out: AssetFile[] = []
+  for (const name of Object.keys(stored.skin.assets)) {
+    const data = row.assets?.[name]?.data
+    if (!(data instanceof ArrayBuffer)) continue
+    const bytes = new Uint8Array(data)
+    const check = inspectImage(bytes)
+    if (check.ok)
+      out.push({
+        name,
+        type: check.info.type,
+        bytes,
+        width: check.info.width,
+        height: check.info.height,
+      })
+  }
+  return out
+}
+
 export interface PutResult {
   ok: boolean
   replaced: boolean
   issues: SkinIssue[]
 }
 
-/** Uloží (nebo přepíše podle `id`) Háv; před uložením ho znovu zvaliduje. */
+/** Uloží (nebo přepíše podle `id`) Háv i s obrázky; před uložením Háv i obrázky znovu zvaliduje. */
 export async function putSkin(
   skin: Skin,
   now = Date.now(),
   options: ValidateOptions = {},
+  assets: readonly AssetFile[] = [],
 ): Promise<PutResult> {
   const v = validateSkin(skin, options)
   if (!v.ok || !v.skin) return { ok: false, replaced: false, issues: v.issues }
+  const rowAssets: NonNullable<Row['assets']> = {}
+  for (const name of Object.keys(v.skin.assets)) {
+    const asset = assets.find((a) => a.name === name)
+    const check = asset ? inspectImage(asset.bytes) : null
+    if (!asset || !check?.ok) {
+      return {
+        ok: false,
+        replaced: false,
+        issues: [
+          {
+            level: 'error',
+            path: `assets.${name}`,
+            message: asset
+              ? `neplatný obrázek: ${check && !check.ok ? check.error : ''}`
+              : 'chybí obrázek',
+          },
+        ],
+      }
+    }
+    rowAssets[name] = { data: asset.bytes.slice().buffer }
+  }
   const existing = await getSkin(v.skin.id)
   if (!existing && (await listSkins()).length >= MAX_SKINS) {
     return {
@@ -86,7 +137,12 @@ export async function putSkin(
       ],
     }
   }
-  const row: Row = { id: v.skin.id, skin: v.skin, addedAt: existing?.addedAt ?? now }
+  const row: Row = {
+    id: v.skin.id,
+    skin: v.skin,
+    addedAt: existing?.addedAt ?? now,
+    assets: rowAssets,
+  }
   await wrap((await store('readwrite')).put(row))
   return { ok: true, replaced: !!existing, issues: v.issues }
 }
@@ -103,7 +159,7 @@ export async function installSkinFile(
 ): Promise<InstallResult> {
   const read = await readSkinFile(bytes, options)
   if (!read.ok || !read.skin) return { ok: false, replaced: false, issues: read.issues, skin: null }
-  const put = await putSkin(read.skin, now, options)
+  const put = await putSkin(read.skin, now, options, read.assets)
   // varování z čtení (ignorované soubory) i z uložení; shodné se nezdvojují
   const issues = [
     ...read.issues,

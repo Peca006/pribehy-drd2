@@ -6,6 +6,7 @@
   import { initPwa } from './core/pwa.svelte'
   import { allModules, getModule } from './core/modules'
   import { markRestore, router, startRouter, tabHref, toHash } from './core/router.svelte'
+  import { appearance } from './core/skin/appearance.svelte'
   import { DEFAULT_MODULE } from './modules'
   import AppBanners from './ui/AppBanners.svelte'
   import ConfirmDialog from './ui/ConfirmDialog.svelte'
@@ -50,7 +51,18 @@
           onclick={() => active?.id !== m.id && markRestore()}
           aria-current={active?.id === m.id ? 'page' : undefined}
         >
-          <span class="icon" aria-hidden="true">{m.icon}</span>
+          {#if appearance.icons[m.id]}
+            <!-- ikona z Hávu; bez ní (nebo než se načte) se použije znak modulu -->
+            <img
+              class="icon-img"
+              class:pixelated={appearance.pixelatedIcons}
+              src={appearance.icons[m.id]}
+              alt=""
+              aria-hidden="true"
+            />
+          {:else}
+            <span class="icon" aria-hidden="true">{m.icon}</span>
+          {/if}
           <span>{m.title}</span>
         </a>
       {/each}
@@ -81,7 +93,15 @@
     display: flex;
     justify-content: space-around;
     background: var(--drd-surface);
-    border-top: 1px solid var(--drd-border);
+    background-image: var(--drd-tab-image, none);
+    background-size: var(--drd-tab-size, auto);
+    background-repeat: var(--drd-tab-repeat, repeat);
+    background-position: var(--drd-tab-position, 0 0);
+    /* výchozí: čára 1 px nahoře; rámeček z Hávu (role „tab“) si šířku nastaví sám */
+    border: 0 solid var(--drd-border);
+    border-width: var(--drd-tab-bw, 1px 0 0 0);
+    border-image: var(--drd-tab-bi-source, none) var(--drd-tab-bi-slice, 100%) /
+      var(--drd-tab-bi-width, 1) / 0 var(--drd-tab-bi-repeat, stretch);
     padding-bottom: env(safe-area-inset-bottom);
   }
   .tabs a {
@@ -101,5 +121,15 @@
   .icon {
     font-size: 1.3rem;
     line-height: 1.2;
+  }
+  /* ikona z Hávu zabírá stejné místo jako znak (1,3 rem × 1,2 řádku) */
+  .icon-img {
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: 0.05rem 0;
+    object-fit: contain;
+  }
+  .icon-img.pixelated {
+    image-rendering: pixelated;
   }
 </style>
