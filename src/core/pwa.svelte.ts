@@ -7,6 +7,7 @@
 // Instalace: Chrome/Edge (Android i počítač) pošle `beforeinstallprompt`, který lze vyvolat vlastním tlačítkem;
 // iOS Safari událost nemá, tam se ukáže návod (Sdílet → Přidat na plochu).
 import { registerSW } from 'virtual:pwa-register'
+import { countEvent } from './stats'
 
 export const pwa = $state({
   /** čeká nová verze, stačí obnovit */
@@ -89,6 +90,7 @@ export async function checkForUpdate(): Promise<'nova' | 'aktualni' | 'nelze'> {
 
 /** Aktivuje čekající verzi a stránku obnoví. */
 export async function applyUpdate() {
+  countEvent('aktualizace', 'Načtena nová verze')
   if (updateSW) await updateSW(true)
   else location.reload()
 }

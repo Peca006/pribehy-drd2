@@ -37,6 +37,41 @@ async function skinBytes(
   return Buffer.from(bytes)
 }
 
+/** Archiv `.drdskin` s libovolným manifestem a textovými soubory (např. SVG), vyrobený zapisovačem ZIPu z aplikace. */
+async function archiveBytes(
+  page: Page,
+  manifest: Record<string, unknown>,
+  files: Record<string, string>,
+): Promise<Buffer> {
+  const bytes = await page.evaluate(
+    async ({ manifest, files, ZIP_MODULE }): Promise<number[]> => {
+      const { writeZip } = await import(/* @vite-ignore */ ZIP_MODULE)
+      const enc = new TextEncoder()
+      const entries = [
+        { name: 'manifest.json', data: enc.encode(JSON.stringify(manifest)) },
+        ...Object.entries(files).map(([name, text]) => ({ name, data: enc.encode(text) })),
+      ]
+      return Array.from(await writeZip(entries))
+    },
+    { manifest, files, ZIP_MODULE },
+  )
+  return Buffer.from(bytes)
+}
+
+const SVG_OK =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#345"/></svg>'
+
+const baseManifest = (id: string, name: string, extra: Record<string, unknown> = {}) => ({
+  schema: 1,
+  id,
+  name,
+  version: '1.0.0',
+  author: 'E2E',
+  license: 'CC0-1.0',
+  scheme: 'dark',
+  ...extra,
+})
+
 const card = (page: Page, name: string) =>
   page.locator('ul.list > li').filter({ has: page.getByText(name, { exact: true }) })
 
@@ -154,8 +189,18 @@ test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení
     page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), v)
   expect(await css('--drd-radius')).toBe('0px')
   expect(await css('--drd-accent')).toBe('#f2c14e')
+  // grafika Podzemí: pozadí a rámečky z obrázků, ikony záložek, embos textu
+  const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
+  await expect(nav.locator('img.icon-img')).toHaveCount(7)
+  expect(await css('--drd-background-image')).toMatch(/^url\("blob:/)
+  expect(await css('--drd-panel-bi-source')).toMatch(/^url\("blob:/)
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body, '::before').backgroundImage),
+  ).toContain('blob:')
+  expect(await page.evaluate(() => getComputedStyle(document.body).textShadow)).not.toBe('none')
   await page.reload()
   await expect(html).toHaveAttribute('data-theme', 'podzemi')
+  await expect(nav.locator('img.icon-img')).toHaveCount(7) // obrázky jsou hned po načtení
 
   // vestavěný Háv nejde smazat, ale jde z něj uložit vzor
   await expect(card(page, 'Podzemí').getByRole('button', { name: 'Smazat' })).toHaveCount(0)
@@ -167,4 +212,92 @@ test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení
   await card(page, 'Pergamen').getByRole('button', { name: 'Použít' }).click()
   await expect(html).toHaveAttribute('data-theme', 'pergamen')
   expect(await css('--drd-bg')).toBe('#efe3c8')
+  // po přepnutí nezůstane nic z grafiky Podzemí
+  await expect(nav.locator('img.icon-img')).toHaveCount(0)
+  expect(await css('--drd-background-image')).toBe('')
+  expect(await css('--drd-panel-bi-source')).toBe('')
+  expect(await page.evaluate(() => getComputedStyle(document.body).textShadow)).toBe('none')
+})
+
+test('Háv s obrázky: import, použití (pozadí, rámeček, ikona), reload a odebrání při přepnutí', async ({
+  page,
+}) => {
+  await page.goto('/#/satnik')
+  await expect(page.getByRole('heading', { name: 'Šatník', level: 1 })).toBeVisible()
+
+  const file = await archiveBytes(
+    page,
+    baseManifest('obrazky-e2e', 'Obrázkový E2E', {
+      assets: { dlazdice: { file: 'assets/dlazdice.svg' }, ram: { file: 'assets/ram.svg' } },
+      roles: {
+        background: { image: 'dlazdice', mode: 'repeat', size: 32 },
+        panel: { image: 'ram', mode: 'slice', slice: 2, fill: false },
+      },
+      icons: { postavy: 'dlazdice' },
+    }),
+    { 'assets/dlazdice.svg': SVG_OK, 'assets/ram.svg': SVG_OK },
+  )
+  await page
+    .locator('input[type=file]')
+    .setInputFiles({ name: 'obrazky-e2e.drdskin', mimeType: 'application/zip', buffer: file })
+  await expect(page.getByText('přidán Háv „Obrázkový E2E“')).toBeVisible()
+  await expect(card(page, 'Obrázkový E2E')).toContainText('2 obrázky')
+
+  await card(page, 'Obrázkový E2E').getByRole('button', { name: 'Použít' }).click()
+  const html = page.locator('html')
+  await expect(html).toHaveAttribute('data-theme', 'obrazky-e2e')
+  const css = (v: string) =>
+    page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), v)
+  const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
+  await expect(nav.locator('img.icon-img')).toHaveCount(1) // jen záložka Postava má ikonu, ostatní zůstávají s emoji
+  expect(await css('--drd-background-image')).toMatch(/^url\("blob:/)
+  expect(await css('--drd-panel-bw')).toBe('2px 2px 2px 2px')
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body, '::before').backgroundSize),
+  ).toBe('32px auto')
+
+  // obrázky jsou uložené v zařízení: po načtení stránky jsou hned
+  await page.reload()
+  await expect(html).toHaveAttribute('data-theme', 'obrazky-e2e')
+  await expect(nav.locator('img.icon-img')).toHaveCount(1)
+  expect(await css('--drd-background-image')).toMatch(/^url\("blob:/)
+
+  // přepnutí na vestavěný Háv obrázky odebere
+  await card(page, 'Tmavý').getByRole('button', { name: 'Použít' }).click()
+  await expect(html).toHaveAttribute('data-theme', 'default-dark')
+  await expect(nav.locator('img.icon-img')).toHaveCount(0)
+  expect(await css('--drd-background-image')).toBe('')
+  expect(await css('--drd-panel-bw')).toBe('')
+})
+
+test('Háv se škodlivým nebo chybným obrázkem se nepřidá', async ({ page }) => {
+  await page.goto('/#/satnik')
+  await expect(page.getByRole('heading', { name: 'Šatník', level: 1 })).toBeVisible()
+  const input = page.locator('input[type=file]')
+  const manifest = baseManifest('skodlivy', 'Škodlivý', {
+    assets: { a: { file: 'assets/a.svg' } },
+    roles: { background: { image: 'a', mode: 'repeat' } },
+  })
+
+  // SVG se skriptem
+  const script = await archiveBytes(page, manifest, {
+    'assets/a.svg':
+      '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><script>alert(1)</script></svg>',
+  })
+  await input.setInputFiles({ name: 'skript.drdskin', mimeType: 'application/zip', buffer: script })
+  await expect(page.getByText(/SVG obsahuje nepovolený prvek/)).toBeVisible()
+
+  // chybí soubor obrázku
+  const missing = await archiveBytes(page, manifest, {})
+  await input.setInputFiles({ name: 'chybi.drdskin', mimeType: 'application/zip', buffer: missing })
+  await expect(page.getByText(/v archivu chybí soubor assets\/a\.svg/)).toBeVisible()
+
+  // obrázek, který není obrázek
+  const fake = await archiveBytes(page, manifest, {
+    'assets/a.svg': 'tohle není obrázek, jen delší text bez podpisu',
+  })
+  await input.setInputFiles({ name: 'falesny.drdskin', mimeType: 'application/zip', buffer: fake })
+  await expect(page.getByText(/nepodporovaný druh obrázku/)).toBeVisible()
+
+  await expect(card(page, 'Škodlivý')).toHaveCount(0)
 })

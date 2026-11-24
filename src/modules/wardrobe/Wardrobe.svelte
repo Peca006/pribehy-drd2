@@ -6,8 +6,14 @@
   import { writeSkinFile } from '../../core/skin/file'
   import { previewChoice, reapplyTheme, refreshInstalledSkins } from '../../core/skin/runtime'
   import { contrastIssues, SKIN_EXTENSION, type Skin, type SkinIssue } from '../../core/skin/skin'
-  import { BUILTIN_SKINS } from '../../themes/havy'
-  import { deleteSkin, installSkinFile, listSkins, type StoredSkin } from '../../core/skin/store'
+  import { BUILTIN_ASSETS, BUILTIN_SKINS } from '../../themes/havy'
+  import {
+    deleteSkin,
+    getSkinAssets,
+    installSkinFile,
+    listSkins,
+    type StoredSkin,
+  } from '../../core/skin/store'
   import DevicePreview from './DevicePreview.svelte'
 
   // Šatník: výběr vzhledu aplikace (Háv), import a export souborů `.drdskin` a náhled na zařízeních.
@@ -94,7 +100,9 @@
 
   async function save(skin: Skin) {
     try {
-      const bytes = await writeSkinFile(skin)
+      // vestavěné Hávy mají obrázky v kódu, nainstalované v úložišti
+      const assets = BUILTIN_ASSETS[skin.id] ?? (await getSkinAssets(skin.id))
+      const bytes = await writeSkinFile(skin, assets)
       const a = document.createElement('a')
       a.href = URL.createObjectURL(
         new Blob([bytes as Uint8Array<ArrayBuffer>], { type: 'application/zip' }),
@@ -128,14 +136,18 @@
 
   const lineOf = (i: SkinIssue) => (i.path ? `${i.path}: ${i.message}` : i.message)
   const schemeLabel = (s: 'light' | 'dark') => (s === 'light' ? 'světlý' : 'tmavý')
+  const imagesLabel = (s: Skin) => {
+    const n = Object.keys(s.assets).length
+    return n ? ` · ${n} ${n === 1 ? 'obrázek' : n < 5 ? 'obrázky' : 'obrázků'}` : ''
+  }
 </script>
 
 <p><a href="#/knihovna">← Více</a></p>
 <h1>Šatník</h1>
 <p class="muted">
-  Vzhled aplikace se jmenuje <strong>Háv</strong>. Háv je malý soubor <code>{SKIN_EXTENSION}</code>,
-  který změní barvy, písmo a tvar prvků. Připravit ho jde na počítači a pak ho stačí přenést do
-  telefonu.
+  Vzhled aplikace se jmenuje <strong>Háv</strong>. Háv je soubor <code>{SKIN_EXTENSION}</code>,
+  který změní barvy, písmo a tvar prvků a může přidat obrázky (pozadí, rámečky panelů a tlačítek,
+  lištu, ikony). Připravit ho jde na počítači a pak ho stačí přenést do telefonu.
 </p>
 
 {#if error}<p class="error" role="alert">{error}</p>{/if}
@@ -148,7 +160,7 @@
       <div class="head">
         <strong>{c.name}</strong>
         <span class="muted">
-          vestavěný{built ? ` · ${schemeLabel(built.scheme)}` : ''}
+          vestavěný{built ? ` · ${schemeLabel(built.scheme)}${imagesLabel(built)}` : ''}
         </span>
       </div>
       <div class="actions">
@@ -174,7 +186,7 @@
         <strong>{row.skin.name}</strong>
         <span class="muted">
           {schemeLabel(row.skin.scheme)} · verze {row.skin.version} · {row.skin.author} · {row.skin
-            .license}
+            .license}{imagesLabel(row.skin)}
         </span>
       </div>
       {#if row.issues.length}

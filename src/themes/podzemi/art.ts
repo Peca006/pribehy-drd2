@@ -1,0 +1,138 @@
+// Grafika vestavěného Háva Podzemí (retro PC RPG: tmavý kámen, měď, zlato a drahokamy), vyrobená programově jako SVG.
+// Barvy jsou na jednom místě, takže grafika vždy ladí s paletou. Každý obrázek je samostatné SVG, které projde stejnou
+// kontrolou (`inspectImage`) jako obrázky z cizích Hávů: žádné skripty ani odkazy mimo soubor, jen tvary a filtry.
+
+const STONE = '#130d1c'
+const COPPER = { light: '#e9ad6b', mid: '#b87333', dark: '#6d3f17', deep: '#2a1608' }
+const GOLD = { light: '#ffe08a', mid: '#f2c14e', dark: '#a8761a' }
+
+const svg = (w: number, h: number, body: string, extra = '') =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"${extra}>${body}</svg>`
+
+/** Mramorové pozadí: tmavý kámen s oblačností a tenkými žilkami. Šum se na okrajích napojuje, dlaždice jde opakovat. */
+export function marble(): string {
+  return svg(
+    256,
+    256,
+    `<defs>
+<filter id="cloud" filterUnits="userSpaceOnUse" x="0" y="0" width="256" height="256" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="3" seed="4" stitchTiles="stitch"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.24  0 0 0 0 0.15  0 0 0 0 0.36  0 0 0 1.1 -0.28"/>
+</filter>
+<filter id="veins" filterUnits="userSpaceOnUse" x="0" y="0" width="256" height="256" color-interpolation-filters="sRGB">
+<feTurbulence type="turbulence" baseFrequency="0.008 0.013" numOctaves="4" seed="11" stitchTiles="stitch"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.62  0 0 0 0 0.48  0 0 0 0 0.82  -9 0 0 0 1.3"/>
+</filter>
+</defs>
+<rect width="256" height="256" fill="${STONE}"/>
+<rect width="256" height="256" filter="url(#cloud)" opacity="0.55"/>
+<rect width="256" height="256" filter="url(#veins)" opacity="0.32"/>`,
+  )
+}
+
+/** Měděný rám panelu 36 × 36 (devítidílný, řez 12): měděné pásmo, zlatá linka uvnitř a nýty v rozích. Střed je průhledný. */
+export function copperFrame(): string {
+  const rivet = (x: number, y: number) =>
+    `<circle cx="${x}" cy="${y}" r="2.4" fill="${GOLD.dark}"/><circle cx="${x - 0.4}" cy="${y - 0.4}" r="1.6" fill="${GOLD.mid}"/><circle cx="${x - 0.8}" cy="${y - 0.8}" r="0.7" fill="${GOLD.light}"/>`
+  return svg(
+    36,
+    36,
+    `<defs><linearGradient id="cu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${COPPER.light}"/><stop offset="0.5" stop-color="${COPPER.mid}"/><stop offset="1" stop-color="${COPPER.dark}"/></linearGradient></defs>
+<rect x="0.5" y="0.5" width="35" height="35" fill="none" stroke="${COPPER.deep}"/>
+<rect x="4" y="4" width="28" height="28" fill="none" stroke="url(#cu)" stroke-width="6"/>
+<rect x="8.5" y="8.5" width="19" height="19" fill="none" stroke="${GOLD.mid}"/>
+<rect x="9.5" y="9.5" width="17" height="17" fill="none" stroke="#000" stroke-opacity="0.45"/>
+${rivet(4, 4)}${rivet(32, 4)}${rivet(4, 32)}${rivet(32, 32)}`,
+  )
+}
+
+/** Tlačítko jako safírový drahokam ve zlaté objímce 24 × 24 (devítidílné, řez 8). */
+export function gemButton(): string {
+  return svg(
+    24,
+    24,
+    `<defs>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${GOLD.light}"/><stop offset="0.5" stop-color="${GOLD.mid}"/><stop offset="1" stop-color="${GOLD.dark}"/></linearGradient>
+<linearGradient id="gem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b5bd0"/><stop offset="1" stop-color="#14205f"/></linearGradient>
+</defs>
+<rect width="24" height="24" fill="#0b1240"/>
+<rect x="1" y="1" width="22" height="22" fill="url(#gold)"/>
+<rect x="3" y="3" width="18" height="18" fill="url(#gem)"/>
+<path d="M3 3H21L19 5H5V19L3 21Z" fill="#fff" fill-opacity="0.2"/>
+<path d="M21 3V21H3L5 19H19V5Z" fill="#000" fill-opacity="0.3"/>`,
+  )
+}
+
+/** Horní lem spodní lišty záložek 32 × 6: měděné pásmo se zlatými kosočtverci (opakuje se vodorovně). */
+export function tabRim(): string {
+  return svg(
+    32,
+    6,
+    `<defs><linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${COPPER.light}"/><stop offset="1" stop-color="${COPPER.dark}"/></linearGradient></defs>
+<rect width="32" height="6" fill="${COPPER.deep}"/>
+<rect y="1" width="32" height="3" fill="url(#rim)"/>
+<path d="M16 0.5L19 2.5L16 4.5L13 2.5Z" fill="${GOLD.mid}"/>
+<path d="M16 1.2L17.6 2.5L16 3.8L14.4 2.5Z" fill="${GOLD.light}"/>`,
+  )
+}
+
+/** Dělicí ozdoba 48 × 8 (opakuje se vodorovně): měděná linka a zlatý kosočtverec. */
+export function divider(): string {
+  return svg(
+    48,
+    8,
+    `<rect y="3" width="48" height="2" fill="${COPPER.mid}"/>
+<rect y="3" width="48" height="1" fill="${COPPER.light}"/>
+<path d="M24 0L28 4L24 8L20 4Z" fill="${GOLD.dark}"/>
+<path d="M24 1L27 4L24 7L21 4Z" fill="${GOLD.mid}"/>
+<path d="M24 2L25.6 4L24 6L22.4 4Z" fill="${GOLD.light}"/>`,
+  )
+}
+
+type Glyph = (color: string) => string
+
+// Piktogramy do drahokamů: jen obdélníky a mnohoúhelníky (pixelartový charakter), vycentrované do 32 × 32.
+const GLYPHS: Record<string, Glyph> = {
+  postavy: (c) =>
+    `<rect x="14" y="8" width="4" height="4" fill="${c}"/><rect x="12" y="13" width="8" height="3" fill="${c}"/><rect x="10" y="16" width="12" height="7" fill="${c}"/>`,
+  druziny: (c) => `<path d="M10 8H22V17L16 24L10 17Z" fill="${c}"/>`,
+  vypravy: (c) =>
+    `<path d="M16 7L19 16L16 25L13 16Z" fill="${c}"/><path d="M7 16L16 13L25 16L16 19Z" fill="${c}" fill-opacity="0.85"/>`,
+  ctenar: (c) =>
+    `<rect x="8" y="10" width="7" height="12" fill="${c}"/><rect x="17" y="10" width="7" height="12" fill="${c}"/>`,
+  bestiar: (c) =>
+    `<rect x="12" y="16" width="8" height="7" fill="${c}"/><rect x="9" y="12" width="3" height="3" fill="${c}"/><rect x="13" y="9" width="3" height="4" fill="${c}"/><rect x="17" y="9" width="3" height="4" fill="${c}"/><rect x="21" y="12" width="3" height="3" fill="${c}"/>`,
+  grimoar: (c) => `<path d="M14 8H18V13L23 22H9L14 13Z" fill="${c}"/>`,
+  knihovna: (c) =>
+    `<rect x="9" y="9" width="14" height="3" fill="${c}"/><rect x="9" y="14.5" width="14" height="3" fill="${c}"/><rect x="9" y="20" width="14" height="3" fill="${c}"/>`,
+}
+
+/** Barvy drahokamů: světlý a tmavý konec přechodu a barva piktogramu. */
+const GEMS: Record<string, { light: string; dark: string; glyph: string }> = {
+  postavy: { light: '#e0405c', dark: '#7a0f26', glyph: '#fff1d6' }, // rubín
+  druziny: { light: '#4f78e8', dark: '#1a2c78', glyph: '#fff1d6' }, // safír
+  vypravy: { light: '#3fc785', dark: '#0d5a35', glyph: '#fff1d6' }, // smaragd
+  ctenar: { light: '#f0a928', dark: '#8a5200', glyph: '#fff7dc' }, // topaz
+  bestiar: { light: '#a65fe0', dark: '#4a1a78', glyph: '#fff1d6' }, // ametyst
+  grimoar: { light: '#d4547a', dark: '#6b1535', glyph: '#fff1d6' }, // granát
+  knihovna: { light: '#b9c2cf', dark: '#566070', glyph: '#1d2430' }, // stříbro
+}
+
+/** Ikona záložky: osmiboký drahokam s fasetami a piktogramem. */
+export function gemIcon(moduleId: keyof typeof GEMS): string {
+  const g = GEMS[moduleId]!
+  const id = `g-${moduleId}`
+  return svg(
+    32,
+    32,
+    `<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${g.light}"/><stop offset="1" stop-color="${g.dark}"/></linearGradient></defs>
+<polygon points="9,1 23,1 31,9 31,23 23,31 9,31 1,23 1,9" fill="#0d0814"/>
+<polygon points="9.5,2.5 22.5,2.5 29.5,9.5 29.5,22.5 22.5,29.5 9.5,29.5 2.5,22.5 2.5,9.5" fill="url(#${id})"/>
+<polygon points="9.5,2.5 22.5,2.5 29.5,9.5 26,9.5 21,4.5 11,4.5 6,9.5 2.5,9.5" fill="#fff" fill-opacity="0.28"/>
+<polygon points="29.5,22.5 22.5,29.5 9.5,29.5 2.5,22.5 6,22.5 11,27.5 21,27.5 26,22.5" fill="#000" fill-opacity="0.3"/>
+${GLYPHS[moduleId]!(g.glyph)}`,
+  )
+}
+
+/** Id modulů, pro které existuje ikona. */
+export const ICON_MODULES = Object.keys(GEMS)

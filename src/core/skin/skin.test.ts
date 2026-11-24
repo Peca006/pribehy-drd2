@@ -52,6 +52,9 @@ describe('výchozí skiny', () => {
       scheme: theme.scheme,
       tokens: {},
       variants: [],
+      assets: {},
+      roles: {},
+      icons: {},
     }
     expect(contrastIssues(skin)).toEqual([])
   })
@@ -107,11 +110,11 @@ describe('validateSkin: manifest', () => {
     expect(r.skin).not.toHaveProperty('extra')
   })
 
-  it('assets: prázdné projde, neprázdné varuje a ignoruje se', () => {
-    expect(validateSkin(minimal({ assets: {} })).issues).toEqual([])
-    const r = validateSkin(minimal({ assets: { bg: 'assets/bg.png' } }))
-    expect(r.ok).toBe(true)
-    expect(r.issues).toEqual([expect.objectContaining({ level: 'warning', path: 'assets' })])
+  it('bez obrázků jsou assets, roles a icons prázdné', () => {
+    const r = validateSkin(minimal({ assets: {} }))
+    expect(r.issues).toEqual([])
+    expect(r.skin).toMatchObject({ assets: {}, roles: {}, icons: {} })
+    expect(r.skin).not.toHaveProperty('iconStyle')
   })
 
   it('minApp: novější než aplikace je chyba', () => {

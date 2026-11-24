@@ -39,6 +39,7 @@ Role jsou oddělené, aby je Háv mohl ladit samostatně (viz `src/themes/defaul
 | `--drd-accent` | zvýraznění |
 | `--drd-danger`, `--drd-success`, `--drd-warning` | stavové barvy textu |
 | `--drd-scrim`, `--drd-shadow` | zástěna za dialogy, stín plovoucích prvků |
+| `--drd-text-shadow` | stín textu (embos); výchozí `none`, smí mít 1–3 vrstvy bez `inset` a rozšíření |
 | `--drd-radius`, `--drd-gap`, `--drd-font` | tvar, mezery, písmo |
 
 Komponenty nesmí mít pevné barvy ani rozměry mimo tokeny. Výjimky: QR kód (musí být černobílý) a pozadí prohlížeče obrázků.
@@ -47,7 +48,7 @@ Komponenty nesmí mít pevné barvy ani rozměry mimo tokeny. Výjimky: QR kód 
 
 ```
 manifest.json        povinný
-assets/…             volitelné obrázky (od M2)
+assets/…             obrázky (PNG, WebP, JPEG, SVG), jen ty, které manifest odkazuje
 ```
 
 `manifest.json`:
@@ -63,12 +64,49 @@ assets/…             volitelné obrázky (od M2)
   "scheme": "light",                 // light | dark (kvůli prvkům prohlížeče)
   "minApp": "0.5.0",
   "tokens": { "--drd-bg": "#f6f1e6" },
-  "variants": [                      // od začátku ve formátu, v M1 jen přepisy tokenů
-    { "when": { "width": "compact", "orientation": "landscape" }, "tokens": { "--drd-gap": "0.5rem" } }
+  "variants": [                      // přepisují tokeny a role podle viewportu
+    { "when": { "width": "compact", "orientation": "landscape" }, "tokens": { "--drd-gap": "0.5rem" },
+      "roles": { "panel": null } }   // role ve variantě: jiná role, nebo null = vypnout
   ],
-  "assets": {}                       // od M2
+  "assets": { "mramor": { "file": "assets/mramor.svg" } },   // název → soubor v archivu
+  "roles": { "background": { "image": "mramor", "mode": "repeat", "size": 256 } },
+  "icons": { "postavy": "ikona-postavy" },                    // id modulu → název obrázku
+  "iconStyle": { "pixelated": false }
 }
 ```
+
+### Role prvků (M2)
+
+Role dá obrázek části aplikace. Pět rolí a prvek, na který se uplatní:
+
+| Role | Prvek |
+|---|---|
+| `background` | pozadí celé aplikace (pevná vrstva za obsahem, `body::before`) |
+| `panel` | `.panel` (karty a bloky; použito 142× v 60 souborech) |
+| `button` | `button`, `.btn` |
+| `tab` | spodní lišta záložek |
+| `divider` | `hr` |
+
+Pole role: `image` (název z `assets`), `mode`, a podle režimu `size`, `position`, `slice`, `width`, `fill`, `edge`,
+`height` (jen `divider`), `pixelated` (jen `background`).
+
+| `mode` | Chování |
+|---|---|
+| `stretch` | roztažení na celou plochu (poměr se nezachovává) |
+| `contain`, `cover` | celý obrázek / vyplnění plochy, poměr se zachová (`position` = kotva) |
+| `repeat`, `repeat-x`, `repeat-y` | dlaždice v obou osách / jen vodorovně / jen svisle (`size` = šířka dlaždice v px) |
+| `slice` | devítidílný rámeček (`border-image`): `slice` = okraje zdroje v px (číslo, nebo nahoře, vpravo, dole, vlevo), `width` = tloušťka na obrazovce (výchozí = `slice`, tedy bez zvětšení), `fill` = vyplnit střed (výchozí ano), `edge` = `stretch`, `repeat`, `round`, `space` |
+
+Role se převede na CSS proměnné `--drd-<role>-image|size|repeat|position` (nebo `-bi-source|slice|width|repeat` a `-bw`
+u rámečku); globální styly v `app.css` je čtou s výchozími hodnotami, takže **bez obrázku se vzhled nemění ani o pixel**.
+Do CSS se nikdy nevkládá text z manifestu, jen ověřená čísla, pevná klíčová slova a adresa `blob:` vyrobená aplikací.
+
+`pixelated` (ostré zvětšení) jde jen u pozadí, protože `image-rendering` se dědí a u panelů a tlačítek by změnilo i
+obrázky uvnitř (ilustrace postav). U rámečků proto platí výchozí šířka = řez, tedy zvětšení 1:1. Obrázky pod textem
+validátor kontrastu nepozná: čitelnost textu na obrázku je odpovědnost autora Hávu.
+
+**Ikony:** `icons` mapuje id modulu v navigaci (`postavy`, `druziny`, `vypravy`, `ctenar`, `bestiar`, `grimoar`, `knihovna`)
+na obrázek; modul bez ikony i ikona, která se ještě nenačetla, zůstávají se znakem (emoji).
 
 ### Validace při importu
 
@@ -81,8 +119,18 @@ assets/…             volitelné obrázky (od M2)
     (`sans-serif`, `serif`, `monospace`, `system-ui`). Žádné `@font-face`.
   - **stín:** `none`, nebo 1–3 vrstvy s právě jednou barvou, 2–4 délkami (každá do 64 px), rozostření nezáporné.
   - Nikdy `url()`, `var()`, `calc()`, `;`, `{`, `}`, `\`, `@`, `<`, `>`, komentáře ani řídicí znaky; hodnota nejvýše 200 znaků.
-  - V M1 žádné vlastní fonty ani obrázky (`assets` se ignoruje s varováním).
-- Limity: manifest nejvýše 64 KB, nejvýše 16 variant; `id` nesmí být `system`, `default-dark`, `default-light`.
+  - Žádné vlastní fonty (písma jen systémová).
+- **Obrázky** (`image.ts`, kontrola obsahu, ne přípony ani deklarace):
+  - typ se pozná podle podpisu souboru: PNG, WebP (lossy, lossless, VP8X), JPEG, SVG; cokoli jiného je chyba;
+  - rastr: rozměry se přečtou z hlavičky bez dekódování, nejvýše 4096 px na straně a 8 milionů pixelů na obrázek,
+    dohromady 16 milionů pixelů; soubor nejvýše 2 MB, archiv 8 MB, nejvýše 32 obrázků;
+  - SVG (nejvýše 512 kB, UTF-8) se používá jen jako obrázek na pozadí, nikdy vložený do stránky, takže se v něm nespustí
+    skript ani nenačte nic zvenčí; přesto se odmítá `<script>`, `foreignObject`, `iframe`, `embed`, `object`, události
+    (`on…=`), `javascript:`, `@import`, entity a `DOCTYPE` a všechny odkazy (`href`, `xlink:href`, `url()`) mimo `#id`;
+  - cesta souboru musí být pod `assets/` a bezpečná; role a ikony smí odkazovat jen na existující obrázky; obrázek, který
+    nic nepoužívá, a soubor mimo manifest varují. Obrázky se při čtení z úložiště kontrolují znovu.
+- Limity: manifest nejvýše 64 KB, nejvýše 16 variant; `id` nesmí být vestavěné (`system`, `default-dark`, `default-light`,
+  `pergamen`, `noc`, `podzemi`).
 - Neznámé položky a tokeny se ignorují s varováním (kvůli budoucím verzím formátu), neplatné hodnoty jsou chyba.
 - Kontrast (WCAG) na `bg` i `surface`: `text`, `text-muted`, `accent`, `danger`, `success`, `warning`.
   Pod 3:1 je chyba (Háv se nedá aktivovat), pod 4,5:1 jen varování. Okraje nejsou text: chyba pod 1,5:1, varování pod 3:1.
@@ -110,8 +158,12 @@ Styl Eye of the Beholder 1–3, Legends of Kyrandia, Dungeon Master, Wizardry 7:
 Nemá napodobovat Truhlici.
 
 - **M1 (jen tokeny):** paleta drahokamů a kovů, ostré hrany (`radius` 0), čitelné písmo, tmavý základ.
-- **M2 (textury):** mramorové pozadí (dlaždice), kování jako 9-slice rámečky, pixelartové ikony a tlačítka-drahokamy;
-  pro embos přidat token pro stín textu (`--drd-text-shadow`), který zatím chybí.
+- **M2 (obrázky), hotovo:** mramorové pozadí (SVG se šumem, napojitelné dlaždice), měděné kování panelů a safírová
+  tlačítka ve zlaté objímce jako devítidílné rámečky, ornamentální lišta záložek a dělicí čára, sedm ikon-drahokamů
+  a embos textu přes `--drd-text-shadow`. Grafika je vyrobená programově (`src/themes/podzemi/art.ts`) a je součástí kódu
+  (precache PWA bere jen js, css a html, samostatné soubory by offline chyběly). Dá se nahradit lepší grafikou:
+  stačí exportovat vzor, vyměnit soubory v `assets/` a nahrát pod jiným `id`.
+- **Později:** pixelartové ikony a tlačítka malované ručně (tehdy má smysl `pixelated` u ikon: `iconStyle`).
 
 ## Milníky
 
@@ -120,8 +172,11 @@ Nemá napodobovat Truhlici.
 tři vlastní Hávy. Změny potřebné pro skinování se slučují do `develop` už po M1 (a rozdělení tokenů hned, protože zasahuje
 do mnoha komponent a vedle se vyvíjejí výpravy).
 
-**M2: textury a rámování.** Role prvků (`background`, `panel`, `button`, `tab`, `divider`, `frame`) s obrázkem a režimem
-(`stretch`, `contain`, `repeat`, `repeat-x`, `repeat-y`, `slice`). Ikonová sada Hávu s rezervou na emoji. Vše přes CSS bez změny struktury.
+**M2: textury a rámování.** Role prvků (`background`, `panel`, `button`, `tab`, `divider`) s obrázkem a režimem
+(`stretch`, `contain`, `cover`, `repeat`, `repeat-x`, `repeat-y`, `slice`). Ikonová sada Hávu s rezervou na emoji.
+Vše přes CSS bez změny struktury; jediná změna komponent je ikona záložek v `App.svelte`. Role `frame` pro dialogy
+zatím není: dialogy mají vlastní styly v 11 komponentách (a shorthand `border` v nich resetuje `border-image`), zavede se
+až se sjednotí.
 
 **M3: layout.** Šablony rozložení (spodní, boční, horní lišta), kotvy a zóny, `clip-path` a maska pro dekorativní tvar uvnitř obdélníku.
 
@@ -143,4 +198,9 @@ do mnoha komponent a vedle se vyvíjejí výpravy).
   Verdana). Jsou to obyčejné manifesty `.drdskin`, při načtení se zvalidují jako Háv ze souboru a musí projít bez chyb i
   varování; text na plochách má kontrast aspoň 7:1. Id jsou vyhrazená (`RESERVED_IDS`), Háv ze souboru je nezastíní. Nejdou
   smazat, ale jde z nich uložit vzor (Exportovat jako vzor); import takového souboru vyžaduje jiné `id`.
-- 🚧 **M1 je hotový.** Dál: M2 (textury a rámování; pro Podzemí mramor, kování, pixelartové gemy a embos, token pro stín textu).
+- ✅ **M1 je hotový.**
+- ✅ **M2 (obrázky, role, ikony, stín textu):** `image.ts` (kontrola obrázků), `roles.ts` (role a převod na CSS proměnné),
+  `file.ts`/`store.ts` (obrázky v archivu a úložišti), `runtime.ts` (adresy `blob:` jen pro používaný Háv, rušení při
+  přepnutí), `appearance.svelte.ts` (ikony), `applyTheme` odebírá staré proměnné, `app.css`, `App.svelte`. Podzemí má grafiku.
+  E2E: `e2e/satnik.spec.ts`.
+- 🚧 **Dál:** role pro dialogy (`frame`), M3 (layout), editor Hávů, zahrnutí Hávů do celkové zálohy.

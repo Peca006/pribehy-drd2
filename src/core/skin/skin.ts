@@ -3,12 +3,23 @@
 import type { Theme, ThemeTokens } from '../theme'
 import { darkTheme, lightTheme } from '../../themes/default'
 import { contrastRatio, parseColor } from './color'
+import {
+  mergeRoles,
+  roleVariables,
+  rolesImages,
+  validateRoles,
+  type RoleOverrides,
+  type Roles,
+} from './roles'
 import { isTokenName, tokenValueError, type TokenName } from './tokens'
+import { isSafeZipName } from './zip'
 
 export const SKIN_SCHEMA = 1
 export const SKIN_EXTENSION = '.drdskin'
 export const MAX_MANIFEST_BYTES = 64 * 1024
 export const MAX_VARIANTS = 16
+export const MAX_ASSETS = 32
+export const ASSET_DIR = 'assets/'
 /** id výchozích skinů a vestavěných Hávů (`src/themes/havy.ts`); Háv ze souboru je nesmí zastínit */
 export const RESERVED_IDS = [
   'system',
@@ -38,7 +49,15 @@ export interface VariantWhen {
 export interface SkinVariant {
   when: VariantWhen
   tokens: Partial<Record<TokenName, string>>
+  /** role, které varianta nahrazuje (`null` roli vypne) */
+  roles?: RoleOverrides
 }
+
+/** Obrázek v souboru Hávu: cesta v archivu (vždy pod `assets/`). Bajty jsou mimo manifest. */
+export interface AssetRef {
+  file: string
+}
+export type Assets = Record<string, AssetRef>
 
 export interface Skin {
   schema: typeof SKIN_SCHEMA
@@ -51,6 +70,13 @@ export interface Skin {
   minApp?: string
   tokens: Partial<Record<TokenName, string>>
   variants: SkinVariant[]
+  /** obrázky podle názvu (viz `assets/` v archivu) */
+  assets: Assets
+  /** role prvků s obrázky (pozadí, panel, tlačítko, záložky, dělicí čára) */
+  roles: Roles
+  /** ikony záložek: id modulu → název obrázku */
+  icons: Record<string, string>
+  iconStyle?: { pixelated: boolean }
 }
 
 export interface SkinIssue {
@@ -102,14 +128,41 @@ export function resolveTokens(skin: Skin, viewport: Viewport): ThemeTokens {
   return out
 }
 
-/** Háv jako `Theme` pro `applyTheme`. */
-export function skinTheme(skin: Skin, viewport: Viewport): Theme {
+/** Role Hávu pro viewport (varianty mohou role nahradit nebo vypnout). */
+export function resolveRoles(skin: Skin, viewport: Viewport): Roles {
+  return mergeRoles(
+    skin.roles,
+    skin.variants.filter((v) => v.roles && matches(v.when, viewport)).map((v) => v.roles!),
+  )
+}
+
+/**
+ * Háv jako `Theme` pro `applyTheme`. `assetUrls` jsou adresy obrázků (název → `blob:`), které vyrobila aplikace;
+ * bez nich (obrázky se ještě nenačetly) se použijí jen barvy.
+ */
+export function skinTheme(
+  skin: Skin,
+  viewport: Viewport,
+  assetUrls: Readonly<Record<string, string>> = {},
+): Theme {
   return {
     id: skin.id,
     name: skin.name,
     scheme: skin.scheme,
-    tokens: resolveTokens(skin, viewport),
+    tokens: {
+      ...resolveTokens(skin, viewport),
+      ...roleVariables(resolveRoles(skin, viewport), assetUrls),
+    },
   }
+}
+
+/** Všechny názvy obrázků, které Háv používá (role, varianty, ikony). */
+export function usedAssets(skin: Skin): Set<string> {
+  return new Set([
+    ...rolesImages(skin.roles),
+    ...skin.variants.flatMap((v) => (v.roles ? rolesImages(v.roles) : [])),
+    ...Object.values(skin.icons),
+  ])
 }
 
 // --- kontrast -------------------------------------------------------------------------------------------------
@@ -193,7 +246,13 @@ const TOP_KEYS = new Set([
   'tokens',
   'variants',
   'assets',
+  'roles',
+  'icons',
+  'iconStyle',
 ])
+
+const ASSET_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/
+const ICON_KEY = /^[a-z0-9]+(-[a-z0-9]+)*$/
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -298,6 +357,61 @@ export function validateSkin(raw: unknown, options: ValidateOptions = {}): SkinV
 
   const tokens = checkTokens('tokens', raw.tokens)
 
+  // obrázky (jen odkazy na soubory v archivu; samotný obsah kontroluje `readSkinFile`)
+  const assets: Assets = {}
+  if (raw.assets !== undefined) {
+    if (!isObject(raw.assets))
+      error('assets', 'obrázky musí být objekt (název → { "file": "assets/…" })')
+    else {
+      const entries = Object.entries(raw.assets)
+      if (entries.length > MAX_ASSETS) error('assets', `nejvýše ${MAX_ASSETS} obrázků`)
+      for (const [key, ref] of entries.slice(0, MAX_ASSETS)) {
+        const path = `assets.${key}`
+        if (key.length > 32 || !ASSET_NAME.test(key))
+          error(path, 'název obrázku: malá písmena, číslice a pomlčky, nejvýše 32 znaků')
+        else if (!isObject(ref) || typeof ref.file !== 'string')
+          error(path, 'chybí soubor, např. { "file": "assets/mramor.svg" }')
+        else if (!ref.file.startsWith(ASSET_DIR) || !isSafeZipName(ref.file))
+          error(
+            `${path}.file`,
+            'cesta musí být pod assets/ a obsahovat jen písmena, číslice, tečku, pomlčku a podtržítko',
+          )
+        else assets[key] = { file: ref.file }
+      }
+    }
+  }
+  const assetNames = new Set(Object.keys(assets))
+  const report = (level: 'error' | 'warning', path: string, message: string) =>
+    issues.push({ level, path, message })
+
+  const roles = validateRoles(raw.roles, 'roles', assetNames, report) as Roles
+
+  const icons: Record<string, string> = {}
+  if (raw.icons !== undefined) {
+    if (!isObject(raw.icons)) error('icons', 'ikony musí být objekt (id modulu → název obrázku)')
+    else {
+      const entries = Object.entries(raw.icons)
+      if (entries.length > MAX_ASSETS) error('icons', `nejvýše ${MAX_ASSETS} ikon`)
+      for (const [key, value] of entries.slice(0, MAX_ASSETS)) {
+        if (key.length > 30 || !ICON_KEY.test(key))
+          warn(`icons.${key}`, 'neplatné id modulu, ikona se ignoruje')
+        else if (typeof value !== 'string' || !assetNames.has(value))
+          error(`icons.${key}`, 'chybí obrázek (název z assets)')
+        else icons[key] = value
+      }
+    }
+  }
+
+  let iconStyle: Skin['iconStyle']
+  if (raw.iconStyle !== undefined) {
+    if (
+      !isObject(raw.iconStyle) ||
+      (raw.iconStyle.pixelated !== undefined && typeof raw.iconStyle.pixelated !== 'boolean')
+    )
+      error('iconStyle', 'očekává se { "pixelated": true | false }')
+    else iconStyle = { pixelated: raw.iconStyle.pixelated === true }
+  }
+
   const variants: SkinVariant[] = []
   if (raw.variants !== undefined) {
     if (!Array.isArray(raw.variants)) error('variants', 'varianty musí být pole')
@@ -321,13 +435,12 @@ export function validateSkin(raw: unknown, options: ValidateOptions = {}): SkinV
           if (Object.keys(when).length === 0)
             error(`${path}.when`, 'podmínka musí obsahovat width, orientation nebo low')
         }
-        variants.push({ when, tokens: checkTokens(`${path}.tokens`, v.tokens) })
+        const variant: SkinVariant = { when, tokens: checkTokens(`${path}.tokens`, v.tokens) }
+        if (v.roles !== undefined)
+          variant.roles = validateRoles(v.roles, `${path}.roles`, assetNames, report, true)
+        variants.push(variant)
       })
     }
-  }
-
-  if (raw.assets !== undefined && !(isObject(raw.assets) && Object.keys(raw.assets).length === 0)) {
-    warn('assets', 'obrázky zatím nejsou podporovány a ignorují se')
   }
 
   if (!scheme || issues.some((i) => i.level === 'error')) return fail()
@@ -342,8 +455,16 @@ export function validateSkin(raw: unknown, options: ValidateOptions = {}): SkinV
     scheme,
     tokens,
     variants,
+    assets,
+    roles,
+    icons,
   }
+  if (iconStyle) skin.iconStyle = iconStyle
   if (minApp) skin.minApp = minApp
+  const used = usedAssets(skin)
+  for (const name of assetNames)
+    if (!used.has(name))
+      warn(`assets.${name}`, 'obrázek se nepoužívá (žádná role ani ikona ho neodkazuje)')
   issues.push(...contrastIssues(skin))
   const ok = !issues.some((i) => i.level === 'error')
   return { ok, skin: ok ? skin : null, issues }
