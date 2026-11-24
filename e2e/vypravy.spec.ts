@@ -3,6 +3,8 @@ import { expect, test } from '@playwright/test'
 // Výpravy, etapa 1: dobrodružství a výprava se vytvoří, upraví, přenese mezi nimi a přežijí obnovení stránky.
 
 test('dobrodružství a výprava: vytvoření, úprava, zařazení a smazání', async ({ page }) => {
+  // pruh o stažení balíčků by zakrýval tlačítka na konci stránky
+  await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
   await page.goto('/#/vypravy')
   await expect(page.getByRole('heading', { name: 'Výpravy', level: 1 })).toBeVisible()
   // vysoké okno: spodní pruh o stažení balíčků a navigace by jinak zakrývaly tlačítka na konci stránky

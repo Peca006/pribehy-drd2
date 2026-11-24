@@ -144,7 +144,18 @@ nový typ přenosu). Trofeje: jen název a poznámka. Hráč zvláštní panel n
 | 4 | Uzavření: návrh zápisu do žurnálu, stav „hotová“, nabídka další výpravy; odkaz na konflikt a příručku | E2E |
 | 5 | Kořist (11e) a zápis postavám | unit testy, E2E |
 | 6 | Inspirace z postav družiny, vlastní ukázková výprava v ukázkových datech (vlastní text), nápověda „?“, `CHANGELOG.md`, vydání | E2E, ověření na telefonu |
+| 7 | **Cizí postavy (CP) v dobrodružství**: zásoba CP u dobrodružství, přidělování k výpravám a příhodám, motivace, příslušnost ke skupinám, vazba na Bestiář (viz níže) | unit testy, E2E |
 | později | Export a import výpravy nebo dobrodružství souborem (sdílení příprav mezi Průvodci, přenos mezi zařízeními) | |
+
+### Cizí postavy (CP, NPC) v dobrodružství (etapa 7, poznámka z 24. 11. 2026)
+Nad rámec původního návrhu; zapsáno, aby se na to nezapomnělo, a záměrně až po etapě 6, aby se plán nebortil.
+- **Zásoba CP u dobrodružství:** dobrodružství má seznam cizích postav, které se přidělují k výpravám (a příhodám), kde vystupují. Družina je v nich může potkat a jednat s nimi.
+- **Co CP drží:** kromě běžných charakteristik (jméno, vzhled a povaha, jednání a vztahy, vědomosti, podle části *Cizí postavy* v SRD, `41#cizi-postavy`)
+  **motivace**, **příslušnost ke skupině** (frakci, rodu, cechu…), poznámky; volitelně vazba na bytost z Bestiáře (číselné údaje a karta).
+- **Přidělení:** CP patří dobrodružství, výprava si z něj vybírá (`Expedition.castIds`), příhoda odkazuje na CP (`Incident.cast[].npcId`). V etapě 2 je
+  `Incident.cast` jen jméno a volitelná bytost; pole `npcId` se přidá později jako volitelné (bez migrace schématu).
+- **Samostatné výpravy** (bez dobrodružství) mohou mít CP přímo u výpravy; podrobnost se rozhodne při návrhu etapy 7.
+- Ve vedení se může u CP evidovat, zda je družina potkala a jaký k nim má postoj (nepovinné, rozhodnout později).
 
 ## 5. Otevřené otázky
 

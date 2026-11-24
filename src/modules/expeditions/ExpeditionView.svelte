@@ -3,11 +3,14 @@
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import HelpHeading from '../../ui/HelpHeading.svelte'
+  import { normalize } from '../../core/expedition/deck'
   import { STYLES, type Adventure, type Expedition } from '../../core/expedition/model'
   import { getExpedition, listAdventures, removeExpedition, saveExpeditionIn } from '../../core/expedition/store'
   import { go } from '../../core/router.svelte'
+  import IncidentsEditor from './IncidentsEditor.svelte'
+  import NodesEditor from './NodesEditor.svelte'
 
-  // Příprava výpravy: základ (téma, pozadí, zápletka, cíl, styl, rozuzlení). Uzlové body a příhody přijdou v další etapě.
+  // Příprava výpravy: téma, pozadí, zápletka, cíl, styl, uzlové body, příhody v balíčcích a rozuzlení.
   let { id }: { id: string } = $props()
 
   let exp = $state<Expedition | undefined>(undefined)
@@ -17,7 +20,8 @@
   let message = $state('')
 
   onMount(async () => {
-    exp = await getExpedition(id)
+    const loadedExp = await getExpedition(id)
+    exp = loadedExp && normalize(loadedExp)
     adventures = (await listAdventures()).sort((a, b) => a.name.localeCompare(b.name, 'cs'))
     adventureId = exp?.adventureId ?? ''
     loaded = true
@@ -94,6 +98,9 @@
         </label>
       {/each}
     </fieldset>
+
+    <NodesEditor bind:exp onstructure={save} />
+    <IncidentsEditor bind:exp onstructure={save} />
 
     <label>
       Možné rozuzlení
