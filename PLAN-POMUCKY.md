@@ -38,7 +38,7 @@ a výtah pravidel. Aktuální otevřené úkoly jsou v `TODO.md`.
 | 11c2 Lektvary | 0.3.4 | ✅ Seznam lektvarů, mastí, odvarů a nektarů: vlastnost (zdroj), druh Jizvy, počet Surovin v zásobníku, poznámka; nabízejí se v dialogu Léčit. Od 0.4.2 jako předpisy v Grimoáru. |
 | 11d1 Nástrahy | 0.3.5 | ✅ Kalkulátor ceny (základ 3 Suroviny + příplatky), seznam nástrah u postavy, spuštění jako výzva s předvyplněným panelem Hod. |
 | 11d2 Kouzla | 0.4.0 | ✅ Viz Grimoár níže. |
-| 11e Kořist | | Čeká na milník Výpravy (viz `TODO.md`). |
+| 11e Kořist | | ✅ Hotovo ve Výpravách (`PLAN-VYPRAVY.md`, etapa 5): kořist u příhody, odhalení, upřesnění a rozdělení členu družiny. |
 | Názvy dovedností | 0.3.9 | ✅ V kartách Postup vyhodnocení z balíčku, jinak odkaz do SRD. Do dialogů výroby a nástrah patří k Nápovědě napříč aplikací (`TODO.md`). |
 
 Rozhodnutí z 16. 11. 2026: Suroviny do deníku revizí i s druhy; Hotovost zůstává ve třech hodnotách; léčí ošetřující (volný text);

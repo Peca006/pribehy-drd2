@@ -28,6 +28,7 @@
   import { getParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
+  import LootPanel from './LootPanel.svelte'
   import { bestiary, findCreature, refreshBestiary } from '../bestiar/state.svelte'
 
   // Vedení (Při hře): balíčky příhod podle uzlových bodů, stav příhod, uzlové body, tempo Zdrojů, improvizace.
@@ -109,7 +110,7 @@
 
   function openClosing() {
     if (!run || !exp) return
-    entry = journalDraft(exp, snap())
+    entry = journalDraft(exp, snap(), party)
     closeMsg = ''
     closing = true
   }
@@ -310,6 +311,18 @@
     />
     <button onclick={addImprov} disabled={!extraTitle.trim()}>Přidat</button>
   </div>
+
+  <LootPanel
+    {exp}
+    {run}
+    {party}
+    onchange={(next) => void change(next)}
+    onreload={async () => {
+      const fresh = await getRun(id)
+      if (fresh) run = fresh
+    }}
+    wait={() => queue}
+  />
 
   {#if conflictMsg}
     <p role="status">{conflictMsg} <a href={'#/druziny/' + run.partyId + '/konflikt'}>Otevřít konflikt</a></p>

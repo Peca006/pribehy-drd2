@@ -10,7 +10,9 @@
     setStage,
     stageLabels,
   } from '../../core/expedition/deck'
-  import type { Expedition, Incident } from '../../core/expedition/model'
+  import { UNIT_LABEL, UNIT_ORDER } from '../../core/character/cash'
+  import { LOOT_KINDS, emptyLoot } from '../../core/expedition/loot'
+  import type { Expedition, Incident, LootKind } from '../../core/expedition/model'
   import { allCreatures, bestiary, refreshBestiary } from '../bestiar/state.svelte'
 
   // Příhody výpravy v balíčcích podle uzlových bodů. Příhoda má víc vyústění: neúspěch příběh rozvíjí, nikdy nezastaví.
@@ -45,6 +47,19 @@
   function pushCast(i: Incident, name: string, creatureId?: string) {
     patch(i.id, (x) => addCast(x, name, creatureId))
     castName[i.id] = ''
+  }
+  function addLoot(i: Incident) {
+    patch(i.id, (x) => ({ ...x, loot: [...(x.loot ?? []), emptyLoot()] }))
+  }
+  function removeLoot(i: Incident, lootId: string) {
+    patch(i.id, (x) => ({ ...x, loot: (x.loot ?? []).filter((l) => l.id !== lootId) }))
+  }
+  /** změna druhu kořisti: zbytek hodnot se nastaví podle nového druhu (ID zůstane) */
+  function changeKind(i: Incident, lootId: string, kind: LootKind) {
+    patch(i.id, (x) => ({
+      ...x,
+      loot: (x.loot ?? []).map((l) => (l.id === lootId ? { ...emptyLoot(kind), id: l.id } : l)),
+    }))
   }
   function pickCreature(i: Incident, id: string) {
     const c = creatures.find((x) => x.id === id)
@@ -107,6 +122,34 @@
         {/if}
       </fieldset>
 
+      <fieldset>
+        <legend>Kořist</legend>
+        {#each i.loot ?? [] as l (l.id)}
+          <div class="loot">
+            <select value={l.kind} onchange={(e) => changeKind(i, l.id, e.currentTarget.value as LootKind)} aria-label="Druh kořisti">
+              {#each LOOT_KINDS as k}<option value={k.id}>{k.label}</option>{/each}
+            </select>
+            {#if l.kind === 'penize' || l.kind === 'suroviny'}
+              <input type="number" min="1" bind:value={l.amount} aria-label="Množství kořisti" class="narrow" />
+            {/if}
+            {#if l.kind === 'penize'}
+              <select bind:value={l.unit} aria-label="Jednotka">
+                {#each UNIT_ORDER as u}<option value={u}>{UNIT_LABEL[u]}</option>{/each}
+              </select>
+            {/if}
+            {#if l.kind === 'suroviny'}<input bind:value={l.mark} maxlength="4" placeholder="značka" aria-label="Značka druhu Surovin" class="narrow" />{/if}
+            <input
+              bind:value={l.label}
+              placeholder={l.kind === 'penize' ? 'odkud (nepovinné)' : l.kind === 'suroviny' ? 'název druhu (nepovinné)' : l.kind === 'vybava' ? 'položka' : 'název trofeje'}
+              aria-label="Popis kořisti"
+            />
+            {#if l.kind === 'trofej'}<input bind:value={l.note} placeholder="poznámka" aria-label="Poznámka k trofeji" />{/if}
+            <button onclick={() => removeLoot(i, l.id)} aria-label="Odebrat kořist">✕</button>
+          </div>
+        {/each}
+        <button onclick={() => addLoot(i)} aria-label={`Přidat kořist k příhodě ${i.title}`}>Přidat kořist</button>
+      </fieldset>
+
       <label>
         Balíček
         <select value={i.stage} onchange={(e) => apply(setStage(snap(), i.id, e.currentTarget.value))}>
@@ -164,6 +207,21 @@
     flex: 1;
     display: block;
     width: auto;
+  }
+  .loot {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0.35rem 0;
+  }
+  .loot input {
+    flex: 1 1 8rem;
+    display: block;
+    width: auto;
+  }
+  .loot .narrow {
+    flex: 0 0 5rem;
   }
   .btns {
     display: flex;

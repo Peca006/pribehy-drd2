@@ -2,6 +2,8 @@
 // Zápis v žurnálu uvidí hráči po sdílení družiny, proto je to jen návrh textu, který Průvodce upraví (nesmí prozradit tajemství).
 import { decks } from './deck'
 import type { Expedition, Run } from './model'
+import type { Party } from '../party/model'
+import { lootLines } from './loot'
 import { OUTCOMES, allIncidents, stateOf } from './run'
 
 export interface JournalDraft {
@@ -28,7 +30,7 @@ export function playedIncidents(exp: Expedition, run: Run) {
 }
 
 /** Návrh zápisu do žurnálu: příhody s výsledky, dosažené uzlové body a poznámky ze hry. */
-export function journalDraft(exp: Expedition, run: Run): JournalDraft {
+export function journalDraft(exp: Expedition, run: Run, party?: Pick<Party, 'members'>): JournalDraft {
   const lines: string[] = []
   if (exp.goal.trim()) lines.push(`Cíl výpravy: ${exp.goal.trim()}`)
   const played = playedIncidents(exp, run)
@@ -42,6 +44,8 @@ export function journalDraft(exp: Expedition, run: Run): JournalDraft {
   }
   const reached = exp.nodes.filter((n) => run.reachedNodes.includes(n.id)).map((n) => n.title.trim()).filter(Boolean)
   if (reached.length) lines.push('', `Zlomové okamžiky: ${reached.join(', ')}.`)
+  const loot = lootLines(exp, run, party)
+  if (loot.length) lines.push('', 'Kořist:', ...loot)
   if (run.notes.trim()) lines.push('', run.notes.trim())
   return { title: `Výprava: ${exp.name.trim() || 'bez názvu'}`, text: lines.join('\n').trim() }
 }

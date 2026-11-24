@@ -3,6 +3,7 @@
 //  - Výprava: příprava bez stavu a bez družiny (zápletka, cíl, uzlové body, příhody),
 //  - Vedení (`Run`): rozehraná hra jedné družiny s jednou výpravou, drží jen stav.
 // Pozadí a příhody jsou tajné: patří Průvodci a nikam se nesdílejí.
+import type { CashUnit } from '../character/cash'
 import { newId } from '../character/model'
 
 export type ExpeditionStyle = 'domino' | 'puzzle'
@@ -29,12 +30,35 @@ export interface Node {
   kind?: 'zvrat' | 'odpocinek'
 }
 
-/** Kořist u příhody (rozdělení postavám je až ve vedení). */
+export type LootKind = 'penize' | 'suroviny' | 'vybava' | 'trofej'
+
+/**
+ * Kořist u příhody (předdefinovaná v přípravě; ve vedení se odhalí, upřesní a rozdělí).
+ * Peníze: `amount` v jednotce `unit` (výchozí groše). Suroviny: `amount` kusů druhu `mark` + `label` (název druhu; prázdné = bez druhu).
+ * Výbava: `label` je položka. Trofej: `label` a `note`, bez účinku na postavu.
+ */
 export interface Loot {
   id: string
-  kind: 'penize' | 'suroviny' | 'vybava' | 'trofej'
+  kind: LootKind
   label: string
   amount?: number
+  unit?: CashUnit
+  mark?: string
+  note?: string
+}
+
+/** Stav kořisti ve vedení: skrytá, odhalená (jde upřesnit) a rozdělená (zafixovaná). Upřesněné hodnoty přepisují přípravu. */
+export interface RunLoot {
+  state: 'ukryta' | 'odhalena' | 'rozdelena'
+  /** člen družiny, který kořist dostal */
+  to?: string
+  /** zapsáno do deníku postavy na tomto zařízení (jinak si ji hráč zapíše sám) */
+  applied?: boolean
+  label?: string
+  amount?: number
+  unit?: CashUnit
+  mark?: string
+  note?: string
 }
 
 export interface Incident {
@@ -110,7 +134,7 @@ export interface Run {
   incidents: Record<string, RunIncident>
   /** příhody vymyšlené při hře (jen v tomto vedení) */
   extra: Incident[]
-  loot: Record<string, { state: 'ukryta' | 'odhalena' | 'rozdelena'; to?: string }>
+  loot: Record<string, RunLoot>
   notes: string
   /** zápis o výpravě, který Průvodce uložil do žurnálu družiny */
   journalEntryId?: string
