@@ -33,6 +33,11 @@
       : 'Aplikace zatím není uložená pro práci offline (po prvním načtení z internetu se uloží).'}
   </p>
 
+  <p class="muted">
+    Na webu se anonymně měří, kolik lidí aplikaci otevírá, v jaké verzi a kolik se stáhlo balíčků a nových verzí (služba GoatCounter, bez cookies a
+    bez osobních údajů). Z aplikace se neposílá žádný obsah ani postavy a při nastaveném „Do Not Track“ ani offline se neměří.
+  </p>
+
   {#if pwa.needRefresh}
     <!-- dokud je dole lišta s novou verzí, nabídka se neopakuje; po „Později“ se ukáže tady -->
     {#if pwa.updateDismissed}

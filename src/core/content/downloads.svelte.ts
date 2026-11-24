@@ -1,4 +1,5 @@
 import { refreshLibrary, library } from '../library.svelte'
+import { countEvent } from '../stats'
 import { downloadPack, fetchCatalog, needsUpdate, type CatalogEntry } from './remote'
 
 // Sdílený stav stahování balíčků ze SRD (katalog z webu aplikace): používá ho nabídka při prvním spuštění,
@@ -54,6 +55,7 @@ export async function download(entries: CatalogEntry[] = pending()): Promise<voi
         downloads.percent = Math.min(99, Math.round(((done + got) / total) * 100))
       })
       done += e.size
+      countEvent(`balicek/${e.id}`, 'Stažen balíček')
     }
   } catch (err) {
     downloads.error = err instanceof Error ? err.message : String(err)
