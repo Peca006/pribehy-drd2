@@ -3,7 +3,12 @@ import { expect, test, type Page } from '@playwright/test'
 
 // Šatník: import souboru `.drdskin`, použití Hávu (přežije načtení stránky), náhled na zařízení, export a smazání.
 
-/** Soubor `.drdskin` vyrobí kód aplikace přímo v stránce (dev server servíruje zdrojáky přes Vite). */
+// Soubory `.drdskin` vyrábí kód aplikace přímo ve stránce (dev server servíruje zdrojáky přes Vite). Adresy modulů jsou
+// v proměnných, aby je TypeScript při kontrole typů nezkoušel hledat na disku (existují jen v prohlížeči).
+const SKIN_MODULE = '/src/core/skin/skin.ts'
+const FILE_MODULE = '/src/core/skin/file.ts'
+const ZIP_MODULE = '/src/core/skin/zip.ts'
+
 async function skinBytes(
   page: Page,
   id: string,
@@ -11,9 +16,9 @@ async function skinBytes(
   tokens: Record<string, string>,
 ): Promise<Buffer> {
   const bytes = await page.evaluate(
-    async ({ id, name, tokens }) => {
-      const { validateSkin } = await import(/* @vite-ignore */ '/src/core/skin/skin.ts')
-      const { writeSkinFile } = await import(/* @vite-ignore */ '/src/core/skin/file.ts')
+    async ({ id, name, tokens, SKIN_MODULE, FILE_MODULE }): Promise<number[]> => {
+      const { validateSkin } = await import(/* @vite-ignore */ SKIN_MODULE)
+      const { writeSkinFile } = await import(/* @vite-ignore */ FILE_MODULE)
       const v = validateSkin({
         schema: 1,
         id,
@@ -27,7 +32,7 @@ async function skinBytes(
       if (!v.skin) throw new Error(JSON.stringify(v.issues))
       return Array.from(await writeSkinFile(v.skin))
     },
-    { id, name, tokens },
+    { id, name, tokens, SKIN_MODULE, FILE_MODULE },
   )
   return Buffer.from(bytes)
 }
@@ -107,8 +112,8 @@ test('vadné soubory se nepřidají a ukáže se proč', async ({ page }) => {
   await expect(page.getByText('to není ZIP archiv')).toBeVisible()
 
   // text černý na tmavém pozadí: kontrast pod 3:1, Háv se nesmí nainstalovat
-  const slepy = await page.evaluate(async () => {
-    const { writeZip } = await import(/* @vite-ignore */ '/src/core/skin/zip.ts')
+  const slepy = await page.evaluate(async (ZIP_MODULE): Promise<number[]> => {
+    const { writeZip } = await import(/* @vite-ignore */ ZIP_MODULE)
     const manifest = {
       schema: 1,
       id: 'slepy',
@@ -124,7 +129,7 @@ test('vadné soubory se nepřidají a ukáže se proč', async ({ page }) => {
         { name: 'manifest.json', data: new TextEncoder().encode(JSON.stringify(manifest)) },
       ]),
     )
-  })
+  }, ZIP_MODULE)
   await input.setInputFiles({
     name: 'slepy.drdskin',
     mimeType: 'application/zip',
