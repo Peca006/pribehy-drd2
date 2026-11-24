@@ -143,7 +143,7 @@
   }
   fieldset {
     margin: 0.75rem 0;
-    border: 1px solid var(--drd-muted);
+    border: 1px solid var(--drd-border);
     border-radius: 0.5rem;
   }
   .chip {
@@ -152,7 +152,7 @@
     align-items: center;
     margin: 0 0.35rem 0.35rem 0;
     padding: 0.1rem 0.6rem;
-    border: 1px solid var(--drd-muted);
+    border: 1px solid var(--drd-border);
     border-radius: 1rem;
   }
   .row {

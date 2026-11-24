@@ -390,7 +390,7 @@
   }
   .badge {
     font-size: 0.8rem;
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
     margin-left: auto;
   }
   .live {

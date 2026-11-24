@@ -138,7 +138,7 @@
   }
   fieldset {
     margin: 0.75rem 0;
-    border: 1px solid var(--drd-muted);
+    border: 1px solid var(--drd-border);
     border-radius: 0.5rem;
   }
   .radio {
