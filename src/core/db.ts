@@ -8,8 +8,18 @@
 import { connection } from './idb'
 
 const DB = 'drd2-data'
-const VERSION = 7
-export const STORES = ['characters', 'creatures', 'creatureImages', 'characterImages', 'parties', 'recipes'] as const
+const VERSION = 8
+export const STORES = [
+  'characters',
+  'creatures',
+  'creatureImages',
+  'characterImages',
+  'parties',
+  'recipes',
+  'adventures',
+  'expeditions',
+  'runs',
+] as const
 export type StoreName = (typeof STORES)[number]
 
 /** Úložiště se záznamy s číslem schématu (obrázky bytostí a postav jsou jen binární data). */
@@ -23,6 +33,9 @@ export const MIGRATIONS: Record<DataStore, Migration[]> = {
   creatures: [],
   parties: [],
   recipes: [],
+  adventures: [],
+  expeditions: [],
+  runs: [],
 }
 
 /** Aktuální schéma = počet migrací + 1. */
@@ -61,7 +74,7 @@ const conn = connection(DB, VERSION, (req, oldVersion) => {
   if (!portraits.indexNames.contains('characterId')) portraits.createIndex('characterId', 'characterId')
   // migrace existujících záznamů (v jedné transakci s upgradem: buď se povede celá, nebo žádná)
   if (oldVersion > 0)
-    for (const s of ['characters', 'creatures', 'parties'] as const) {
+    for (const s of ['characters', 'creatures', 'parties', 'recipes', 'adventures', 'expeditions', 'runs'] as const) {
       const cursor = req.transaction!.objectStore(s).openCursor()
       cursor.onsuccess = () => {
         const c = cursor.result

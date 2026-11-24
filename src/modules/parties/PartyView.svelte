@@ -1,5 +1,6 @@
 <script lang="ts">
   import HelpHeading from '../../ui/HelpHeading.svelte'
+  import PartyRuns from '../expeditions/PartyRuns.svelte'
   import { ask } from '../../core/confirm.svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import { onMount } from 'svelte'
@@ -214,6 +215,8 @@
       </article>
     {/each}
   {/if}
+
+  {#if gm}<PartyRuns partyId={party.id} />{/if}
 
   {#if overview.length}
     <h2>Přehled družiny</h2>

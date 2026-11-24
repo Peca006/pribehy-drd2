@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { BACKUP_FORMAT, BACKUP_VERSION, backupFileName, buildBackup, parseBackup, restoreBackup, summarize } from './backup'
 import { closeDb, repo, run } from './db'
 import { listCharacterImages } from './character/images'
+import { emptyAdventure, emptyExpedition, emptyRun } from './expedition/model'
+import { getAdventure, getExpedition, getRun, saveAdventure, saveExpedition, saveRun } from './expedition/store'
 
 // úložiště v paměti místo localStorage
 function memory(init: Record<string, string> = {}) {
@@ -48,12 +50,30 @@ describe('záloha dat', () => {
     globalThis.indexedDB = new IDBFactory()
     const parsed = parseBackup(text)
     expect(parsed.errors).toEqual([])
-    expect(summarize(parsed.backup!)).toEqual({ characters: 1, parties: 1, creatures: 1, recipes: 1, images: 1 })
+    expect(summarize(parsed.backup!)).toEqual({
+      characters: 1,
+      parties: 1,
+      creatures: 1,
+      recipes: 1,
+      adventures: 0,
+      expeditions: 0,
+      runs: 0,
+      images: 1,
+    })
     expect(Object.keys(parsed.backup!.local).sort()).toEqual(['drd2-char-play:c1', 'drd2-settings'])
 
     const fresh = memory()
     const res = await restoreBackup(parsed.backup!, 'doplnit', fresh)
-    expect(res.added).toEqual({ characters: 1, parties: 1, creatures: 1, recipes: 1, images: 1 })
+    expect(res.added).toEqual({
+      characters: 1,
+      parties: 1,
+      creatures: 1,
+      recipes: 1,
+      adventures: 0,
+      expeditions: 0,
+      runs: 0,
+      images: 1,
+    })
     expect(await repo('characters').get('c1')).toEqual(log('c1', 'name', 'concept'))
     expect((await repo<{ id: string; name: string }>('parties').get('p1'))?.name).toBe('Vlci')
     const images = await listCharacterImages('c1')
@@ -61,6 +81,24 @@ describe('záloha dat', () => {
     expect(images[0].blob.type).toBe('image/png')
     expect(images[0].blob.size).toBe(7)
     expect(fresh.getItem('drd2-char-play:c1')).toBe('{"spent":{}}')
+  })
+
+  it('záloha nese dobrodružství, výpravy i vedení a obnova je vrátí', async () => {
+    const adv = { ...emptyAdventure('Bílý hrad'), expeditionIds: ['e1'] }
+    const exp = { ...emptyExpedition('Cesta', adv.id), id: 'e1', hook: 'Stabor hledá družinu' }
+    const run = emptyRun('Vlci', 'p1', exp.id)
+    await saveAdventure(adv)
+    await saveExpedition(exp)
+    await saveRun(run)
+    const text = JSON.stringify(await buildBackup({ storage: memory() }))
+    await closeDb()
+    globalThis.indexedDB = new IDBFactory()
+    const parsed = parseBackup(text)
+    expect(summarize(parsed.backup!)).toMatchObject({ adventures: 1, expeditions: 1, runs: 1 })
+    await restoreBackup(parsed.backup!, 'doplnit', memory())
+    expect((await getAdventure(adv.id))?.expeditionIds).toEqual(['e1'])
+    expect((await getExpedition('e1'))?.hook).toBe('Stabor hledá družinu')
+    expect((await getRun(run.id))?.partyId).toBe('p1')
   })
 
   it('bez ilustrací je soubor menší a obrázky nenese', async () => {
