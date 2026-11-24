@@ -164,15 +164,15 @@
       linear-gradient(
         to top right,
         transparent calc(50% - 1px),
-        var(--drd-muted) 50%,
+        var(--drd-border) 50%,
         transparent calc(50% + 1px)
       ),
       linear-gradient(
         to bottom right,
         transparent calc(50% - 1px),
-        var(--drd-muted) 50%,
+        var(--drd-border) 50%,
         transparent calc(50% + 1px)
       );
-    border-color: var(--drd-muted);
+    border-color: var(--drd-border);
   }
 </style>

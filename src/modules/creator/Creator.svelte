@@ -151,7 +151,7 @@
     padding: 0.4rem 0.7rem;
     border-radius: 1rem;
     background: var(--drd-surface);
-    color: var(--drd-muted);
+    color: var(--drd-text-muted);
     text-decoration: none;
     font-size: 0.9rem;
   }
