@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import { readSkinFile, writeSkinFile } from '../core/skin/file'
+import { inspectImage } from '../core/skin/image'
 import {
   contrastIssues,
   resolveTokens,
+  skinTheme,
   ALL_VIEWPORTS,
   RESERVED_IDS,
   validateSkin,
 } from '../core/skin/skin'
 import { contrastRatio, parseColor } from '../core/skin/color'
 import { TOKEN_NAMES } from '../core/skin/tokens'
-import { BUILTIN_SKINS } from './havy'
+import { BUILTIN_ASSETS, BUILTIN_SKINS } from './havy'
+import { gemIcon, marble } from './podzemi/art'
 
 describe('vestavěné Hávy', () => {
   it('jsou tři a jejich id jsou vyhrazená, aby je Háv ze souboru nemohl zastínit', () => {
@@ -63,7 +66,7 @@ describe('vestavěné Hávy', () => {
 
   it('exportovaný Háv jde přečíst, ale s vyhrazeným id ho import odmítne s nápovědou, co změnit', async () => {
     for (const skin of BUILTIN_SKINS) {
-      const back = await readSkinFile(await writeSkinFile(skin))
+      const back = await readSkinFile(await writeSkinFile(skin, BUILTIN_ASSETS[skin.id] ?? []))
       expect(back.ok).toBe(false)
       expect(back.issues).toContainEqual(
         expect.objectContaining({
@@ -72,10 +75,78 @@ describe('vestavěné Hávy', () => {
           message: expect.stringContaining('jiné id'),
         }),
       )
-      // po změně id je to platný Háv se stejným vzhledem
+      // po změně id je to platný Háv se stejným vzhledem (i s obrázky)
       const renamed = validateSkin({ ...skin, id: `${skin.id}-moje` })
       expect(renamed.ok, skin.id).toBe(true)
       expect(renamed.issues).toEqual([])
+      const again = await readSkinFile(
+        await writeSkinFile(renamed.skin!, BUILTIN_ASSETS[skin.id] ?? []),
+      )
+      expect(again.ok, skin.id).toBe(true)
+      expect(again.issues).toEqual([])
+      expect(again.assets).toHaveLength(Object.keys(skin.assets).length)
     }
+  })
+
+  describe('obrázky vestavěných Hávů', () => {
+    it('Pergamen a Noc obrázky nemají, Podzemí ano', () => {
+      expect(Object.keys(BUILTIN_ASSETS)).toEqual(['podzemi'])
+      for (const id of ['pergamen', 'noc'])
+        expect(BUILTIN_SKINS.find((s) => s.id === id)!.assets).toEqual({})
+    })
+
+    const podzemi = () => BUILTIN_SKINS.find((s) => s.id === 'podzemi')!
+
+    it('každý obrázek z manifestu má bajty a žádný navíc, a všechny projdou stejnou kontrolou jako cizí obrázky', () => {
+      const names = Object.keys(podzemi().assets).sort()
+      expect(BUILTIN_ASSETS.podzemi!.map((a) => a.name).sort()).toEqual(names)
+      for (const a of BUILTIN_ASSETS.podzemi!) {
+        const check = inspectImage(a.bytes)
+        expect(check.ok, a.name).toBe(true)
+        expect(check.ok && check.info.type, a.name).toBe('image/svg+xml')
+        expect(a.type, a.name).toBe('image/svg+xml')
+      }
+    })
+
+    it('používá všech pět rolí a ikony pro všechny záložky', () => {
+      expect(Object.keys(podzemi().roles).sort()).toEqual([
+        'background',
+        'button',
+        'divider',
+        'panel',
+        'tab',
+      ])
+      expect(Object.keys(podzemi().icons).sort()).toEqual([
+        'bestiar',
+        'ctenar',
+        'druziny',
+        'grimoar',
+        'knihovna',
+        'postavy',
+        'vypravy',
+      ])
+    })
+
+    it('vyrobí proměnné všech rolí a embos textu', () => {
+      const urls = Object.fromEntries(
+        Object.keys(podzemi().assets).map((n) => [n, `blob:http://x/${n}`]),
+      )
+      const t = skinTheme(podzemi(), ALL_VIEWPORTS[0]!, urls).tokens
+      for (const k of [
+        '--drd-background-image',
+        '--drd-panel-bi-source',
+        '--drd-button-bi-source',
+        '--drd-tab-bi-source',
+        '--drd-divider-image',
+        '--drd-text-shadow',
+      ]) {
+        expect(t[k as keyof typeof t], k).toBeTruthy()
+      }
+    })
+
+    it('grafika je opakovatelná (stejný výstup při každém volání)', () => {
+      expect(marble()).toBe(marble())
+      expect(gemIcon('postavy')).toBe(gemIcon('postavy'))
+    })
   })
 })

@@ -24,6 +24,7 @@ export const darkTheme: Theme = {
     '--drd-warning': '#e8c070',
     '--drd-scrim': 'rgb(0 0 0 / 0.6)',
     '--drd-shadow': '0 2px 12px rgb(0 0 0 / 0.5)',
+    '--drd-text-shadow': 'none',
     '--drd-radius': '10px',
     '--drd-gap': '1rem',
     '--drd-font': "system-ui, 'Segoe UI', Roboto, sans-serif",

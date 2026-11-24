@@ -86,6 +86,23 @@ describe('stíny', () => {
   })
 })
 
+describe('stín textu (embos)', () => {
+  it('přijímá none, tvrdý stín i embos z dvou vrstev', () => {
+    ok('--drd-text-shadow', 'none')
+    ok('--drd-text-shadow', '1px 1px 0 #000')
+    ok('--drd-text-shadow', '-1px -1px 0 rgb(0 0 0 / 0.7), 1px 1px 0 rgb(255 255 255 / 0.12)')
+    ok('--drd-text-shadow', '0 1px 2px rgba(0, 0, 0, 0.5)')
+  })
+  it('na rozdíl od stínu prvků nezná inset a rozšíření a vyžaduje barvu', () => {
+    bad('--drd-text-shadow', 'inset 1px 1px 0 #000')
+    bad('--drd-text-shadow', '1px 1px 2px 3px #000') // rozšíření
+    bad('--drd-text-shadow', '1px 1px 0')
+    bad('--drd-text-shadow', '1px 1px 100px #000')
+    bad('--drd-text-shadow', '1px 1px -2px #000')
+    bad('--drd-text-shadow', '1px 1px 0 #000, 1px 1px 0 #000, 1px 1px 0 #000, 1px 1px 0 #000')
+  })
+})
+
 describe('nebezpečné vstupy', () => {
   it.each([
     'url(https://evil.example/x.png)',
