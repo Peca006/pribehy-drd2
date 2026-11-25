@@ -1,5 +1,10 @@
 # Změny
 
+## 0.5.2 (25. 11. 2026)
+
+- **Šatník, role `dialog`:** Háv může mít vlastní rám oken. Všech deset dialogů aplikace (potvrzení, kouzla, lektvary, jizvy, pasti, recepty, účastníci a další) má sjednocený vzhled v jednom pravidle, takže Háv mění všechny najednou. Podzemí má ozdobný zlatý rám s rubíny.
+- **Oprava:** šířka okraje u obrázkových rolí je v samostatné vlastnosti `border-width` (zkratka s proměnnou o čtyřech hodnotách byla neplatná a okraj se nevykreslil).
+
 ## 0.5.1 (25. 11. 2026)
 
 - **Anonymní měření (GoatCounter):** na ostrém webu se měří, kolik lidí aplikaci otevírá, v jaké verzi, kolik se stáhlo balíčků (`balicek/<id>`) a kolik nových verzí (`aktualizace`). Bez cookies a bez osobních údajů, z aplikace se neposílá žádný obsah ani postavy. Neměří se při vývoji a v testech, při nastaveném „Do Not Track“ ani offline; skript je z jiné domény a service worker ho neukládá. Informace je ve Více → Aplikace.
