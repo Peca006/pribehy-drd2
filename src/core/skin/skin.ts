@@ -11,6 +11,7 @@ import {
   type RoleOverrides,
   type Roles,
 } from './roles'
+import { shapeVariables } from './shape'
 import { isTokenName, tokenValueError, type TokenName } from './tokens'
 import { isSafeZipName } from './zip'
 
@@ -145,13 +146,15 @@ export function skinTheme(
   viewport: Viewport,
   assetUrls: Readonly<Record<string, string>> = {},
 ): Theme {
+  const tokens = resolveTokens(skin, viewport)
   return {
     id: skin.id,
     name: skin.name,
     scheme: skin.scheme,
     tokens: {
-      ...resolveTokens(skin, viewport),
+      ...tokens,
       ...roleVariables(resolveRoles(skin, viewport), assetUrls),
+      ...shapeVariables(tokens),
     },
   }
 }

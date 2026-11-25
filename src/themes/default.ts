@@ -9,6 +9,7 @@ import type { Theme } from '../core/theme'
 //  scrim, shadow          zástěna za dialogy a stín plovoucích prvků
 //  radius, gap, font      tvar, mezery, písmo
 //  nav-position           poloha hlavní lišty (bottom, top, left, right)
+//  shape-*, shape-size    tvar panelů, tlačítek a dialogů (rect, chamfer, notch) a velikost seříznutí
 export const darkTheme: Theme = {
   id: 'default-dark',
   name: 'Tmavý',
@@ -30,6 +31,10 @@ export const darkTheme: Theme = {
     '--drd-gap': '1rem',
     '--drd-font': "system-ui, 'Segoe UI', Roboto, sans-serif",
     '--drd-nav-position': 'bottom',
+    '--drd-shape-panel': 'rect',
+    '--drd-shape-button': 'rect',
+    '--drd-shape-dialog': 'rect',
+    '--drd-shape-size': '6px',
   },
 }
 
