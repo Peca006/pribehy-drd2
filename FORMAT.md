@@ -63,7 +63,7 @@ Tři vrstvy (návrh: `PLAN-VYPRAVY.md`), vše jen u Průvodce, nikam se nesdíl�
 
 ### Sezení (`sittings`)
 
-Časomíra Vedení hry (`PLAN-VEDENI-HRY.md`), jen u Průvodce, nikam se nesdílí: `{ id, partyId, runId?, status, started, ended?, spans[], current?, absent?, planned?, note?, updated }`.
+Časomíra Vedení hry (`PLAN-VEDENI-HRY.md`), jen u Průvodce, nikam se nesdílí: `{ id, partyId, runId?, status, started, ended?, spans[], current?, absent?, planned?, countdown?, note?, updated }` (`countdown`: `{ total, end }` v ms, krátký odpočet).
 `status` je `bezi`, `pauza` nebo `hotovo`; `spans[]` jsou úseky `{ memberId, from, to? }` v ms (poslední bez `to` běží). Součty se počítají z razítek, nic se neukládá
 jako uplynulý čas. Při smazání družiny se smažou i její sezení.
 

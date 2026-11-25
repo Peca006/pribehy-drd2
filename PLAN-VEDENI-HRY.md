@@ -32,7 +32,7 @@ Sitting { id, partyId, runId?, status: 'bezi' | 'pauza' | 'hotovo', started, end
 | ✅ 1 | Model, úložiště a záloha, čistá logika časomíry (`core/game/clock.ts`), stránka **Hra**: začít, klepnutím přepnout aktivního hráče, pauza a pokračování, ukončit, pruhy času ve stejném měřítku, čas celkem | unit testy, E2E |
 | ✅ 2 | Spravedlivý prostor: spravedlivý díl, upozornění, kdo je pozadu (po prahu času), členové „mimo hru“ se nezapočítávají | unit testy, E2E |
 | ✅ 3 | Plán podle délky sezení: plánovaná délka, zbývá celkem a na jednoho, odhad příhod podle odehraných příhod vedení | unit testy, E2E |
-| 4 | Krátký odpočet pro rychlé reakce (přednastavení, vlastní čas, zvuk a vibrace na konci), nezávislý na hlavní časomíře | unit testy, E2E |
+| ✅ 4 | Krátký odpočet pro rychlé reakce (přednastavení, vlastní čas, zvuk a vibrace na konci), nezávislý na hlavní časomíře | unit testy, E2E |
 | 5 | Vazba na vedení: pruh s aktivním hráčem v Při hře, odkaz z družiny; souhrn časů do poznámky zápisu žurnálu | E2E |
 | 6 | Nápověda „?“, `CHANGELOG.md`, `FORMAT.md`, ověření na telefonu (nezhasínání displeje), vydání | |
 

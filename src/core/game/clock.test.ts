@@ -6,6 +6,8 @@ import {
   activate,
   activeMember,
   bars,
+  clearCountdown,
+  countdownLeft,
   elapsed,
   fairness,
   finish,
@@ -17,6 +19,7 @@ import {
   setAbsent,
   setPlanned,
   setRun,
+  startCountdown,
   startSitting,
   totals,
   wallClock,
@@ -226,5 +229,30 @@ describe('plán podle délky sezení', () => {
         T0,
       ),
     ).toBe(2)
+  })
+})
+
+describe('krátký odpočet', () => {
+  it('běží nezávisle na pauze a počítá se z koncového okamžiku', () => {
+    const s = startCountdown(startSitting('p1', T0), 30, T0)
+    expect(s.status).toBe('pauza')
+    expect(countdownLeft(s, T0 + 10_000)).toBe(20_000)
+    expect(countdownLeft(s, T0 + 45_000)).toBe(0)
+  })
+
+  it('nový odpočet nahradí starý, neplatná délka nic nezmění, zrušení ho odstraní', () => {
+    const base = startSitting('p1', T0)
+    expect(startCountdown(base, 0, T0)).toBe(base)
+    const a = startCountdown(base, 60, T0)
+    expect(startCountdown(a, 10, T0 + 5000).countdown).toEqual({ total: 10_000, end: T0 + 15_000 })
+    expect(countdownLeft(clearCountdown(a), T0)).toBeUndefined()
+    expect(clearCountdown(base)).toBe(base)
+  })
+
+  it('hotové sezení odpočet nespustí a odpočet nemění čas hráčů', () => {
+    const done = finish(activate(startSitting('p1', T0), 'a', T0), T0 + MIN)
+    expect(startCountdown(done, 30, T0 + 2 * MIN)).toBe(done)
+    const run = startCountdown(activate(startSitting('p1', T0), 'a', T0), 30, T0)
+    expect(totals(run, T0 + MIN).a).toBe(MIN)
   })
 })

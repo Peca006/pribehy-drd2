@@ -117,3 +117,35 @@ test('časomíra: plánovaná délka ukáže zbývající čas a čas na hráče
   await page.getByRole('button', { name: 'Mimo hru: Emil' }).click()
   await expect(page.getByLabel('Plán sezení')).toContainText('na hráče ve hře asi 60 min')
 })
+
+test('časomíra: krátký odpočet běží, přežije obnovení a jde zrušit i nechat doběhnout', async ({
+  page,
+}) => {
+  await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
+  await page.goto('/#/druziny')
+  await page.getByLabel('Název nové družiny').fill('Sovy')
+  await page.getByRole('button', { name: 'Nová', exact: true }).click()
+  await expect(page.getByLabel('Název družiny')).toHaveValue('Sovy')
+  await page.getByText('Přidat člena', { exact: true }).click()
+  await page.getByLabel('Jméno člena').fill('Gita')
+  await page.getByLabel('Jméno člena').press('Enter')
+  await expect(page.getByText('Gita', { exact: true }).first()).toBeVisible()
+  await page.getByRole('link', { name: /Hra \(časomíra\)/ }).click()
+  await page.getByRole('button', { name: 'Začít sezení' }).click()
+
+  // odpočet 30 s běží i při pauze hlavní časomíry a přežije obnovení stránky
+  await page.getByLabel('Odpočet').getByRole('button', { name: '30 s' }).click()
+  await expect(page.getByRole('timer')).toBeVisible()
+  await page.reload()
+  await expect(page.getByRole('timer')).toBeVisible()
+  await page.getByRole('button', { name: 'Zrušit' }).click()
+  await expect(page.getByRole('button', { name: '30 s' })).toBeVisible()
+
+  // vlastní krátký odpočet doběhne
+  const vlastni = page.getByLabel('vlastní (s)')
+  await vlastni.fill('1')
+  await vlastni.press('Enter')
+  await expect(page.getByRole('alert')).toContainText('Čas vypršel')
+  await page.getByRole('button', { name: 'Hotovo' }).click()
+  await expect(page.getByRole('button', { name: '10 s' })).toBeVisible()
+})

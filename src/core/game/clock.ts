@@ -26,6 +26,8 @@ export interface Sitting {
   absent?: string[]
   /** plánovaná délka sezení v minutách */
   planned?: number
+  /** krátký odpočet pro rychlé reakce (běží nezávisle na hlavní časomíře): délka a okamžik konce, oboje v ms */
+  countdown?: { total: number; end: number }
   note?: string
   updated: string
 }
@@ -238,3 +240,21 @@ export function plan(
   }
   return base
 }
+
+/** Spustí krátký odpočet (nahradí předchozí). Nezávisí na pauze hlavní časomíry. */
+export function startCountdown(s: Sitting, seconds: number, now: number): Sitting {
+  const total = Math.round(seconds) * 1000
+  if (!(total > 0) || s.status === 'hotovo') return s
+  return stamp({ ...s, countdown: { total, end: now + total } })
+}
+
+/** Zruší odpočet (nebo ho po vypršení odloží). */
+export function clearCountdown(s: Sitting): Sitting {
+  if (!s.countdown) return s
+  const { countdown: _old, ...rest } = s
+  return stamp(rest)
+}
+
+/** Kolik ms zbývá do konce odpočtu (0 = vypršel); bez odpočtu undefined. */
+export const countdownLeft = (s: Sitting, now: number): number | undefined =>
+  s.countdown ? Math.max(0, s.countdown.end - now) : undefined

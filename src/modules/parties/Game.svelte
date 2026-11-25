@@ -5,6 +5,8 @@
     activate,
     activeMember,
     bars,
+    clearCountdown,
+    countdownLeft,
     elapsed,
     fairness,
     finish,
@@ -16,6 +18,7 @@
     setAbsent,
     setPlanned,
     setRun,
+    startCountdown,
     startSitting,
     totals,
     wallClock,
@@ -129,6 +132,7 @@
   const timing = $derived(
     sitting ? plan(sitting, now, fair?.present.length ?? 0, incidents) : undefined,
   )
+  const left = $derived(sitting ? countdownLeft(sitting, now) : undefined)
   const minutes = (ms: number) => Math.max(0, Math.round(ms / 60_000))
   const nameOf = (memberId: string) => members.find((m) => m.id === memberId)?.name ?? ''
 
@@ -154,6 +158,38 @@
     change(setRun(sitting, (e.currentTarget as HTMLSelectElement).value || undefined))
     await queue
     await loadRuns()
+  }
+  // krátký odpočet: na konci zvuk a vibrace (jednou pro každý odpočet)
+  let alerts = $state(true)
+  let alerted = 0
+  const startTimer = (seconds: number) =>
+    sitting && change(startCountdown(sitting, seconds, Date.now()))
+  const customTimer = (e: Event) => {
+    const input = e.currentTarget as HTMLInputElement
+    startTimer(Number(input.value))
+    input.value = ''
+  }
+  const stopTimer = () => sitting && change(clearCountdown(sitting))
+  $effect(() => {
+    const end = sitting?.countdown?.end
+    if (!end || left !== 0 || alerted === end) return
+    alerted = end
+    if (alerts) beep()
+  })
+  function beep() {
+    try {
+      navigator.vibrate?.([300, 100, 300])
+      const Ctx = window.AudioContext
+      const ctx = new Ctx()
+      const osc = ctx.createOscillator()
+      osc.connect(ctx.destination)
+      osc.frequency.value = 880
+      osc.start()
+      osc.stop(ctx.currentTime + 0.6)
+      osc.onended = () => void ctx.close()
+    } catch {
+      /* bez zvuku zbývá text na obrazovce */
+    }
   }
   async function end() {
     if (!sitting) return
@@ -265,6 +301,33 @@
       {/if}
     </section>
 
+    <section class="panel plan" aria-label="Odpočet">
+      {#if left === undefined}
+        <div class="presets">
+          <span>Odpočet:</span>
+          {#each [10, 30, 60, 120] as sec (sec)}
+            <button onclick={() => startTimer(sec)}
+              >{sec < 60 ? sec + ' s' : sec / 60 + ' min'}</button
+            >
+          {/each}
+          <label
+            >vlastní (s) <input type="number" min="1" max="3600" onchange={customTimer} /></label
+          >
+          <label><input type="checkbox" bind:checked={alerts} /> zvuk a vibrace</label>
+        </div>
+      {:else if left > 0}
+        <div class="presets">
+          <strong class="big" role="timer">{formatClock(left + 999)}</strong>
+          <button onclick={stopTimer}>Zrušit</button>
+        </div>
+      {:else}
+        <div class="presets">
+          <strong role="alert">Čas vypršel</strong>
+          <button class="primary" onclick={stopTimer}>Hotovo</button>
+        </div>
+      {/if}
+    </section>
+
     {#if fair?.ready && fair.behind.length}
       <p class="panel warn" role="status">
         Méně prostoru měl{fair.behind.length > 1 ? 'i' : ''}:
@@ -364,6 +427,15 @@
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
+  }
+  .presets {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .presets input[type='number'] {
+    width: 5rem;
   }
   .warn {
     border-color: var(--drd-accent);
