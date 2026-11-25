@@ -1,5 +1,10 @@
 # Změny
 
+## 0.5.7 (25. 11. 2026)
+
+- **Poloha lišty (Šatník, M3a):** Háv může určit, kde je hlavní lišta: dole, nahoře, nebo jako svislý pruh vlevo či vpravo, zvlášť pro každou kombinaci viewportu (token `--drd-nav-position` ve `variants`). Podzemí má na telefonu na šířku a v širokém okně svislý pruh vlevo, na výšku zůstává lišta dole.
+- **Vlastní poloha lišty:** Dílna → Spodní lišta → Poloha lišty (podle vzhledu, dole, nahoře, vlevo, vpravo) přebije Háv; v náhledu Hávu v Šatníku se volba ignoruje.
+
 ## 0.5.6 (25. 11. 2026)
 
 - **Sluj se zvýrazní:** když je otevřená sekce, která není v liště (Příručka, Bestiář a Grimoár ve výchozím stavu, Šatník), svítí záložka Sluj.
