@@ -98,6 +98,19 @@ export function tabRim(): string {
   )
 }
 
+/** Pravý lem svislé lišty záložek 6 × 32 (svislý pruh vlevo): měděné pásmo se zlatými kosočtverci, opakuje se svisle. */
+export function tabRimSide(): string {
+  return svg(
+    6,
+    32,
+    `<defs><linearGradient id="rim" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${COPPER.light}"/><stop offset="1" stop-color="${COPPER.dark}"/></linearGradient></defs>
+<rect width="6" height="32" fill="${COPPER.deep}"/>
+<rect x="2" width="3" height="32" fill="url(#rim)"/>
+<path d="M5.5 16L3.5 19L1.5 16L3.5 13Z" fill="${GOLD.mid}"/>
+<path d="M4.8 16L3.5 17.6L2.2 16L3.5 14.4Z" fill="${GOLD.light}"/>`,
+  )
+}
+
 /** Dělicí ozdoba 48 × 8 (opakuje se vodorovně): měděná linka a zlatý kosočtverec. */
 export function divider(): string {
   return svg(
