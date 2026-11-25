@@ -173,3 +173,68 @@ export function fairness(s: Sitting, memberIds: readonly string[], now: number):
     : []
   return { present, share, behind, ready }
 }
+
+/** Nastaví plánovanou délku sezení v minutách; prázdná nebo neplatná hodnota plán zruší. */
+export function setPlanned(s: Sitting, minutes: number | undefined): Sitting {
+  const { planned: _old, ...rest } = s
+  return stamp(minutes && minutes > 0 ? { ...rest, planned: Math.round(minutes) } : rest)
+}
+
+/** Přiřadí sezení vedení výpravy (nebo vazbu zruší). */
+export function setRun(s: Sitting, runId: string | undefined): Sitting {
+  const { runId: _old, ...rest } = s
+  return stamp(runId ? { ...rest, runId } : rest)
+}
+
+/** Kolik příhod bylo odehráno od `since` (ms); `at` je ISO čas odehrání příhody. */
+export function playedSince(
+  incidents: Record<string, { state: string; at?: string }>,
+  since: number,
+): number {
+  return Object.values(incidents).filter(
+    (i) => i.state === 'odehrana' && i.at !== undefined && Date.parse(i.at) >= since,
+  ).length
+}
+
+export interface Plan {
+  plannedMs: number
+  /** zbývá do konce plánu (záporné = plán je překročen) */
+  remainingMs: number
+  over: boolean
+  /** zbývající čas na jednoho člena ve hře */
+  perMemberMs: number
+  /** průměrná délka odehrané příhody v tomto sezení (od začátku sezení včetně pauz) */
+  perIncidentMs?: number
+  /** odhad času na zbývající příhody výpravy */
+  neededMs?: number
+  /** vyjde zbývající příhody při tomto tempu stihnout? */
+  fits?: boolean
+}
+
+/**
+ * Plán podle délky sezení: kolik zbývá celkem a na jednoho. Jsou-li známé odehrané příhody sezení (`played`) a počet
+ * zbývajících příhod výpravy (`left`), přidá odhad, jestli je při tomto tempu stihnete. Bez plánu vrací undefined.
+ */
+export function plan(
+  s: Sitting,
+  now: number,
+  present: number,
+  incidents?: { played: number; left: number },
+): Plan | undefined {
+  if (!s.planned) return undefined
+  const plannedMs = s.planned * 60_000
+  const remainingMs = plannedMs - wallClock(s, now)
+  const over = remainingMs <= 0
+  const base: Plan = {
+    plannedMs,
+    remainingMs,
+    over,
+    perMemberMs: !over && present > 0 ? remainingMs / present : 0,
+  }
+  if (incidents && incidents.played > 0) {
+    const perIncidentMs = wallClock(s, now) / incidents.played
+    const neededMs = perIncidentMs * incidents.left
+    return { ...base, perIncidentMs, neededMs, fits: !over && neededMs <= remainingMs }
+  }
+  return base
+}

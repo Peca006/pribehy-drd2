@@ -10,13 +10,20 @@
     finish,
     formatClock,
     pause,
+    plan,
+    playedSince,
     resume,
     setAbsent,
+    setPlanned,
+    setRun,
     startSitting,
     totals,
     wallClock,
     type Sitting,
   } from '../../core/game/clock'
+  import { pace } from '../../core/expedition/run'
+  import { getExpedition, listRuns } from '../../core/expedition/store'
+  import type { Expedition, Run } from '../../core/expedition/model'
   import { listSittings, saveSitting } from '../../core/game/store'
   import { roleOf, type Party } from '../../core/party/model'
   import { getParty } from '../../core/party/store'
@@ -31,6 +38,9 @@
   let last = $state.raw<Sitting | undefined>(undefined)
   let loaded = $state(false)
   let now = $state(Date.now())
+  // vedení výprav družiny, které právě probíhají (pro odhad příhod)
+  let runs = $state.raw<Run[]>([])
+  let expedition = $state.raw<Expedition | undefined>(undefined)
 
   let timer: ReturnType<typeof setInterval> | undefined
   let lock: { release: () => Promise<void> } | undefined
@@ -40,6 +50,7 @@
     const all = await listSittings(id)
     sitting = all.find((s) => s.status !== 'hotovo')
     last = all.find((s) => s.status === 'hotovo')
+    await loadRuns()
     loaded = true
     timer = setInterval(() => (now = Date.now()), 500)
     document.addEventListener('visibilitychange', onVisible)
@@ -62,9 +73,16 @@
       /* bez zámku se displej může zhasnout, časomíra tím nestrádá */
     }
   }
+  // vedení výprav a výprava vybraného vedení (znovu se čtou, když se vrátíte z Při hře)
+  async function loadRuns() {
+    runs = (await listRuns()).filter((r) => r.partyId === id && r.status === 'probiha')
+    const run = runs.find((r) => r.id === sitting?.runId)
+    expedition = run ? await getExpedition(run.expeditionId) : undefined
+  }
   function onVisible() {
     if (document.visibilityState === 'visible') {
       now = Date.now()
+      void loadRuns()
       void keepAwake()
     }
   }
@@ -99,6 +117,19 @@
         )
       : undefined,
   )
+  const run = $derived(runs.find((r) => r.id === sitting?.runId))
+  const incidents = $derived.by(() => {
+    if (!sitting || !run || !expedition) return undefined
+    const p = pace(expedition, run)
+    return {
+      played: playedSince(run.incidents, sitting.started),
+      left: Math.max(0, p.total - p.played),
+    }
+  })
+  const timing = $derived(
+    sitting ? plan(sitting, now, fair?.present.length ?? 0, incidents) : undefined,
+  )
+  const minutes = (ms: number) => Math.max(0, Math.round(ms / 60_000))
   const nameOf = (memberId: string) => members.find((m) => m.id === memberId)?.name ?? ''
 
   function begin() {
@@ -113,6 +144,16 @@
   const toggleAbsent = (memberId: string) => {
     if (!sitting) return
     change(setAbsent(sitting, memberId, !sitting.absent?.includes(memberId), Date.now()))
+  }
+  const setPlan = (e: Event) => {
+    if (!sitting) return
+    change(setPlanned(sitting, Number((e.currentTarget as HTMLInputElement).value)))
+  }
+  async function chooseRun(e: Event) {
+    if (!sitting) return
+    change(setRun(sitting, (e.currentTarget as HTMLSelectElement).value || undefined))
+    await queue
+    await loadRuns()
   }
   async function end() {
     if (!sitting) return
@@ -185,6 +226,44 @@
     {#if sitting.status === 'pauza'}<p class="muted" role="status">
         Časomíra stojí. Klepnutím na hráče ji rozběhnete.
       </p>{/if}
+
+    <section class="panel plan" aria-label="Plán sezení">
+      <label
+        >Plánovaná délka (min) <input
+          type="number"
+          min="0"
+          step="5"
+          value={sitting.planned ?? ''}
+          onchange={setPlan}
+        /></label
+      >
+      {#if runs.length}
+        <label
+          >Vedení výpravy
+          <select value={sitting.runId ?? ''} onchange={chooseRun}>
+            <option value="">bez výpravy</option>
+            {#each runs as r (r.id)}<option value={r.id}>{r.name}</option>{/each}
+          </select>
+        </label>
+      {/if}
+      {#if timing}
+        <p role="status">
+          {#if timing.over}
+            Plán je překročen o {minutes(-timing.remainingMs)} min.
+          {:else}
+            Zbývá {minutes(timing.remainingMs)} min, na hráče ve hře asi {minutes(
+              timing.perMemberMs,
+            )} min.
+          {/if}
+          {#if timing.neededMs !== undefined && incidents}
+            Při tempu {minutes(timing.perIncidentMs ?? 0)} min na příhodu vyjde zbývajících {incidents.left}
+            příhod na {minutes(timing.neededMs)} min{timing.fits
+              ? ': stihnete.'
+              : ': nestihnete, zvažte zkrácení.'}
+          {/if}
+        </p>
+      {/if}
+    </section>
 
     {#if fair?.ready && fair.behind.length}
       <p class="panel warn" role="status">
@@ -275,6 +354,16 @@
   .away {
     font-size: 0.85rem;
     padding: 0.2rem 0.5rem;
+  }
+  .plan {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .plan label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
   }
   .warn {
     border-color: var(--drd-accent);

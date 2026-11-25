@@ -11,8 +11,12 @@ import {
   finish,
   formatClock,
   pause,
+  plan,
+  playedSince,
   resume,
   setAbsent,
+  setPlanned,
+  setRun,
   startSitting,
   totals,
   wallClock,
@@ -159,5 +163,68 @@ describe('spravedlivý prostor', () => {
     const done = finish(game(), T0 + 30 * MIN)
     expect(setAbsent(done, 'a', true, T0 + 31 * MIN)).toBe(done)
     expect(fairness(game(), ['a'], T0 + 30 * MIN).behind).toEqual([])
+  })
+})
+
+describe('plán podle délky sezení', () => {
+  it('bez plánu nic nevrací, plán se dá nastavit a zrušit', () => {
+    const s = startSitting('p1', T0)
+    expect(plan(s, T0, 3)).toBeUndefined()
+    const p = setPlanned(s, 120)
+    expect(p.planned).toBe(120)
+    expect('planned' in setPlanned(p, 0)).toBe(false)
+    expect('planned' in setPlanned(p, undefined)).toBe(false)
+  })
+
+  it('zbývá celkem a na jednoho hráče ve hře', () => {
+    const s = setPlanned(startSitting('p1', T0), 120)
+    const r = plan(s, T0 + 30 * MIN, 3)!
+    expect(r.remainingMs).toBe(90 * MIN)
+    expect(r.perMemberMs).toBe(30 * MIN)
+    expect(r.over).toBe(false)
+    expect(r.neededMs).toBeUndefined()
+  })
+
+  it('překročený plán nedělí čas', () => {
+    const s = setPlanned(startSitting('p1', T0), 60)
+    const r = plan(s, T0 + 70 * MIN, 3)!
+    expect(r.over).toBe(true)
+    expect(r.remainingMs).toBe(-10 * MIN)
+    expect(r.perMemberMs).toBe(0)
+  })
+
+  it('odhad příhod podle tempa: stihnete, nebo ne', () => {
+    const s = setPlanned(startSitting('p1', T0), 120)
+    // 2 příhody za 40 min = 20 min na příhodu, zbývá 80 min
+    expect(plan(s, T0 + 40 * MIN, 3, { played: 2, left: 4 })).toMatchObject({
+      perIncidentMs: 20 * MIN,
+      neededMs: 80 * MIN,
+      fits: true,
+    })
+    expect(plan(s, T0 + 40 * MIN, 3, { played: 2, left: 5 })).toMatchObject({
+      neededMs: 100 * MIN,
+      fits: false,
+    })
+    // bez odehrané příhody odhad nejde
+    expect(plan(s, T0 + 40 * MIN, 3, { played: 0, left: 5 })?.neededMs).toBeUndefined()
+  })
+
+  it('vazba na vedení výpravy a počet příhod odehraných od začátku sezení', () => {
+    const s = startSitting('p1', T0)
+    expect(setRun(s, 'r1').runId).toBe('r1')
+    expect('runId' in setRun(setRun(s, 'r1'), undefined)).toBe(false)
+    const at = (min: number) => new Date(T0 + min * MIN).toISOString()
+    expect(
+      playedSince(
+        {
+          a: { state: 'odehrana', at: at(-5) },
+          b: { state: 'odehrana', at: at(10) },
+          c: { state: 'odehrana', at: at(20) },
+          d: { state: 'nasazena', at: at(30) },
+          e: { state: 'odehrana' },
+        },
+        T0,
+      ),
+    ).toBe(2)
   })
 })

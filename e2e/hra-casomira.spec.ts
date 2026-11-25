@@ -87,3 +87,33 @@ test('časomíra: člen mimo hru se nepočítá a po návratu je zase ve hře', 
   await expect(cyril).toHaveAttribute('aria-pressed', 'true')
   await expect(page.getByRole('button', { name: 'Mimo hru: Cyril' })).toBeVisible()
 })
+
+test('časomíra: plánovaná délka ukáže zbývající čas a čas na hráče', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
+  await page.goto('/#/druziny')
+  await page.getByLabel('Název nové družiny').fill('Lišky')
+  await page.getByRole('button', { name: 'Nová', exact: true }).click()
+  await expect(page.getByLabel('Název družiny')).toHaveValue('Lišky')
+  await page.getByText('Přidat člena', { exact: true }).click()
+  for (const jmeno of ['Emil', 'Filip']) {
+    await page.getByLabel('Jméno člena').fill(jmeno)
+    await page.getByLabel('Jméno člena').press('Enter')
+    await expect(page.getByText(jmeno, { exact: true }).first()).toBeVisible()
+  }
+  await page.getByRole('link', { name: /Hra \(časomíra\)/ }).click()
+  await page.getByRole('button', { name: 'Začít sezení' }).click()
+
+  const plan = page.getByLabel('Plánovaná délka (min)')
+  await plan.fill('60')
+  await plan.press('Enter')
+  await plan.blur()
+  await expect(page.getByLabel('Plán sezení')).toContainText(
+    'Zbývá 60 min, na hráče ve hře asi 30 min',
+  )
+
+  // plán se uloží i po obnovení stránky
+  await page.reload()
+  await expect(page.getByLabel('Plánovaná délka (min)')).toHaveValue('60')
+  await page.getByRole('button', { name: 'Mimo hru: Emil' }).click()
+  await expect(page.getByLabel('Plán sezení')).toContainText('na hráče ve hře asi 60 min')
+})
