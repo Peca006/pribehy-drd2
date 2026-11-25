@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   defaultTabbar,
   isDefaultTabbar,
+  isLegacyDefaultTabbar,
   layoutTabs,
   moveTab,
   orderedIds,
@@ -15,15 +16,20 @@ const all = mods.map((m) => m.id)
 const names = (l: { id: string }[]) => l.map((m) => m.id)
 
 describe('layoutTabs', () => {
-  it('výchozí: Postava vlevo, Více vpravo, ostatní se posouvají v původním pořadí', () => {
+  it('výchozí: Postava vlevo, Sluj vpravo, Příručka, Bestiář a Grimoár jen ve Sluji', () => {
     const l = layoutTabs(mods, defaultTabbar())
     expect(l.left?.id).toBe('postavy')
     expect(l.right?.id).toBe('knihovna')
+    expect(names(l.middle)).toEqual(['druziny'])
+  })
+
+  it('bez skrývání jsou v liště všechny záložky v původním pořadí', () => {
+    const l = layoutTabs(mods, { ...defaultTabbar(), hidden: [] })
     expect(names(l.middle)).toEqual(['druziny', 'ctenar', 'bestiar', 'grimoar'])
   })
 
   it('pořadí z nastavení má přednost, nové moduly se přidají na konec', () => {
-    const cfg = { ...defaultTabbar(), order: ['grimoar', 'druziny', 'neznamy'] }
+    const cfg = { ...defaultTabbar(), hidden: [], order: ['grimoar', 'druziny', 'neznamy'] }
     expect(names(layoutTabs(mods, cfg).middle)).toEqual(['grimoar', 'druziny', 'ctenar', 'bestiar'])
   })
 
@@ -91,7 +97,8 @@ describe('setPlacement', () => {
   })
 
   it('zobrazení skryté záložky ji vrátí do posuvné části', () => {
-    const c = setPlacement(setPlacement(defaultTabbar(), 'bestiar', 'hidden'), 'bestiar', 'scroll')
+    expect(placementOf(defaultTabbar(), 'bestiar')).toBe('hidden')
+    const c = setPlacement(defaultTabbar(), 'bestiar', 'scroll')
     expect(placementOf(c, 'bestiar')).toBe('scroll')
   })
 })
@@ -114,6 +121,12 @@ describe('moveTab', () => {
       'postavy',
       'druziny',
     ])
+  })
+
+  it('dřívější výchozí lišta se pozná a nová výchozí není dřívější', () => {
+    expect(isLegacyDefaultTabbar({ order: [], hidden: [], left: 'postavy', right: 'knihovna' })).toBe(true)
+    expect(isLegacyDefaultTabbar(defaultTabbar())).toBe(false)
+    expect(isLegacyDefaultTabbar({ order: ['x'], hidden: [], left: 'postavy', right: 'knihovna' })).toBe(false)
   })
 
   it('výchozí nastavení se pozná', () => {

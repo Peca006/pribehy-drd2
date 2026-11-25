@@ -1,6 +1,6 @@
 // Nastavení aplikace (jen v tomto zařízení). Ukládá se do localStorage; když není dostupné
 // (soukromé okno, zakázaná data webu), nastavení platí do zavření stránky.
-import { defaultTabbar, parseTabbar, type TabbarConfig } from './tabbar'
+import { defaultTabbar, isLegacyDefaultTabbar, parseTabbar, type TabbarConfig } from './tabbar'
 import { isLinkMode, type LinkMode } from './termLinks'
 
 const KEY = 'drd2-settings'
@@ -24,6 +24,11 @@ export const DEFAULT_SKIN = 'podzemi'
  * uloží. Od té chvíle má uložená volba vždy přednost. Při dalším takovém úvodu vzhledu stačí číslo zvýšit.
  */
 const SKIN_INTRO = 1
+/**
+ * Úvod nové výchozí lišty (Příručka, Bestiář a Grimoár jen ve Sluji): kdo má lištu ještě dotčenou jen výchozími
+ * hodnotami z dřívějška, dostane novou výchozí; kdo si ji upravil, zůstane u své.
+ */
+const TABBAR_INTRO = 1
 
 function load(): Settings {
   const s: Settings = { termLinks: 'first', author: 'hráč', skin: DEFAULT_SKIN, tabbar: defaultTabbar() }
@@ -34,7 +39,11 @@ function load(): Settings {
       s.author = raw.author.trim().slice(0, 60)
     if (typeof raw.skin === 'string' && SKIN_ID.test(raw.skin) && raw.skinIntro === SKIN_INTRO)
       s.skin = raw.skin
-    s.tabbar = parseTabbar(raw.tabbar)
+    const bar = parseTabbar(raw.tabbar)
+    s.tabbar =
+      raw.tabbarIntro === TABBAR_INTRO || !raw.tabbar || !isLegacyDefaultTabbar(bar)
+        ? bar
+        : defaultTabbar()
   } catch {
     /* výchozí hodnoty */
   }
@@ -53,6 +62,7 @@ function save() {
         skin: settings.skin,
         skinIntro: SKIN_INTRO,
         tabbar: settings.tabbar,
+        tabbarIntro: TABBAR_INTRO,
       }),
     )
   } catch {

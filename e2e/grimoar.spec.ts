@@ -5,16 +5,14 @@ import { clearRecipes } from './helpers.js'
 // Grimoár na liště, předpisy všech druhů, filtr podle druhu a převod starého formátu deníku (lektvary a nástrahy
 // zapsané přímo v postavě se při spuštění převedou na předpisy).
 
-test('Grimoár je na liště mezi Bestiářem a Sluj', async ({ page }) => {
+test('Grimoár je ve Sluji a ve výchozí liště není', async ({ page }) => {
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
-  await expect(nav.getByRole('link', { name: /Grimoár/ })).toBeVisible()
-  const names = await nav.getByRole('link').allInnerTexts()
-  const clean = names.map((n) => n.replace(/\s+/g, ' ').trim())
-  const i = clean.findIndex((n) => n.includes('Grimoár'))
-  expect(i).toBeGreaterThan(-1)
-  expect(clean[i - 1]).toContain('Bestiář')
-  expect(clean[i + 1]).toContain('Sluj')
+  await expect(nav.getByRole('link', { name: /Sluj/ })).toBeVisible()
+  await expect(nav.getByRole('link', { name: /Grimoár/ })).toHaveCount(0)
+  await nav.getByRole('link', { name: /Sluj/ }).click()
+  await page.locator('.tile').filter({ hasText: 'Grimoár' }).click()
+  await expect(page).toHaveURL(/#\/grimoar/)
 })
 
 test('předpisy všech druhů a filtr podle druhu', async ({ page }) => {

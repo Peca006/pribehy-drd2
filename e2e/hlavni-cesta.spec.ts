@@ -21,9 +21,13 @@ test('první spuštění, stažení balíčků, postava, sdílení a import', as
   await expect(bar).toBeHidden()
 
   // 2) Příručka ukazuje kapitoly a Bestiář bytosti
-  await page.getByRole('link', { name: 'Příručka' }).click()
+  // (Příručka i Bestiář jsou ve výchozím stavu ve Sluji)
+  const sluj = page.getByRole('navigation', { name: 'Hlavní navigace' }).getByRole('link', { name: /Sluj/ })
+  await sluj.click()
+  await page.locator('.tile').filter({ hasText: 'Příručka' }).click()
   await expect(page.getByRole('link', { name: 'Rasy' }).first()).toBeVisible()
-  await page.getByRole('link', { name: 'Bestiář' }).last().click()
+  await sluj.click()
+  await page.locator('.tile').filter({ hasText: 'Bestiář' }).click()
   await expect(page.getByPlaceholder('Hledat bytost…')).toBeVisible()
 
   // 3) tvorba postavy
