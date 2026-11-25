@@ -1,5 +1,10 @@
 # Změny
 
+## 0.5.9 (25. 11. 2026)
+
+- **Záhlaví a ozdoby (Šatník, M3c):** Háv může mít záhlaví (pás s obrázkem nad obsahem, role `header`) a až osm rohových ozdob (pole `ornaments`), které se kreslí jen do volného bočního okraje a nikdy nepřekryjí obsah. Na telefonu na výšku se neukážou. Podzemí má měděné záhlaví (na nízkém viewportu vypnuté) a čtyři rohové ozdoby v širokém okně.
+- **Záhlaví vzhledu:** Dílna → Spodní lišta → Záhlaví vzhledu (podle vzhledu, skrýt); v náhledu Hávu v Šatníku se volba ignoruje.
+
 ## 0.5.8 (25. 11. 2026)
 
 - **Tvary ploch (Šatník, M3b):** Háv může seříznout rohy panelů, tlačítek a oken (tokeny `--drd-shape-panel|button|dialog`: `rect`, `chamfer`, `notch`, velikost `--drd-shape-size` 2 až 16 px). Podzemí má seříznutá tlačítka a okna a panely se dvěma protilehlými rohy. Ohnisko seříznutého tlačítka zůstává při ovládání klávesnicí viditelné.
