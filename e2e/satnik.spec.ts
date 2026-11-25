@@ -100,6 +100,11 @@ test('Šatník je dostupný z Více', async ({ page }) => {
   await page.goto('/#/knihovna')
   await page.getByRole('link', { name: /Šatník/ }).click()
   await expect(page.getByRole('heading', { name: 'Šatník', level: 1 })).toBeVisible()
+  // výchozí vzhled je Háv Podzemí; vlastní volba (i „Podle systému“) se pak respektuje
+  await expect(card(page, 'Podzemí')).toContainText('používá se')
+  await card(page, 'Podle systému').getByRole('button', { name: 'Použít' }).click()
+  await expect(card(page, 'Podle systému')).toContainText('používá se')
+  await page.reload()
   await expect(card(page, 'Podle systému')).toContainText('používá se')
 })
 
@@ -203,6 +208,8 @@ test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení
   for (const name of ['Pergamen', 'Noc', 'Podzemí'])
     await expect(card(page, name)).toContainText('vestavěný')
 
+  // Podzemí je výchozí; nejdřív přepnout jinam, ať se použití vyzkouší
+  await card(page, 'Noc').getByRole('button', { name: 'Použít' }).click()
   await card(page, 'Podzemí').getByRole('button', { name: 'Použít' }).click()
   const html = page.locator('html')
   await expect(html).toHaveAttribute('data-theme', 'podzemi')
