@@ -4,7 +4,15 @@
 // pevná klíčová slova a adresa obrázku, kterou vyrobila aplikace (`blob:`).
 import type { ThemeTokens } from '../theme'
 
-export const ROLE_NAMES = ['background', 'panel', 'button', 'tab', 'divider', 'dialog'] as const
+export const ROLE_NAMES = [
+  'background',
+  'panel',
+  'button',
+  'tab',
+  'divider',
+  'dialog',
+  'header',
+] as const
 export type RoleName = (typeof ROLE_NAMES)[number]
 
 export const ROLE_MODES = [
@@ -53,7 +61,7 @@ export interface Role {
   fill?: boolean
   /** `slice`: jak se vyplní strany rámečku mezi rohy (výchozí `stretch`) */
   edge?: RoleEdge
-  /** jen u role `divider`: výška dělicí čáry v px (výchozí 0, tedy jen ohraničení z `slice`) */
+  /** u role `divider` výška dělicí čáry v px (výchozí 0, tedy jen ohraničení z `slice`), u role `header` povinná výška záhlaví */
   height?: number
   /** pixelart: ostré zvětšení bez vyhlazení; jen u role `background` (u ostatních by se přenášelo na vnitřní obrázky) */
   pixelated?: boolean
@@ -67,6 +75,8 @@ export const MAX_SLICE = 2048
 export const MAX_BORDER_WIDTH = 64
 export const MAX_TILE = 2048
 export const MAX_DIVIDER_HEIGHT = 512
+export const MIN_HEADER_HEIGHT = 16
+export const MAX_HEADER_HEIGHT = 160
 
 const ROLE_KEYS = [
   'image',
@@ -218,8 +228,22 @@ export function validateRoles(
       continue
     }
     const role = validateRole(value, `${path}.${name}`, assetNames, report)
-    if (role && role.height !== undefined && name !== 'divider') {
-      report('warning', `${path}.${name}.height`, 'výška se používá jen u role divider')
+    if (role && name === 'header') {
+      const h = role.height
+      if (h === undefined || h < MIN_HEADER_HEIGHT || h > MAX_HEADER_HEIGHT) {
+        report(
+          'error',
+          `${path}.${name}.height`,
+          `záhlaví potřebuje výšku, celé číslo ${MIN_HEADER_HEIGHT} až ${MAX_HEADER_HEIGHT}`,
+        )
+        continue
+      }
+      if (role.mode === 'slice') {
+        report('error', `${path}.${name}.mode`, 'záhlaví nepodporuje režim slice')
+        continue
+      }
+    } else if (role && role.height !== undefined && name !== 'divider') {
+      report('warning', `${path}.${name}.height`, 'výška se používá jen u rolí divider a header')
       delete role.height
     }
     if (role) out[name] = role

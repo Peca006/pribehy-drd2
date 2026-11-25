@@ -13,6 +13,8 @@ import {
   marble,
   tabRim,
   tabRimSide,
+  headerPlate,
+  cornerOrnament,
 } from './podzemi/art'
 
 const svgAsset = (name: string, source: string): AssetFile => ({
@@ -92,6 +94,8 @@ const definitions = [
       klenot: { file: 'assets/klenot.svg' },
       lem: { file: 'assets/lem.svg' },
       'lem-bok': { file: 'assets/lem-bok.svg' },
+      zahlavi: { file: 'assets/zahlavi.svg' },
+      roh: { file: 'assets/roh.svg' },
       ozdoba: { file: 'assets/ozdoba.svg' },
       okno: { file: 'assets/okno.svg' },
       ...Object.fromEntries(
@@ -105,7 +109,16 @@ const definitions = [
       tab: { image: 'lem', mode: 'slice', slice: [6, 0, 0, 0], edge: 'repeat', fill: false },
       divider: { image: 'ozdoba', mode: 'repeat-x', size: 48, height: 8 },
       dialog: { image: 'okno', mode: 'slice', slice: 16, width: 12, fill: false },
+      // záhlaví s názvem aplikace; na nízkém viewportu (telefon na šířku) se vypíná, aby nebralo výšku
+      header: { image: 'zahlavi', mode: 'repeat-x', size: 256, height: 40, position: 'center' },
     },
+    // rohové ozdoby se ukážou jen ve volném bočním okraji (široké okno), jinak je aplikace skryje
+    ornaments: [
+      { image: 'roh', anchor: 'top-left', width: 96 },
+      { image: 'roh', anchor: 'top-right', width: 96 },
+      { image: 'roh', anchor: 'bottom-left', width: 96 },
+      { image: 'roh', anchor: 'bottom-right', width: 96 },
+    ],
     icons: Object.fromEntries(ICON_MODULES.map((m) => [m, `ikona-${m}`])),
     tokens: {
       '--drd-text-shadow': '1px 1px 0 rgb(0 0 0 / 0.85), -1px -1px 0 rgb(255 255 255 / 0.08)',
@@ -130,7 +143,7 @@ const definitions = [
     },
     variants: [
       { when: { width: 'compact' }, tokens: { '--drd-gap': '0.75rem' } },
-      { when: { low: true }, tokens: { '--drd-gap': '0.5rem' } },
+      { when: { low: true }, tokens: { '--drd-gap': '0.5rem' }, roles: { header: null } },
       // telefon na šířku a široké okno: lišta je svislý pruh vlevo (nízký viewport nemá výšku nazbyt) s pravým lemem
       {
         when: { orientation: 'landscape', low: true },
@@ -161,6 +174,8 @@ export const BUILTIN_ASSETS: Readonly<Record<string, readonly AssetFile[]>> = {
     svgAsset('klenot', gemButton()),
     svgAsset('lem', tabRim()),
     svgAsset('lem-bok', tabRimSide()),
+    svgAsset('zahlavi', headerPlate()),
+    svgAsset('roh', cornerOrnament()),
     svgAsset('ozdoba', divider()),
     svgAsset('okno', dialogFrame()),
     ...ICON_MODULES.map((m) => svgAsset(`ikona-${m}`, gemIcon(m))),

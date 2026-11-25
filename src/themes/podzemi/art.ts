@@ -111,6 +111,38 @@ export function tabRimSide(): string {
   )
 }
 
+/** Záhlaví 256 × 40 (opakuje se vodorovně): tmavý kámen mezi dvěma měděnými pásmy, uprostřed tlumený zlatý kosočtverec. */
+export function headerPlate(): string {
+  return svg(
+    256,
+    40,
+    `<defs><linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${COPPER.light}"/><stop offset="1" stop-color="${COPPER.dark}"/></linearGradient>
+<linearGradient id="plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d2042"/><stop offset="1" stop-color="#1a1129"/></linearGradient></defs>
+<rect width="256" height="40" fill="url(#plate)"/>
+<rect width="256" height="4" fill="url(#band)"/>
+<rect y="4" width="256" height="1" fill="${COPPER.deep}"/>
+<rect y="36" width="256" height="4" fill="url(#band)"/>
+<rect y="35" width="256" height="1" fill="${COPPER.deep}"/>
+<path d="M128 11L135 20L128 29L121 20Z" fill="${GOLD.dark}" fill-opacity="0.55"/>
+<path d="M128 14L132 20L128 26L124 20Z" fill="${GOLD.mid}" fill-opacity="0.45"/>`,
+  )
+}
+
+/** Rohová ozdoba 96 × 96 pro levý horní roh (ostatní rohy aplikace zrcadlí): měděný oblouk se zlatým kosočtvercem. */
+export function cornerOrnament(): string {
+  return svg(
+    96,
+    96,
+    `<defs><linearGradient id="arc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${COPPER.light}"/><stop offset="1" stop-color="${COPPER.dark}"/></linearGradient></defs>
+<path d="M4 92V28C4 14 14 4 28 4H92V12H30C20 12 12 20 12 30V92Z" fill="url(#arc)"/>
+<path d="M12 92V30C12 20 20 12 30 12H92V15H31C22 15 15 22 15 31V92Z" fill="${COPPER.deep}" fill-opacity="0.55"/>
+<path d="M28 28L38 38L28 48L18 38Z" fill="${GOLD.dark}"/>
+<path d="M28 30.5L35.5 38L28 45.5L20.5 38Z" fill="${GOLD.mid}"/>
+<path d="M28 33L32.5 38L28 43L23.5 38Z" fill="${GOLD.light}"/>
+<circle cx="52" cy="8" r="2.2" fill="${GOLD.mid}"/><circle cx="8" cy="52" r="2.2" fill="${GOLD.mid}"/>`,
+  )
+}
+
 /** Dělicí ozdoba 48 × 8 (opakuje se vodorovně): měděná linka a zlatý kosočtverec. */
 export function divider(): string {
   return svg(
