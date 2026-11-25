@@ -1,5 +1,9 @@
 # Změny
 
+## 0.5.8 (25. 11. 2026)
+
+- **Tvary ploch (Šatník, M3b):** Háv může seříznout rohy panelů, tlačítek a oken (tokeny `--drd-shape-panel|button|dialog`: `rect`, `chamfer`, `notch`, velikost `--drd-shape-size` 2 až 16 px). Podzemí má seříznutá tlačítka a okna a panely se dvěma protilehlými rohy. Ohnisko seříznutého tlačítka zůstává při ovládání klávesnicí viditelné.
+
 ## 0.5.7 (25. 11. 2026)
 
 - **Poloha lišty (Šatník, M3a):** Háv může určit, kde je hlavní lišta: dole, nahoře, nebo jako svislý pruh vlevo či vpravo, zvlášť pro každou kombinaci viewportu (token `--drd-nav-position` ve `variants`). Podzemí má na telefonu na šířku a v širokém okně svislý pruh vlevo, na výšku zůstává lišta dole.
