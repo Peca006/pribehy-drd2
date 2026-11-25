@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 
-// Záloha všech dat do souboru a obnova z něj (Více → Záloha a obnova dat).
+// Záloha všech dat do souboru a obnova z něj (Sluj → Dílna → Záloha a obnova dat).
 
 test('záloha se stáhne a jde obnovit (doplnit i přepsat)', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení

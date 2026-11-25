@@ -5,16 +5,14 @@ import { clearRecipes } from './helpers.js'
 // Grimoár na liště, předpisy všech druhů, filtr podle druhu a převod starého formátu deníku (lektvary a nástrahy
 // zapsané přímo v postavě se při spuštění převedou na předpisy).
 
-test('Grimoár je na liště mezi Bestiářem a Více', async ({ page }) => {
+test('Grimoár je ve Sluji a ve výchozí liště není', async ({ page }) => {
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
-  await expect(nav.getByRole('link', { name: /Grimoár/ })).toBeVisible()
-  const names = await nav.getByRole('link').allInnerTexts()
-  const clean = names.map((n) => n.replace(/\s+/g, ' ').trim())
-  const i = clean.findIndex((n) => n.includes('Grimoár'))
-  expect(i).toBeGreaterThan(-1)
-  expect(clean[i - 1]).toContain('Bestiář')
-  expect(clean[i + 1]).toContain('Více')
+  await expect(nav.getByRole('link', { name: /Sluj/ })).toBeVisible()
+  await expect(nav.getByRole('link', { name: /Grimoár/ })).toHaveCount(0)
+  await nav.getByRole('link', { name: /Sluj/ }).click()
+  await page.locator('.tile').filter({ hasText: 'Grimoár' }).click()
+  await expect(page).toHaveURL(/#\/grimoar/)
 })
 
 test('předpisy všech druhů a filtr podle druhu', async ({ page }) => {
@@ -61,7 +59,7 @@ test('předpisy všech druhů a filtr podle druhu', async ({ page }) => {
 })
 
 test('lektvar zapsaný u postavy je předpis v Grimoáru a sdílí se mezi postavami', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByRole('button', { name: 'Skrýt' }).click()
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
@@ -152,7 +150,7 @@ test('výrobky u postavy s počtem kusů a výběr lektvaru z Grimoáru podle n�
   await page.getByRole('dialog', { name: 'Lektvar' }).getByRole('button', { name: 'Uložit do Grimoáru' }).click()
   await expect(page.getByText('Mast na popáleniny (Tělo, popálenina)')).toBeVisible()
 
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click()

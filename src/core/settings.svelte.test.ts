@@ -37,3 +37,26 @@ describe('výchozí vzhled', () => {
     expect((await load()).skin).toBe('podzemi')
   })
 })
+
+describe('výchozí spodní lišta', () => {
+  beforeEach(() => localStorage.clear())
+  const legacy = { order: [], hidden: [], left: 'postavy', right: 'knihovna' }
+
+  it('bez uloženého nastavení má Příručku, Bestiář a Grimoár jen ve Sluji', async () => {
+    expect((await load()).tabbar.hidden).toEqual(['ctenar', 'bestiar', 'grimoar'])
+    expect(stored().tabbarIntro).toBe(1)
+  })
+
+  it('nedotčená dřívější lišta se přepne na novou výchozí', async () => {
+    store({ skinIntro: 1, tabbar: legacy })
+    expect((await load()).tabbar.hidden).toEqual(['ctenar', 'bestiar', 'grimoar'])
+  })
+
+  it('upravená lišta zůstane a po úvodu se i prázdné skrývání respektuje', async () => {
+    const mine = { order: ['grimoar'], hidden: [], left: 'postavy', right: 'knihovna' }
+    store({ skinIntro: 1, tabbar: mine })
+    expect((await load()).tabbar).toEqual(mine)
+    store({ skinIntro: 1, tabbarIntro: 1, tabbar: legacy })
+    expect((await load()).tabbar.hidden).toEqual([])
+  })
+})

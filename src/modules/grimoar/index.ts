@@ -1,7 +1,7 @@
 import { registerModule } from '../../core/modules'
 import Grimoar from './Grimoar.svelte'
 
-// Grimoár: sklad předpisů hráče (kouzla, lektvary, nástrahy, výrobky), mezi Bestiářem a Více.
+// Grimoár: sklad předpisů hráče (kouzla, lektvary, nástrahy, výrobky), mezi Bestiářem a Sluj.
 registerModule({
   id: 'grimoar',
   title: 'Grimoár',

@@ -13,7 +13,7 @@
   } from '../../core/tabbar'
 
   // Spodní lišta: pořadí záložek, skrytí a přišpendlení jedné záložky vlevo a jedné vpravo (zbytek se posouvá do stran).
-  // Skryté záložky jsou dál dostupné z Více a z odkazů v aplikaci. Nastavení platí jen v tomto zařízení.
+  // Skryté záložky (Příručka, Bestiář a Grimoár jsou ve výchozím stavu jen ve Sluji) jsou dál dostupné ze Sluje a z odkazů v aplikaci. Nastavení platí jen v tomto zařízení.
   const mods = $derived(allModules().filter((m) => m.nav))
   const ids = $derived(mods.map((m) => m.id))
   const rows = $derived(orderedIds(ids, settings.tabbar).map((id) => mods.find((m) => m.id === id)!))
@@ -22,7 +22,7 @@
     ['scroll', 'V liště (posuvná)'],
     ['left', 'Přišpendlená vlevo'],
     ['right', 'Přišpendlená vpravo'],
-    ['hidden', 'Skrytá'],
+    ['hidden', 'Jen ve Sluji (skrytá v liště)'],
   ]
 </script>
 
@@ -30,7 +30,7 @@
 <div class="panel">
   <p class="muted">
     Když se záložky na telefon nevejdou, střed lišty se posouvá do stran. Jednu záložku můžete
-    přišpendlit vlevo a jednu vpravo, aby byly vždy na dosah. Pořadí a skrytí je jen pro toto zařízení.
+    přišpendlit vlevo a jednu vpravo, aby byly vždy na dosah. Pořadí a skrytí je jen pro toto zařízení. Co v liště není, najdete ve Sluji.
   </p>
   <ul class="rows" aria-label="Záložky spodní lišty">
     {#each rows as m, i (m.id)}

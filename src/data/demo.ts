@@ -1,5 +1,5 @@
 // Ukázková data: tři postavy a družina. Vymyšlené postavy z vestavěného přehledu (jen ID ras, povolání a schopností,
-// žádné texty pravidel). Slouží k vyzkoušení aplikace a k testům; jdou smazat a ve Více se dají obnovit.
+// žádné texty pravidel). Slouží k vyzkoušení aplikace a k testům; jdou smazat a v Dílně se dají obnovit.
 import { fromHeller } from '../core/character/cash'
 import { emptyCharacter, eventsFor, type Character, type CharacterLog } from '../core/character/model'
 import { emptyParty, type Party } from '../core/party/model'
@@ -71,7 +71,7 @@ export const DEMO_CHARACTERS: Character[] = [
 export const demoParty = (): Party => ({
   ...emptyParty('Ukázková družina'),
   id: DEMO_PARTY_ID,
-  notes: 'Ukázková data k vyzkoušení aplikace. Můžete je upravit nebo smazat, ve Více je lze obnovit.',
+  notes: 'Ukázková data k vyzkoušení aplikace. Můžete je upravit nebo smazat, v Dílně je lze obnovit.',
   members: DEMO_CHARACTERS.map((c) => ({ id: `demo-clen-${c.id}`, name: c.name, characterId: c.id })),
 })
 

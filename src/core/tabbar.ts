@@ -4,7 +4,7 @@
 export interface TabbarConfig {
   /** pořadí `id` modulů; co v něm chybí, se řadí za něj podle výchozího pořadí modulů */
   order: string[]
-  /** skryté záložky (jsou dál dostupné z Více) */
+  /** skryté záložky (jsou dál dostupné ze Sluje) */
   hidden: string[]
   /** přišpendlená záložka vlevo; prázdné = žádná */
   left: string
@@ -17,12 +17,19 @@ export type Placement = 'scroll' | 'left' | 'right' | 'hidden'
 /** Záložka, kterou nejde skrýt: vede k nastavení, takže by si uživatel lištu nemohl vrátit. */
 export const LOCKED_TAB = 'knihovna'
 
+/** Čtecí sekce, které jsou ve výchozím stavu jen ve Sluji (v liště je může mít každý, kdo chce). */
+const SLUJ_TABS = ['ctenar', 'bestiar', 'grimoar']
+
 export const defaultTabbar = (): TabbarConfig => ({
   order: [],
-  hidden: [],
+  hidden: [...SLUJ_TABS],
   left: 'postavy',
   right: LOCKED_TAB,
 })
+
+/** Výchozí lišta do verze 0.5.4 (všechny záložky v liště); poznává se jí nedotčené nastavení, které se přepne na nové. */
+export const isLegacyDefaultTabbar = (cfg: TabbarConfig): boolean =>
+  !cfg.order.length && !cfg.hidden.length && cfg.left === 'postavy' && cfg.right === LOCKED_TAB
 
 const ID = /^[a-z0-9-]{1,40}$/
 const MAX_ITEMS = 40
@@ -41,7 +48,7 @@ export function parseTabbar(raw: unknown): TabbarConfig {
     v === '' ? '' : typeof v === 'string' && ID.test(v) ? v : fallback
   const cfg: TabbarConfig = {
     order: ids(r.order),
-    hidden: ids(r.hidden).filter((i) => i !== LOCKED_TAB),
+    hidden: Array.isArray(r.hidden) ? ids(r.hidden).filter((i) => i !== LOCKED_TAB) : def.hidden,
     left: pin(r.left, def.left),
     right: pin(r.right, def.right),
   }
@@ -121,5 +128,11 @@ export function moveTab(cfg: TabbarConfig, all: string[], id: string, dir: -1 | 
 
 export const isDefaultTabbar = (cfg: TabbarConfig): boolean => {
   const d = defaultTabbar()
-  return !cfg.order.length && !cfg.hidden.length && cfg.left === d.left && cfg.right === d.right
+  return (
+    !cfg.order.length &&
+    cfg.left === d.left &&
+    cfg.right === d.right &&
+    cfg.hidden.length === d.hidden.length &&
+    d.hidden.every((i) => cfg.hidden.includes(i))
+  )
 }

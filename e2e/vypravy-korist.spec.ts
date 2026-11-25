@@ -7,7 +7,7 @@ test('kořist se odhalí, upřesní a rozdělí; postava ji má v deníku a dru�
   await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
 
   // ukázková družina s postavami na tomto zařízení
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení

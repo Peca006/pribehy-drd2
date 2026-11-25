@@ -96,8 +96,9 @@ const baseManifest = (id: string, name: string, extra: Record<string, unknown> =
 const card = (page: Page, name: string) =>
   page.locator('ul.list > li').filter({ has: page.getByText(name, { exact: true }) })
 
-test('Šatník je dostupný z Více', async ({ page }) => {
+test('Šatník je dostupný ze Sluje přes Dílnu', async ({ page }) => {
   await page.goto('/#/knihovna')
+  await page.getByRole('link', { name: /Dílna/ }).click()
   await page.getByRole('link', { name: /Šatník/ }).click()
   await expect(page.getByRole('heading', { name: 'Šatník', level: 1 })).toBeVisible()
   // výchozí vzhled je Háv Podzemí; vlastní volba (i „Podle systému“) se pak respektuje
@@ -219,7 +220,7 @@ test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení
   expect(await css('--drd-accent')).toBe('#f2c14e')
   // grafika Podzemí: pozadí a rámečky z obrázků, ikony záložek, embos textu
   const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
-  await expect(nav.locator('img.icon-img')).toHaveCount(7)
+  await expect(nav.locator('img.icon-img')).toHaveCount(4)
   expect(await css('--drd-background-image')).toMatch(/^url\("blob:/)
   expect(await css('--drd-panel-bi-source')).toMatch(/^url\("blob:/)
   expect(
@@ -228,7 +229,7 @@ test('vestavěné Hávy: Podzemí se použije bez instalace, přežije načtení
   expect(await page.evaluate(() => getComputedStyle(document.body).textShadow)).not.toBe('none')
   await page.reload()
   await expect(html).toHaveAttribute('data-theme', 'podzemi')
-  await expect(nav.locator('img.icon-img')).toHaveCount(7) // obrázky jsou hned po načtení
+  await expect(nav.locator('img.icon-img')).toHaveCount(4) // obrázky jsou hned po načtení
 
   // rámy mají skutečnou šířku a styl okraje (ne jen obrázek přes nulový okraj): panel, tlačítko i dialog
   const border = (selector: string) =>

@@ -1,5 +1,10 @@
 # Změny
 
+## 0.5.5 (25. 11. 2026)
+
+- **Sluj a Dílna místo Více:** poslední záložka se jmenuje **Sluj** (ikona 🐲, v Podzemí vchod do jeskyně). Je to rozcestník s dlaždicemi Příručka, Bestiář a Grimoár, hledáním do Příručky (když jsou nainstalované knihy) a tlačítkem **Dílna**. Dílna (⚗️) je nastavení a data: nastavení, Spodní lišta, balíčky, záloha, Šatník, nápověda a O aplikaci.
+- **Nová výchozí lišta:** Postava, Družina, Výpravy a Sluj; vejde se na telefon bez posunu. Příručka, Bestiář a Grimoár jsou ve výchozím stavu jen ve Sluji a do lišty jdou přidat v Dílně → Spodní lišta („Jen ve Sluji“ ↔ „V liště“). Nedotčená dřívější lišta se přepne na novou, upravená zůstane.
+
 ## 0.5.4 (25. 11. 2026)
 
 - **Háv Podzemí pro všechny:** vzhled Podzemí (retro RPG) se jednorázově zapne všem, aby si změny všimli. Jiný vzhled (včetně „Podle systému“) se zvolí v Šatníku (Více → Šatník) a od té chvíle se volba respektuje.

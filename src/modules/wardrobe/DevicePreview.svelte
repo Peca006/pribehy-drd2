@@ -15,7 +15,7 @@
   const PAGES = [
     { hash: '#/postavy', label: 'Postavy' },
     { hash: '#/bestiar', label: 'Bestiář' },
-    { hash: '#/knihovna', label: 'Více' },
+    { hash: '#/knihovna', label: 'Sluj' },
   ] as const
 
   let deviceId = $state<(typeof DEVICES)[number]['id']>('tel-v')
