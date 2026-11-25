@@ -84,7 +84,7 @@ Role dá obrázek části aplikace. Šest rolí a prvek, na který se uplatní:
 | `background` | pozadí celé aplikace (pevná vrstva za obsahem, `body::before`) |
 | `panel` | `.panel` (karty a bloky; použito 142× v 60 souborech) |
 | `button` | `button`, `.btn` |
-| `tab` | spodní lišta záložek |
+| `tab` | spodní lišta záložek; pořadí, skrytí a přišpendlení záložek nastavuje uživatel (`settings.tabbar`, `core/tabbar.ts`), ne Háv; role `tab` platí na celou lištu, střed lišty se na úzkém telefonu posouvá do stran |
 | `divider` | `hr` |
 | `dialog` | okna (`dialog`): potvrzení a formuláře v oknech |
 

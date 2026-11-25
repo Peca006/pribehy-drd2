@@ -6,7 +6,9 @@
   import { initPwa } from './core/pwa.svelte'
   import { allModules, getModule } from './core/modules'
   import { markRestore, router, startRouter, tabHref, toHash } from './core/router.svelte'
+  import { settings } from './core/settings.svelte'
   import { appearance } from './core/skin/appearance.svelte'
+  import { layoutTabs } from './core/tabbar'
   import { DEFAULT_MODULE } from './modules'
   import AppBanners from './ui/AppBanners.svelte'
   import ConfirmDialog from './ui/ConfirmDialog.svelte'
@@ -27,8 +29,60 @@
   const active = $derived(getModule(router.module || DEFAULT_MODULE))
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Current = $derived(active?.component as any)
-  const tabs = $derived(allModules().filter((m) => m.nav))
+  const tabs = $derived(layoutTabs(allModules().filter((m) => m.nav), settings.tabbar))
+
+  // střed lišty se posouvá do stran; okraje se stíní, když je za nimi další obsah
+  let scroller = $state<HTMLElement>()
+  let canLeft = $state(false)
+  let canRight = $state(false)
+  function measure() {
+    if (!scroller) return
+    canLeft = scroller.scrollLeft > 2
+    canRight = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 2
+  }
+  $effect(() => {
+    if (!scroller) return
+    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure)
+    ro?.observe(scroller)
+    measure()
+    return () => ro?.disconnect()
+  })
+  // aktivní záložka se dorolovala do viditelné části (po otevření odkazu, změně pořadí i otočení telefonu)
+  $effect(() => {
+    void active?.id
+    void tabs
+    const el = scroller?.querySelector<HTMLElement>('[aria-current="page"]')
+    if (!scroller || !el) return
+    const left = el.offsetLeft - scroller.offsetLeft
+    const right = left + el.offsetWidth
+    if (left < scroller.scrollLeft) scroller.scrollLeft = left
+    else if (right > scroller.scrollLeft + scroller.clientWidth)
+      scroller.scrollLeft = right - scroller.clientWidth
+    measure()
+  })
 </script>
+
+{#snippet tab(m: { id: string; title: string; icon: string })}
+  <a
+    href={tabHref(m.id, active?.id)}
+    onclick={() => active?.id !== m.id && markRestore()}
+    aria-current={active?.id === m.id ? 'page' : undefined}
+  >
+    {#if appearance.icons[m.id]}
+      <!-- ikona z Hávu; bez ní (nebo než se načte) se použije znak modulu -->
+      <img
+        class="icon-img"
+        class:pixelated={appearance.pixelatedIcons}
+        src={appearance.icons[m.id]}
+        alt=""
+        aria-hidden="true"
+      />
+    {:else}
+      <span class="icon" aria-hidden="true">{m.icon}</span>
+    {/if}
+    <span>{m.title}</span>
+  </a>
+{/snippet}
 
 <div class="shell">
   <main>
@@ -45,27 +99,13 @@
   <div class="bottom">
     <AppBanners />
     <nav class="tabs" aria-label="Hlavní navigace">
-      {#each tabs as m}
-        <a
-          href={tabHref(m.id, active?.id)}
-          onclick={() => active?.id !== m.id && markRestore()}
-          aria-current={active?.id === m.id ? 'page' : undefined}
-        >
-          {#if appearance.icons[m.id]}
-            <!-- ikona z Hávu; bez ní (nebo než se načte) se použije znak modulu -->
-            <img
-              class="icon-img"
-              class:pixelated={appearance.pixelatedIcons}
-              src={appearance.icons[m.id]}
-              alt=""
-              aria-hidden="true"
-            />
-          {:else}
-            <span class="icon" aria-hidden="true">{m.icon}</span>
-          {/if}
-          <span>{m.title}</span>
-        </a>
-      {/each}
+      {#if tabs.left}<div class="pin">{@render tab(tabs.left)}</div>{/if}
+      <div class="mid" class:can-left={canLeft} class:can-right={canRight}>
+        <div class="scroller" bind:this={scroller} onscroll={measure}>
+          {#each tabs.middle as m (m.id)}{@render tab(m)}{/each}
+        </div>
+      </div>
+      {#if tabs.right}<div class="pin">{@render tab(tabs.right)}</div>{/if}
     </nav>
   </div>
 </div>
@@ -91,7 +131,6 @@
   }
   .tabs {
     display: flex;
-    justify-content: space-around;
     background: var(--drd-surface);
     background-image: var(--drd-tab-image, none);
     background-size: var(--drd-tab-size, auto);
@@ -103,6 +142,61 @@
     border-image: var(--drd-tab-bi-source, none) var(--drd-tab-bi-slice, 100%) /
       var(--drd-tab-bi-width, 1) / 0 var(--drd-tab-bi-repeat, stretch);
     padding-bottom: env(safe-area-inset-bottom);
+  }
+  /* přišpendlené záložky (vlevo a vpravo) zůstávají vždy vidět, střed se posouvá */
+  .pin {
+    flex: 0 0 auto;
+    display: flex;
+    min-width: 4.5rem;
+  }
+  .tabs .pin a {
+    flex: 1;
+  }
+  .mid {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+  }
+  .scroller {
+    flex: 1;
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .scroller::-webkit-scrollbar {
+    display: none;
+  }
+  .tabs .scroller a {
+    flex: 1 0 4.5rem;
+    scroll-snap-align: start;
+  }
+  /* stín na okraji, za kterým je další obsah; barvu může změnit Háv (--drd-tab-fade) */
+  .mid::before,
+  .mid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1.25rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 1;
+  }
+  .mid::before {
+    left: 0;
+    background: linear-gradient(to right, var(--drd-tab-fade, rgba(0, 0, 0, 0.35)), transparent);
+  }
+  .mid::after {
+    right: 0;
+    background: linear-gradient(to left, var(--drd-tab-fade, rgba(0, 0, 0, 0.35)), transparent);
+  }
+  .mid.can-left::before,
+  .mid.can-right::after {
+    opacity: 1;
   }
   .tabs a {
     flex: 1;

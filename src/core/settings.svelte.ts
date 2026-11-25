@@ -1,5 +1,6 @@
 // Nastavení aplikace (jen v tomto zařízení). Ukládá se do localStorage; když není dostupné
 // (soukromé okno, zakázaná data webu), nastavení platí do zavření stránky.
+import { defaultTabbar, parseTabbar, type TabbarConfig } from './tabbar'
 import { isLinkMode, type LinkMode } from './termLinks'
 
 const KEY = 'drd2-settings'
@@ -11,18 +12,21 @@ interface Settings {
   author: string
   /** zvolený vzhled: `system`, výchozí skin, nebo `id` nainstalovaného Hávu */
   skin: string
+  /** spodní lišta: pořadí, skryté a přišpendlené záložky */
+  tabbar: TabbarConfig
 }
 
 const SKIN_ID = /^[a-z0-9-]{1,40}$/
 
 function load(): Settings {
-  const s: Settings = { termLinks: 'first', author: 'hráč', skin: 'system' }
+  const s: Settings = { termLinks: 'first', author: 'hráč', skin: 'system', tabbar: defaultTabbar() }
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}')
     if (isLinkMode(raw.termLinks)) s.termLinks = raw.termLinks
     if (typeof raw.author === 'string' && raw.author.trim())
       s.author = raw.author.trim().slice(0, 60)
     if (typeof raw.skin === 'string' && SKIN_ID.test(raw.skin)) s.skin = raw.skin
+    s.tabbar = parseTabbar(raw.tabbar)
   } catch {
     /* výchozí hodnoty */
   }
@@ -39,6 +43,7 @@ function save() {
         termLinks: settings.termLinks,
         author: settings.author,
         skin: settings.skin,
+        tabbar: settings.tabbar,
       }),
     )
   } catch {
@@ -58,5 +63,10 @@ export function setSkin(id: string) {
 
 export function setAuthor(name: string) {
   settings.author = name.trim().slice(0, 60) || 'hráč'
+  save()
+}
+
+export function setTabbar(cfg: TabbarConfig) {
+  settings.tabbar = parseTabbar(cfg)
   save()
 }
