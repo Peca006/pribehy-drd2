@@ -84,7 +84,7 @@ Role dá obrázek části aplikace. Šest rolí a prvek, na který se uplatní:
 | `background` | pozadí celé aplikace (pevná vrstva za obsahem, `body::before`) |
 | `panel` | `.panel` (karty a bloky; použito 142× v 60 souborech) |
 | `button` | `button`, `.btn` |
-| `tab` | spodní lišta záložek |
+| `tab` | spodní lišta záložek; pořadí, skrytí a přišpendlení záložek nastavuje uživatel (`settings.tabbar`, `core/tabbar.ts`), ne Háv; role `tab` platí na celou lištu, střed lišty se na úzkém telefonu posouvá do stran |
 | `divider` | `hr` |
 | `dialog` | okna (`dialog`): potvrzení a formuláře v oknech |
 
@@ -146,7 +146,7 @@ na obrázek; modul bez ikony i ikona, která se ještě nenačetla, zůstávají
 - **Úložiště** (`store.ts`): samostatná databáze `drd2-wardrobe` (ne `drd2-data`, aby změna vzhledu neriskovala
   migraci postav a družin). Každý Háv se při čtení znovu zvaliduje, neplatný se přeskočí. Nejvýše 30 Hávů, stejné `id` Háv
   přepíše. Hávy **nepatří do celkové zálohy** (rozhodnuto): přenášejí se jen samostatným exportem a importem `.drdskin`.
-- **Volba** (`settings.skin`): `system` (výchozí), `default-light`, `default-dark`, nebo `id` nainstalovaného Hávu.
+- **Volba** (`settings.skin`): výchozí je vestavěný Háv `podzemi` (`DEFAULT_SKIN`, od 0.5.3), dokud si uživatel nezvolí jiný; uložená volba má vždy přednost, takže `system` (Podle systému), `default-light`, `default-dark` nebo `id` nainstalovaného Hávu se respektují. Kdo měl `system` uložené dříve, zůstane u něj.
   Smazaný či neplatný Háv spadne na „podle systému“, aplikace zůstane vždy použitelná.
 - **Viewport za běhu** (`runtime.ts`): přepočítává se při `resize` a `orientationchange` (s kontrolou po 250 ms, protože
   některé prohlížeče pošlou událost dřív, než se přepočítají rozměry). Při psaní do pole se orientace a „nízký“ viewport

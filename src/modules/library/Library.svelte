@@ -9,6 +9,7 @@
   import Backup from './Backup.svelte'
   import DemoData from './DemoData.svelte'
   import Packs from './Packs.svelte'
+  import TabbarSettings from './TabbarSettings.svelte'
 
   // Více: nastavení nahoře (používá se nejčastěji), pak balíčky, a vzácněji používané věci sbalené.
   // `#/knihovna/napoveda` ukáže stránku Nápověda.
@@ -36,6 +37,8 @@
   </label>
   <LinkModeSelect />
 </div>
+
+<TabbarSettings />
 
 <Packs />
 
