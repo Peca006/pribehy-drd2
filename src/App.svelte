@@ -8,7 +8,7 @@
   import { markRestore, router, startRouter, tabHref, toHash } from './core/router.svelte'
   import { settings } from './core/settings.svelte'
   import { appearance } from './core/skin/appearance.svelte'
-  import { layoutTabs } from './core/tabbar'
+  import { LOCKED_TAB, layoutTabs } from './core/tabbar'
   import { DEFAULT_MODULE } from './modules'
   import AppBanners from './ui/AppBanners.svelte'
   import ConfirmDialog from './ui/ConfirmDialog.svelte'
@@ -30,6 +30,14 @@
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Current = $derived(active?.component as any)
   const tabs = $derived(layoutTabs(allModules().filter((m) => m.nav), settings.tabbar))
+
+  // zvýrazněná záložka: aktivní sekce; sekce mimo lištu (Příručka, Bestiář a Grimoár ve výchozím stavu, Šatník) patří ke Sluji
+  const current = $derived.by(() => {
+    const id = active?.id
+    if (!id) return undefined
+    const inBar = [tabs.left, ...tabs.middle, tabs.right].some((m) => m?.id === id)
+    return inBar ? id : active?.nav || id === 'satnik' ? LOCKED_TAB : undefined
+  })
 
   // střed lišty se posouvá do stran; okraje se stíní, když je za nimi další obsah
   let scroller = $state<HTMLElement>()
@@ -65,8 +73,8 @@
 {#snippet tab(m: { id: string; title: string; icon: string })}
   <a
     href={tabHref(m.id, active?.id)}
-    onclick={() => active?.id !== m.id && markRestore()}
-    aria-current={active?.id === m.id ? 'page' : undefined}
+    onclick={() => current !== m.id && markRestore()}
+    aria-current={current === m.id ? 'page' : undefined}
   >
     {#if appearance.icons[m.id]}
       <!-- ikona z Hávu; bez ní (nebo než se načte) se použije znak modulu -->
