@@ -17,7 +17,8 @@
   let withImages = $state(true)
   let busy = $state(false)
   let msg = $state('')
-  let parsed = $state<ParsedBackup | undefined>(undefined)
+  // raw: obsah zálohy se zapisuje do IndexedDB, a Svelte proxy (hluboký `$state`) se do ní uložit nedá
+  let parsed = $state.raw<ParsedBackup | undefined>(undefined)
   let fileName = $state('')
   let mode = $state<RestoreMode>('doplnit')
   let result = $state<RestoreResult | undefined>(undefined)
@@ -34,7 +35,7 @@
       a.click()
       URL.revokeObjectURL(a.href)
       const s = summarize(b)
-      msg = `Záloha uložena: ${s.characters} postav, ${s.parties} družin, ${s.creatures} bytostí, ${s.recipes} předpisů, ${s.expeditions} výprav, ${s.images} obrázků (${(blob.size / 1_000_000).toFixed(1)} MB).`
+      msg = `Záloha uložena: ${s.characters} postav, ${s.parties} družin, ${s.creatures} bytostí, ${s.recipes} předpisů, ${s.adventures} dobrodružství, ${s.expeditions} výprav, ${s.runs} vedení, ${s.sittings} sezení, ${s.images} obrázků (${(blob.size / 1_000_000).toFixed(1)} MB).`
     } catch (err) {
       msg = err instanceof Error ? err.message : String(err)
     } finally {
@@ -109,7 +110,7 @@
       {@const s = summarize(parsed.backup)}
       <div role="status">
         <strong>{fileName}</strong>: {s.characters} postav, {s.parties} družin, {s.creatures} bytostí, {s.recipes} předpisů,
-        {s.expeditions} výprav, {s.images} obrázků{parsed.backup.created ? `, vytvořeno ${new Date(parsed.backup.created).toLocaleString('cs-CZ')}` : ''}.
+        {s.adventures} dobrodružství, {s.expeditions} výprav, {s.runs} vedení, {s.sittings} sezení, {s.images} obrázků{parsed.backup.created ? `, vytvořeno ${new Date(parsed.backup.created).toLocaleString('cs-CZ')}` : ''}.
         {#if dropNote(parsed)}<p class="muted">{dropNote(parsed)}</p>{/if}
       </div>
       <label class="check">
@@ -129,7 +130,8 @@
   {#if result}
     <p role="status">
       Obnoveno: přidáno {result.added.characters} postav, {result.added.parties} družin, {result.added.creatures} bytostí,
-      {result.added.recipes} předpisů, {result.added.images} obrázků{result.replaced ? `, přepsáno ${result.replaced}` : ''}{result.kept
+      {result.added.recipes} předpisů, {result.added.adventures} dobrodružství, {result.added.expeditions} výprav,
+      {result.added.runs} vedení, {result.added.sittings} sezení, {result.added.images} obrázků{result.replaced ? `, přepsáno ${result.replaced}` : ''}{result.kept
         ? `, ponecháno ${result.kept} stávajících`
         : ''}.
       <button onclick={() => location.reload()}>Načíst aplikaci znovu</button>
