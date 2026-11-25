@@ -136,6 +136,24 @@ test('časomíra: krátký odpočet běží, přežije obnovení a jde zrušit i
   // odpočet 30 s běží i při pauze hlavní časomíry a přežije obnovení stránky
   await page.getByLabel('Odpočet').getByRole('button', { name: '30 s' }).click()
   await expect(page.getByRole('timer')).toBeVisible()
+  // počkat, až se odpočet uloží do databáze (v pomalém CI by obnovení stránky předběhlo zápis)
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          new Promise<boolean>((resolve) => {
+            const open = indexedDB.open('drd2-data')
+            open.onsuccess = () => {
+              const all = open.result.transaction('sittings').objectStore('sittings').getAll()
+              all.onsuccess = () => {
+                open.result.close()
+                resolve((all.result as { countdown?: unknown }[]).some((x) => x.countdown))
+              }
+            }
+          }),
+      ),
+    )
+    .toBe(true)
   await page.reload()
   await expect(page.getByRole('timer')).toBeVisible()
   await page.getByRole('button', { name: 'Zrušit' }).click()
