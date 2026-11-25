@@ -25,6 +25,7 @@ export const RECORD_STORES = [
   'adventures',
   'expeditions',
   'runs',
+  'sittings',
 ] as const satisfies readonly DataStore[]
 type RecordStore = (typeof RECORD_STORES)[number]
 
@@ -68,6 +69,7 @@ export interface Backup {
   adventures: Rec[]
   expeditions: Rec[]
   runs: Rec[]
+  sittings: Rec[]
   images: { characters: BackupImage[]; creatures: BackupImage[] }
   local: Record<string, string>
 }
@@ -125,6 +127,7 @@ export async function buildBackup({ withImages = true, storage = defaultStorage(
     adventures: await recs('adventures'),
     expeditions: await recs('expeditions'),
     runs: await recs('runs'),
+    sittings: await recs('sittings'),
     images: withImages
       ? { characters: await imagesOf('characterImages', 'characterId'), creatures: await imagesOf('creatureImages', 'creatureId') }
       : { characters: [], creatures: [] },
@@ -193,6 +196,9 @@ function sanitizeRecord(store: RecordStore, raw: unknown, dropped: Dropped): Rec
       return { ...r, id }
     case 'expeditions':
       if (typeof r.name !== 'string' || !Array.isArray(r.nodes) || !Array.isArray(r.incidents)) return void dropped.records++
+      return { ...r, id }
+    case 'sittings':
+      if (typeof r.partyId !== 'string' || !Array.isArray(r.spans) || typeof r.started !== 'number') return void dropped.records++
       return { ...r, id }
     case 'runs':
       if (typeof r.partyId !== 'string' || typeof r.expeditionId !== 'string' || !obj(r.incidents)) return void dropped.records++
@@ -263,6 +269,7 @@ export function parseBackup(text: string): ParsedBackup {
     adventures: list('adventures'),
     expeditions: list('expeditions'),
     runs: list('runs'),
+    sittings: list('sittings'),
     images: {
       characters: sanitizeImages(images?.characters, dropped),
       creatures: sanitizeImages(images?.creatures, dropped),
@@ -280,6 +287,7 @@ export interface BackupSummary {
   adventures: number
   expeditions: number
   runs: number
+  sittings: number
   images: number
 }
 
@@ -291,6 +299,7 @@ export const summarize = (b: Backup): BackupSummary => ({
   adventures: b.adventures.length,
   expeditions: b.expeditions.length,
   runs: b.runs.length,
+  sittings: b.sittings.length,
   images: b.images.characters.length + b.images.creatures.length,
 })
 
@@ -314,7 +323,7 @@ export async function restoreBackup(
   storage: KeyValueStorage | undefined = defaultStorage(),
 ): Promise<RestoreResult> {
   const result: RestoreResult = {
-    added: { characters: 0, parties: 0, creatures: 0, recipes: 0, adventures: 0, expeditions: 0, runs: 0, images: 0 },
+    added: { characters: 0, parties: 0, creatures: 0, recipes: 0, adventures: 0, expeditions: 0, runs: 0, sittings: 0, images: 0 },
     kept: 0,
     replaced: 0,
   }
