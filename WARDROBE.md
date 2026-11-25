@@ -107,7 +107,9 @@ obrázky uvnitř (ilustrace postav). U rámečků proto platí výchozí šířk
 validátor kontrastu nepozná: čitelnost textu na obrázku je odpovědnost autora Hávu.
 
 **Ikony:** `icons` mapuje id modulu v navigaci (`postavy`, `druziny`, `vypravy`, `ctenar`, `bestiar`, `grimoar`, `knihovna`)
-na obrázek; modul bez ikony i ikona, která se ještě nenačetla, zůstávají se znakem (emoji).
+na obrázek; modul bez ikony i ikona, která se ještě nenačetla, zůstávají se znakem (emoji). `knihovna` je záložka **Sluj** (od 0.5.5; id zůstalo kvůli adresám a existujícím Hávům). Ikony `ctenar`, `bestiar` a `grimoar` se použijí na záložce, je-li v liště, i na dlaždicích ve Sluji.
+
+**Navigace (0.5.5):** výchozí lišta má Postavu, Družinu, Výpravy a Sluj; Příručka, Bestiář a Grimoár jsou ve Sluji a jdou do lišty přidat v Dílně. Sekce mimo lištu zvýrazňují Sluj. Pořadí a viditelnost záložek určuje uživatel, ne Háv; M3 má tento model (`TabbarConfig`) číst.
 
 ### Validace při importu
 
@@ -160,7 +162,7 @@ Nemá napodobovat Truhlici.
 
 - **M1 (jen tokeny):** paleta drahokamů a kovů, ostré hrany (`radius` 0), čitelné písmo, tmavý základ.
 - **M2 (obrázky), hotovo:** mramorové pozadí (SVG se šumem, napojitelné dlaždice), měděné kování panelů a safírová
-  tlačítka ve zlaté objímce jako devítidílné rámečky, ornamentální lišta záložek a dělicí čára, sedm ikon-drahokamů
+  tlačítka ve zlaté objímce jako devítidílné rámečky, ornamentální lišta záložek a dělicí čára, sedm ikon-drahokamů (ikona modulu `knihovna` je Sluj: vchod do jeskyně)
   a embos textu přes `--drd-text-shadow`. Grafika je vyrobená programově (`src/themes/podzemi/art.ts`) a je součástí kódu
   (precache PWA bere jen js, css a html, samostatné soubory by offline chyběly). Dá se nahradit lepší grafikou:
   stačí exportovat vzor, vyměnit soubory v `assets/` a nahrát pod jiným `id`.
