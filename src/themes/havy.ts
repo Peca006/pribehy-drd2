@@ -122,6 +122,11 @@ const definitions = [
       '--drd-shadow': '3px 3px 0 rgb(0 0 0 / 0.85)',
       '--drd-radius': '0px',
       '--drd-font': 'Verdana, Tahoma, "DejaVu Sans", sans-serif',
+      // seříznuté rohy: tlačítka-drahokamy a okna
+      '--drd-shape-button': 'chamfer',
+      '--drd-shape-dialog': 'chamfer',
+      '--drd-shape-panel': 'notch',
+      '--drd-shape-size': '6px',
     },
     variants: [
       { when: { width: 'compact' }, tokens: { '--drd-gap': '0.75rem' } },

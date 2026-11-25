@@ -20,6 +20,10 @@ export const TOKEN_NAMES = [
   '--drd-gap',
   '--drd-font',
   '--drd-nav-position',
+  '--drd-shape-panel',
+  '--drd-shape-button',
+  '--drd-shape-dialog',
+  '--drd-shape-size',
 ] as const
 
 export type TokenName = (typeof TOKEN_NAMES)[number]
@@ -35,6 +39,10 @@ type TokenSpec =
 /** Poloha hlavní lišty: dole (výchozí), nahoře, svislý pruh vlevo nebo vpravo. */
 export const NAV_POSITIONS = ['bottom', 'top', 'left', 'right'] as const
 export type NavPosition = (typeof NAV_POSITIONS)[number]
+
+/** Tvar plochy: obdélník, seříznuté všechny čtyři rohy (`chamfer`), nebo jen levý horní a pravý dolní (`notch`). */
+export const SHAPES = ['rect', 'chamfer', 'notch'] as const
+export type Shape = (typeof SHAPES)[number]
 
 const COLOR = { kind: 'color', opaque: true } as const
 
@@ -55,6 +63,10 @@ export const TOKEN_SPECS: Record<TokenName, TokenSpec> = {
   '--drd-gap': { kind: 'length', min: 4, max: 32 },
   '--drd-font': { kind: 'font' },
   '--drd-nav-position': { kind: 'enum', values: NAV_POSITIONS },
+  '--drd-shape-panel': { kind: 'enum', values: SHAPES },
+  '--drd-shape-button': { kind: 'enum', values: SHAPES },
+  '--drd-shape-dialog': { kind: 'enum', values: SHAPES },
+  '--drd-shape-size': { kind: 'length', min: 2, max: 16 },
 }
 
 export const MAX_VALUE_LENGTH = 200
@@ -83,7 +95,7 @@ function splitTopLevel(s: string, isSep: (ch: string) => boolean): string[] | nu
 const LENGTH = /^(-?(?:\d+\.?\d*|\.\d+))(px|rem|em)?$/
 
 /** Délka v px; bezrozměrná je povolená jen nula. `em` se bere jako 16 px. */
-function lengthPx(s: string): number | null {
+export function lengthPx(s: string): number | null {
   const m = LENGTH.exec(s)
   if (!m) return null
   const n = Number(m[1])
