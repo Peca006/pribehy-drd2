@@ -32,7 +32,12 @@ export interface Sitting {
 
 const stamp = (s: Sitting): Sitting => ({ ...s, updated: new Date().toISOString() })
 
-export const startSitting = (partyId: string, now: number, runId?: string, planned?: number): Sitting => ({
+export const startSitting = (
+  partyId: string,
+  now: number,
+  runId?: string,
+  planned?: number,
+): Sitting => ({
   id: newId(),
   partyId,
   ...(runId ? { runId } : {}),
@@ -106,10 +111,15 @@ export const elapsed = (s: Sitting, now: number): number =>
   Object.values(totals(s, now)).reduce((a, b) => a + b, 0)
 
 /** Čas od začátku sezení včetně pauz. */
-export const wallClock = (s: Sitting, now: number): number => Math.max(0, (s.ended ?? now) - s.started)
+export const wallClock = (s: Sitting, now: number): number =>
+  Math.max(0, (s.ended ?? now) - s.started)
 
 /** Pruhy pro porovnání: podíl času každého člena vůči největšímu (0 až 1), takže všechny pruhy mají stejné měřítko. */
-export function bars(s: Sitting, memberIds: readonly string[], now: number): Record<string, number> {
+export function bars(
+  s: Sitting,
+  memberIds: readonly string[],
+  now: number,
+): Record<string, number> {
   const t = totals(s, now)
   const max = Math.max(0, ...memberIds.map((id) => t[id] ?? 0))
   return Object.fromEntries(memberIds.map((id) => [id, max ? (t[id] ?? 0) / max : 0]))
@@ -122,4 +132,44 @@ export function formatClock(ms: number): string {
   const m = Math.floor((total % 3600) / 60)
   const sec = String(total % 60).padStart(2, '0')
   return h ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`
+}
+
+/** Spravedlivý prostor: kdo je „pozadu“, se ukáže, až když hra trvá aspoň tohle dlouho. */
+export const FAIR_MIN_MS = 10 * 60 * 1000
+/** Člen je pozadu, když má méně než tento podíl spravedlivého dílu. */
+export const FAIR_BEHIND = 0.7
+
+export interface Fairness {
+  /** členové ve hře (bez těch, kdo jsou mimo) */
+  present: string[]
+  /** spravedlivý díl v ms: čas hry členů ve hře dělený jejich počtem */
+  share: number
+  /** členové ve hře pod prahem, od nejméně času; prázdné, dokud hra netrvá dost dlouho */
+  behind: string[]
+  /** je hra dost dlouhá na to, aby se upozornění ukazovalo */
+  ready: boolean
+}
+
+/** Člen je mimo hru (nepočítá se do spravedlivého dílu). Aktivního člena nejdřív pozastaví. */
+export function setAbsent(s: Sitting, memberId: string, absent: boolean, now: number): Sitting {
+  if (s.status === 'hotovo') return s
+  const base = activeMember(s) === memberId ? pause(s, now) : s
+  const rest = (base.absent ?? []).filter((x) => x !== memberId)
+  return stamp({ ...base, absent: absent ? [...rest, memberId] : rest })
+}
+
+/** Spravedlivý díl a upozornění, kdo je pozadu. Čas se bere jen členům ve hře. */
+export function fairness(s: Sitting, memberIds: readonly string[], now: number): Fairness {
+  const out = new Set(s.absent ?? [])
+  const present = memberIds.filter((id) => !out.has(id))
+  const t = totals(s, now)
+  const sum = present.reduce((a, id) => a + (t[id] ?? 0), 0)
+  const share = present.length ? sum / present.length : 0
+  const ready = present.length > 1 && sum >= FAIR_MIN_MS
+  const behind = ready
+    ? present
+        .filter((id) => (t[id] ?? 0) < share * FAIR_BEHIND)
+        .sort((a, b) => (t[a] ?? 0) - (t[b] ?? 0))
+    : []
+  return { present, share, behind, ready }
 }

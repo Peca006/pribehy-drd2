@@ -6,10 +6,12 @@
     activeMember,
     bars,
     elapsed,
+    fairness,
     finish,
     formatClock,
     pause,
     resume,
+    setAbsent,
     startSitting,
     totals,
     wallClock,
@@ -52,7 +54,9 @@
   // displej se při hře nemá zhasínat (kde to prohlížeč umí)
   async function keepAwake() {
     try {
-      const nav = navigator as Navigator & { wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> } }
+      const nav = navigator as Navigator & {
+        wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> }
+      }
       lock = await nav.wakeLock?.request('screen')
     } catch {
       /* bez zámku se displej může zhasnout, časomíra tím nestrádá */
@@ -76,8 +80,26 @@
   const gm = $derived(party ? roleOf(party) === 'pruvodce' : false)
   const members = $derived(party?.members ?? [])
   const time = $derived(sitting ? totals(sitting, now) : {})
-  const scale = $derived(sitting ? bars(sitting, members.map((m) => m.id), now) : {})
+  const scale = $derived(
+    sitting
+      ? bars(
+          sitting,
+          members.map((m) => m.id),
+          now,
+        )
+      : {},
+  )
   const active = $derived(sitting ? activeMember(sitting) : undefined)
+  const fair = $derived(
+    sitting
+      ? fairness(
+          sitting,
+          members.map((m) => m.id),
+          now,
+        )
+      : undefined,
+  )
+  const nameOf = (memberId: string) => members.find((m) => m.id === memberId)?.name ?? ''
 
   function begin() {
     change(startSitting(id, Date.now()))
@@ -88,9 +110,19 @@
     if (!sitting) return
     change(sitting.status === 'bezi' ? pause(sitting, Date.now()) : resume(sitting, Date.now()))
   }
+  const toggleAbsent = (memberId: string) => {
+    if (!sitting) return
+    change(setAbsent(sitting, memberId, !sitting.absent?.includes(memberId), Date.now()))
+  }
   async function end() {
     if (!sitting) return
-    if (!(await ask('Časomíra se zastaví a sezení se uloží. Časy zůstanou jen u vás.', { title: 'Ukončit sezení?', ok: 'Ukončit' }))) return
+    if (
+      !(await ask('Časomíra se zastaví a sezení se uloží. Časy zůstanou jen u vás.', {
+        title: 'Ukončit sezení?',
+        ok: 'Ukončit',
+      }))
+    )
+      return
     const done = finish(sitting, Date.now())
     change(done)
     await queue
@@ -112,21 +144,28 @@
   <h1>Hra: {party.name}</h1>
 
   {#if !members.length}
-    <p class="muted">Družina zatím nemá členy. Přidejte je na stránce družiny, pak půjde sezení měřit.</p>
+    <p class="muted">
+      Družina zatím nemá členy. Přidejte je na stránce družiny, pak půjde sezení měřit.
+    </p>
   {:else if !sitting}
     <p class="muted">
-      Časomíra měří, kolik času měl který hráč. Klepnutím na hráče se přepne, kdo je na řadě. Časy vidíte jen vy a nikam se nesdílejí.
+      Časomíra měří, kolik času měl který hráč. Klepnutím na hráče se přepne, kdo je na řadě. Časy
+      vidíte jen vy a nikam se nesdílejí.
     </p>
     <p><button class="primary" onclick={begin}>Začít sezení</button></p>
     {#if last}
       <h2>Poslední sezení</h2>
       <div class="panel" aria-label="Poslední sezení">
         <p>
-          {new Date(last.started).toLocaleString('cs-CZ')} · hra {formatClock(elapsed(last, last.ended ?? now))}
+          {new Date(last.started).toLocaleString('cs-CZ')} · hra {formatClock(
+            elapsed(last, last.ended ?? now),
+          )}
           <span class="muted"> (celkem {formatClock(wallClock(last, now))})</span>
         </p>
         {#each members as m (m.id)}
-          <div class="line"><span>{m.name}</span><strong>{formatClock(totals(last, now)[m.id] ?? 0)}</strong></div>
+          <div class="line">
+            <span>{m.name}</span><strong>{formatClock(totals(last, now)[m.id] ?? 0)}</strong>
+          </div>
         {/each}
       </div>
     {/if}
@@ -137,19 +176,43 @@
         <div class="muted">čas hry · od začátku {formatClock(wallClock(sitting, now))}</div>
       </div>
       <div class="actions">
-        <button onclick={togglePause} disabled={!sitting.current}>{sitting.status === 'bezi' ? 'Pauza' : 'Pokračovat'}</button>
+        <button onclick={togglePause} disabled={!sitting.current}
+          >{sitting.status === 'bezi' ? 'Pauza' : 'Pokračovat'}</button
+        >
         <button onclick={end}>Ukončit</button>
       </div>
     </section>
-    {#if sitting.status === 'pauza'}<p class="muted" role="status">Časomíra stojí. Klepnutím na hráče ji rozběhnete.</p>{/if}
+    {#if sitting.status === 'pauza'}<p class="muted" role="status">
+        Časomíra stojí. Klepnutím na hráče ji rozběhnete.
+      </p>{/if}
+
+    {#if fair?.ready && fair.behind.length}
+      <p class="panel warn" role="status">
+        Méně prostoru měl{fair.behind.length > 1 ? 'i' : ''}:
+        <strong>{fair.behind.map(nameOf).join(', ')}</strong>. Spravedlivý díl je teď {formatClock(
+          fair.share,
+        )}.
+      </p>
+    {/if}
 
     <ul class="members" aria-label="Hráči">
       {#each members as m (m.id)}
-        <li>
-          <button class="member" class:active={active === m.id} aria-pressed={active === m.id} onclick={() => tap(m.id)}>
+        {@const out = sitting.absent?.includes(m.id) ?? false}
+        <li class:out class:behind={fair?.behind.includes(m.id)}>
+          <button
+            class="member"
+            class:active={active === m.id}
+            aria-pressed={active === m.id}
+            onclick={() => tap(m.id)}
+          >
             <span class="who">{m.name}</span>
             <span class="t">{formatClock(time[m.id] ?? 0)}</span>
-            <span class="bar" aria-hidden="true"><span style:width={(scale[m.id] ?? 0) * 100 + '%'}></span></span>
+            <span class="bar" aria-hidden="true"
+              ><span style:width={(scale[m.id] ?? 0) * 100 + '%'}></span></span
+            >
+          </button>
+          <button class="away" aria-pressed={out} onclick={() => toggleAbsent(m.id)}>
+            {out ? 'Vrátit do hry: ' : 'Mimo hru: '}{m.name}
           </button>
         </li>
       {/each}
@@ -197,6 +260,24 @@
   }
   .member.active {
     outline: 3px solid var(--drd-accent);
+  }
+  li {
+    display: grid;
+    gap: 0.25rem;
+  }
+  li.out .member {
+    opacity: 0.55;
+  }
+  li.behind .member {
+    border-color: var(--drd-accent);
+    border-style: dashed;
+  }
+  .away {
+    font-size: 0.85rem;
+    padding: 0.2rem 0.5rem;
+  }
+  .warn {
+    border-color: var(--drd-accent);
   }
   .who {
     font-weight: 600;

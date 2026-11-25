@@ -21,8 +21,8 @@ test('časomíra: přepínání hráčů, pauza, obnovení stránky a ukončení
   await page.getByRole('link', { name: /Hra \(časomíra\)/ }).click()
   await expect(page.getByRole('heading', { name: 'Hra: Vlci' })).toBeVisible()
   await page.getByRole('button', { name: 'Začít sezení' }).click()
-  const aneta = page.getByRole('button', { name: /Aneta/ })
-  const boris = page.getByRole('button', { name: /Boris/ })
+  const aneta = page.getByRole('button', { name: /^Aneta/ })
+  const boris = page.getByRole('button', { name: /^Boris/ })
   await expect(page.getByRole('status')).toContainText('Časomíra stojí')
 
   // Aneta je na řadě, pak Boris
@@ -45,7 +45,7 @@ test('časomíra: přepínání hráčů, pauza, obnovení stránky a ukončení
   // sezení přežije obnovení stránky (stav z uložených časových razítek)
   await page.reload()
   await expect(page.getByRole('button', { name: 'Pokračovat' })).toBeVisible()
-  await expect(page.getByRole('button', { name: /Aneta/ }).locator('.t')).not.toHaveText('0:00')
+  await expect(page.getByRole('button', { name: /^Aneta/ }).locator('.t')).not.toHaveText('0:00')
 
   // ukončení uloží souhrn
   await page.getByRole('button', { name: 'Ukončit', exact: true }).click()
@@ -53,4 +53,37 @@ test('časomíra: přepínání hráčů, pauza, obnovení stránky a ukončení
   await expect(page.getByRole('heading', { name: 'Poslední sezení' })).toBeVisible()
   await expect(page.getByLabel('Poslední sezení')).toContainText('Aneta')
   await expect(page.getByRole('button', { name: 'Začít sezení' })).toBeVisible()
+})
+
+test('časomíra: člen mimo hru se nepočítá a po návratu je zase ve hře', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
+  await page.goto('/#/druziny')
+  await page.getByLabel('Název nové družiny').fill('Havrani')
+  await page.getByRole('button', { name: 'Nová', exact: true }).click()
+  await expect(page.getByLabel('Název družiny')).toHaveValue('Havrani')
+  await page.getByText('Přidat člena', { exact: true }).click()
+  for (const jmeno of ['Cyril', 'Dana']) {
+    await page.getByLabel('Jméno člena').fill(jmeno)
+    await page.getByLabel('Jméno člena').press('Enter')
+    await expect(page.getByText(jmeno, { exact: true }).first()).toBeVisible()
+  }
+  await page.getByRole('link', { name: /Hra \(časomíra\)/ }).click()
+  await page.getByRole('button', { name: 'Začít sezení' }).click()
+
+  const cyril = page.getByRole('button', { name: /^Cyril/ })
+  await cyril.click()
+  await expect(cyril).toHaveAttribute('aria-pressed', 'true')
+
+  // mimo hru pozastaví časomíru a členovi dá tlačítko Vrátit do hry
+  await page.getByRole('button', { name: 'Mimo hru: Cyril' }).click()
+  await expect(cyril).toHaveAttribute('aria-pressed', 'false')
+  await expect(page.getByRole('button', { name: 'Vrátit do hry: Cyril' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+
+  // klepnutí na člena ho vrátí do hry
+  await cyril.click()
+  await expect(cyril).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Mimo hru: Cyril' })).toBeVisible()
 })

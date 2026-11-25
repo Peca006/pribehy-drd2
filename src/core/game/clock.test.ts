@@ -7,10 +7,12 @@ import {
   activeMember,
   bars,
   elapsed,
+  fairness,
   finish,
   formatClock,
   pause,
   resume,
+  setAbsent,
   startSitting,
   totals,
   wallClock,
@@ -105,5 +107,57 @@ describe('úložiště sezení', () => {
     await removePartySittings('p1')
     expect(await listSittings('p1')).toEqual([])
     expect((await getSitting(other.id))?.partyId).toBe('p2')
+  })
+})
+
+describe('spravedlivý prostor', () => {
+  const ids = ['a', 'b', 'c']
+  // a hrál 15 min, b 3 min, c 12 min
+  const game = () => {
+    let s = startSitting('p1', T0)
+    s = activate(s, 'a', T0)
+    s = activate(s, 'b', T0 + 15 * MIN)
+    s = activate(s, 'c', T0 + 18 * MIN)
+    return pause(s, T0 + 30 * MIN)
+  }
+
+  it('spravedlivý díl je průměr a pozadu je ten pod 70 % dílu', () => {
+    const f = fairness(game(), ids, T0 + 30 * MIN)
+    expect(f.share).toBe(10 * MIN)
+    expect(f.ready).toBe(true)
+    expect(f.behind).toEqual(['b'])
+  })
+
+  it('před 10 minutami hry se upozornění neukazuje', () => {
+    let s = activate(startSitting('p1', T0), 'a', T0)
+    s = pause(s, T0 + 8 * MIN)
+    const f = fairness(s, ids, T0 + 8 * MIN)
+    expect(f.ready).toBe(false)
+    expect(f.behind).toEqual([])
+  })
+
+  it('člen mimo hru se do dílu nepočítá a není pozadu', () => {
+    const s = setAbsent(game(), 'b', true, T0 + 30 * MIN)
+    const f = fairness(s, ids, T0 + 30 * MIN)
+    expect(f.present).toEqual(['a', 'c'])
+    expect(f.share).toBe(13.5 * MIN)
+    expect(f.behind).toEqual([])
+    expect(setAbsent(s, 'b', false, T0 + 30 * MIN).absent).toEqual([])
+  })
+
+  it('mimo hru pozastaví aktivního člena a aktivace ho vrátí do hry', () => {
+    let s = activate(startSitting('p1', T0), 'a', T0)
+    s = setAbsent(s, 'a', true, T0 + MIN)
+    expect(s.status).toBe('pauza')
+    expect(totals(s, T0 + 5 * MIN).a).toBe(MIN)
+    expect(s.absent).toEqual(['a'])
+    s = activate(s, 'a', T0 + 5 * MIN)
+    expect(s.absent).toEqual([])
+  })
+
+  it('hotové sezení se neměnní a samotný hráč nikdy není pozadu', () => {
+    const done = finish(game(), T0 + 30 * MIN)
+    expect(setAbsent(done, 'a', true, T0 + 31 * MIN)).toBe(done)
+    expect(fairness(game(), ['a'], T0 + 30 * MIN).behind).toEqual([])
   })
 })

@@ -9,7 +9,9 @@ export const deleteSitting = (id: string) => sittings.remove(id)
 
 /** Sezení družiny, nejnovější první. */
 export async function listSittings(partyId: string): Promise<Sitting[]> {
-  return (await sittings.list()).filter((s) => s.partyId === partyId).sort((a, b) => b.started - a.started)
+  return (await sittings.list())
+    .filter((s) => s.partyId === partyId)
+    .sort((a, b) => b.started - a.started)
 }
 
 /** Nedokončené sezení družiny (běží, nebo je v pauze), pokud existuje. */
