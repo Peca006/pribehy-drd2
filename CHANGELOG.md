@@ -1,5 +1,10 @@
 # Změny
 
+## 0.5.11 (25. 11. 2026)
+
+- **Oprava obnovy ze zálohy:** obnova do zařízení, kde záznamy ještě nejsou (například nový telefon), selhávala s hláškou „could not be cloned“. Obnova z Dílny → Záloha a obnova dat teď funguje i do prázdného zařízení.
+- **Souhrn zálohy:** náhled i výsledek obnovy uvádí i dobrodružství, vedení výprav a sezení.
+
 ## 0.5.10 (25. 11. 2026)
 
 - **Vedení hry, časomíra sezení:** nová stránka **Hra** u družiny (jen pro Průvodce, Družina → Hra). Klepnutím na hráče se přepíná, komu čas běží; pauza, pokračování a ukončení sezení se souhrnem. Pruhy času mají společné měřítko. Čas se počítá z časových razítek, takže přežije uspání telefonu i obnovení stránky; displej se při hře nezhasíná (kde to prohlížeč umí). Časy zůstávají jen na zařízení Průvodce.
