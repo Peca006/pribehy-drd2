@@ -17,8 +17,13 @@ interface Settings {
 }
 
 const SKIN_ID = /^[a-z0-9-]{1,40}$/
-/** Výchozí vzhled, dokud si uživatel žádný nezvolí: vestavěný Háv „Podzemí“ (retro RPG). Uložená volba (i „Podle systému“) má vždy přednost. */
+/** Výchozí vzhled: vestavěný Háv „Podzemí“ (retro RPG). */
 export const DEFAULT_SKIN = 'podzemi'
+/**
+ * Jednorázové zapnutí výchozího vzhledu: kdo ještě nemá tuto značku, dostane Podzemí (aby si změny všiml), a značka se
+ * uloží. Od té chvíle má uložená volba vždy přednost. Při dalším takovém úvodu vzhledu stačí číslo zvýšit.
+ */
+const SKIN_INTRO = 1
 
 function load(): Settings {
   const s: Settings = { termLinks: 'first', author: 'hráč', skin: DEFAULT_SKIN, tabbar: defaultTabbar() }
@@ -27,7 +32,8 @@ function load(): Settings {
     if (isLinkMode(raw.termLinks)) s.termLinks = raw.termLinks
     if (typeof raw.author === 'string' && raw.author.trim())
       s.author = raw.author.trim().slice(0, 60)
-    if (typeof raw.skin === 'string' && SKIN_ID.test(raw.skin)) s.skin = raw.skin
+    if (typeof raw.skin === 'string' && SKIN_ID.test(raw.skin) && raw.skinIntro === SKIN_INTRO)
+      s.skin = raw.skin
     s.tabbar = parseTabbar(raw.tabbar)
   } catch {
     /* výchozí hodnoty */
@@ -45,6 +51,7 @@ function save() {
         termLinks: settings.termLinks,
         author: settings.author,
         skin: settings.skin,
+        skinIntro: SKIN_INTRO,
         tabbar: settings.tabbar,
       }),
     )
@@ -52,6 +59,9 @@ function save() {
     /* nastavení platí aspoň do zavření stránky */
   }
 }
+
+// značka úvodu se uloží hned, ne až při další změně nastavení
+save()
 
 export function setTermLinks(mode: LinkMode) {
   settings.termLinks = mode
