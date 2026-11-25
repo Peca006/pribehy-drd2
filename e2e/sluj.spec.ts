@@ -27,3 +27,12 @@ test('Sluj nabízí Příručku, Bestiář, Grimoár a Dílnu', async ({ page })
   await page.locator('main').getByRole('link', { name: /Sluj/ }).click()
   await expect(page.getByRole('heading', { name: 'Sluj', level: 1 })).toBeVisible()
 })
+
+test('sekce mimo lištu zvýrazňuje Sluj', async ({ page }) => {
+  await page.goto('/#/bestiar')
+  const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
+  await expect(nav.getByRole('link', { name: /Sluj/ })).toHaveAttribute('aria-current', 'page')
+  await page.goto('/#/postavy')
+  await expect(nav.getByRole('link', { name: /Postava/ })).toHaveAttribute('aria-current', 'page')
+  await expect(nav.getByRole('link', { name: /Sluj/ })).not.toHaveAttribute('aria-current', 'page')
+})

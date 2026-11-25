@@ -387,6 +387,17 @@ export const TOPICS_APP: Card[] = [
     ],
   },
   {
+    id: 'navigace',
+    title: 'Spodní lišta, Sluj a Dílna',
+    kind: 'navod',
+    text: 'Dole je lišta se sekcemi aplikace. Na úzkém telefonu se její střed posouvá do stran.',
+    steps: [
+      'Výchozí lišta: Postava, Družina, Výpravy a Sluj. Sluj je rozcestník: Příručka, Bestiář, Grimoár a hledání v pravidlech.',
+      'Dílna (ve Sluji) je nastavení a data: jméno, odkazy v textu, balíčky, záloha, Šatník, nápověda a O aplikaci.',
+      'Dílna → Spodní lišta: pořadí záložek, přidání Příručky, Bestiáře nebo Grimoáru do lišty („V liště“), jejich skrytí („Jen ve Sluji“) a přišpendlení jedné záložky vlevo a jedné vpravo. Platí jen v tomto zařízení.',
+    ],
+  },
+  {
     id: 'aplikace',
     title: 'Aplikace a aktualizace',
     kind: 'navod',
