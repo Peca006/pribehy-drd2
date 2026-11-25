@@ -40,6 +40,8 @@ Role jsou oddělené, aby je Háv mohl ladit samostatně (viz `src/themes/defaul
 | `--drd-danger`, `--drd-success`, `--drd-warning` | stavové barvy textu |
 | `--drd-scrim`, `--drd-shadow` | zástěna za dialogy, stín plovoucích prvků |
 | `--drd-nav-position` | poloha hlavní lišty: `bottom` (výchozí), `top`, `left`, `right` (svislý pruh); výčet, jiná hodnota je chyba |
+| `--drd-shape-panel`, `--drd-shape-button`, `--drd-shape-dialog` | tvar panelů, tlačítek a oken: `rect` (výchozí), `chamfer` (seříznuté čtyři rohy), `notch` (levý horní a pravý dolní roh); výčet |
+| `--drd-shape-size` | velikost seříznutí, 2 až 16 px (výchozí 6 px) |
 | `--drd-text-shadow` | stín textu (embos); výchozí `none`, smí mít 1–3 vrstvy bez `inset` a rozšíření |
 | `--drd-radius`, `--drd-gap`, `--drd-font` | tvar, mezery, písmo |
 
@@ -192,6 +194,11 @@ se posouvá svisle. Roli `tab` může varianta nahradit (Podzemí: svislý lem `
 v Dílně → Spodní lišta (Poloha lišty: podle vzhledu, dole, nahoře, vlevo, vpravo); v náhledu Hávu v Šatníku se volba ignoruje.
 Podzemí: svislý pruh vlevo na telefonu na šířku (nízký viewport) a v širokém okně, jinak dole. Role `tab` Hávu je laděná pro
 polohy, které Háv sám určuje; při vlastní volbě uživatele zůstane lem Hávu, jaký je.
+
+**M3b: tvary (0.5.8).** Tokeny `--drd-shape-panel|button|dialog` (`rect`, `chamfer`, `notch`) a `--drd-shape-size`. Aplikace z nich
+vyrobí `clip-path` (`shape.ts`), manifest tedy nepřináší žádný volný text. Ořez odřízne i stín a roh rámečku z obrázku (u Podzemí
+je to záměr, měděný rám je na seříznutém rohu přerušený). Ohnisko tlačítka se při ořezu přesune dovnitř (`--drd-focus-offset`),
+aby zůstalo vidět při ovládání klávesnicí. Podzemí: tlačítka a okna `chamfer`, panely `notch`, 6 px.
 
 **M3: layout.** Zbývá: tvary (`clip-path` jako výčet), záhlaví a ozdoby kotvené k okrajům (M3b, M3c). Původní záměr: šablony rozložení (spodní, boční, horní lišta), kotvy a zóny, `clip-path` a maska pro dekorativní tvar uvnitř obdélníku.
 

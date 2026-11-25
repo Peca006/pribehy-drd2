@@ -56,6 +56,12 @@ button,
   min-height: 40px;
   cursor: pointer;
   text-decoration: none;
+  /* tvar z Hávu (seříznuté rohy); ohnisko se při ořezu přesune dovnitř, jinak by zmizelo */
+  clip-path: var(--drd-clip-button, none);
+}
+button:focus-visible,
+.btn:focus-visible {
+  outline-offset: var(--drd-focus-offset, 0px);
 }
 button.primary,
 .btn.primary {
@@ -106,6 +112,7 @@ select {
   border-radius: var(--drd-radius);
   padding: 0.75rem 1rem;
   margin: 0.5rem 0;
+  clip-path: var(--drd-clip-panel, none);
 }
 
 /* Dialogy: jednotný vzhled (dřív ho každý z deseti dialogů opakoval ve vlastních stylech). Komponenta nastaví jen
@@ -123,6 +130,7 @@ dialog {
     var(--drd-dialog-bi-width, 1) / 0 var(--drd-dialog-bi-repeat, stretch);
   border-radius: var(--drd-radius);
   width: min(28rem, 94vw);
+  clip-path: var(--drd-clip-dialog, none);
 }
 dialog::backdrop {
   background: var(--drd-scrim);
