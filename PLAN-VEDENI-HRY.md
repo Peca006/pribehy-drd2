@@ -40,4 +40,4 @@ Sitting { id, partyId, runId?, status: 'bezi' | 'pauza' | 'hotovo', started, end
 
 1. ~~Práh „pozadu“~~ rozhodnuto: pod 70 % spravedlivého dílu, nejdřív po 10 minutách hry (`FAIR_BEHIND`, `FAIR_MIN_MS` v `clock.ts`).
 2. ~~Čas, nebo i příhody~~ rozhodnuto: zatím jen čas; počet příhod slouží jen k odhadu, jestli se plán stihne.
-3. Má odpočet běžet jen na stránce Hra, nebo i jako plovoucí pruh v Při hře?
+3. ~~Kde běží odpočet~~ rozhodnuto (25. 11. 2026): v etapě 4 jen na stránce Hra; v Při hře bude (etapa 5) obyčejný pruh nahoře, ne plovoucí: aktivní hráč a krátký odpočet pro limit na rozhodnutí. Po vyzkoušení lze změnit.
