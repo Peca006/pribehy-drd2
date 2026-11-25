@@ -1,5 +1,11 @@
 # Změny
 
+## 0.5.3 (25. 11. 2026)
+
+- **Spodní lišta na telefonu:** záložky se už nemačkají. Střed lišty se posouvá do stran (se zarážením a stíněním okrajů), jedna záložka je přišpendlená vlevo (výchozí Postava) a jedna vpravo (výchozí Více). Otevřená záložka se dorolovala do viditelné části.
+- **Nastavení lišty:** Více → Spodní lišta: pořadí záložek, skrytí a přišpendlení vlevo či vpravo, „Vrátit výchozí“. Jen pro toto zařízení; Více nejde skrýt.
+- **Nový výchozí vzhled:** aplikace se poprvé otevře v Hávu Podzemí (retro RPG). Kdo si už zvolil jiný vzhled, včetně „Podle systému“, zůstane u své volby; změnit jde v Šatníku.
+
 ## 0.5.2 (25. 11. 2026)
 
 - **Šatník, role `dialog`:** Háv může mít vlastní rám oken. Všech deset dialogů aplikace (potvrzení, kouzla, lektvary, jizvy, pasti, recepty, účastníci a další) má sjednocený vzhled v jednom pravidle, takže Háv mění všechny najednou. Podzemí má ozdobný zlatý rám s rubíny.
