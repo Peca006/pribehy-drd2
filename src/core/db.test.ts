@@ -18,6 +18,7 @@ const migs = (...m: Migration[]) => ({
   adventures: [],
   expeditions: [],
   runs: [],
+  sittings: [],
 })
 
 describe('migrace záznamů (čistá funkce)', () => {

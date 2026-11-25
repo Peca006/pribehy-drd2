@@ -58,6 +58,7 @@ describe('záloha dat', () => {
       adventures: 0,
       expeditions: 0,
       runs: 0,
+      sittings: 0,
       images: 1,
     })
     expect(Object.keys(parsed.backup!.local).sort()).toEqual(['drd2-char-play:c1', 'drd2-settings'])
@@ -72,6 +73,7 @@ describe('záloha dat', () => {
       adventures: 0,
       expeditions: 0,
       runs: 0,
+      sittings: 0,
       images: 1,
     })
     expect(await repo('characters').get('c1')).toEqual(log('c1', 'name', 'concept'))

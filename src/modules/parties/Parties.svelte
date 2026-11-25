@@ -4,11 +4,12 @@
   import { listParties, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import Conflict from './Conflict.svelte'
+  import Game from './Game.svelte'
   import PartyShare from './PartyShare.svelte'
   import PartyView from './PartyView.svelte'
   import SessionForm from './SessionForm.svelte'
 
-  // params: [] = seznam družin, [id] = družina, [id, 'sezeni'] = nové sezení, [id, 'sdilet'] = sdílení
+  // params: [] = seznam družin, [id] = družina, [id, 'sezeni'] = nové sezení, [id, 'sdilet'] = sdílení, [id, 'hra'] = časomíra sezení
   let { params }: { params: string[] } = $props()
 
   let parties = $state.raw<Party[]>([])
@@ -27,6 +28,8 @@
 
 {#if params[0] && params[1] === 'sezeni'}
   <SessionForm id={params[0]} />
+{:else if params[0] && params[1] === 'hra'}
+  <Game id={params[0]} />
 {:else if params[0] && params[1] === 'konflikt'}
   <Conflict id={params[0]} />
 {:else if params[0] && params[1] === 'sdilet'}

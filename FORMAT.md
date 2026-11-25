@@ -7,7 +7,7 @@ a ukázky. **Každou změnu formátu zapište sem i do `CHANGELOG.md`.**
 
 | Co | Kde | Číslo formátu | Kód |
 | --- | --- | --- | --- |
-| Postavy, družiny, bytosti, předpisy, dobrodružství, výpravy, vedení | IndexedDB `drd2-data` | `schema` u každého záznamu | `src/core/db.ts` |
+| Postavy, družiny, bytosti, předpisy, dobrodružství, výpravy, vedení, sezení | IndexedDB `drd2-data` | `schema` u každého záznamu | `src/core/db.ts` |
 | Ilustrace postav a bytostí | IndexedDB `drd2-data` (`characterImages`, `creatureImages`) | bez čísla (binární data) | `src/core/character/images.ts`, `creatures/images.ts` |
 | Obsahové balíčky (pravidla, bestiář) | IndexedDB `drd2-content` | `PACK_BUILD`, `manifest.format` | `src/core/content/` |
 | Místní stav (zdroje, hrozba, návrhy…) | `localStorage` | bez čísla, čte se opatrně | viz „Místní stav“ |
@@ -21,7 +21,7 @@ zálohy při změně struktury souboru zálohy.
 ## Záznamy v úložišti a `schema`
 
 Každý záznam (postava, družina, bytost, předpis) se ukládá s polem `schema`; bez něj je to schéma 1. Aktuální schéma úložiště je
-počet jeho migrací + 1 (dnes 1 u všech sedmi úložišť). Při čtení se záznam převede řetězcem migrací (`MIGRATIONS[úložiště][i]` převádí schéma
+počet jeho migrací + 1 (dnes 1 u všech osmi úložišť). Při čtení se záznam převede řetězcem migrací (`MIGRATIONS[úložiště][i]` převádí schéma
 `i+1` na `i+2`) a pole `schema` se odstraní, takže ven z úložiště (sdílení, export) nikdy nejde. Při změně tvaru se přidá migrace a
 zvýší `VERSION` databáze; při upgradu se převedou všechny záznamy v jedné transakci. Záznam s vyšším schématem, než aplikace zná, se
 nemění (a import ze zálohy ho přeskočí).
@@ -61,6 +61,12 @@ Tři vrstvy (návrh: `PLAN-VYPRAVY.md`), vše jen u Průvodce, nikam se nesdíl�
 - **Vedení** `{ id, name, partyId, expeditionId, status, reachedNodes[], incidents{}, extra[], loot{}, notes, started, updated }`: rozehraná hra
   jedné družiny s jednou výpravou, odkazuje na přípravu živě podle `id`. Výprava s vedením se nemaže.
 
+### Sezení (`sittings`)
+
+Časomíra Vedení hry (`PLAN-VEDENI-HRY.md`), jen u Průvodce, nikam se nesdílí: `{ id, partyId, runId?, status, started, ended?, spans[], current?, absent?, planned?, note?, updated }`.
+`status` je `bezi`, `pauza` nebo `hotovo`; `spans[]` jsou úseky `{ memberId, from, to? }` v ms (poslední bez `to` běží). Součty se počítají z razítek, nic se neukládá
+jako uplynulý čas. Při smazání družiny se smažou i její sezení.
+
 ### Bytost (`creatures`) a předpis (`recipes`)
 
 Vlastní bytosti (`id` začíná `vlastni:`) a předpisy z Grimoáru (`kind`, `name`, `description`, `params`, `contentHash`, `updatedAt`).
@@ -97,10 +103,10 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 ```json
 {
   "format": "drd2-zaloha", "v": 1, "created": "2026-11-22T10:00:00.000Z", "app": "0.4.11",
-  "schemas": { "characters": 1, "parties": 1, "creatures": 1, "recipes": 1, "adventures": 1, "expeditions": 1, "runs": 1 },
+  "schemas": { "characters": 1, "parties": 1, "creatures": 1, "recipes": 1, "adventures": 1, "expeditions": 1, "runs": 1, "sittings": 1 },
   "characters": [ { "id": "…", "schema": 1, "events": [ … ] } ],
   "parties": [ … ], "creatures": [ … ], "recipes": [ … ],
-  "adventures": [ … ], "expeditions": [ … ], "runs": [ … ],
+  "adventures": [ … ], "expeditions": [ … ], "runs": [ … ], "sittings": [ … ],
   "images": { "characters": [ { "id": "…", "owner": "<id postavy>", "added": 0, "mime": "image/webp", "data": "<base64>" } ],
               "creatures": [ … ] },
   "local": { "drd2-settings": "{…}", "drd2-char-play:<id>": "{…}" }
@@ -135,3 +141,4 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 | 0.4.x | Ilustrace postav (`characterImages`), přenos jen v souboru |
 | 0.4.11 | Záloha všech dat, `BACKUP_VERSION` 1 |
 | 0.5.0 | Úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1); záloha je nese jako volitelné seznamy (`BACKUP_VERSION` zůstává 1, starší soubory je nemají) |
+| 0.5.x (rozpracováno) | Úložiště `sittings` (DB v9, schéma 1); záloha je nese jako volitelný seznam (`BACKUP_VERSION` zůstává 1) |
