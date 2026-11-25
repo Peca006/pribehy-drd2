@@ -1,5 +1,9 @@
 # Změny
 
+## 0.5.4 (25. 11. 2026)
+
+- **Háv Podzemí pro všechny:** vzhled Podzemí (retro RPG) se jednorázově zapne všem, aby si změny všimli. Jiný vzhled (včetně „Podle systému“) se zvolí v Šatníku (Více → Šatník) a od té chvíle se volba respektuje.
+
 ## 0.5.3 (25. 11. 2026)
 
 - **Spodní lišta na telefonu:** záložky se už nemačkají. Střed lišty se posouvá do stran (se zarážením a stíněním okrajů), jedna záložka je přišpendlená vlevo (výchozí Postava) a jedna vpravo (výchozí Více). Otevřená záložka se dorolovala do viditelné části.
