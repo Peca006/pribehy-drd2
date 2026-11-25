@@ -394,6 +394,7 @@ export const TOPICS_APP: Card[] = [
     steps: [
       'Výchozí lišta: Postava, Družina, Výpravy a Sluj. Sluj je rozcestník: Příručka, Bestiář, Grimoár a hledání v pravidlech.',
       'Dílna (ve Sluji) je nastavení a data: jméno, odkazy v textu, balíčky, záloha, Šatník, nápověda a O aplikaci.',
+      'Poloha lišty (dole, nahoře, svislý pruh vlevo nebo vpravo) se řídí vzhledem (Podzemí má na šířku svislý pruh vlevo); v Dílně → Spodní lišta ji můžeš nastavit sám.',
       'Dílna → Spodní lišta: pořadí záložek, přidání Příručky, Bestiáře nebo Grimoáru do lišty („V liště“), jejich skrytí („Jen ve Sluji“) a přišpendlení jedné záložky vlevo a jedné vpravo. Platí jen v tomto zařízení.',
     ],
   },

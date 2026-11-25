@@ -19,6 +19,7 @@ export const TOKEN_NAMES = [
   '--drd-radius',
   '--drd-gap',
   '--drd-font',
+  '--drd-nav-position',
 ] as const
 
 export type TokenName = (typeof TOKEN_NAMES)[number]
@@ -29,6 +30,11 @@ type TokenSpec =
   | { kind: 'font' }
   | { kind: 'shadow' }
   | { kind: 'textShadow' }
+  | { kind: 'enum'; values: readonly string[] }
+
+/** Poloha hlavní lišty: dole (výchozí), nahoře, svislý pruh vlevo nebo vpravo. */
+export const NAV_POSITIONS = ['bottom', 'top', 'left', 'right'] as const
+export type NavPosition = (typeof NAV_POSITIONS)[number]
 
 const COLOR = { kind: 'color', opaque: true } as const
 
@@ -48,6 +54,7 @@ export const TOKEN_SPECS: Record<TokenName, TokenSpec> = {
   '--drd-radius': { kind: 'length', min: 0, max: 48 },
   '--drd-gap': { kind: 'length', min: 4, max: 32 },
   '--drd-font': { kind: 'font' },
+  '--drd-nav-position': { kind: 'enum', values: NAV_POSITIONS },
 }
 
 export const MAX_VALUE_LENGTH = 200
@@ -176,5 +183,7 @@ export function tokenValueError(name: TokenName, value: unknown): string | null 
       return shadowError(v)
     case 'textShadow':
       return shadowError(v, true)
+    case 'enum':
+      return spec.values.includes(v) ? null : `povoleno: ${spec.values.join(', ')}`
   }
 }

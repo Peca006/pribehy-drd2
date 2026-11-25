@@ -15,6 +15,10 @@ import { appearance } from './appearance.svelte'
 import type { AssetFile } from './file'
 import { classifyViewport, type Skin, type Viewport } from './skin'
 import { getSkinAssets, listSkins } from './store'
+import { NAV_POSITIONS, type NavPosition } from './tokens'
+
+const navPositionOf = (v: string | undefined): NavPosition =>
+  NAV_POSITIONS.find((p) => p === v) ?? 'bottom'
 
 /** Aplikace běží jako náhled v rámečku zařízení (Šatník): volba z adresy má přednost před uloženou. */
 export const previewChoice: string | null =
@@ -59,7 +63,9 @@ function apply(force = false) {
   lastViewport = viewport
   const skin = findSkin(choice(), installed)
   const urls = currentUrls(skin)
-  applyTheme(pickTheme(choice(), installed, systemScheme(), viewport, urls))
+  const theme = pickTheme(choice(), installed, systemScheme(), viewport, urls)
+  applyTheme(theme)
+  appearance.navPosition = navPositionOf(theme.tokens['--drd-nav-position'])
   // ikony záložek (jen když je Háv se svými obrázky skutečně použit)
   appearance.icons = skin
     ? Object.fromEntries(

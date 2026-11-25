@@ -123,3 +123,12 @@ describe('nebezpečné vstupy', () => {
     bad('--drd-font', 'a'.repeat(201))
   })
 })
+
+describe('poloha lišty (--drd-nav-position)', () => {
+  it('povoluje jen bottom, top, left a right', () => {
+    for (const v of ['bottom', 'top', 'left', 'right'])
+      expect(tokenValueError('--drd-nav-position', v)).toBeNull()
+    for (const v of ['center', 'LEFT', '10px', '', 'left; color: red'])
+      expect(tokenValueError('--drd-nav-position', v)).not.toBeNull()
+  })
+})

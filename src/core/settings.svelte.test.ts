@@ -60,3 +60,15 @@ describe('výchozí spodní lišta', () => {
     expect((await load()).tabbar.hidden).toEqual([])
   })
 })
+
+describe('poloha lišty', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('výchozí je podle Hávu, platná vlastní volba se uloží a neplatná se zahodí', async () => {
+    expect((await load()).navPosition).toBe('skin')
+    store({ skinIntro: 1, tabbarIntro: 1, navPosition: 'left' })
+    expect((await load()).navPosition).toBe('left')
+    store({ skinIntro: 1, tabbarIntro: 1, navPosition: 'diagonal' })
+    expect((await load()).navPosition).toBe('skin')
+  })
+})
