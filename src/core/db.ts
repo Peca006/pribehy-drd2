@@ -8,7 +8,7 @@
 import { connection } from './idb'
 
 const DB = 'drd2-data'
-const VERSION = 8
+const VERSION = 9
 export const STORES = [
   'characters',
   'creatures',
@@ -19,6 +19,7 @@ export const STORES = [
   'adventures',
   'expeditions',
   'runs',
+  'sittings',
 ] as const
 export type StoreName = (typeof STORES)[number]
 
@@ -36,6 +37,7 @@ export const MIGRATIONS: Record<DataStore, Migration[]> = {
   adventures: [],
   expeditions: [],
   runs: [],
+  sittings: [],
 }
 
 /** Aktuální schéma = počet migrací + 1. */
@@ -74,7 +76,7 @@ const conn = connection(DB, VERSION, (req, oldVersion) => {
   if (!portraits.indexNames.contains('characterId')) portraits.createIndex('characterId', 'characterId')
   // migrace existujících záznamů (v jedné transakci s upgradem: buď se povede celá, nebo žádná)
   if (oldVersion > 0)
-    for (const s of ['characters', 'creatures', 'parties', 'recipes', 'adventures', 'expeditions', 'runs'] as const) {
+    for (const s of ['characters', 'creatures', 'parties', 'recipes', 'adventures', 'expeditions', 'runs', 'sittings'] as const) {
       const cursor = req.transaction!.objectStore(s).openCursor()
       cursor.onsuccess = () => {
         const c = cursor.result

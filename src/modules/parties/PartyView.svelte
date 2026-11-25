@@ -29,6 +29,7 @@
   import { partyOverview } from '../../core/party/overview'
   import { approveEntry, rejectEntry } from '../../core/party/share'
   import { professions } from '../../core/library.svelte'
+  import { removePartySittings } from '../../core/game/store'
   import { deleteParty, getParty, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
   import { settings } from '../../core/settings.svelte'
@@ -169,6 +170,7 @@
       }))
     )
       return
+    await removePartySittings(party.id)
     await deleteParty(party.id)
     go('druziny')
   }
@@ -195,6 +197,7 @@
         >Nové sezení (zkušenosti)</a
       >{/if}
     {#if gm}<a class="btn" href={'#/druziny/' + party.id + '/konflikt'}>Konflikt</a>{/if}
+    {#if gm}<a class="btn" href={'#/druziny/' + party.id + '/hra'}>Hra (časomíra)</a>{/if}
     <a class="btn" href={'#/druziny/' + party.id + '/sdilet'}>Sdílet…</a>
   </p>
   {#if !gm && party.notes}
