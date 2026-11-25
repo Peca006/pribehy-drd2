@@ -1,5 +1,10 @@
 # Změny
 
+## 0.5.6 (25. 11. 2026)
+
+- **Sluj se zvýrazní:** když je otevřená sekce, která není v liště (Příručka, Bestiář a Grimoár ve výchozím stavu, Šatník), svítí záložka Sluj.
+- **Nápověda:** nové téma „Spodní lišta, Sluj a Dílna“.
+
 ## 0.5.5 (25. 11. 2026)
 
 - **Sluj a Dílna místo Více:** poslední záložka se jmenuje **Sluj** (ikona 🐲, v Podzemí vchod do jeskyně). Je to rozcestník s dlaždicemi Příručka, Bestiář a Grimoár, hledáním do Příručky (když jsou nainstalované knihy) a tlačítkem **Dílna**. Dílna (⚗️) je nastavení a data: nastavení, Spodní lišta, balíčky, záloha, Šatník, nápověda a O aplikaci.
