@@ -13,7 +13,7 @@ import {
 } from './active'
 import { appearance } from './appearance.svelte'
 import type { AssetFile } from './file'
-import { classifyViewport, type Skin, type Viewport } from './skin'
+import { classifyViewport, resolveRoles, type Skin, type Viewport } from './skin'
 import { getSkinAssets, listSkins } from './store'
 import { NAV_POSITIONS, type NavPosition } from './tokens'
 
@@ -73,6 +73,14 @@ function apply(force = false) {
       )
     : {}
   appearance.pixelatedIcons = !!skin?.iconStyle?.pixelated
+  // záhlaví (role `header` pro tento viewport) a ozdoby
+  const header = skin ? resolveRoles(skin, viewport).header : undefined
+  appearance.header = !!header && !!urls[header.image]
+  appearance.ornaments = skin
+    ? skin.ornaments.flatMap((o) =>
+        urls[o.image] ? [{ url: urls[o.image]!, anchor: o.anchor, width: o.width }] : [],
+      )
+    : []
 }
 
 const revoke = (a: LoadedAssets | null) => {

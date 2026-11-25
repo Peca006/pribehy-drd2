@@ -55,6 +55,7 @@ describe('výchozí skiny', () => {
       assets: {},
       roles: {},
       icons: {},
+      ornaments: [],
     }
     expect(contrastIssues(skin)).toEqual([])
   })
@@ -113,7 +114,7 @@ describe('validateSkin: manifest', () => {
   it('bez obrázků jsou assets, roles a icons prázdné', () => {
     const r = validateSkin(minimal({ assets: {} }))
     expect(r.issues).toEqual([])
-    expect(r.skin).toMatchObject({ assets: {}, roles: {}, icons: {} })
+    expect(r.skin).toMatchObject({ assets: {}, roles: {}, icons: {}, ornaments: [] })
     expect(r.skin).not.toHaveProperty('iconStyle')
   })
 

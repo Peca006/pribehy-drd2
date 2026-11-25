@@ -108,12 +108,13 @@ describe('vestavěné Hávy', () => {
       }
     })
 
-    it('používá všech šest rolí a ikony pro všechny záložky', () => {
+    it('používá všech sedm rolí a ikony pro všechny záložky', () => {
       expect(Object.keys(podzemi().roles).sort()).toEqual([
         'background',
         'button',
         'dialog',
         'divider',
+        'header',
         'panel',
         'tab',
       ])
