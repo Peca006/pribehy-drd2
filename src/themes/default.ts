@@ -9,6 +9,7 @@ import type { Theme } from '../core/theme'
 //  scrim, shadow          zástěna za dialogy a stín plovoucích prvků
 //  radius, gap, font      tvar, mezery, písmo
 //  nav-position           poloha hlavní lišty (bottom, top, left, right)
+//  panel-opacity          průhlednost pozadí panelů (60 až 100 %), aby prosvítalo pozadí stránky
 //  shape-*, shape-size    tvar panelů, tlačítek a dialogů (rect, chamfer, notch) a velikost seříznutí
 export const darkTheme: Theme = {
   id: 'default-dark',
@@ -35,6 +36,7 @@ export const darkTheme: Theme = {
     '--drd-shape-button': 'rect',
     '--drd-shape-dialog': 'rect',
     '--drd-shape-size': '6px',
+    '--drd-panel-opacity': '100%',
   },
 }
 

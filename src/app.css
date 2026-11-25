@@ -99,7 +99,8 @@ select {
   width: 100%;
 }
 .panel {
-  background: var(--drd-surface);
+  /* průhlednost z Hávu (výchozí 100 %): pod panelem prosvítá pozadí stránky */
+  background-color: color-mix(in srgb, var(--drd-surface) var(--drd-panel-opacity, 100%), transparent);
   background-image: var(--drd-panel-image, none);
   background-size: var(--drd-panel-size, auto);
   background-repeat: var(--drd-panel-repeat, repeat);

@@ -24,6 +24,7 @@ export const TOKEN_NAMES = [
   '--drd-shape-button',
   '--drd-shape-dialog',
   '--drd-shape-size',
+  '--drd-panel-opacity',
 ] as const
 
 export type TokenName = (typeof TOKEN_NAMES)[number]
@@ -35,6 +36,8 @@ type TokenSpec =
   | { kind: 'shadow' }
   | { kind: 'textShadow' }
   | { kind: 'enum'; values: readonly string[] }
+  /** procenta (`80%`), kolik z barvy panelu je vidět; zbytek propustí pozadí stránky */
+  | { kind: 'percent'; min: number; max: number }
 
 /** Poloha hlavní lišty: dole (výchozí), nahoře, svislý pruh vlevo nebo vpravo. */
 export const NAV_POSITIONS = ['bottom', 'top', 'left', 'right'] as const
@@ -67,6 +70,7 @@ export const TOKEN_SPECS: Record<TokenName, TokenSpec> = {
   '--drd-shape-button': { kind: 'enum', values: SHAPES },
   '--drd-shape-dialog': { kind: 'enum', values: SHAPES },
   '--drd-shape-size': { kind: 'length', min: 2, max: 16 },
+  '--drd-panel-opacity': { kind: 'percent', min: 60, max: 100 },
 }
 
 export const MAX_VALUE_LENGTH = 200
@@ -195,6 +199,12 @@ export function tokenValueError(name: TokenName, value: unknown): string | null 
       return shadowError(v)
     case 'textShadow':
       return shadowError(v, true)
+    case 'percent': {
+      const m = /^(\d{1,3})%$/.exec(v)
+      if (!m) return 'neplatná hodnota (povoleno celé procento, například 85%)'
+      const n = Number(m[1])
+      return n < spec.min || n > spec.max ? `procento musí být v rozmezí ${spec.min} až ${spec.max}` : null
+    }
     case 'enum':
       return spec.values.includes(v) ? null : `povoleno: ${spec.values.join(', ')}`
   }
