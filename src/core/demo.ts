@@ -1,4 +1,4 @@
-// Instalace ukázkových dat: při prvním spuštění do prázdné aplikace a na požádání ve Více (obnoví jen ukázková data).
+// Instalace ukázkových dat: při prvním spuštění do prázdné aplikace a na požádání v Dílně (obnoví jen ukázková data).
 import { DEMO_CHARACTERS, demoLog, demoParty } from '../data/demo'
 import { DEMO_RECIPES } from '../data/demoRecipes'
 import { demoAdventure, demoExpeditions } from '../data/demoExpeditions'

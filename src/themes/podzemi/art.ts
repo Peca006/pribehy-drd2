@@ -125,8 +125,9 @@ const GLYPHS: Record<string, Glyph> = {
   bestiar: (c) =>
     `<rect x="12" y="16" width="8" height="7" fill="${c}"/><rect x="9" y="12" width="3" height="3" fill="${c}"/><rect x="13" y="9" width="3" height="4" fill="${c}"/><rect x="17" y="9" width="3" height="4" fill="${c}"/><rect x="21" y="12" width="3" height="3" fill="${c}"/>`,
   grimoar: (c) => `<path d="M14 8H18V13L23 22H9L14 13Z" fill="${c}"/>`,
+  // Sluj: vchod do jeskyně (oblouk s tmavým otvorem)
   knihovna: (c) =>
-    `<rect x="9" y="9" width="14" height="3" fill="${c}"/><rect x="9" y="14.5" width="14" height="3" fill="${c}"/><rect x="9" y="20" width="14" height="3" fill="${c}"/>`,
+    `<path fill-rule="evenodd" d="M8 24V15C8 10.5 11.5 7.5 16 7.5S24 10.5 24 15V24ZM12.5 24V17C12.5 14.8 14 13.5 16 13.5S19.5 14.8 19.5 17V24Z" fill="${c}"/>`,
 }
 
 /** Barvy drahokamů: světlý a tmavý konec přechodu a barva piktogramu. */

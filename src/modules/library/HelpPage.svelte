@@ -1,5 +1,5 @@
 <script lang="ts">
-  // Stránka Nápověda ve Více: úvod do aplikace a všechna témata z registru `core/help.ts` s hledáním.
+  // Stránka Nápověda (z Dílny): úvod do aplikace a všechna témata z registru `core/help.ts` s hledáním.
   import Arrow from '../../ui/Arrow.svelte'
   import HelpPanel from '../../ui/HelpPanel.svelte'
   import { helpGroups, searchHelp } from '../../core/help'
@@ -14,7 +14,7 @@
   const searching = $derived(query.trim().length > 0)
 </script>
 
-<nav><a class="btn" href="#/knihovna"><Arrow dir="left" /> Více</a></nav>
+<nav><a class="btn" href="#/knihovna/dilna"><Arrow dir="left" /> Dílna</a></nav>
 <h1>Nápověda</h1>
 
 <div class="panel">
@@ -23,7 +23,7 @@
     i nastavení zůstávají v tomto zařízení. Mezi zařízeními se přenášejí kódem, QR, souborem nebo zvukem, bez serveru.
   </p>
   <p>
-    Pravidla a Bestiář v rozsahu SRD se stahují jako balíčky (Více → Obsahové balíčky). U většiny prvků je tlačítko
+    Pravidla a Bestiář v rozsahu SRD se stahují jako balíčky (Sluj → Dílna → Obsahové balíčky). U většiny prvků je tlačítko
     „?“ s krátkou nápovědou; tady je všechna pohromadě.
   </p>
 </div>

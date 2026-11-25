@@ -13,7 +13,7 @@
   } from '../../core/tabbar'
 
   // Spodní lišta: pořadí záložek, skrytí a přišpendlení jedné záložky vlevo a jedné vpravo (zbytek se posouvá do stran).
-  // Skryté záložky jsou dál dostupné z Více a z odkazů v aplikaci. Nastavení platí jen v tomto zařízení.
+  // Skryté záložky jsou dál dostupné ze Sluje a z odkazů v aplikaci. Nastavení platí jen v tomto zařízení.
   const mods = $derived(allModules().filter((m) => m.nav))
   const ids = $derived(mods.map((m) => m.id))
   const rows = $derived(orderedIds(ids, settings.tabbar).map((id) => mods.find((m) => m.id === id)!))

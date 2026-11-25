@@ -1,5 +1,5 @@
 // Ukázkové dobrodružství a výpravy (vlastní vymyšlený text, ne příklady ze SRD). Slouží k vyzkoušení Výprav a jdou smazat;
-// ve Více se dají obnovit. Všechna ID mají předponu `demo-`, takže se odstraní společně s ostatními ukázkovými daty.
+// v Dílně se dají obnovit. Všechna ID mají předponu `demo-`, takže se odstraní společně s ostatními ukázkovými daty.
 import { ANYTIME, type Adventure, type Expedition, type Incident, type Npc } from '../core/expedition/model'
 
 export const DEMO_ADVENTURE_ID = 'demo-dobrodruzstvi-karavan'

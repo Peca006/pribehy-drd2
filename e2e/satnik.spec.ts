@@ -96,8 +96,9 @@ const baseManifest = (id: string, name: string, extra: Record<string, unknown> =
 const card = (page: Page, name: string) =>
   page.locator('ul.list > li').filter({ has: page.getByText(name, { exact: true }) })
 
-test('Šatník je dostupný z Více', async ({ page }) => {
+test('Šatník je dostupný ze Sluje přes Dílnu', async ({ page }) => {
   await page.goto('/#/knihovna')
+  await page.getByRole('link', { name: /Dílna/ }).click()
   await page.getByRole('link', { name: /Šatník/ }).click()
   await expect(page.getByRole('heading', { name: 'Šatník', level: 1 })).toBeVisible()
   // výchozí vzhled je Háv Podzemí; vlastní volba (i „Podle systému“) se pak respektuje

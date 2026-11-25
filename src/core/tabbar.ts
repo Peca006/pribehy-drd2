@@ -4,7 +4,7 @@
 export interface TabbarConfig {
   /** pořadí `id` modulů; co v něm chybí, se řadí za něj podle výchozího pořadí modulů */
   order: string[]
-  /** skryté záložky (jsou dál dostupné z Více) */
+  /** skryté záložky (jsou dál dostupné ze Sluje) */
   hidden: string[]
   /** přišpendlená záložka vlevo; prázdné = žádná */
   left: string

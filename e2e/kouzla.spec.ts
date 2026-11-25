@@ -6,7 +6,7 @@ import { clearRecipes } from './helpers.js'
 
 test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', async ({ page }) => {
   // ukázkové postavy
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení
@@ -54,7 +54,7 @@ test('kouzlo ad hoc, uložení do Grimoáru a přidání našeptáváním', asyn
   await expect(page.getByText('obor mimo schopnosti')).toBeHidden()
 })
 
-test('Grimoár ve Více: nové kouzlo, úprava a smazání s potvrzením', async ({ page }) => {
+test('Grimoár v Dílně: nové kouzlo, úprava a smazání s potvrzením', async ({ page }) => {
   await page.goto('/#/grimoar')
   await clearRecipes(page)
   await expect(page.getByText('Grimoár je zatím prázdný')).toBeVisible()
@@ -83,7 +83,7 @@ test('Grimoár ve Více: nové kouzlo, úprava a smazání s potvrzením', async
 })
 
 test('sdílení postavy přenese kouzlo do Grimoáru příjemce', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByRole('button', { name: 'Skrýt' }).click() // pruh s nabídkou stažení balíčků by překážel
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()

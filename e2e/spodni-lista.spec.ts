@@ -2,7 +2,7 @@
 import { expect, test } from '@playwright/test'
 
 // Spodní lišta: na úzkém telefonu se střed posouvá, jedna záložka je přišpendlená vlevo a jedna vpravo,
-// pořadí, skrytí a přišpendlení se nastavují ve Více a přežijí načtení stránky.
+// pořadí, skrytí a přišpendlení se nastavují v Dílně a přežijí načtení stránky.
 
 test.use({ viewport: { width: 360, height: 700 } })
 
@@ -11,10 +11,10 @@ test('lišta se na telefonu posouvá a jde nastavit', async ({ page }) => {
   const nav = page.getByRole('navigation', { name: 'Hlavní navigace' })
   await expect(nav).toBeVisible()
 
-  // výchozí: Postava vlevo, Více vpravo, mezi nimi posuvný střed bez vodorovného posunu celé stránky
+  // výchozí: Postava vlevo, Sluj vpravo, mezi nimi posuvný střed bez vodorovného posunu celé stránky
   const links = nav.getByRole('link')
   await expect(links.first()).toContainText('Postava')
-  await expect(links.last()).toContainText('Více')
+  await expect(links.last()).toContainText('Sluj')
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)
   expect(overflow).toBe(false)
   const scroller = page.locator('.scroller')
@@ -34,15 +34,16 @@ test('lišta se na telefonu posouvá a jde nastavit', async ({ page }) => {
   await expect(nav.getByRole('link', { name: /Bestiář/ })).toBeInViewport()
 
   // nastavení: Grimoár přišpendlit vlevo (Postava přejde do posuvné části), Bestiář skrýt
-  await nav.getByRole('link', { name: /Více/ }).click()
+  await nav.getByRole('link', { name: /Sluj/ }).click()
+  await page.getByRole('link', { name: /Dílna/ }).click()
   await page.getByLabel('Umístění: Grimoár').selectOption('left')
   await page.getByLabel('Umístění: Bestiář').selectOption('hidden')
   await expect(links.first()).toContainText('Grimoár')
   await expect(nav.getByRole('link', { name: /Bestiář/ })).toHaveCount(0)
   await expect(page.getByLabel('Umístění: Postava')).toHaveValue('scroll')
 
-  // Více nejde skrýt
-  await expect(page.getByLabel('Umístění: Více').locator('option[value="hidden"]')).toBeDisabled()
+  // Sluj nejde skrýt
+  await expect(page.getByLabel('Umístění: Sluj').locator('option[value="hidden"]')).toBeDisabled()
 
   // pořadí: Příručka o místo výš
   const before = await nav.getByRole('link').allTextContents()
@@ -56,7 +57,8 @@ test('lišta se na telefonu posouvá a jde nastavit', async ({ page }) => {
   await expect(nav.getByRole('link', { name: /Bestiář/ })).toHaveCount(0)
 
   // vrácení výchozího
-  await nav.getByRole('link', { name: /Více/ }).click()
+  await nav.getByRole('link', { name: /Sluj/ }).click()
+  await page.getByRole('link', { name: /Dílna/ }).click()
   await page.getByRole('button', { name: 'Vrátit výchozí' }).click()
   await expect(nav.getByRole('link').first()).toContainText('Postava')
   await expect(nav.getByRole('link', { name: /Bestiář/ })).toHaveCount(1)

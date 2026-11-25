@@ -12,7 +12,7 @@ import { countEvent } from './stats'
 export const pwa = $state({
   /** čeká nová verze, stačí obnovit */
   needRefresh: false,
-  /** uživatel skryl lištu s novou verzí („Později“); nabídka se pak ukáže ve Více */
+  /** uživatel skryl lištu s novou verzí („Později“); nabídka se pak ukáže v Dílně */
   updateDismissed: false,
   /** aplikace je připravená pro práci offline (první nainstalování service workeru) */
   offlineReady: false,
