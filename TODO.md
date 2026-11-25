@@ -2,12 +2,12 @@
 
 Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
 
-## Otevřené úkoly (stav k verzi 0.5.9, 25. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.5.10, 25. 11. 2026)
 
 ### Další práce
 
 - ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); zbývá zkouška na telefonu a export a import výprav souborem.
-- 🚧 **Vedení hry (rozpracováno, plán `PLAN-VEDENI-HRY.md`, etapa 1 hotová: časomíra a přepínání hráčů).** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
+- 🚧 **Vedení hry (rozpracováno, plán `PLAN-VEDENI-HRY.md`, etapy 1 až 4 hotové a vydané v 0.5.10: časomíra, spravedlivý prostor, plán, odpočet; zbývá vazba na Při hře a zkouška na telefonu).** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
   stupnice, plánování podle délky sezení, rychlé přepínání mezi hráči (postavami) a krátký odpočet pro rychlé reakce. Zápis v `PLAN-VYPRAVY.md`.
 - ✅ **Kořist (11e, 0.5.0).** Příprava u příhody, odhalení, upřesnění a rozdělení postavám.
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
