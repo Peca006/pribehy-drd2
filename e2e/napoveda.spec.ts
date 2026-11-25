@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 // Nápověda „?“ u pomůcek: panel pod prvkem, přepínání, odkaz do SRD bez balíčku, nápověda v dialogu.
 
 test('nápověda u přehledu postavy a v dialogu', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení
@@ -43,7 +43,7 @@ test('nápověda u přehledu postavy a v dialogu', async ({ page }) => {
 })
 
 test('nápověda u importu a žurnálu družiny', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení
@@ -59,8 +59,8 @@ test('nápověda u importu a žurnálu družiny', async ({ page }) => {
   await expect(page.getByRole('region', { name: 'Nápověda: Žurnál družiny' })).toContainText('Průvodce')
 })
 
-test('stránka Nápověda ve Více: úvod, hledání a téma', async ({ page }) => {
-  await page.goto('/#/knihovna')
+test('stránka Nápověda z Dílny: úvod, hledání a téma', async ({ page }) => {
+  await page.goto('/#/knihovna/dilna')
   await page.getByRole('link', { name: 'Nápověda a návody' }).click()
   await expect(page.getByRole('heading', { name: 'Nápověda', exact: true })).toBeVisible()
   await expect(page.getByText('funguje i bez připojení')).toBeVisible()

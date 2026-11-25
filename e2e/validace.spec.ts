@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 // Průběžná kontrola postavy: nedostupná pokročilá povolání jsou vidět, ale nejdou přidat; tvorba upozorní hned.
 
 async function ukazkovaData(page: import('@playwright/test').Page) {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení

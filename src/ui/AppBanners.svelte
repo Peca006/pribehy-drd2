@@ -81,7 +81,7 @@
         {downloads.busy ? `Stahuji… ${downloads.percent} %` : 'Aktualizovat'}
       </button>
     {:else}
-      <a class="btn primary" href="#/knihovna">Více</a>
+      <a class="btn primary" href="#/knihovna/dilna">Dílna</a>
     {/if}
     <button onclick={() => (hideOutdated = true)} aria-label="Skrýt">Později</button>
   </div>

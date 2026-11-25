@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 // Panel Hod: manévr Přesně a postih Nepřesně se vylučují, hod třemi kostkami platí manévr Zdrojem.
 
 test('manévr Přesně a postih Nepřesně se vylučují', async ({ page }) => {
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByRole('button', { name: 'Skrýt' }).click()
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()

@@ -142,7 +142,7 @@
   }
 </script>
 
-<p><a href="#/knihovna">← Více</a></p>
+<p><a href="#/knihovna/dilna">← Dílna</a></p>
 <h1>Šatník</h1>
 <p class="muted">
   Vzhled aplikace se jmenuje <strong>Háv</strong>. Háv je soubor <code>{SKIN_EXTENSION}</code>,

@@ -270,7 +270,7 @@ export const TOPICS_PARTY: Card[] = [
   },
 ]
 
-/** Témata k Příručce, Bestiáři a části Více. */
+/** Témata k Příručce, Bestiáři a části Dílny. */
 export const TOPICS_APP: Card[] = [
   {
     id: 'prirucka',
@@ -280,7 +280,7 @@ export const TOPICS_APP: Card[] = [
     steps: [
       'Hledání (od dvou znaků) prochází kapitoly, bytosti i pojmy.',
       'Kapitoly jsou ve sbalitelných částech; předchozí a další kapitola platí v rámci knihy.',
-      'Pojmy v textu jsou odkazy; kolik jich se ukáže, nastavíš ve Více (Odkazy v textu).',
+      'Pojmy v textu jsou odkazy; kolik jich se ukáže, nastavíš v Dílně (Odkazy v textu).',
       'Bez balíčku nabídne aplikace Stáhnout, případně odkaz do SRD.',
     ],
   },
@@ -369,7 +369,7 @@ export const TOPICS_APP: Card[] = [
     kind: 'navod',
     text: 'Všechna data jsou jen v tomto zařízení. Záloha je uloží do jednoho souboru .json, ze kterého je lze vrátit i na jiném telefonu.',
     steps: [
-      'Více → Záloha a obnova dat → „Stáhnout zálohu“. V souboru jsou postavy, družiny, bytosti, předpisy, rozpracované úpravy a (volitelně) ilustrace.',
+      'Sluj → Dílna → Záloha a obnova dat → „Stáhnout zálohu“. V souboru jsou postavy, družiny, bytosti, předpisy, rozpracované úpravy a (volitelně) ilustrace.',
       'Soubor si pošlete mimo telefon (e-mail sobě, cloud). Smazání dat prohlížeče nebo odinstalace aplikace záznamy odstraní.',
       'Obnova: vyberte soubor. „Doplnit“ přidá jen chybějící, „Přepsat“ nahradí záznamy se stejným ID zálohou.',
       'Balíčky pravidel se nezálohují, stáhnou se znovu. Záloha z novější verze aplikace se nenačte: nejdřív obnovte aplikaci.',

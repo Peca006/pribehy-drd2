@@ -6,7 +6,7 @@ test('ukázkové dobrodružství je v ukázkových datech a inspirace ukáže p�
   await page.setViewportSize({ width: 1280, height: 3500 })
   await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
 
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).click()
   await page.getByRole('button', { name: 'Obnovit', exact: true }).last().click() // potvrzení
@@ -33,7 +33,7 @@ test('ukázkové dobrodružství je v ukázkových datech a inspirace ukáže p�
   await expect(page.getByText('Zeptejte se hráčů')).toBeVisible()
 
   // ukázková výprava jde smazat i s ostatními ukázkovými daty
-  await page.goto('/#/knihovna')
+  await page.goto('/#/knihovna/dilna')
   await page.getByText('Ukázková data', { exact: true }).click()
   await page.getByRole('button', { name: 'Odstranit', exact: true }).click()
   await page.getByRole('button', { name: 'Odstranit', exact: true }).last().click() // potvrzení

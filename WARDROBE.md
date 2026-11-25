@@ -1,6 +1,6 @@
 # Šatník (modul `wardrobe`) a formát Hávu
 
-Šatník převléká aplikaci. Jeden vzhled se jmenuje **Háv** (soubor `.drdskin`). Šatník je modul v sekci Více;
+Šatník převléká aplikaci. Jeden vzhled se jmenuje **Háv** (soubor `.drdskin`). Šatník je modul v Dílně (Sluj → Dílna);
 rozhodnutí, zda zůstane modulem, nebo se stane samostatnou aplikací, se odkládá za M3.
 
 ## Zásady
@@ -169,7 +169,7 @@ Nemá napodobovat Truhlici.
 ## Milníky
 
 **M1: základ.** Formát a validace, úložiště Hávů v IndexedDB, volba aktivního Hávu v nastavení (výchozí „podle systému"),
-Šatník v sekci Více (seznam, náhled na telefonu na výšku a na šířku a na tabletu, aktivace, smazání, export a import),
+Šatník v Dílně (seznam, náhled na telefonu na výšku a na šířku a na tabletu, aktivace, smazání, export a import),
 tři vlastní Hávy. Změny potřebné pro skinování se slučují do `develop` už po M1 (a rozdělení tokenů hned, protože zasahuje
 do mnoha komponent a vedle se vyvíjejí výpravy).
 
@@ -193,7 +193,7 @@ jedno pravidlo `dialog` v `app.css`, komponenty mají jen vlastní šířku. Š�
   na `#8a5e0e`, protože měl na pozadí jen 4,2:1.
 - ✅ Čtení a zápis `.drdskin` (ZIP), úložiště v IndexedDB, volba Hávu v nastavení a použití za běhu podle viewportu
   (`zip.ts`, `file.ts`, `store.ts`, `active.ts`, `runtime.ts`; ověřeno i v prohlížeči).
-- ✅ Modul Šatník (`src/modules/wardrobe/`, `#/satnik`, odkaz ve Více): seznam vzhledů, použití, smazání, export a import
+- ✅ Modul Šatník (`src/modules/wardrobe/`, `#/satnik`, odkaz v Dílně): seznam vzhledů, použití, smazání, export a import
   `.drdskin` (i několika souborů, s výpisem chyb a varování) a náhled na zařízeních (telefon na výšku a šířku, tablet
   na výšku a šířku). Náhled je aplikace v `<iframe>` ve skutečných rozměrech zařízení; Háv se do něj předává přes `?hav=…`,
   takže se dá prohlížet bez aktivace. E2E: `e2e/satnik.spec.ts`.
