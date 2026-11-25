@@ -8,6 +8,7 @@ import type { Theme } from '../core/theme'
 //  danger, success, warning   stavové barvy textu (musí být čitelné na bg i surface)
 //  scrim, shadow          zástěna za dialogy a stín plovoucích prvků
 //  radius, gap, font      tvar, mezery, písmo
+//  nav-position           poloha hlavní lišty (bottom, top, left, right)
 export const darkTheme: Theme = {
   id: 'default-dark',
   name: 'Tmavý',
@@ -28,6 +29,7 @@ export const darkTheme: Theme = {
     '--drd-radius': '10px',
     '--drd-gap': '1rem',
     '--drd-font': "system-ui, 'Segoe UI', Roboto, sans-serif",
+    '--drd-nav-position': 'bottom',
   },
 }
 

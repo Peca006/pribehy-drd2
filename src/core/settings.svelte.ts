@@ -1,6 +1,7 @@
 // Nastavení aplikace (jen v tomto zařízení). Ukládá se do localStorage; když není dostupné
 // (soukromé okno, zakázaná data webu), nastavení platí do zavření stránky.
 import { defaultTabbar, isLegacyDefaultTabbar, parseTabbar, type TabbarConfig } from './tabbar'
+import { NAV_POSITIONS, type NavPosition } from './skin/tokens'
 import { isLinkMode, type LinkMode } from './termLinks'
 
 const KEY = 'drd2-settings'
@@ -14,6 +15,8 @@ interface Settings {
   skin: string
   /** spodní lišta: pořadí, skryté a přišpendlené záložky */
   tabbar: TabbarConfig
+  /** poloha lišty: `skin` = podle Hávu, jinak vlastní volba uživatele */
+  navPosition: NavPosition | 'skin'
 }
 
 const SKIN_ID = /^[a-z0-9-]{1,40}$/
@@ -31,7 +34,7 @@ const SKIN_INTRO = 1
 const TABBAR_INTRO = 1
 
 function load(): Settings {
-  const s: Settings = { termLinks: 'first', author: 'hráč', skin: DEFAULT_SKIN, tabbar: defaultTabbar() }
+  const s: Settings = { termLinks: 'first', author: 'hráč', skin: DEFAULT_SKIN, tabbar: defaultTabbar(), navPosition: 'skin' }
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}')
     if (isLinkMode(raw.termLinks)) s.termLinks = raw.termLinks
@@ -39,6 +42,7 @@ function load(): Settings {
       s.author = raw.author.trim().slice(0, 60)
     if (typeof raw.skin === 'string' && SKIN_ID.test(raw.skin) && raw.skinIntro === SKIN_INTRO)
       s.skin = raw.skin
+    if ((NAV_POSITIONS as readonly string[]).includes(raw.navPosition)) s.navPosition = raw.navPosition
     const bar = parseTabbar(raw.tabbar)
     s.tabbar =
       raw.tabbarIntro === TABBAR_INTRO || !raw.tabbar || !isLegacyDefaultTabbar(bar)
@@ -63,6 +67,7 @@ function save() {
         skinIntro: SKIN_INTRO,
         tabbar: settings.tabbar,
         tabbarIntro: TABBAR_INTRO,
+        navPosition: settings.navPosition,
       }),
     )
   } catch {
@@ -90,5 +95,10 @@ export function setAuthor(name: string) {
 
 export function setTabbar(cfg: TabbarConfig) {
   settings.tabbar = parseTabbar(cfg)
+  save()
+}
+
+export function setNavPosition(p: NavPosition | 'skin') {
+  settings.navPosition = p === 'skin' || (NAV_POSITIONS as readonly string[]).includes(p) ? p : 'skin'
   save()
 }

@@ -8,6 +8,7 @@
   import { markRestore, router, startRouter, tabHref, toHash } from './core/router.svelte'
   import { settings } from './core/settings.svelte'
   import { appearance } from './core/skin/appearance.svelte'
+  import { previewChoice } from './core/skin/runtime'
   import { LOCKED_TAB, layoutTabs } from './core/tabbar'
   import { DEFAULT_MODULE } from './modules'
   import AppBanners from './ui/AppBanners.svelte'
@@ -39,14 +40,25 @@
     return inBar ? id : active?.nav || id === 'satnik' ? LOCKED_TAB : undefined
   })
 
-  // střed lišty se posouvá do stran; okraje se stíní, když je za nimi další obsah
+  // poloha lišty: podle Hávu pro aktuální viewport, nebo vlastní volba uživatele (v náhledu Hávu v Šatníku se volba ignoruje)
+  const position = $derived(
+    previewChoice || settings.navPosition === 'skin' ? appearance.navPosition : settings.navPosition,
+  )
+  const vertical = $derived(position === 'left' || position === 'right')
+
+  // střed lišty se posouvá (vodorovně, ve svislém pruhu svisle); okraje se stíní, když je za nimi další obsah
   let scroller = $state<HTMLElement>()
-  let canLeft = $state(false)
-  let canRight = $state(false)
+  let canStart = $state(false)
+  let canEnd = $state(false)
   function measure() {
     if (!scroller) return
-    canLeft = scroller.scrollLeft > 2
-    canRight = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 2
+    if (vertical) {
+      canStart = scroller.scrollTop > 2
+      canEnd = scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 2
+    } else {
+      canStart = scroller.scrollLeft > 2
+      canEnd = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 2
+    }
   }
   $effect(() => {
     if (!scroller) return
@@ -59,13 +71,22 @@
   $effect(() => {
     void active?.id
     void tabs
+    void vertical
     const el = scroller?.querySelector<HTMLElement>('[aria-current="page"]')
     if (!scroller || !el) return
-    const left = el.offsetLeft - scroller.offsetLeft
-    const right = left + el.offsetWidth
-    if (left < scroller.scrollLeft) scroller.scrollLeft = left
-    else if (right > scroller.scrollLeft + scroller.clientWidth)
-      scroller.scrollLeft = right - scroller.clientWidth
+    if (vertical) {
+      const top = el.offsetTop - scroller.offsetTop
+      const bottom = top + el.offsetHeight
+      if (top < scroller.scrollTop) scroller.scrollTop = top
+      else if (bottom > scroller.scrollTop + scroller.clientHeight)
+        scroller.scrollTop = bottom - scroller.clientHeight
+    } else {
+      const left = el.offsetLeft - scroller.offsetLeft
+      const right = left + el.offsetWidth
+      if (left < scroller.scrollLeft) scroller.scrollLeft = left
+      else if (right > scroller.scrollLeft + scroller.clientWidth)
+        scroller.scrollLeft = right - scroller.clientWidth
+    }
     measure()
   })
 </script>
@@ -92,35 +113,54 @@
   </a>
 {/snippet}
 
-<div class="shell">
-  <main>
-    {#if !ready}
-      <p class="muted" role="status">Načítám…</p>
-    {:else if Current}
-      <Current params={router.params} />
-    {:else}
-      <p>Stránka nenalezena. <a href={toHash(DEFAULT_MODULE)}>Domů</a></p>
-    {/if}
-  </main>
-  <ConfirmDialog />
-  <!-- pruhy a navigace jsou na konci stránky „lepivé“ (sticky): drží se u spodního okraje, ale zabírají místo, takže nezakrývají konec obsahu -->
-  <div class="bottom">
-    <AppBanners />
-    <nav class="tabs" aria-label="Hlavní navigace">
-      {#if tabs.left}<div class="pin">{@render tab(tabs.left)}</div>{/if}
-      <div class="mid" class:can-left={canLeft} class:can-right={canRight}>
-        <div class="scroller" bind:this={scroller} onscroll={measure}>
-          {#each tabs.middle as m (m.id)}{@render tab(m)}{/each}
-        </div>
+{#snippet navbar()}
+  <nav class="tabs" aria-label="Hlavní navigace">
+    {#if tabs.left}<div class="pin">{@render tab(tabs.left)}</div>{/if}
+    <div class="mid" class:can-start={canStart} class:can-end={canEnd}>
+      <div class="scroller" bind:this={scroller} onscroll={measure}>
+        {#each tabs.middle as m (m.id)}{@render tab(m)}{/each}
       </div>
-      {#if tabs.right}<div class="pin">{@render tab(tabs.right)}</div>{/if}
-    </nav>
+    </div>
+    {#if tabs.right}<div class="pin">{@render tab(tabs.right)}</div>{/if}
+  </nav>
+{/snippet}
+
+<!-- poloha lišty (dole, nahoře, svislý pruh vlevo nebo vpravo) určuje Háv podle viewportu nebo volba uživatele -->
+<div class="shell" data-nav={position}>
+  {#if position === 'top' || position === 'left'}{@render navbar()}{/if}
+  <div class="page">
+    <main>
+      {#if !ready}
+        <p class="muted" role="status">Načítám…</p>
+      {:else if Current}
+        <Current params={router.params} />
+      {:else}
+        <p>Stránka nenalezena. <a href={toHash(DEFAULT_MODULE)}>Domů</a></p>
+      {/if}
+    </main>
+    <ConfirmDialog />
+    <!-- pruhy (a dolní lišta) jsou na konci stránky „lepivé“ (sticky): drží se u spodního okraje, ale zabírají místo, takže nezakrývají konec obsahu -->
+    <div class="bottom">
+      <AppBanners />
+      {#if position === 'bottom'}{@render navbar()}{/if}
+    </div>
   </div>
+  {#if position === 'right'}{@render navbar()}{/if}
 </div>
 
 <style>
   .shell {
     min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  .shell[data-nav='left'],
+  .shell[data-nav='right'] {
+    flex-direction: row;
+  }
+  .page {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
   }
@@ -151,7 +191,64 @@
       var(--drd-tab-bi-width, 1) / 0 var(--drd-tab-bi-repeat, stretch);
     padding-bottom: env(safe-area-inset-bottom);
   }
-  /* přišpendlené záložky (vlevo a vpravo) zůstávají vždy vidět, střed se posouvá */
+  /* poloha lišty: nahoře drží lišta u horního okraje, ve svislém pruhu u okraje okna po celou výšku */
+  .shell[data-nav='top'] .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding-bottom: 0;
+    padding-top: env(safe-area-inset-top);
+    border-width: var(--drd-tab-bw, 0 0 1px 0);
+  }
+  .shell[data-nav='left'] .tabs,
+  .shell[data-nav='right'] .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    flex-direction: column;
+    width: 5rem;
+    height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .shell[data-nav='left'] .tabs {
+    padding-left: env(safe-area-inset-left);
+    border-width: var(--drd-tab-bw, 0 1px 0 0);
+  }
+  .shell[data-nav='right'] .tabs {
+    padding-right: env(safe-area-inset-right);
+    border-width: var(--drd-tab-bw, 0 0 0 1px);
+  }
+  .shell[data-nav='left'] .pin,
+  .shell[data-nav='right'] .pin {
+    min-width: 0;
+  }
+  .shell[data-nav='left'] .mid,
+  .shell[data-nav='right'] .mid {
+    flex-direction: column;
+    min-height: 0;
+  }
+  .shell[data-nav='left'] .scroller,
+  .shell[data-nav='right'] .scroller {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+  }
+  .shell[data-nav='left'] .tabs .scroller a,
+  .shell[data-nav='right'] .tabs .scroller a {
+    flex: 0 0 auto;
+    min-height: 3.75rem;
+    justify-content: center;
+  }
+  .shell[data-nav='left'] .tabs .pin a,
+  .shell[data-nav='right'] .tabs .pin a {
+    justify-content: center;
+    min-height: 3.75rem;
+  }
+  /* přišpendlené záložky (vlevo a vpravo; ve svislém pruhu nahoře a dole) zůstávají vždy vidět, střed se posouvá */
   .pin {
     flex: 0 0 auto;
     display: flex;
@@ -202,9 +299,31 @@
     right: 0;
     background: linear-gradient(to left, var(--drd-tab-fade, rgba(0, 0, 0, 0.35)), transparent);
   }
-  .mid.can-left::before,
-  .mid.can-right::after {
+  .mid.can-start::before,
+  .mid.can-end::after {
     opacity: 1;
+  }
+  /* ve svislém pruhu se stíní horní a dolní okraj */
+  .shell[data-nav='left'] .mid::before,
+  .shell[data-nav='right'] .mid::before,
+  .shell[data-nav='left'] .mid::after,
+  .shell[data-nav='right'] .mid::after {
+    left: 0;
+    right: 0;
+    width: auto;
+    height: 1.25rem;
+  }
+  .shell[data-nav='left'] .mid::before,
+  .shell[data-nav='right'] .mid::before {
+    top: 0;
+    bottom: auto;
+    background: linear-gradient(to bottom, var(--drd-tab-fade, rgba(0, 0, 0, 0.35)), transparent);
+  }
+  .shell[data-nav='left'] .mid::after,
+  .shell[data-nav='right'] .mid::after {
+    top: auto;
+    bottom: 0;
+    background: linear-gradient(to top, var(--drd-tab-fade, rgba(0, 0, 0, 0.35)), transparent);
   }
   .tabs a {
     flex: 1;

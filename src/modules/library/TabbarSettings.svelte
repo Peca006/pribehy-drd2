@@ -1,6 +1,6 @@
 <script lang="ts">
   import { allModules } from '../../core/modules'
-  import { setTabbar, settings } from '../../core/settings.svelte'
+  import { setNavPosition, setTabbar, settings } from '../../core/settings.svelte'
   import {
     LOCKED_TAB,
     defaultTabbar,
@@ -11,6 +11,7 @@
     setPlacement,
     type Placement,
   } from '../../core/tabbar'
+  import type { NavPosition } from '../../core/skin/tokens'
 
   // Spodní lišta: pořadí záložek, skrytí a přišpendlení jedné záložky vlevo a jedné vpravo (zbytek se posouvá do stran).
   // Skryté záložky (Příručka, Bestiář a Grimoár jsou ve výchozím stavu jen ve Sluji) jsou dál dostupné ze Sluje a z odkazů v aplikaci. Nastavení platí jen v tomto zařízení.
@@ -28,6 +29,20 @@
 
 <h2>Spodní lišta</h2>
 <div class="panel">
+  <label class="pos">
+    <span>Poloha lišty</span>
+    <select
+      aria-label="Poloha lišty"
+      value={settings.navPosition}
+      onchange={(e) => setNavPosition(e.currentTarget.value as NavPosition | 'skin')}
+    >
+      <option value="skin">Podle vzhledu (Háv)</option>
+      <option value="bottom">Dole</option>
+      <option value="top">Nahoře</option>
+      <option value="left">Vlevo (svislý pruh)</option>
+      <option value="right">Vpravo (svislý pruh)</option>
+    </select>
+  </label>
   <p class="muted">
     Když se záložky na telefon nevejdou, střed lišty se posouvá do stran. Jednu záložku můžete
     přišpendlit vlevo a jednu vpravo, aby byly vždy na dosah. Pořadí a skrytí je jen pro toto zařízení. Co v liště není, najdete ve Sluji.
@@ -65,6 +80,11 @@
 </div>
 
 <style>
+  .pos {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
   .rows {
     list-style: none;
     margin: 0 0 0.75rem;

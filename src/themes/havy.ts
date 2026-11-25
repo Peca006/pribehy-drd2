@@ -12,6 +12,7 @@ import {
   ICON_MODULES,
   marble,
   tabRim,
+  tabRimSide,
 } from './podzemi/art'
 
 const svgAsset = (name: string, source: string): AssetFile => ({
@@ -19,6 +20,8 @@ const svgAsset = (name: string, source: string): AssetFile => ({
   type: 'image/svg+xml',
   bytes: new TextEncoder().encode(source),
 })
+
+const SIDE_TAB = { image: 'lem-bok', mode: 'slice', slice: [0, 6, 0, 0], edge: 'repeat', fill: false }
 
 const MANIFEST = {
   schema: 1,
@@ -88,6 +91,7 @@ const definitions = [
       kovani: { file: 'assets/kovani.svg' },
       klenot: { file: 'assets/klenot.svg' },
       lem: { file: 'assets/lem.svg' },
+      'lem-bok': { file: 'assets/lem-bok.svg' },
       ozdoba: { file: 'assets/ozdoba.svg' },
       okno: { file: 'assets/okno.svg' },
       ...Object.fromEntries(
@@ -122,6 +126,13 @@ const definitions = [
     variants: [
       { when: { width: 'compact' }, tokens: { '--drd-gap': '0.75rem' } },
       { when: { low: true }, tokens: { '--drd-gap': '0.5rem' } },
+      // telefon na šířku a široké okno: lišta je svislý pruh vlevo (nízký viewport nemá výšku nazbyt) s pravým lemem
+      {
+        when: { orientation: 'landscape', low: true },
+        tokens: { '--drd-nav-position': 'left' },
+        roles: { tab: SIDE_TAB },
+      },
+      { when: { width: 'expanded' }, tokens: { '--drd-nav-position': 'left' }, roles: { tab: SIDE_TAB } },
     ],
   },
 ]
@@ -144,6 +155,7 @@ export const BUILTIN_ASSETS: Readonly<Record<string, readonly AssetFile[]>> = {
     svgAsset('kovani', copperFrame()),
     svgAsset('klenot', gemButton()),
     svgAsset('lem', tabRim()),
+    svgAsset('lem-bok', tabRimSide()),
     svgAsset('ozdoba', divider()),
     svgAsset('okno', dialogFrame()),
     ...ICON_MODULES.map((m) => svgAsset(`ikona-${m}`, gemIcon(m))),

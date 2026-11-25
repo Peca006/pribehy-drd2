@@ -39,6 +39,7 @@ Role jsou oddělené, aby je Háv mohl ladit samostatně (viz `src/themes/defaul
 | `--drd-accent` | zvýraznění |
 | `--drd-danger`, `--drd-success`, `--drd-warning` | stavové barvy textu |
 | `--drd-scrim`, `--drd-shadow` | zástěna za dialogy, stín plovoucích prvků |
+| `--drd-nav-position` | poloha hlavní lišty: `bottom` (výchozí), `top`, `left`, `right` (svislý pruh); výčet, jiná hodnota je chyba |
 | `--drd-text-shadow` | stín textu (embos); výchozí `none`, smí mít 1–3 vrstvy bez `inset` a rozšíření |
 | `--drd-radius`, `--drd-gap`, `--drd-font` | tvar, mezery, písmo |
 
@@ -184,7 +185,15 @@ stejné pozadí, okraj a zástěnu ve vlastních stylech, a zkratka `border` v n
 jedno pravidlo `dialog` v `app.css`, komponenty mají jen vlastní šířku. Šířku okraje čte zvlášť `border-width`, protože zkratka
 `border` přijímá jen jednu hodnotu a rámeček z Hávu má čtyři (s proměnnou ve zkratce by se okraj tiše vypnul).
 
-**M3: layout.** Šablony rozložení (spodní, boční, horní lišta), kotvy a zóny, `clip-path` a maska pro dekorativní tvar uvnitř obdélníku.
+**M3a: poloha lišty (0.5.7).** Token `--drd-nav-position` (`bottom`, `top`, `left`, `right`) se nastavuje stejně jako ostatní
+tokeny, tedy i ve `variants` podle `when` (šířka, orientace, nízký viewport), takže jde určit pro všech 12 kombinací viewportu.
+Svislý pruh (`left`, `right`) je 5 rem široký přes celou výšku okna, přišpendlená záložka „vlevo“ je nahoře a „vpravo“ dole, střed
+se posouvá svisle. Roli `tab` může varianta nahradit (Podzemí: svislý lem `lem-bok` u pruhu vlevo). Uživatel polohu přebije
+v Dílně → Spodní lišta (Poloha lišty: podle vzhledu, dole, nahoře, vlevo, vpravo); v náhledu Hávu v Šatníku se volba ignoruje.
+Podzemí: svislý pruh vlevo na telefonu na šířku (nízký viewport) a v širokém okně, jinak dole. Role `tab` Hávu je laděná pro
+polohy, které Háv sám určuje; při vlastní volbě uživatele zůstane lem Hávu, jaký je.
+
+**M3: layout.** Zbývá: tvary (`clip-path` jako výčet), záhlaví a ozdoby kotvené k okrajům (M3b, M3c). Původní záměr: šablony rozložení (spodní, boční, horní lišta), kotvy a zóny, `clip-path` a maska pro dekorativní tvar uvnitř obdélníku.
 
 **Později:** editor Hávů v aplikaci; rozhodnutí o samostatné aplikaci.
 
