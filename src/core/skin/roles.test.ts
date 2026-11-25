@@ -313,3 +313,40 @@ describe('roleVariables', () => {
     expect(v).not.toHaveProperty('--drd-dialog-bw') // výchozí okraj okna zůstává
   })
 })
+
+describe('role header (záhlaví)', () => {
+  const run = (raw: unknown) => {
+    const issues: string[] = []
+    const roles = validateRoles({ header: raw }, 'roles', ASSETS, (l, p) => issues.push(`${l}:${p}`))
+    return { roles, issues }
+  }
+
+  it('přijme obrázek s výškou 16 až 160 px', () => {
+    const r = run({ image: 'marble', mode: 'repeat-x', size: 256, height: 40 })
+    expect(r.issues).toEqual([])
+    expect(r.roles.header?.height).toBe(40)
+  })
+
+  it('bez výšky, s nepovolenou výškou nebo v režimu slice je chyba a role se zahodí', () => {
+    for (const raw of [
+      { image: 'marble', mode: 'stretch' },
+      { image: 'marble', mode: 'stretch', height: 8 },
+      { image: 'marble', mode: 'stretch', height: 400 },
+      { image: 'marble', mode: 'slice', slice: 4, height: 40 },
+    ]) {
+      const r = run(raw)
+      expect(r.issues.some((i) => i.startsWith('error:'))).toBe(true)
+      expect(r.roles.header).toBeUndefined()
+    }
+  })
+
+  it('převede se na proměnné s výškou', () => {
+    const v = roleVariables(
+      { header: { image: 'marble', mode: 'repeat-x', size: 256, height: 40, position: 'center' } },
+      { marble: 'blob:x' },
+    )
+    expect(v['--drd-header-height']).toBe('40px')
+    expect(v['--drd-header-image']).toBe('url("blob:x")')
+    expect(v['--drd-header-position']).toBe('center')
+  })
+})

@@ -17,6 +17,8 @@ interface Settings {
   tabbar: TabbarConfig
   /** poloha lišty: `skin` = podle Hávu, jinak vlastní volba uživatele */
   navPosition: NavPosition | 'skin'
+  /** záhlaví z Hávu: `skin` = podle Hávu, `off` = skrýt (víc místa pro obsah) */
+  header: 'skin' | 'off'
 }
 
 const SKIN_ID = /^[a-z0-9-]{1,40}$/
@@ -34,7 +36,7 @@ const SKIN_INTRO = 1
 const TABBAR_INTRO = 1
 
 function load(): Settings {
-  const s: Settings = { termLinks: 'first', author: 'hráč', skin: DEFAULT_SKIN, tabbar: defaultTabbar(), navPosition: 'skin' }
+  const s: Settings = { termLinks: 'first', author: 'hráč', skin: DEFAULT_SKIN, tabbar: defaultTabbar(), navPosition: 'skin', header: 'skin' }
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}')
     if (isLinkMode(raw.termLinks)) s.termLinks = raw.termLinks
@@ -43,6 +45,7 @@ function load(): Settings {
     if (typeof raw.skin === 'string' && SKIN_ID.test(raw.skin) && raw.skinIntro === SKIN_INTRO)
       s.skin = raw.skin
     if ((NAV_POSITIONS as readonly string[]).includes(raw.navPosition)) s.navPosition = raw.navPosition
+    if (raw.header === 'off') s.header = 'off'
     const bar = parseTabbar(raw.tabbar)
     s.tabbar =
       raw.tabbarIntro === TABBAR_INTRO || !raw.tabbar || !isLegacyDefaultTabbar(bar)
@@ -68,6 +71,7 @@ function save() {
         tabbar: settings.tabbar,
         tabbarIntro: TABBAR_INTRO,
         navPosition: settings.navPosition,
+        header: settings.header,
       }),
     )
   } catch {
@@ -100,5 +104,10 @@ export function setTabbar(cfg: TabbarConfig) {
 
 export function setNavPosition(p: NavPosition | 'skin') {
   settings.navPosition = p === 'skin' || (NAV_POSITIONS as readonly string[]).includes(p) ? p : 'skin'
+  save()
+}
+
+export function setHeader(h: 'skin' | 'off') {
+  settings.header = h === 'off' ? 'off' : 'skin'
   save()
 }

@@ -12,6 +12,7 @@ import {
   type Roles,
 } from './roles'
 import { shapeVariables } from './shape'
+import { validateOrnaments, type Ornament } from './ornaments'
 import { isTokenName, tokenValueError, type TokenName } from './tokens'
 import { isSafeZipName } from './zip'
 
@@ -78,6 +79,8 @@ export interface Skin {
   /** ikony záložek: id modulu → název obrázku */
   icons: Record<string, string>
   iconStyle?: { pixelated: boolean }
+  /** ozdoby kotvené k rohům okna (jen ve volném bočním okraji) */
+  ornaments: Ornament[]
 }
 
 export interface SkinIssue {
@@ -165,6 +168,7 @@ export function usedAssets(skin: Skin): Set<string> {
     ...rolesImages(skin.roles),
     ...skin.variants.flatMap((v) => (v.roles ? rolesImages(v.roles) : [])),
     ...Object.values(skin.icons),
+    ...skin.ornaments.map((o) => o.image),
   ])
 }
 
@@ -252,6 +256,7 @@ const TOP_KEYS = new Set([
   'roles',
   'icons',
   'iconStyle',
+  'ornaments',
 ])
 
 const ASSET_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/
@@ -415,6 +420,8 @@ export function validateSkin(raw: unknown, options: ValidateOptions = {}): SkinV
     else iconStyle = { pixelated: raw.iconStyle.pixelated === true }
   }
 
+  const ornaments = validateOrnaments(raw.ornaments, 'ornaments', assetNames, report)
+
   const variants: SkinVariant[] = []
   if (raw.variants !== undefined) {
     if (!Array.isArray(raw.variants)) error('variants', 'varianty musí být pole')
@@ -461,13 +468,14 @@ export function validateSkin(raw: unknown, options: ValidateOptions = {}): SkinV
     assets,
     roles,
     icons,
+    ornaments,
   }
   if (iconStyle) skin.iconStyle = iconStyle
   if (minApp) skin.minApp = minApp
   const used = usedAssets(skin)
   for (const name of assetNames)
     if (!used.has(name))
-      warn(`assets.${name}`, 'obrázek se nepoužívá (žádná role ani ikona ho neodkazuje)')
+      warn(`assets.${name}`, 'obrázek se nepoužívá (žádná role, ikona ani ozdoba ho neodkazuje)')
   issues.push(...contrastIssues(skin))
   const ok = !issues.some((i) => i.level === 'error')
   return { ok, skin: ok ? skin : null, issues }

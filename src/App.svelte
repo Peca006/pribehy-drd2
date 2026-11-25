@@ -13,6 +13,7 @@
   import { DEFAULT_MODULE } from './modules'
   import AppBanners from './ui/AppBanners.svelte'
   import ConfirmDialog from './ui/ConfirmDialog.svelte'
+  import Ornaments from './ui/Ornaments.svelte'
 
   // stránky se vykreslí až po jednorázovém převodu starých deníků (lektvary a nástrahy → předpisy) a načtení Grimoáru
   let ready = $state(false)
@@ -45,6 +46,8 @@
     previewChoice || settings.navPosition === 'skin' ? appearance.navPosition : settings.navPosition,
   )
   const vertical = $derived(position === 'left' || position === 'right')
+  // záhlaví z Hávu (role `header`); uživatel ho může skrýt, v náhledu Hávu v Šatníku se volba ignoruje
+  const showHeader = $derived(appearance.header && (previewChoice || settings.header === 'skin'))
 
   // střed lišty se posouvá (vodorovně, ve svislém pruhu svisle); okraje se stíní, když je za nimi další obsah
   let scroller = $state<HTMLElement>()
@@ -129,6 +132,12 @@
 <div class="shell" data-nav={position}>
   {#if position === 'top' || position === 'left'}{@render navbar()}{/if}
   <div class="page">
+    {#if showHeader}
+      <!-- ozdobné záhlaví z Hávu: jen název aplikace (nadpisem stránky je h1 v obsahu) -->
+      <header class="skin-header" class:top-nav={position === 'top'}>
+        <span>Příběhy v Dračím doupěti</span>
+      </header>
+    {/if}
     <main>
       {#if !ready}
         <p class="muted" role="status">Načítám…</p>
@@ -147,6 +156,7 @@
   </div>
   {#if position === 'right'}{@render navbar()}{/if}
 </div>
+{#if appearance.ornaments.length}<Ornaments />{/if}
 
 <style>
   .shell {
@@ -163,6 +173,27 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
+  }
+  /* záhlaví z Hávu (role „header“): pás s obrázkem a názvem aplikace, odroluje se s obsahem */
+  .skin-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: content-box;
+    height: var(--drd-header-height, 0);
+    padding-top: env(safe-area-inset-top);
+    background-color: var(--drd-surface);
+    background-image: var(--drd-header-image, none);
+    background-size: var(--drd-header-size, auto);
+    background-repeat: var(--drd-header-repeat, repeat);
+    background-position: var(--drd-header-position, center);
+    color: var(--drd-accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-shadow: var(--drd-text-shadow);
+  }
+  .skin-header.top-nav {
+    padding-top: 0;
   }
   main {
     flex: 1;

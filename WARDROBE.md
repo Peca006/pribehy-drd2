@@ -90,6 +90,7 @@ Role dá obrázek části aplikace. Šest rolí a prvek, na který se uplatní:
 | `tab` | spodní lišta záložek; pořadí, skrytí a přišpendlení záložek nastavuje uživatel (`settings.tabbar`, `core/tabbar.ts`), ne Háv; role `tab` platí na celou lištu, střed lišty se na úzkém telefonu posouvá do stran |
 | `divider` | `hr` |
 | `dialog` | okna (`dialog`): potvrzení a formuláře v oknech |
+| `header` | záhlaví: pás nad obsahem s názvem aplikace; povinná `height` 16 až 160 px, režim nesmí být `slice`; odroluje se s obsahem; varianta ho může vypnout (`null`) |
 
 Pole role: `image` (název z `assets`), `mode`, a podle režimu `size`, `position`, `slice`, `width`, `fill`, `edge`,
 `height` (jen `divider`), `pixelated` (jen `background`).
@@ -200,7 +201,16 @@ vyrobí `clip-path` (`shape.ts`), manifest tedy nepřináší žádný volný te
 je to záměr, měděný rám je na seříznutém rohu přerušený). Ohnisko tlačítka se při ořezu přesune dovnitř (`--drd-focus-offset`),
 aby zůstalo vidět při ovládání klávesnicí. Podzemí: tlačítka a okna `chamfer`, panely `notch`, 6 px.
 
-**M3: layout.** Zbývá: tvary (`clip-path` jako výčet), záhlaví a ozdoby kotvené k okrajům (M3b, M3c). Původní záměr: šablony rozložení (spodní, boční, horní lišta), kotvy a zóny, `clip-path` a maska pro dekorativní tvar uvnitř obdélníku.
+**M3c: záhlaví a ozdoby (0.5.9).** Role `header` (viz tabulka rolí) je pás s obrázkem a názvem aplikace nad obsahem, výchozí je
+bez záhlaví. Nadpisem stránky zůstává `h1` v obsahu, záhlaví je jen ozdoba. Uživatel ho může skrýt (Dílna → Spodní lišta →
+Záhlaví vzhledu), v náhledu Hávu v Šatníku se volba ignoruje. Pole `ornaments` (nejvýše 8) je seznam
+`{ "image", "anchor", "width" }`: kotva `top-left`, `top-right`, `bottom-left`, `bottom-right`, šířka 16 až 192 px. Obrázek je
+nakreslený pro levý horní roh, ostatní kotvy ho aplikace zrcadlí. Ozdoby se kreslí za obsahem (nereagují na klepnutí, čtečky je
+přeskočí) a **jen když se vejdou do volného bočního okraje** vedle sloupce obsahu; měří to aplikace (`placeOrnaments`), takže
+na telefonu na výšku se neukážou a nikdy nepřekryjí text. Podzemí: záhlaví s měděným pásem na úzkém a středním viewportu (ne na
+nízkém) a čtyři rohové ozdoby.
+
+**M3: layout.** M3 je tím dokončený (M3a až M3c). Původní záměr: šablony rozložení (spodní, boční, horní lišta), kotvy a zóny, `clip-path` a maska pro dekorativní tvar uvnitř obdélníku.
 
 **Později:** editor Hávů v aplikaci; rozhodnutí o samostatné aplikaci.
 

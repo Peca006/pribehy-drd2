@@ -1,6 +1,6 @@
 <script lang="ts">
   import { allModules } from '../../core/modules'
-  import { setNavPosition, setTabbar, settings } from '../../core/settings.svelte'
+  import { setHeader, setNavPosition, setTabbar, settings } from '../../core/settings.svelte'
   import {
     LOCKED_TAB,
     defaultTabbar,
@@ -29,6 +29,17 @@
 
 <h2>Spodní lišta</h2>
 <div class="panel">
+  <label class="pos">
+    <span>Záhlaví vzhledu</span>
+    <select
+      aria-label="Záhlaví vzhledu"
+      value={settings.header}
+      onchange={(e) => setHeader(e.currentTarget.value === 'off' ? 'off' : 'skin')}
+    >
+      <option value="skin">Podle vzhledu (Háv)</option>
+      <option value="off">Skrýt (víc místa pro obsah)</option>
+    </select>
+  </label>
   <label class="pos">
     <span>Poloha lišty</span>
     <select
