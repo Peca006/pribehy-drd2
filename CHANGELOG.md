@@ -1,5 +1,14 @@
 # Změny
 
+## 0.5.10 (25. 11. 2026)
+
+- **Vedení hry, časomíra sezení:** nová stránka **Hra** u družiny (jen pro Průvodce, Družina → Hra). Klepnutím na hráče se přepíná, komu čas běží; pauza, pokračování a ukončení sezení se souhrnem. Pruhy času mají společné měřítko. Čas se počítá z časových razítek, takže přežije uspání telefonu i obnovení stránky; displej se při hře nezhasíná (kde to prohlížeč umí). Časy zůstávají jen na zařízení Průvodce.
+- **Spravedlivý prostor:** po deseti minutách hry upozornění na hráče pod 70 % spravedlivého dílu; člen může být „mimo hru“ a do dílu se nepočítá.
+- **Plán podle délky sezení:** zbývá celkem a na hráče, odhad podle tempa odehraných příhod vybraného vedení výpravy, jestli se zbývající příhody stihnou.
+- **Krátký odpočet:** 10 s, 30 s, 1 min, 2 min nebo vlastní čas, nezávislý na hlavní časomíře, se zvukem a vibrací na konci (jde vypnout).
+- **Data a záloha:** nové úložiště sezení (databáze v9) a volitelný seznam `sittings` v záloze; starší zálohy a aplikace fungují beze změny (`FORMAT.md`).
+- **Nápověda:** nové téma „Hra: časomíra a spravedlivý prostor“.
+
 ## 0.5.9 (25. 11. 2026)
 
 - **Záhlaví a ozdoby (Šatník, M3c):** Háv může mít záhlaví (pás s obrázkem nad obsahem, role `header`) a až osm rohových ozdob (pole `ornaments`), které se kreslí jen do volného bočního okraje a nikdy nepřekryjí obsah. Na telefonu na výšku se neukážou. Podzemí má měděné záhlaví (na nízkém viewportu vypnuté) a čtyři rohové ozdoby v širokém okně.

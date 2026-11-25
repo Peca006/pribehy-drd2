@@ -364,6 +364,19 @@ export const TOPICS_APP: Card[] = [
     link: '41-priprava-a-vedeni-hry#hrajete-o-zdroje',
   },
   {
+    id: 'hra',
+    title: 'Hra: časomíra a spravedlivý prostor (Průvodce)',
+    kind: 'navod',
+    text: 'Stránka Hra u družiny (Družina → Hra) měří, kolik času měl který hráč. Časy vidí jen Průvodce a nikam se nesdílejí.',
+    steps: [
+      '„Začít sezení“ a klepnutím na hráče určíš, kdo je na řadě; čas běží jen jemu. Klepnutí na aktivního hráče nebo „Pauza“ časomíru zastaví, „Ukončit“ sezení uloží.',
+      'Pruhy pod jmény mají společné měřítko, takže je vidět, kdo měl víc a kdo míň. Po deseti minutách hry se ukáže upozornění na hráče, kteří mají pod 70 % spravedlivého dílu.',
+      '„Mimo hru“ vyřadí hráče ze spravedlivého dílu (odešel, odpočívá); klepnutím na jeho kartu se vrátí.',
+      'Plánovaná délka sezení ukáže, kolik zbývá celkem a na hráče. Když vybereš vedení výpravy, odhadne se podle tempa, jestli zbývající příhody stihnete.',
+      'Krátký odpočet (10 s až 2 min nebo vlastní čas) hlídá limit na rozhodnutí; na konci zazní pípnutí a telefon zavibruje.',
+    ],
+  },
+  {
     id: 'zaloha',
     title: 'Záloha a obnova dat',
     kind: 'navod',
