@@ -45,7 +45,9 @@ button,
   background-size: var(--drd-button-size, auto);
   background-repeat: var(--drd-button-repeat, repeat);
   background-position: var(--drd-button-position, 0 0);
-  border: var(--drd-button-bw, 1px) solid var(--drd-border);
+  border: 1px solid var(--drd-border);
+  /* šířka zvlášť: zkratka `border` přijímá jen jednu hodnotu, rámeček z Hávu má čtyři */
+  border-width: var(--drd-button-bw, 1px);
   /* devítidílný rámeček z Hávu; bez něj je zdroj `none` a platí obyčejný okraj */
   border-image: var(--drd-button-bi-source, none) var(--drd-button-bi-slice, 100%) /
     var(--drd-button-bi-width, 1) / 0 var(--drd-button-bi-repeat, stretch);
@@ -97,12 +99,33 @@ select {
   background-repeat: var(--drd-panel-repeat, repeat);
   background-position: var(--drd-panel-position, 0 0);
   /* bez rámečku z Hávu je okraj nulový, takže se rozložení nemění */
-  border: var(--drd-panel-bw, 0) solid transparent;
+  border: 0 solid transparent;
+  border-width: var(--drd-panel-bw, 0);
   border-image: var(--drd-panel-bi-source, none) var(--drd-panel-bi-slice, 100%) /
     var(--drd-panel-bi-width, 1) / 0 var(--drd-panel-bi-repeat, stretch);
   border-radius: var(--drd-radius);
   padding: 0.75rem 1rem;
   margin: 0.5rem 0;
+}
+
+/* Dialogy: jednotný vzhled (dřív ho každý z deseti dialogů opakoval ve vlastních stylech). Komponenta nastaví jen
+   šířku, pokud se liší od výchozí. Rám z Hávu (role „dialog“) je devítidílný rámeček; bez něj platí obyčejný okraj. */
+dialog {
+  background: var(--drd-surface);
+  background-image: var(--drd-dialog-image, none);
+  background-size: var(--drd-dialog-size, auto);
+  background-repeat: var(--drd-dialog-repeat, repeat);
+  background-position: var(--drd-dialog-position, 0 0);
+  color: var(--drd-text);
+  border: 1px solid var(--drd-accent);
+  border-width: var(--drd-dialog-bw, 1px);
+  border-image: var(--drd-dialog-bi-source, none) var(--drd-dialog-bi-slice, 100%) /
+    var(--drd-dialog-bi-width, 1) / 0 var(--drd-dialog-bi-repeat, stretch);
+  border-radius: var(--drd-radius);
+  width: min(28rem, 94vw);
+}
+dialog::backdrop {
+  background: var(--drd-scrim);
 }
 
 /* dělicí čára (role „divider“ z Hávu) */
