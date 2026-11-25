@@ -17,9 +17,11 @@ interface Settings {
 }
 
 const SKIN_ID = /^[a-z0-9-]{1,40}$/
+/** Výchozí vzhled, dokud si uživatel žádný nezvolí: vestavěný Háv „Podzemí“ (retro RPG). Uložená volba (i „Podle systému“) má vždy přednost. */
+export const DEFAULT_SKIN = 'podzemi'
 
 function load(): Settings {
-  const s: Settings = { termLinks: 'first', author: 'hráč', skin: 'system', tabbar: defaultTabbar() }
+  const s: Settings = { termLinks: 'first', author: 'hráč', skin: DEFAULT_SKIN, tabbar: defaultTabbar() }
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}')
     if (isLinkMode(raw.termLinks)) s.termLinks = raw.termLinks
