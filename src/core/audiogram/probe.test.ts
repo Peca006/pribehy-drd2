@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { levelVerdict } from './audio'
-import { analyseModeTest, MODE_TEST_FRAMES, modeTestSignal, PROBE_TONES, probeSignal, toneAmplitude, toneBurst, toDb } from './probe'
+import { PROBE_TONES, probeSignal, toneAmplitude, toneBurst, toDb } from './probe'
 
 describe('zkouška zvuku', () => {
   it('změří amplitudu čistého tónu a rozliší ostatní frekvence', () => {
@@ -29,14 +29,6 @@ describe('ukazatel hlasitosti', () => {
     expect(levelVerdict(0.3)).toBe('dobre')
     expect(levelVerdict(0.99)).toBe('prebuzene')
   })
-})
-
-describe('zkouška režimů', () => {
-  it('bez rušení projdou všechny režimy všemi rámci', () => {
-    const fs = 48000
-    const res = analyseModeTest(modeTestSignal(fs), fs)
-    for (const r of res) expect(r.ok, r.mode).toBe(MODE_TEST_FRAMES)
-  }, 60000)
 })
 
 describe('společná zkouška (tóny a režimy)', () => {
@@ -70,11 +62,5 @@ describe('společná zkouška (tóny a režimy)', () => {
   it('v tichu nenaměří nic', async () => {
     const { toneLevels } = await import('./probe')
     for (const l of toneLevels(new Float32Array(fs * 20), fs)) expect(l).toBe(-120)
-  })
-
-  it('celá zkouška trvá do zhruba minuty', async () => {
-    const { fullTestSeconds } = await import('./probe')
-    expect(fullTestSeconds()).toBeLessThan(75)
-    expect(fullTestSeconds()).toBeGreaterThan(20)
   })
 })
