@@ -35,6 +35,8 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
 - **Drobnosti.** Jména testerů do O aplikace (až budou).
+- **Nápad: NFC žetony (později, jiná větev).** Štítky NTAG s odkazem na Bytost, postavu či předmět; klepnutí otevře záznam
+  (iPhone bez aplikace, čtení v aplikaci jen Chrome na Androidu). Podrobnosti v `PLAN-WEBRTC.md` (NFC).
 - **Nápad: skiny s obrázkovou mapou ovládacích prvků (později).** Prvky (tlačítko, popis, výstup) definované souřadnicemi
   na obrázku; pixelartová varianta (inspirace Truhlice) nebo klasická. Předpoklad: uklidit stránky a navigaci.
 

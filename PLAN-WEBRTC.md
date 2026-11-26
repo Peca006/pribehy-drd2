@@ -1,6 +1,6 @@
 # Přenosy v reálném čase (WebRTC): sezení bez internetu
 
-Návrh plánu, stav: **ke schválení** (26. 11. 2026). Nic z toho není hotové. Navazuje na dnešní přenosy (kód, soubor, QR, zvuk;
+Návrh plánu, stav: **schválený v hrubých rysech** (26. 11. 2026, rozhodnutí na konci). Nic z toho není hotové. Navazuje na dnešní přenosy (kód, soubor, QR, zvuk;
 `FORMAT.md` → Přenos postavy a družiny) a na pořadí v `TODO.md` (Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC).
 
 ## Cíl
@@ -101,10 +101,42 @@ Závislosti: 1 je nezávislá a užitečná sama (dá se vydat dřív). 2 závis
 - Soukromí: časomíra a poznámky Průvodce se nikdy nerozesílají; žádný zápis do GoatCounteru z obsahu přenosů.
 - Doplnit paměť i `FORMAT.md` při první změně formátu.
 
-## Rozhodnutí k potvrzení
+## Výměna obsahu mimo sezení
 
-1. Souhlasíš s pořadím, kdy etapa 0 (průzkum, zahozený kód) rozhoduje o zhuštěné signalizaci a mDNS náhradě?
-2. Hráč–hráč: napřed jen přes uzel (relé), nebo přímo? Navrhuji relé, přímé spojení až když se osvědčí.
-3. Etapa 1 (Zásilky) vydat samostatně hned, protože pomůže i bez WebRTC?
-4. Etapa 7 (Moje zařízení, vedení hry z více zařízení) je největší riziko; ponechat až po vyzkoušení sezení v praxi?
-5. Veřejný STUN: nechat jako volbu (vypnutou), nebo úplně vynechat?
+Kromě sezení (hvězda kolem uzlu) existuje druhý, jednodušší případ: **dvě zařízení si přímo vymění obsah**, bez družiny, rolí a
+uzlu (kemp, setkání, kamarád). Je to spojení 1:1 z etapy 2 a zásilky z etapy 1, jen bez vrstvy sezení. Posílat jde:
+vlastní obsahové balíčky (pravidla, bestiář, které druhý nemá), Bytosti, Cizí postavy, Postavy, Hávy, připravené Výpravy.
+Uživatel vybere položky, druhá strana je vidí ve schránce a potvrdí. Proto jsou etapy 1 a 2 použitelné samy a vydávají se před
+sezením (etapy 3 až 6).
+
+Pozor na licence: sdílet se smí vlastní obsah a veřejné balíčky ze SRD. Interní balíček Her mocných (lokální, jen pro vlastní
+účely) se tímto kanálem **neposílá**; sdílení balíčku je rozdávání, takže export bude u takových balíčků vypnutý.
+
+## Rozhodnutí (26. 11. 2026)
+
+1. Etapa 0 (průzkum, zahozený kód) rozhoduje o zhuštěné signalizaci a o náhradě za mDNS. Souhlas. Testování: více prohlížečů
+   a profilů na počítači (smyčka, ověří protokol, ne síť), plus jeden či dva telefony (hotspot).
+2. Hráč–hráč je přímé sdílení obsahu mimo sezení (sekce výše), ne relé přes uzel.
+3. Vydání jen na pokyn, nejspíš před sezením nebo před zkouškou na vlastních zařízeních.
+4. Etapa 7 (Moje zařízení, vedení hry z více zařízení) až po vyzkoušení sezení v praxi. Souhlas.
+5. **STUN** (Session Traversal Utilities for NAT) je veřejný server, který zařízení za domácím routerem řekne jeho veřejnou
+   adresu, aby se dvě zařízení mohla spojit přes internet. Na jedné Wi-Fi či hotspotu ho nepotřebujeme. Server uvidí IP adresu.
+   Zatím: ve výchozím stavu vypnuto, zvážit jen jako volbu „spojení přes internet“ (rozhodne se po etapě 2).
+   Související **TURN** (Traversal Using Relays around NAT) by data přenášel přes server; nedělat.
+
+## NFC (doplněno)
+
+- Telefon nemůže webovou aplikací předstírat NFC štítek (emulace karty je jen pro nativní aplikace), takže „klepnutí telefonů“
+  nejde. Kód se dá z NFC jen **číst** (štítek) a zapisovat do **fyzických štítků** (jen Chrome na Androidu).
+- iPhone (XS a novější) přečte štítek s odkazem i bez aplikace a otevře odkaz; zapisovat umí jen nativní aplikace (např. NFC Tools).
+  V PWA na iPhonu se tedy štítek jen „klepne“ a otevře odkaz do aplikace.
+- Použití pro nás: uzel (Android) zapíše na štítek pozvánku (zhuštěná nabídka kolem 200 B) a hráči ji klepnutím načtou místo
+  skenování prvního QR. Odpověď hráče se pořád vrací QR, kódem nebo zvukem, takže je to zrychlení, ne náhrada.
+- Vhodné štítky: **NTAG215** (504 B) nebo **NTAG216** (888 B). Pozor na „1K/4K“: to bývá MIFARE Classic, které prohlížeč ani
+  iPhone jako NDEF nečtou; kupovat výslovně NTAG a typ NDEF. Kapacita 2k/4k není potřeba.
+
+## Nápad na později: NFC žetony (jiná větev aplikace)
+
+Ano, jde to. Levný štítek NTAG213 (144 B) nese odkaz nebo ID (např. odkaz na Bytost, postavu, předmět či kouzlo). Klepnutí otevře
+záznam v aplikaci; iPhone to umí bez aplikace, uvnitř aplikace čte štítky jen Chrome na Androidu. Do aplikace by přibylo „Načíst
+žeton“ a zápis žetonů (Android). Zapsat do `TODO.md`, nedělat před sezením.
