@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readStore } from './helpers'
 
 // Výpravy, etapa 2: uzlové body a příhody v balíčcích, přesun mezi balíčky, cizí postavy, uložení.
 
@@ -41,6 +42,18 @@ test('uzlové body a příhody v balíčcích se řadí, přesouvají a přežij
   await lavina.getByRole('button', { name: /Posunout níže/ }).click()
   const nadpisy = page.locator('details.incident > summary strong')
   await expect(nadpisy).toHaveText(['Zlobři', 'Lavina', 'Dřevorubci'])
+
+  // uložení běží na pozadí: před obnovením stránky počkáme, až je pořadí a cizí postava opravdu v úložišti
+  // (jinak se obnovení občas stihne dřív než zápis a test spadne)
+  await expect
+    .poll(async () => {
+      const all = await readStore<{ name: string; incidents: { title: string; cast: { name: string }[] }[] }>(page, 'expeditions')
+      const e = all.find((x) => x.name === 'Perlík') // ukázkové výpravy jsou v úložišti taky
+      const titles = e?.incidents.map((i) => i.title) ?? []
+      const harald = e?.incidents.find((i) => i.title === 'Dřevorubci')?.cast.some((c) => c.name === 'Harald')
+      return titles.indexOf('Zlobři') >= 0 && titles.indexOf('Zlobři') < titles.indexOf('Lavina') && !!harald
+    })
+    .toBe(true)
 
   // po obnovení stránky je vše zachované
   await page.reload()
