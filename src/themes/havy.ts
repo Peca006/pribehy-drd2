@@ -140,6 +140,8 @@ const definitions = [
       '--drd-shape-dialog': 'chamfer',
       '--drd-shape-panel': 'notch',
       '--drd-shape-size': '6px',
+      // panely částečně průhledné, aby prosvítala textura pozadí
+      '--drd-panel-opacity': '82%',
     },
     variants: [
       { when: { width: 'compact' }, tokens: { '--drd-gap': '0.75rem' } },

@@ -37,3 +37,15 @@ describe('tvary ploch (M3b)', () => {
     expect(tokenValueError('--drd-shape-size', '40px')).not.toBeNull()
   })
 })
+
+describe('průhlednost panelů', () => {
+  it('povoluje celá procenta 60 až 100, jiný zápis odmítne', () => {
+    expect(tokenValueError('--drd-panel-opacity', '82%')).toBeNull()
+    expect(tokenValueError('--drd-panel-opacity', '100%')).toBeNull()
+    expect(tokenValueError('--drd-panel-opacity', '59%')).not.toBeNull()
+    expect(tokenValueError('--drd-panel-opacity', '101%')).not.toBeNull()
+    expect(tokenValueError('--drd-panel-opacity', '0.8')).not.toBeNull()
+    expect(tokenValueError('--drd-panel-opacity', '80% ')).toBeNull() // okraje se ořezávají
+    expect(tokenValueError('--drd-panel-opacity', 'calc(80%)')).not.toBeNull()
+  })
+})

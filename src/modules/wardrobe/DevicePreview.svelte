@@ -4,13 +4,15 @@
   // Náhled Háva: aplikace v rámečku zařízení. Háv se předává přes `?hav=…` (viz `previewChoiceFromSearch`),
   // takže se dá prohlížet bez aktivace. Rámeček má skutečné rozměry zařízení (aplikace uvnitř tak zjistí správnou
   // třídu viewportu) a jen se zmenší, aby se vešel do šířky stránky.
-  let { choice }: { choice: string } = $props()
+  let { choice, rev = 0 }: { choice: string; rev?: number } = $props()
 
   const DEVICES = [
     { id: 'tel-v', label: 'Telefon na výšku', w: 360, h: 740 },
     { id: 'tel-s', label: 'Telefon na šířku', w: 740, h: 360 },
     { id: 'tab-v', label: 'Tablet na výšku', w: 768, h: 1024 },
     { id: 'tab-s', label: 'Tablet na šířku', w: 1180, h: 820 },
+    { id: 'okno-s', label: 'Široké okno', w: 1400, h: 900 },
+    { id: 'okno-v', label: 'Široké okno na výšku', w: 1100, h: 1400 },
   ] as const
   const PAGES = [
     { hash: '#/postavy', label: 'Postavy' },
@@ -25,7 +27,8 @@
   const device = $derived(DEVICES.find((d) => d.id === deviceId) ?? DEVICES[0])
   // 8 px na ohraničení rámečku, ať se nezobrazí vodorovný posun
   const scale = $derived(available > 8 ? Math.min(1, (available - 8) / device.w) : 1)
-  const src = $derived(`${location.pathname}?hav=${encodeURIComponent(choice)}${page}`)
+  // `rev` mění adresu, takže se náhled načte znovu (Švadlena po uložení úpravy)
+  const src = $derived(`${location.pathname}?hav=${encodeURIComponent(choice)}${rev ? `&r=${rev}` : ''}${page}`)
 </script>
 
 <div class="bar">

@@ -42,6 +42,7 @@ Role jsou oddělené, aby je Háv mohl ladit samostatně (viz `src/themes/defaul
 | `--drd-nav-position` | poloha hlavní lišty: `bottom` (výchozí), `top`, `left`, `right` (svislý pruh); výčet, jiná hodnota je chyba |
 | `--drd-shape-panel`, `--drd-shape-button`, `--drd-shape-dialog` | tvar panelů, tlačítek a oken: `rect` (výchozí), `chamfer` (seříznuté čtyři rohy), `notch` (levý horní a pravý dolní roh); výčet |
 | `--drd-shape-size` | velikost seříznutí, 2 až 16 px (výchozí 6 px) |
+| `--drd-panel-opacity` | průhlednost pozadí panelů, celé procento 60 až 100 (výchozí `100%`); pod panelem prosvítá pozadí stránky |
 | `--drd-text-shadow` | stín textu (embos); výchozí `none`, smí mít 1–3 vrstvy bez `inset` a rozšíření |
 | `--drd-radius`, `--drd-gap`, `--drd-font` | tvar, mezery, písmo |
 
@@ -236,4 +237,22 @@ nízkém) a čtyři rohové ozdoby.
   přepnutí), `appearance.svelte.ts` (ikony), `applyTheme` odebírá staré proměnné, `app.css`, `App.svelte`. Podzemí má grafiku.
   E2E: `e2e/satnik.spec.ts`.
 - ✅ **Role `dialog`:** jednotný vzhled oken v `app.css`, role v Hávu, ozdobný zlatý rám s rubíny pro Podzemí.
-- 🚧 **Dál:** M3 (layout), editor Hávů.
+- ✅ **M3 (poloha lišty, tvary, záhlaví a ozdoby)** je hotový, viz výše.
+- ✅ **Švadlena (editor Hávů).** Dílna → Švadlena, adresa `#/satnik/svadlena[/<id>]`. Jádro `core/skin/editor.ts` (čisté
+  funkce, test `editor.test.ts`), rozhraní `modules/wardrobe/Svadlena.svelte`. Upravuje se vždy vlastní kopie (`copyForEditing`
+  z vestavěného, nainstalovaného nebo prázdného základu; `id` ve tvaru `moje-<název>`), která se ukládá do úložiště Hávů.
+  Každá změna projde stejnou validací jako import (`setToken` → `tokenValueError`, před uložením `validateSkin` včetně
+  kontrastu); neplatný stav se neuloží, náhled ukazuje poslední platný a editor vypíše důvody. Po 0,5 s se platný Háv uloží,
+  přepočítá se, je-li používaný, a náhled (iframe jako v Šatníku, `rev` v adrese) se načte znovu.
+  - ✅ **Etapa 1: tokeny** (barvy, písmo a stíny, zaoblení, mezery, tvary, průhlednost panelů, poloha lišty, metadata,
+    schéma, export `.drdskin`, použití). Obrázky, role, ikony, ozdoby a varianty zůstávají ze zdroje beze změny.
+  - ✅ **Etapa 2: obrázky** (`core/skin/editor-assets.ts`, `modules/wardrobe/SvadlenaImages.svelte`). Nahrání PNG, WebP, JPEG a SVG
+    z počítače prochází stejnou kontrolou jako obrázek v souboru (`inspectImage`: typ podle obsahu, rozměry, SVG bez skriptů
+    a cizích odkazů) a stejnými mezemi (32 obrázků, 2 MB, 16 Mpx dohromady). Role (pozadí, panel, tlačítko, lišta, dělicí čára,
+    okno, záhlaví), ikony záložek a ozdoby se nastavují a ověřují týmiž funkcemi jako při importu (`validateRoles`,
+    `validateOrnaments`); odebrání obrázku odebere i místa, která ho používají. Role ve variantách se zatím neupravují.
+  - ✅ **Etapa 3: varianty** (`core/skin/editor-variants.ts`, `modules/wardrobe/SvadlenaVariants.svelte`). Přidání (z předvoleb),
+    podmínka (šířka, orientace, nízké okno; musí omezit aspoň jednu), pořadí (pozdější přepíše dřívější), odebrání, přepsání tokenů
+    a rolí (jako základní, vypnout, jiný obrázek) ověřené týmiž funkcemi jako při importu, souhrn pokrytí 12 kombinací okna.
+    Náhled má i široké okno na šířku a na výšku. Ovládání tokenu (`TokenControl`) a role (`RoleControls`) je sdílené se základním editorem.
+  - Švadlena je tím hotová; další nápady: úpravy ikon přímo v aplikaci (kreslení), sdílení Hávu odkazem.

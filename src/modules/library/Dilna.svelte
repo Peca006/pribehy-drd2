@@ -17,8 +17,9 @@
 <nav><a class="btn" href="#/knihovna"><Arrow dir="left" /> Sluj</a></nav>
 <h1>Dílna</h1>
 <p>
-  <a class="btn" href="#/knihovna/napoveda">Nápověda a návody</a>
-  <a class="btn" href="#/satnik">Šatník (vzhled aplikace)</a>
+  <a class="btn" href="#/knihovna/napoveda"><span aria-hidden="true">❓</span> Nápověda</a>
+  <a class="btn" href="#/satnik"><span aria-hidden="true">🧥</span> Šatník</a>
+  <a class="btn" href="#/satnik/svadlena"><span aria-hidden="true">🪡</span> Švadlena</a>
 </p>
 
 <HelpHeading title="Nastavení" topic="nastaveni" />

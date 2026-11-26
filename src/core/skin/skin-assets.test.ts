@@ -162,7 +162,7 @@ describe('role podle viewportu a převod na téma', () => {
   it('skinTheme přidá proměnné rolí, jen když jsou známé adresy obrázků', () => {
     const vp = classifyViewport(1280, 800)
     expect(
-      Object.keys(skinTheme(skin, vp).tokens).filter((k) => k.startsWith('--drd-panel')),
+      Object.keys(skinTheme(skin, vp).tokens).filter((k) => k.startsWith('--drd-panel') && k !== '--drd-panel-opacity'),
     ).toEqual([])
     const t = skinTheme(skin, vp, { mramor: 'blob:http://x/1', ram: 'blob:http://x/2' })
     expect(t.tokens['--drd-background-image']).toBe('url("blob:http://x/1")')
