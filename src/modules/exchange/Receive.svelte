@@ -2,10 +2,11 @@
   import { onMount } from 'svelte'
   import Arrow from '../../ui/Arrow.svelte'
   import QrScanner from '../../ui/QrScanner.svelte'
-  import { newCreatureId } from '../../core/creatures/bundle'
+  import { exportBundle, newCreatureId } from '../../core/creatures/bundle'
   import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
   import {
     addNpcsTo,
+    buildMessageContent,
     describeContent,
     planAdventure,
     planExpedition,
@@ -22,7 +23,9 @@
   import { go } from '../../core/router.svelte'
   import { refreshInstalledSkins } from '../../core/skin/runtime'
   import { installSkinFile } from '../../core/skin/store'
-  import { allCreatures, refreshBestiary, saveCreature } from '../bestiar/state.svelte'
+  import { allCreatures, bestiary, refreshBestiary, saveCreature } from '../bestiar/state.svelte'
+  import SendContent from './SendContent.svelte'
+  import { settings } from '../../core/settings.svelte'
 
   // Přijmout obsah: jedno místo pro soubor, kód nebo QR. Aplikace sama pozná, co přišlo (výprava, dobrodružství,
   // cizí postavy, bytosti, Háv, postava či družina), ukáže souhrn a nic neuloží bez potvrzení.
@@ -88,6 +91,10 @@
     }
   }
 
+  let msgTitle = $state('')
+  let msgText = $state('')
+  let chosenCreatures = $state<Record<string, boolean>>({})
+  const pickedCreatures = $derived(bestiary.user.filter((c) => chosenCreatures[c.id]))
   const content = $derived(incoming?.kind === 'obsah' ? incoming.content : undefined)
   const summary = $derived(content ? describeContent(content) : undefined)
   const targets = $derived([
@@ -97,7 +104,7 @@
 
   const addContent = () =>
     run(async () => {
-      if (!content) return ''
+      if (!content || content.kind === 'zprava') return ''
       if (content.kind === 'vyprava') {
         const { expedition } = planExpedition(content)
         await saveExpedition(expedition)
@@ -178,6 +185,9 @@
   <div class="panel">
     <h2>{summary.title}</h2>
     {#each summary.lines as l}<p class="line">{l}</p>{/each}
+    {#if content.kind === 'zprava'}
+      <button onclick={() => navigator.clipboard?.writeText(content.text)}>Zkopírovat text zprávy</button>
+    {/if}
     {#if content.kind === 'cizi-postava'}
       <label>
         Kam přidat
@@ -187,7 +197,9 @@
         </select>
       </label>
     {/if}
-    <button class="primary" disabled={busy || (content.kind === 'cizi-postava' && !target)} onclick={addContent}>Přidat</button>
+    {#if content.kind !== 'zprava'}
+      <button class="primary" disabled={busy || (content.kind === 'cizi-postava' && !target)} onclick={addContent}>Přidat</button>
+    {/if}
   </div>
 {:else if incoming?.kind === 'bestiar'}
   <div class="panel">
@@ -214,6 +226,36 @@
   <p role="status">{done}</p>
 {/if}
 
+<h2>Odeslat</h2>
+<p class="muted">Zpráva a vlastní bytosti jdou poslat stejným způsobem (soubor, kód, Sdílet…). Výpravy a cizí postavy se sdílejí v Výpravách, Háv v Šatníku.</p>
+<h3>Zpráva</h3>
+<label>Předmět (nepovinný) <input bind:value={msgTitle} /></label>
+<label>Text zprávy <textarea rows="3" bind:value={msgText} maxlength="5000"></textarea></label>
+{#if msgText.trim()}
+  <SendContent
+    label="Odeslat zprávu"
+    kind="zprava"
+    name={msgTitle || 'zprava'}
+    build={() => buildMessageContent(settings.author, msgTitle, msgText)}
+  />
+{/if}
+<h3>Vlastní bytosti</h3>
+{#if bestiary.user.length}
+  {#each bestiary.user as c (c.id)}
+    <label class="check"><input type="checkbox" bind:checked={chosenCreatures[c.id]} /> {c.name}</label>
+  {/each}
+  {#if pickedCreatures.length}
+    <SendContent
+      label="Odeslat vybrané bytosti"
+      kind="bytosti"
+      name="bytosti"
+      build={() => JSON.parse(exportBundle(pickedCreatures, 'Moje bytosti'))}
+    />
+  {/if}
+{:else}
+  <p class="muted">Zatím nemáte žádné vlastní bytosti.</p>
+{/if}
+
 <style>
   nav {
     margin-bottom: var(--drd-gap);
@@ -230,5 +272,15 @@
   }
   .line {
     margin: 0.15rem 0;
+    white-space: pre-wrap;
+  }
+  .check {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .check input {
+    width: auto;
+    min-height: 0;
   }
 </style>
