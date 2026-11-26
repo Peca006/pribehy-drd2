@@ -100,7 +100,7 @@ Typy: `revize` (revize postavy, volitelně zhuštěná historie `compact` a pou�
 
 Obálka `{ v: 1, type: 'obsah', kind, … }` ve stejné podobě jako přenos postavy (kód `DRD2:` nebo holý JSON, soubor `*.drd2.txt`).
 Druhy (`kind`): `vyprava` (`expedition`; cizí postavy z dobrodružství jsou přiložené v `cast`, `castIds` a `adventureId` odpadají),
-`dobrodruzstvi` (`adventure` a `expeditions` v pořadí dobrodružství) a `cizi-postava` (`npcs`). Příjemce vše očistí
+`dobrodruzstvi` (`adventure` a `expeditions` v pořadí dobrodružství), `cizi-postava` (`npcs`) a `zprava` (`from`, `title`, `text` do 5000 znaků; nikam se neukládá). Příjemce vše očistí
 (`sanitizeContent`: typy, délky, počty, neznámá pole se zahodí), při uložení přidělí **nová ID** (výpravy, dobrodružství, postavy,
 příhody, kořist) a překládá odkazy mezi nimi; uzlové body si ID ponechají. Stav vedení (`Run`) se nikdy nepřenáší. Pozadí a příhody jsou
 součástí zásilky: posílá je vypravěč jinému vypravěči. Rozpoznání příchozí zásilky (včetně bestiáře, Hávu a balíčků postav) dělá

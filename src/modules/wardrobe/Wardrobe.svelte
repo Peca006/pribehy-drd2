@@ -14,7 +14,7 @@
     type StoredSkin,
   } from '../../core/skin/store'
   import DevicePreview from './DevicePreview.svelte'
-  import { downloadSkin } from './download'
+  import { canShareFiles, downloadSkin, shareSkin } from './download'
 
   // Šatník: výběr vzhledu aplikace (Háv), import a export souborů `.drdskin` a náhled na zařízeních.
   // Formát a pravidla: WARDROBE.md.
@@ -107,6 +107,15 @@
       error = err instanceof Error ? err.message : String(err)
     }
   }
+
+  async function share(skin: Skin) {
+    try {
+      await shareSkin(skin, BUILTIN_ASSETS[skin.id] ?? (await getSkinAssets(skin.id)))
+    } catch (err) {
+      error = err instanceof Error ? err.message : String(err)
+    }
+  }
+  const sharing = canShareFiles()
 
   async function remove(row: Row) {
     const ok = await ask(
@@ -202,6 +211,7 @@
         {/if}
         <a class="btn" href="#/satnik/svadlena/{row.skin.id}">Upravit</a>
         <button type="button" onclick={() => save(row.skin)}>Exportovat</button>
+        {#if sharing}<button type="button" onclick={() => share(row.skin)}>Sdílet…</button>{/if}
         <button type="button" onclick={() => remove(row)}>Smazat</button>
       </div>
     </li>

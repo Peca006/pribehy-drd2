@@ -1,6 +1,5 @@
 <script lang="ts">
   import { encodeJson } from '../../core/character/share'
-  import type { Content } from '../../core/exchange/content'
   import { shareFileName } from '../../core/shareFile'
 
   // Odeslání zásilky obsahu (výprava, dobrodružství, cizí postavy): soubor, zkopírovaný kód, Sdílet.
@@ -11,8 +10,9 @@
     name,
     label = 'Sdílet',
   }: {
-    build: () => Content
-    kind: 'vyprava' | 'dobrodruzstvi' | 'cizi-postavy'
+    /** hodnota zásilky (obálka obsahu, balíček bestiáře…); kód z ní vznikne stlačením JSONu */
+    build: () => unknown
+    kind: 'vyprava' | 'dobrodruzstvi' | 'cizi-postavy' | 'zprava' | 'bytosti'
     name: string
     label?: string
   } = $props()
@@ -58,7 +58,7 @@
 <details class="send">
   <summary>{label}</summary>
   <p class="muted">
-    Soubor či kód otevře jiný vypravěč v Dílně → Přijmout obsah. Posílají se i tajná pozadí a příhody;
+    Soubor či kód otevře příjemce v Dílně → Přijmout obsah. U výprav se posílají i tajná pozadí a příhody;
     rozehraná vedení ne.
   </p>
   <p class="actions">

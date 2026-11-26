@@ -17,7 +17,7 @@ import {
 import { UNIT_ORDER } from '../character/cash'
 
 export const CONTENT_VERSION = 1
-export type ContentKind = 'vyprava' | 'dobrodruzstvi' | 'cizi-postava'
+export type ContentKind = 'vyprava' | 'dobrodruzstvi' | 'cizi-postava' | 'zprava'
 
 /** Výprava je soběstačná: cizí postavy vybrané z dobrodružství jsou přiložené v `cast`, `castIds` odpadá. */
 export interface ExpeditionContent {
@@ -39,7 +39,18 @@ export interface NpcContent {
   kind: 'cizi-postava'
   npcs: Npc[]
 }
-export type Content = ExpeditionContent | AdventureContent | NpcContent
+/** Krátká zpráva (vypravěč hráči či naopak). Nikam se neukládá, příjemce ji přečte a podle potřeby zkopíruje. */
+export interface MessageContent {
+  v: 1
+  type: 'obsah'
+  kind: 'zprava'
+  from: string
+  title: string
+  text: string
+}
+export type Content = ExpeditionContent | AdventureContent | NpcContent | MessageContent
+
+export const MAX_MESSAGE = 5000
 
 export const MAX_EXPEDITIONS = 50
 const MAX_NPCS = 200
@@ -202,6 +213,12 @@ export function sanitizeContent(raw: unknown): { content?: Content; errors: stri
       ? { content: { v: 1, type: 'obsah', kind: 'cizi-postava', npcs }, errors }
       : { errors: ['Zásilka neobsahuje použitelné cizí postavy.'] }
   }
+  if (r.kind === 'zprava') {
+    const text = str(r.text, MAX_MESSAGE)
+    return text.trim()
+      ? { content: { v: 1, type: 'obsah', kind: 'zprava', from: str(r.from, 60), title: str(r.title, 200), text }, errors }
+      : { errors: ['Zpráva je prázdná.'] }
+  }
   return { errors: ['Neznámý druh zásilky.'] }
 }
 
@@ -233,6 +250,15 @@ export function buildAdventureContent(a: Adventure, expeditions: readonly Expedi
     }),
   }
 }
+
+export const buildMessageContent = (from: string, title: string, text: string): MessageContent => ({
+  v: CONTENT_VERSION,
+  type: 'obsah',
+  kind: 'zprava',
+  from: from.trim().slice(0, 60),
+  title: title.trim().slice(0, 200),
+  text: text.slice(0, MAX_MESSAGE),
+})
 
 export const buildNpcContent = (npcs: readonly Npc[]): NpcContent => ({
   v: CONTENT_VERSION,
@@ -331,5 +357,7 @@ export function describeContent(c: Content): { title: string; lines: string[] } 
       ],
     }
   }
+  if (c.kind === 'zprava')
+    return { title: c.title ? `Zpráva: ${c.title}` : 'Zpráva', lines: [...(c.from ? [`Od: ${c.from}`] : []), c.text] }
   return { title: `Cizí postavy (${c.npcs.length})`, lines: c.npcs.map((n) => `• ${n.name}${n.group ? ` (${n.group})` : ''}`) }
 }

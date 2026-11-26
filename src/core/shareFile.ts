@@ -3,7 +3,7 @@
 import { slugify } from './creatures/bundle'
 
 export const shareFileName = (
-  kind: 'postava' | 'druzina' | 'vyprava' | 'dobrodruzstvi' | 'cizi-postavy',
+  kind: 'postava' | 'druzina' | 'vyprava' | 'dobrodruzstvi' | 'cizi-postavy' | 'zprava' | 'bytosti',
   name: string,
 ): string =>
   `${kind}-${slugify(name).slice(0, 40).replace(/-+$/, '') || 'drd2'}.drd2.txt`

@@ -54,3 +54,23 @@ test('dobrodružství: stáhnout soubor, přijmout jako kopii, bestiář z vlož
   await page.getByLabel('Kód k přijetí').fill('DRD2:@@@')
   await expect(page.getByRole('alert')).toBeVisible()
 })
+
+test('zpráva: napsat, stáhnout jako soubor a přijmout', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
+  await page.goto('/#/prijmout')
+  await page.getByLabel('Předmět (nepovinný)').fill('Sraz')
+  await page.getByLabel('Text zprávy').fill('Sejdeme se u brány.')
+  await page.locator('summary', { hasText: 'Odeslat zprávu' }).click()
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.getByRole('button', { name: 'Stáhnout soubor' }).first().click(),
+  ])
+  expect(download.suggestedFilename()).toBe('zprava-sraz.drd2.txt')
+  const code = (await readFile(await download.path(), 'utf8')).trim()
+
+  await page.goto('/#/prijmout')
+  await page.getByLabel('Kód k přijetí').fill(code)
+  await expect(page.getByRole('heading', { name: 'Zpráva: Sraz' })).toBeVisible()
+  await expect(page.locator('.line', { hasText: 'Sejdeme se u brány.' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Přidat', exact: true })).toHaveCount(0)
+})

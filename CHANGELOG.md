@@ -2,6 +2,7 @@
 
 ## Nevydáno
 
+- **Odeslání zprávy a bytostí:** v Přijmout obsah je část Odeslat: krátká zpráva (do 5000 znaků) a vybrané vlastní bytosti jako soubor, kód nebo Sdílet…; příjemce je přijme tamtéž (bytosti se přidají jako kopie). Háv jde v Šatníku poslat tlačítkem Sdílet… (kde prohlížeč umí sdílet soubory).
 - **Přijmout obsah (Dílna → 📥):** jedno místo pro soubor, vložený kód nebo QR. Aplikace pozná výpravu, dobrodružství, cizí postavy, bytosti, Háv (`.drdskin`) i balíček postavy či družiny (ten předá do Importu postav), ukáže souhrn a nic neuloží bez potvrzení. Nic se nepřepisuje, vždy vznikne nová kopie s novými ID.
 - **Sdílení výprav:** u výpravy, dobrodružství (s výpravami a cizími postavami) a vlastních cizích postav je „Sdílet“: soubor, kód nebo Sdílet… Posílá se i tajné pozadí a příhody (vypravěč jinému vypravěči); rozehraná vedení ne. Výprava je soběstačná: cizí postavy z dobrodružství se přiloží. Tím je hotový i export a import výprav souborem.
 

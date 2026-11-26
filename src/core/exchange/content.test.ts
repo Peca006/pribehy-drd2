@@ -6,6 +6,7 @@ import {
   addNpcsTo,
   buildAdventureContent,
   buildExpeditionContent,
+  buildMessageContent,
   buildNpcContent,
   describeContent,
   planAdventure,
@@ -123,6 +124,25 @@ describe('zásilky obsahu', () => {
     const { adv, e1 } = sample()
     expect(describeContent(buildExpeditionContent(e1, adv)).title).toBe('Výprava První')
     expect(describeContent(buildNpcContent(adv.cast!)).lines).toEqual(['• Marta', '• Radim'])
+  })
+})
+
+describe('zpráva a bytosti jako zásilka', () => {
+  it('zpráva prošla kolečkem, očistí se a prázdná se odmítne', async () => {
+    const code = await encodeJson(buildMessageContent('Petr', 'Cesta', 'Sraz u brány\nzítra'))
+    const d = await detectIncoming(code)
+    expect(d.incoming).toMatchObject({ kind: 'obsah', content: { kind: 'zprava', from: 'Petr', title: 'Cesta', text: 'Sraz u brány\nzítra' } })
+    const inc = d.incoming
+    expect(inc?.kind === 'obsah' && describeContent(inc.content).title).toBe('Zpráva: Cesta')
+    const long = sanitizeContent({ v: 1, type: 'obsah', kind: 'zprava', text: 'x'.repeat(9000), from: 5 })
+    expect((long.content as { text: string; from: string }).text).toHaveLength(5000)
+    expect((long.content as { from: string }).from).toBe('')
+    expect(sanitizeContent({ v: 1, type: 'obsah', kind: 'zprava', text: '  ' }).errors).toEqual(['Zpráva je prázdná.'])
+  })
+
+  it('balíček bytostí v kódu DRD2: se rozpozná jako bestiář', async () => {
+    const code = await encodeJson({ format: 1, type: 'bestiar', creatures: [{ name: 'Mlžný vlk' }] })
+    expect((await detectIncoming(code)).incoming).toMatchObject({ kind: 'bestiar', creatures: [{ name: 'Mlžný vlk' }] })
   })
 })
 
