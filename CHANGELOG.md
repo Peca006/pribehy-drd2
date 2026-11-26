@@ -1,5 +1,14 @@
 # Změny
 
+## 0.6.0 (26. 11. 2026)
+
+- **Švadlena, editor Hávů:** Dílna → Švadlena (🪡). Vlastní Háv vznikne jako kopie vestavěného, nainstalovaného nebo prázdného základu; vestavěné Hávy se nikdy nemění. Úpravy se ukládají samy, vedle formuláře je živý náhled aplikace v rámečku zařízení (včetně širokého okna), Háv jde použít a exportovat do `.drdskin`. U vlastních Hávů v Šatníku je tlačítko Upravit.
+- **Švadlena, tokeny:** barvy, písmo a stíny, zaoblení, mezery, tvary panelů, tlačítek a oken, průhlednost panelů, poloha lišty, název, autor, licence a schéma. Každá hodnota prochází stejnou kontrolou jako import; neplatný stav (i slabý kontrast) se neuloží a editor ukáže důvod.
+- **Švadlena, obrázky:** nahrání PNG, WebP, JPEG a SVG z počítače se stejnou kontrolou a mezemi jako v souboru Hávu (typ podle obsahu, rozměry, SVG bez skriptů a odkazů ven; 32 obrázků, 2 MB, 16 Mpx). Obrázky se přiřazují rolím (pozadí, panely, tlačítka, lišta, dělicí čára, okna, záhlaví), ikonám záložek a rohovým ozdobám.
+- **Švadlena, varianty:** varianty podle velikosti okna (šířka, orientace, nízké okno) s pořadím, přepsáním tokenů a rolí a souhrnem pokrytí všech 12 kombinací okna.
+- **Průhledné panely:** nový token Hávu `--drd-panel-opacity` (60 až 100 %), pod panelem prosvítá pozadí stránky. Podzemí má 82 %.
+- **Dílna a Šatník:** tlačítka „❓ Nápověda“, „🧥 Šatník“ a „🪡 Švadlena“; sekce v Šatníku se jmenuje „Háv“.
+
 ## 0.5.11 (25. 11. 2026)
 
 - **Oprava obnovy ze zálohy:** obnova do zařízení, kde záznamy ještě nejsou (například nový telefon), selhávala s hláškou „could not be cloned“. Obnova z Dílny → Záloha a obnova dat teď funguje i do prázdného zařízení.
