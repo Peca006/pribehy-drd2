@@ -152,3 +152,4 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 | 0.4.11 | Záloha všech dat, `BACKUP_VERSION` 1 |
 | 0.5.0 | Úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1); záloha je nese jako volitelné seznamy (`BACKUP_VERSION` zůstává 1, starší soubory je nemají) |
 | 0.5.x (rozpracováno) | Úložiště `sittings` (DB v9, schéma 1); záloha je nese jako volitelný seznam (`BACKUP_VERSION` zůstává 1) |
+| 0.6.1 | Obálka přenosu `obsah` (výprava, dobrodružství, cizí postavy, zpráva), bez změny databáze a zálohy |
