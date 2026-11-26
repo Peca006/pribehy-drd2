@@ -39,11 +39,6 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - **K ověření na telefonu.** Dialogy (léčení, výroba, lektvary, nástrahy, kouzla), Hotovost, Grimoár, ilustrace, značka
   „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
-- **Nestabilní E2E test.** `e2e/vypravy-pribehy.spec.ts` („uzlové body a příhody v balíčcích se řadí, přesouvají a přežijí
-  obnovení stránky“) občas spadne v CI, i po opakování v téže úloze: po `page.reload()` neodpovídá pořadí příhod
-  (`details.incident > summary strong`, řádek 47). Zjištěno při nasazení 0.6.1 na `main` (stejný kód prošel v Kontrole
-  na `develop` i lokálně; po `gh run rerun --failed` prošlo). Pravděpodobně závod: změna pořadí se ještě ukládá, když
-  se stránka obnoví. Zpevnit test (před obnovením počkat na uložení) nebo ukládání po přesunu.
 - **Drobnosti.** Jména testerů do O aplikace (až budou).
 - **Nápad: NFC žetony (později, jiná větev).** Štítky NTAG s odkazem na Bytost, postavu či předmět; klepnutí otevře záznam
   (iPhone bez aplikace, čtení v aplikaci jen Chrome na Androidu). Podrobnosti v `PLAN-WEBRTC.md` (NFC).
