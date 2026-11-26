@@ -1,6 +1,6 @@
 # Změny
 
-## Nevydáno
+## 0.6.1 (26. 11. 2026)
 
 - **Test WebRTC (Dílna, za zkouškou zvuku):** rozbalovací sekce pro průzkum přenosů bez serveru. Dvě zařízení se propojí nabídkou a odpovědí (QR nebo vložený text), ukáže se stav spojení, vybraná dvojice kandidátů, adresy `.local`, odezva a jde poslat zprávu. Pokyny a zápis zkoušek (otestováno, OK či KO, poznámka, zkopírování výsledků) jsou v sekci. Po průzkumu se odstraní.
 - **Tlačítko Zpět:** v Šatníku a Švadleně je univerzální „‹ Zpět“, které vrací na stránku, odkud uživatel přišel (nemá-li kam, vede na nadřazenou stránku). Nahradilo odkazy „← Dílna“, „← Šatník“ a „Švadlena“.
