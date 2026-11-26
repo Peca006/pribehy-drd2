@@ -100,6 +100,24 @@ describe('ePub ze SRD', () => {
       expect(nav).toContain(t)
   })
 
+  it('stránka Obsah je za titulní stranou a odkazuje na začátek každé kapitoly i rejstříku', () => {
+    const opf = xml(text('OEBPS/content.opf'))
+    const items = new Map(
+      [...opf.getElementsByTagName('item')].map((i) => [
+        i.getAttribute('id'),
+        i.getAttribute('href'),
+      ]),
+    )
+    const spine = [...opf.getElementsByTagName('itemref')].map((r) =>
+      items.get(r.getAttribute('idref')),
+    )
+    expect(spine.slice(0, 3)).toEqual(['text/titulni-strana.xhtml', 'text/obsah.xhtml', spine[2]])
+    const hrefs = [...xml(text('OEBPS/text/obsah.xhtml')).querySelectorAll('a')].map((a) =>
+      a.getAttribute('href'),
+    )
+    for (const s of spine.slice(2)) expect(hrefs, s!).toContain(s!.replace('text/', ''))
+  })
+
   it('rejstříky nejsou prázdné a bytosti jsou v knize všechny', () => {
     expect(built.stats.creatures).toBe(packs[1].creatures.length)
     for (const n of Object.values(built.stats.indexes) as number[]) expect(n).toBeGreaterThan(30)

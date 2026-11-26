@@ -647,9 +647,32 @@ export function buildEpub({
   })
 
   const firstHref = (n) => n.href ?? firstHref(n.children[0])
+
+  // --- stránka Obsah v textu knihy (za titulní stranou): části a kapitoly s odkazem na začátek kapitoly
+  const tocList = (nodes) =>
+    `<ul class="toc">${nodes
+      .map((n) => {
+        const href = esc(firstHref(n).replace(/^text\//, ''))
+        // kapitola (má vlastní soubor) je odkaz; část knihy je nadpis a pod ní kapitoly
+        const label = n.href
+          ? `<a href="${href}">${esc(n.title)}</a>`
+          : `<strong>${esc(n.title)}</strong>`
+        const sub = n.href ? '' : tocList(n.children)
+        return `<li>${label}${sub}</li>`
+      })
+      .join('')}</ul>`
+  out.splice(1, 0, {
+    name: 'OEBPS/text/obsah.xhtml',
+    data: page(
+      'Obsah',
+      `<section epub:type="toc">\n<h1 id="top">Obsah</h1>\n${tocList(tree.slice(1))}\n</section>`,
+    ),
+  })
+  tree.splice(1, 0, { title: 'Obsah', href: 'text/obsah.xhtml', children: [] })
+
   const navList = (nodes) =>
     `<ol>${nodes.map((n) => `<li>${n.href ? `<a href="${esc(n.href)}">${esc(n.title)}</a>` : `<a href="${esc(firstHref(n))}">${esc(n.title)}</a>`}${n.children.length ? navList(n.children) : ''}</li>`).join('')}</ol>`
-  const nav = `<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="cs" xml:lang="cs">\n<head><meta charset="utf-8"/><title>Obsah</title><link rel="stylesheet" type="text/css" href="style.css"/></head>\n<body>\n<nav epub:type="toc" id="toc"><h1>Obsah</h1>\n${navList(tree)}\n</nav>\n<nav epub:type="landmarks" hidden="hidden"><ol><li><a epub:type="titlepage" href="text/titulni-strana.xhtml">Titulní strana</a></li><li><a epub:type="toc" href="nav.xhtml#toc">Obsah</a></li></ol></nav>\n</body>\n</html>\n`
+  const nav = `<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="cs" xml:lang="cs">\n<head><meta charset="utf-8"/><title>Obsah</title><link rel="stylesheet" type="text/css" href="style.css"/></head>\n<body>\n<nav epub:type="toc" id="toc"><h1>Obsah</h1>\n${navList(tree)}\n</nav>\n<nav epub:type="landmarks" hidden="hidden"><ol><li><a epub:type="titlepage" href="text/titulni-strana.xhtml">Titulní strana</a></li><li><a epub:type="toc" href="text/obsah.xhtml">Obsah</a></li></ol></nav>\n</body>\n</html>\n`
   let order = 0
   const ncxPoints = (nodes) =>
     nodes
@@ -665,6 +688,7 @@ export function buildEpub({
   const textFiles = out.map((f) => f.name.replace('OEBPS/', ''))
   const spine = [
     'text/titulni-strana.xhtml',
+    'text/obsah.xhtml',
     ...chapters.map((c) => file(c.id)),
     ...idx.map(([iid]) => `text/${iid}.xhtml`),
   ]
@@ -713,6 +737,9 @@ th { font-weight: bold; }
 .img { text-align: center; }
 img { max-width: 100%; }
 .letters a { margin-right: .5em; }
+ul.toc { list-style: none; padding-left: 0; }
+ul.toc ul.toc { padding-left: 1.2em; }
+ul.toc li { margin: .25em 0; }
 .ix { margin: 0 0 .5em; hyphens: none; }
 .sum { font-size: .9em; }
 `
