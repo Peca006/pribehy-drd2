@@ -4,15 +4,9 @@
   import type { AssetFile } from '../../core/skin/file'
   import { assetLimitError } from '../../core/skin/editor-assets'
   import {
-    ENUM_LABELS,
-    FONT_PRESETS,
     TOKEN_GROUPS,
     blankSkin,
     copyForEditing,
-    enumValues,
-    fieldKind,
-    fieldRange,
-    hexOf,
     setMeta,
     setScheme,
     setToken,
@@ -22,16 +16,17 @@
   import { reapplyTheme, refreshInstalledSkins } from '../../core/skin/runtime'
   import { validateSkin, type Skin, type SkinIssue } from '../../core/skin/skin'
   import { getSkin, getSkinAssets, listSkins, putSkin, type StoredSkin } from '../../core/skin/store'
-  import { lengthPx } from '../../core/skin/tokens'
   import { BUILTIN_ASSETS, BUILTIN_SKINS } from '../../themes/havy'
   import DevicePreview from './DevicePreview.svelte'
   import SvadlenaImages from './SvadlenaImages.svelte'
+  import SvadlenaVariants from './SvadlenaVariants.svelte'
+  import TokenControl from './TokenControl.svelte'
   import { downloadSkin } from './download'
 
   // Švadlena: editor Hávů. Upravuje se vždy vlastní kopie uložená v zařízení; každá změna projde stejnou validací jako
   // import souboru a po krátké prodlevě se uloží, takže náhled (aplikace v rámečku zařízení) ukazuje poslední platný stav.
   // Etapa 1: tokeny (barvy, písmo, tvary, mezery, průhlednost panelů, poloha lišty). Etapa 2: obrázky, role,
-  // ikony záložek a ozdoby (`SvadlenaImages.svelte`). Varianty zůstávají ze zdrojového Hávu. Pravidla formátu: WARDROBE.md.
+  // ikony záložek a ozdoby (`SvadlenaImages.svelte`). Etapa 3: varianty podle viewportu (`SvadlenaVariants.svelte`). Pravidla formátu: WARDROBE.md.
   let { id }: { id?: string } = $props()
 
   const APP = { appVersion: __APP_VERSION__ }
@@ -180,7 +175,6 @@
   }
 
   const lineOf = (i: SkinIssue) => (i.path ? `${i.path}: ${i.message}` : i.message)
-  const fontIsPreset = (v: string) => FONT_PRESETS.some((p) => p.value === v)
 
   onMount(() => {
     void loadInstalled()
@@ -291,74 +285,19 @@
         <section class="panel">
           <h3>{g.title}</h3>
           {#each g.fields as f (f.name)}
-            {@const kind = fieldKind(f.name)}
-            {@const v = tokenValue(d, f.name)}
-            {@const range = fieldRange(f.name)}
-            <div class="field">
-              <label for="t{f.name}">{f.label}</label>
-              <div class="control">
-                {#if kind === 'color'}
-                  <input
-                    type="color"
-                    class="swatch"
-                    aria-label="{f.label}: výběr barvy"
-                    value={hexOf(v) ?? '#000000'}
-                    oninput={(e) => setField(f, e.currentTarget.value)}
-                  />
-                  <input id="t{f.name}" value={v} maxlength="40" onchange={(e) => setField(f, e.currentTarget.value)} />
-                {:else if kind === 'font'}
-                  <select
-                    id="t{f.name}"
-                    value={fontIsPreset(v) ? v : 'jine'}
-                    onchange={(e) => e.currentTarget.value !== 'jine' && setField(f, e.currentTarget.value)}
-                  >
-                    {#each FONT_PRESETS as p (p.value)}<option value={p.value}>{p.label}</option>{/each}
-                    <option value="jine">Jiné (zapište níže)</option>
-                  </select>
-                  {#if !fontIsPreset(v)}
-                    <input aria-label="{f.label}: vlastní seznam" value={v} onchange={(e) => setField(f, e.currentTarget.value)} />
-                  {/if}
-                {:else if kind === 'px' && range}
-                  <input
-                    id="t{f.name}"
-                    type="number"
-                    min={range.min}
-                    max={range.max}
-                    step="1"
-                    value={lengthPx(v) ?? 0}
-                    onchange={(e) => setField(f, `${e.currentTarget.value}px`)}
-                  />
-                  <span class="muted">px</span>
-                {:else if kind === 'percent' && range}
-                  <input
-                    id="t{f.name}"
-                    type="range"
-                    min={range.min}
-                    max={range.max}
-                    step="1"
-                    value={parseInt(v, 10) || range.max}
-                    oninput={(e) => setField(f, `${e.currentTarget.value}%`)}
-                  />
-                  <span class="muted">{v}</span>
-                {:else if kind === 'enum'}
-                  <select id="t{f.name}" value={v} onchange={(e) => setField(f, e.currentTarget.value)}>
-                    {#each enumValues(f.name) as o (o)}<option value={o}>{ENUM_LABELS[o] ?? o}</option>{/each}
-                  </select>
-                {:else}
-                  <input id="t{f.name}" value={v} maxlength="200" onchange={(e) => setField(f, e.currentTarget.value)} />
-                {/if}
-                {#if f.name in d.tokens}
-                  <button type="button" aria-label="Vrátit výchozí: {f.label}" title="Vrátit výchozí" onclick={() => setField(f, '')}>↺</button>
-                {/if}
-              </div>
-              {#if fieldError[f.name]}<p class="error" role="alert">{fieldError[f.name]}</p>
-              {:else if f.hint}<p class="muted hint">{f.hint}</p>{/if}
-            </div>
+            <TokenControl
+              field={f}
+              value={tokenValue(d, f.name)}
+              overridden={f.name in d.tokens}
+              error={fieldError[f.name] ?? ''}
+              onset={(raw) => setField(f, raw)}
+            />
           {/each}
         </section>
       {/each}
 
       <SvadlenaImages skin={d} {assets} onchange={editWithAssets} />
+      <SvadlenaVariants skin={d} onchange={edit} />
     </div>
 
     <div class="preview">
@@ -425,36 +364,6 @@
   }
   h3 {
     margin: 0;
-  }
-  .field {
-    display: grid;
-    gap: 0.2rem;
-  }
-  .control {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-  }
-  .control input:not([type='color']):not([type='range']):not([type='number']) {
-    flex: 1;
-    min-width: 0;
-  }
-  .control input[type='number'] {
-    width: 6rem;
-  }
-  .control input[type='range'] {
-    flex: 1;
-    min-height: 0;
-  }
-  .swatch {
-    width: 3rem;
-    min-height: 40px;
-    padding: 0.1rem;
-    flex: none;
-  }
-  .hint {
-    margin: 0;
-    font-size: 0.85em;
   }
   .badge {
     border: 1px solid var(--drd-accent);

@@ -187,3 +187,17 @@ export function setOrnaments(skin: Skin, ornaments: readonly Ornament[]): Change
   if (error || out.length !== ornaments.length) return { skin, error: error ?? 'neplatná ozdoba' }
   return { skin: { ...skin, ornaments: out }, error: null }
 }
+
+/** Role po změně: při přepnutí na rámeček dostane okraje, při přepnutí pryč se okraje a dlaždice zruší. */
+export function patchedRole(cur: Role, patch: Partial<Role>): Role {
+  const next: Role = { ...cur, ...patch }
+  if (next.mode === 'slice') next.slice ??= [12, 12, 12, 12]
+  else {
+    delete next.slice
+    delete next.width
+    delete next.fill
+    delete next.edge
+  }
+  if (!next.mode.startsWith('repeat')) delete next.size
+  return next
+}

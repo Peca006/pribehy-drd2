@@ -115,3 +115,46 @@ test('Švadlena: nahrání obrázku, role, ikona, ozdoba, odmítnutí zlého SVG
   await expect(page.locator('.assets li')).toHaveCount(0)
   await expect(page.locator('#r-background')).toHaveValue('')
 })
+
+// Etapa 3: varianty podle velikosti okna.
+test('Švadlena: varianta pro široké okno přepíše token, podmínka se nedá vyprázdnit, pořadí a odebrání', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('drd2.packPromptDismissed', '1'))
+  await page.goto('/#/satnik/svadlena')
+  await page.getByLabel('Začít od:').selectOption({ label: 'Podzemí (vestavěný)' })
+  await page.getByPlaceholder('Můj Háv').fill('Varianty')
+  await page.getByRole('button', { name: 'Vytvořit a upravit' }).click()
+  await expect(page).toHaveURL(/#\/satnik\/svadlena\/moje-varianty$/)
+
+  // Podzemí už má varianty; přidáme novou pro široké okno
+  const before = await page.getByRole('button', { name: /^Odebrat variantu/ }).count()
+  await page.locator('#var-preset').selectOption({ label: 'Široké okno' })
+  await page.getByRole('button', { name: 'Přidat variantu' }).click()
+  const n = before + 1
+  await expect(page.getByText(`Varianta ${n}: široký`)).toBeVisible()
+
+  // přepsání tokenu zaoblení pro tuto variantu
+  await page.getByLabel(`Varianta ${n}: přepsat token`).selectOption({ label: 'Zaoblení rohů' })
+  await page.locator(`#v${n - 1}---drd-radius`).fill('20')
+  await page.locator(`#v${n - 1}---drd-radius`).press('Tab')
+  await expect(page.getByRole('status').filter({ hasText: 'Uloženo' })).toBeVisible()
+
+  // v širokém náhledu je zaoblení 20 px, v úzkém zůstává původní
+  await page.getByRole('button', { name: 'Široké okno', exact: true }).click()
+  const preview = page.frameLocator('iframe[title^="Náhled aplikace"]')
+  await expect
+    .poll(() => preview.locator('html').evaluate((el) => getComputedStyle(el).getPropertyValue('--drd-radius')))
+    .toBe('20px')
+  await page.getByRole('button', { name: 'Telefon na výšku' }).click()
+  await expect
+    .poll(() => preview.locator('html').evaluate((el) => getComputedStyle(el).getPropertyValue('--drd-radius')))
+    .not.toBe('20px')
+
+  // podmínku nejde vyprázdnit
+  await page.getByLabel(`Varianta ${n}: šířka`).selectOption('')
+  await expect(page.getByRole('alert').filter({ hasText: 'Podmínka' })).toBeVisible()
+
+  // pořadí a odebrání
+  await page.getByRole('button', { name: `Varianta ${n} dřív` }).click()
+  await page.getByRole('button', { name: `Odebrat variantu ${n}` }).click()
+  await expect(page.getByRole('button', { name: /^Odebrat variantu/ })).toHaveCount(before)
+})

@@ -7,6 +7,7 @@ import {
   assetNameFor,
   assetStats,
   defaultRole,
+  patchedRole,
   removeAsset,
   setIcon,
   setOrnaments,
@@ -146,5 +147,15 @@ describe('odebrání obrázku', () => {
     const r = removeAsset(podzemi, files, some)
     expect(validateSkin(r.skin, { allowReserved: true }).issues.filter((i) => i.level === 'error')).toEqual([])
     expect(usesOf(r.skin, some)).toEqual([])
+  })
+})
+
+describe('patchedRole', () => {
+  it('přepnutí na rámeček doplní okraje, přepnutí pryč je zruší spolu s dlaždicí', () => {
+    const r = patchedRole({ image: 'a', mode: 'repeat', size: 64 }, { mode: 'slice' })
+    expect(r.slice).toEqual([12, 12, 12, 12])
+    expect(r.size).toBeUndefined()
+    const back = patchedRole({ ...r, edge: 'repeat', fill: false }, { mode: 'stretch' })
+    expect(back).toEqual({ image: 'a', mode: 'stretch' })
   })
 })
