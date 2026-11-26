@@ -3,7 +3,6 @@
   import { ask } from '../../core/confirm.svelte'
   import { setSkin, settings } from '../../core/settings.svelte'
   import { BUILTIN_CHOICES, isBuiltinChoice, SYSTEM_CHOICE } from '../../core/skin/active'
-  import { writeSkinFile } from '../../core/skin/file'
   import { previewChoice, reapplyTheme, refreshInstalledSkins } from '../../core/skin/runtime'
   import { contrastIssues, SKIN_EXTENSION, type Skin, type SkinIssue } from '../../core/skin/skin'
   import { BUILTIN_ASSETS, BUILTIN_SKINS } from '../../themes/havy'
@@ -15,6 +14,7 @@
     type StoredSkin,
   } from '../../core/skin/store'
   import DevicePreview from './DevicePreview.svelte'
+  import { downloadSkin } from './download'
 
   // Šatník: výběr vzhledu aplikace (Háv), import a export souborů `.drdskin` a náhled na zařízeních.
   // Formát a pravidla: WARDROBE.md.
@@ -102,14 +102,7 @@
     try {
       // vestavěné Hávy mají obrázky v kódu, nainstalované v úložišti
       const assets = BUILTIN_ASSETS[skin.id] ?? (await getSkinAssets(skin.id))
-      const bytes = await writeSkinFile(skin, assets)
-      const a = document.createElement('a')
-      a.href = URL.createObjectURL(
-        new Blob([bytes as Uint8Array<ArrayBuffer>], { type: 'application/zip' }),
-      )
-      a.download = `${skin.id}${SKIN_EXTENSION}`
-      a.click()
-      URL.revokeObjectURL(a.href)
+      await downloadSkin(skin, assets)
     } catch (err) {
       error = err instanceof Error ? err.message : String(err)
     }
@@ -151,6 +144,8 @@
 </p>
 
 {#if error}<p class="error" role="alert">{error}</p>{/if}
+
+<p><a class="btn" href="#/satnik/svadlena"><span aria-hidden="true">🪡</span> Švadlena: upravit nebo vytvořit Háv</a></p>
 
 <h2>Háv</h2>
 <ul class="list">
@@ -205,6 +200,7 @@
         {:else}
           <button type="button" onclick={() => use(row.skin.id)}>Použít</button>
         {/if}
+        <a class="btn" href="#/satnik/svadlena/{row.skin.id}">Upravit</a>
         <button type="button" onclick={() => save(row.skin)}>Exportovat</button>
         <button type="button" onclick={() => remove(row)}>Smazat</button>
       </div>

@@ -237,4 +237,14 @@ nízkém) a čtyři rohové ozdoby.
   přepnutí), `appearance.svelte.ts` (ikony), `applyTheme` odebírá staré proměnné, `app.css`, `App.svelte`. Podzemí má grafiku.
   E2E: `e2e/satnik.spec.ts`.
 - ✅ **Role `dialog`:** jednotný vzhled oken v `app.css`, role v Hávu, ozdobný zlatý rám s rubíny pro Podzemí.
-- 🚧 **Dál:** M3 (layout), editor Hávů.
+- ✅ **M3 (poloha lišty, tvary, záhlaví a ozdoby)** je hotový, viz výše.
+- 🚧 **Švadlena (editor Hávů).** Dílna → Švadlena, adresa `#/satnik/svadlena[/<id>]`. Jádro `core/skin/editor.ts` (čisté
+  funkce, test `editor.test.ts`), rozhraní `modules/wardrobe/Svadlena.svelte`. Upravuje se vždy vlastní kopie (`copyForEditing`
+  z vestavěného, nainstalovaného nebo prázdného základu; `id` ve tvaru `moje-<název>`), která se ukládá do úložiště Hávů.
+  Každá změna projde stejnou validací jako import (`setToken` → `tokenValueError`, před uložením `validateSkin` včetně
+  kontrastu); neplatný stav se neuloží, náhled ukazuje poslední platný a editor vypíše důvody. Po 0,5 s se platný Háv uloží,
+  přepočítá se, je-li používaný, a náhled (iframe jako v Šatníku, `rev` v adrese) se načte znovu.
+  - ✅ **Etapa 1: tokeny** (barvy, písmo a stíny, zaoblení, mezery, tvary, průhlednost panelů, poloha lišty, metadata,
+    schéma, export `.drdskin`, použití). Obrázky, role, ikony, ozdoby a varianty zůstávají ze zdroje beze změny.
+  - **Etapa 2: obrázky** (nahrání pro pozadí, rámečky, záhlaví, ozdoby, ikony s kontrolou `image.ts`).
+  - **Etapa 3: varianty** pro 12 kombinací viewportu.
