@@ -61,7 +61,7 @@ test('nápověda u importu a žurnálu družiny', async ({ page }) => {
 
 test('stránka Nápověda z Dílny: úvod, hledání a téma', async ({ page }) => {
   await page.goto('/#/knihovna/dilna')
-  await page.getByRole('link', { name: 'Nápověda a návody' }).click()
+  await page.getByRole('link', { name: 'Nápověda', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Nápověda', exact: true })).toBeVisible()
   await expect(page.getByText('funguje i bez připojení')).toBeVisible()
 

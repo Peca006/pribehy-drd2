@@ -152,7 +152,7 @@
 
 {#if error}<p class="error" role="alert">{error}</p>{/if}
 
-<h2>Vzhled</h2>
+<h2>Háv</h2>
 <ul class="list">
   {#each BUILTIN_CHOICES as c (c.id)}
     {@const built = BUILTIN_SKINS.find((s) => s.id === c.id)}

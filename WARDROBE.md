@@ -42,6 +42,7 @@ Role jsou oddělené, aby je Háv mohl ladit samostatně (viz `src/themes/defaul
 | `--drd-nav-position` | poloha hlavní lišty: `bottom` (výchozí), `top`, `left`, `right` (svislý pruh); výčet, jiná hodnota je chyba |
 | `--drd-shape-panel`, `--drd-shape-button`, `--drd-shape-dialog` | tvar panelů, tlačítek a oken: `rect` (výchozí), `chamfer` (seříznuté čtyři rohy), `notch` (levý horní a pravý dolní roh); výčet |
 | `--drd-shape-size` | velikost seříznutí, 2 až 16 px (výchozí 6 px) |
+| `--drd-panel-opacity` | průhlednost pozadí panelů, celé procento 60 až 100 (výchozí `100%`); pod panelem prosvítá pozadí stránky |
 | `--drd-text-shadow` | stín textu (embos); výchozí `none`, smí mít 1–3 vrstvy bez `inset` a rozšíření |
 | `--drd-radius`, `--drd-gap`, `--drd-font` | tvar, mezery, písmo |
 
