@@ -2,18 +2,25 @@
 
 Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značky = otevřené. Podrobnosti hotových věcí jsou v `CHANGELOG.md`.
 
-## Otevřené úkoly (stav k verzi 0.6.0, 25. 11. 2026)
+## Otevřené úkoly (stav k verzi 0.6.1, 26. 11. 2026)
 
 ### Další práce
 
-- ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); zbývá zkouška na telefonu a export a import výprav souborem.
-- 🚧 **Vedení hry (rozpracováno, plán `PLAN-VEDENI-HRY.md`, etapy 1 až 4 hotové a vydané v 0.5.10: časomíra, spravedlivý prostor, plán, odpočet; zbývá vazba na Při hře a zkouška na telefonu).** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
-  stupnice, plánování podle délky sezení, rychlé přepínání mezi hráči (postavami) a krátký odpočet pro rychlé reakce. Zápis v `PLAN-VYPRAVY.md`.
+- ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); export a import výprav souborem hotový (Zásilky, nevydáno); zbývá zkouška na telefonu.
+- 🚧 **Vedení hry (plán `PLAN-VEDENI-HRY.md`).** Etapy 1 až 4 jsou hotové a vydané v 0.5.10 (stránka Hra u družiny: časomíra,
+  spravedlivý prostor, plán podle délky sezení, krátký odpočet). Zbývá etapa 5 (pruh s aktivním hráčem v Při hře, odkaz z družiny,
+  souhrn časů do poznámky zápisu), etapa 6 (nápověda „?“, `FORMAT.md`, vydání) a zkouška na telefonu (uspání, zvuk odpočtu).
 - ✅ **Kořist (11e, 0.5.0).** Příprava u příhody, odhalení, upřesnění a rozdělení postavám.
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
   včetně ilustrací). Zbývá projít migrace při první skutečné změně tvaru dat a ověřit zálohu a obnovu na telefonu (soubor přes
   e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`.
+- **Systémové Zpět v Androidu (návrh).** Tlačítko Zpět telefonu vrací o krok v historii prohlížeče, uživatel čeká návrat o úroveň výš
+  jako v aplikaci. Řešení vyžaduje strom stránek (nadřazená stránka každé adresy, `parentOf`), zachycení návratu přes Navigation API
+  (`navigate` s `traverse` dozadu) a nahrazení cílem „o úroveň výš“ (v kořeni modulu nechat výchozí chování), aby se historie
+  nezacyklila. Univerzální tlačítko „Zpět“ (`ui/BackButton.svelte`) už vrací na stránku, odkud se přišlo. Dělat po ověření na
+  telefonu a až s pevným stromem stránek (a rozmyslet, co dělá Zpět na záložkách a v Při hře).
 - **Přenosy (pořadí).** Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC. `file_handlers` se nedělají (jen počítač).
+  Plán WebRTC (sezení bez internetu, hotspot, rozeslání změn): `PLAN-WEBRTC.md`.
   Kód, soubor, QR (s odkazem do aplikace, zhuštění historie), zvuk a příjem sdíleného souboru jsou hotové.
 - **Sdílení vypravěč → družina.** Průvodce posílá po sezení opakovaně od zvoleného bodu žurnálu (hotovo), dnes souborem
   zprávou či e-mailem. Hromadné odeslání všem jednou akcí (multi-cast) až s WebRTC. Zbývá sdílení členů s postavami
@@ -33,6 +40,8 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
 - **Drobnosti.** Jména testerů do O aplikace (až budou).
+- **Nápad: NFC žetony (později, jiná větev).** Štítky NTAG s odkazem na Bytost, postavu či předmět; klepnutí otevře záznam
+  (iPhone bez aplikace, čtení v aplikaci jen Chrome na Androidu). Podrobnosti v `PLAN-WEBRTC.md` (NFC).
 - **Nápad: skiny s obrázkovou mapou ovládacích prvků (později).** Prvky (tlačítko, popis, výstup) definované souřadnicemi
   na obrázku; pixelartová varianta (inspirace Truhlice) nebo klasická. Předpoklad: uklidit stránky a navigaci.
 

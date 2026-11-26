@@ -96,6 +96,16 @@ srozumitelnou hláškou. Ilustrace postavy nese jen soubor (`images`, base64, ne
 Typy: `revize` (revize postavy, volitelně zhuštěná historie `compact` a použité předpisy `recipes`), `odpoved` (odpověď vypravěče),
 `druzina`, `predpisy`.
 
+## Zásilky obsahu (výprava, dobrodružství, cizí postavy)
+
+Obálka `{ v: 1, type: 'obsah', kind, … }` ve stejné podobě jako přenos postavy (kód `DRD2:` nebo holý JSON, soubor `*.drd2.txt`).
+Druhy (`kind`): `vyprava` (`expedition`; cizí postavy z dobrodružství jsou přiložené v `cast`, `castIds` a `adventureId` odpadají),
+`dobrodruzstvi` (`adventure` a `expeditions` v pořadí dobrodružství), `cizi-postava` (`npcs`) a `zprava` (`from`, `title`, `text` do 5000 znaků; nikam se neukládá). Příjemce vše očistí
+(`sanitizeContent`: typy, délky, počty, neznámá pole se zahodí), při uložení přidělí **nová ID** (výpravy, dobrodružství, postavy,
+příhody, kořist) a překládá odkazy mezi nimi; uzlové body si ID ponechají. Stav vedení (`Run`) se nikdy nepřenáší. Pozadí a příhody jsou
+součástí zásilky: posílá je vypravěč jinému vypravěči. Rozpoznání příchozí zásilky (včetně bestiáře, Hávu a balíčků postav) dělá
+`core/exchange/detect.ts`. Obálka bude nosičem i pro WebRTC (`PLAN-WEBRTC.md`).
+
 ## Záloha všech dat
 
 Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
@@ -142,3 +152,4 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 | 0.4.11 | Záloha všech dat, `BACKUP_VERSION` 1 |
 | 0.5.0 | Úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1); záloha je nese jako volitelné seznamy (`BACKUP_VERSION` zůstává 1, starší soubory je nemají) |
 | 0.5.x (rozpracováno) | Úložiště `sittings` (DB v9, schéma 1); záloha je nese jako volitelný seznam (`BACKUP_VERSION` zůstává 1) |
+| 0.6.1 | Obálka přenosu `obsah` (výprava, dobrodružství, cizí postavy, zpráva), bez změny databáze a zálohy |

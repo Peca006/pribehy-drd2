@@ -13,8 +13,9 @@
     listSkins,
     type StoredSkin,
   } from '../../core/skin/store'
+  import BackButton from '../../ui/BackButton.svelte'
   import DevicePreview from './DevicePreview.svelte'
-  import { downloadSkin } from './download'
+  import { canShareFiles, downloadSkin, shareSkin } from './download'
 
   // Šatník: výběr vzhledu aplikace (Háv), import a export souborů `.drdskin` a náhled na zařízeních.
   // Formát a pravidla: WARDROBE.md.
@@ -108,6 +109,15 @@
     }
   }
 
+  async function share(skin: Skin) {
+    try {
+      await shareSkin(skin, BUILTIN_ASSETS[skin.id] ?? (await getSkinAssets(skin.id)))
+    } catch (err) {
+      error = err instanceof Error ? err.message : String(err)
+    }
+  }
+  const sharing = canShareFiles()
+
   async function remove(row: Row) {
     const ok = await ask(
       `Háv „${row.skin.name}“ se z tohoto zařízení odstraní. Nemáte-li ho uložený v souboru (tlačítko Exportovat), nevrátí se.`,
@@ -135,7 +145,7 @@
   }
 </script>
 
-<p><a href="#/knihovna/dilna">← Dílna</a></p>
+<nav><BackButton fallback="#/knihovna/dilna" /></nav>
 <h1>Šatník</h1>
 <p class="muted">
   Vzhled aplikace se jmenuje <strong>Háv</strong>. Háv je soubor <code>{SKIN_EXTENSION}</code>,
@@ -145,7 +155,7 @@
 
 {#if error}<p class="error" role="alert">{error}</p>{/if}
 
-<p><a class="btn" href="#/satnik/svadlena"><span aria-hidden="true">🪡</span> Švadlena: upravit nebo vytvořit Háv</a></p>
+<p><a class="btn" href="#/satnik/svadlena"><span aria-hidden="true">🪡</span> Švadlena</a></p>
 
 <h2>Háv</h2>
 <ul class="list">
@@ -200,8 +210,9 @@
         {:else}
           <button type="button" onclick={() => use(row.skin.id)}>Použít</button>
         {/if}
-        <a class="btn" href="#/satnik/svadlena/{row.skin.id}">Upravit</a>
+        <a class="btn" href="#/satnik/svadlena/{row.skin.id}">Přešít</a>
         <button type="button" onclick={() => save(row.skin)}>Exportovat</button>
+        {#if sharing}<button type="button" onclick={() => share(row.skin)}>Sdílet…</button>{/if}
         <button type="button" onclick={() => remove(row)}>Smazat</button>
       </div>
     </li>

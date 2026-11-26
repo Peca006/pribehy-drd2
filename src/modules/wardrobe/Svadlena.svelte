@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
+  import BackButton from '../../ui/BackButton.svelte'
   import { setSkin, settings } from '../../core/settings.svelte'
   import type { AssetFile } from '../../core/skin/file'
   import { assetLimitError } from '../../core/skin/editor-assets'
@@ -186,7 +187,7 @@
   })
 </script>
 
-<p><a href="#/satnik">← Šatník</a>{#if id} · <a href="#/satnik/svadlena">Švadlena</a>{/if}</p>
+<nav><BackButton fallback={id ? '#/satnik/svadlena' : '#/knihovna/dilna'} /></nav>
 <h1>Švadlena</h1>
 
 {#if error}<p class="error" role="alert">{error}</p>{/if}
@@ -209,7 +210,7 @@
       <span class="muted">Název:</span>
       <input bind:value={newName} maxlength="60" placeholder="Můj Háv" />
     </label>
-    <p><button class="primary" disabled={busy} onclick={create}>Vytvořit a upravit</button></p>
+    <p><button class="primary" disabled={busy} onclick={create}>Přešít</button></p>
   </div>
 
   <h2>Moje Hávy</h2>
@@ -219,7 +220,7 @@
         <li class="panel">
           <strong>{row.skin.name}</strong>
           <span class="muted">{row.skin.author} · verze {row.skin.version}</span>
-          <a class="btn" href="#/satnik/svadlena/{row.skin.id}">Upravit</a>
+          <a class="btn" href="#/satnik/svadlena/{row.skin.id}">Přešít</a>
         </li>
       {/each}
     </ul>

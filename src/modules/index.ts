@@ -9,5 +9,6 @@ import './creator'
 import './reader'
 import './library'
 import './wardrobe'
+import './exchange'
 
 export const DEFAULT_MODULE = 'postavy'

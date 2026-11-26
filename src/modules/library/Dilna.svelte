@@ -4,6 +4,7 @@
   import { setAuthor, settings } from '../../core/settings.svelte'
   import AudioTest from '../../ui/audiogram/AudioTest.svelte'
   import LinkModeSelect from '../../ui/LinkModeSelect.svelte'
+  import WebRtcTest from '../../ui/webrtc/WebRtcTest.svelte'
   import About from './About.svelte'
   import AppInfo from './AppInfo.svelte'
   import Backup from './Backup.svelte'
@@ -20,6 +21,7 @@
   <a class="btn" href="#/knihovna/napoveda"><span aria-hidden="true">❓</span> Nápověda</a>
   <a class="btn" href="#/satnik"><span aria-hidden="true">🧥</span> Šatník</a>
   <a class="btn" href="#/satnik/svadlena"><span aria-hidden="true">🪡</span> Švadlena</a>
+  <a class="btn" href="#/prijmout"><span aria-hidden="true">📥</span> Přijmout obsah</a>
 </p>
 
 <HelpHeading title="Nastavení" topic="nastaveni" />
@@ -47,6 +49,10 @@
   <summary>Zkouška zvuku (přenos zvukem mezi zařízeními, audiogram)</summary>
   <HelpHeading title="Nápověda ke zvuku" topic="zvuk" />
   <AudioTest />
+</details>
+<details>
+  <summary>Test WebRTC (průzkum přenosů bez serveru)</summary>
+  <WebRtcTest />
 </details>
 
 <AppInfo />

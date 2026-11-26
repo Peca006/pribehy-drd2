@@ -29,6 +29,7 @@
   import { fromScan, loadAssembler, saveAssembler } from '../../core/character/qr'
   import { onMount } from 'svelte'
   import { takeShared } from '../../core/sharedInbox'
+  import { takeHandoff } from '../../core/exchange/handoff'
   import { mergeIncoming, type MergeResult } from '../../core/party/share'
   import { getParty, saveParty } from '../../core/party/store'
   import { go } from '../../core/router.svelte'
@@ -126,6 +127,12 @@
         text = shared.trim()
         await check()
       } else errors = ['Sdílený kód se nepodařilo načíst.']
+      return
+    }
+    const handed = takeHandoff()
+    if (handed && !part) {
+      text = handed.trim()
+      await check()
       return
     }
     if (!part) return
