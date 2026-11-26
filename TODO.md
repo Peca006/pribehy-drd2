@@ -7,13 +7,15 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 ### Další práce
 
 - ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); zbývá zkouška na telefonu a export a import výprav souborem.
-- 🚧 **Vedení hry (rozpracováno, plán `PLAN-VEDENI-HRY.md`, etapy 1 až 4 hotové a vydané v 0.5.10: časomíra, spravedlivý prostor, plán, odpočet; zbývá vazba na Při hře a zkouška na telefonu).** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
-  stupnice, plánování podle délky sezení, rychlé přepínání mezi hráči (postavami) a krátký odpočet pro rychlé reakce. Zápis v `PLAN-VYPRAVY.md`.
+- 🚧 **Vedení hry (plán `PLAN-VEDENI-HRY.md`).** Etapy 1 až 4 jsou hotové a vydané v 0.5.10 (stránka Hra u družiny: časomíra,
+  spravedlivý prostor, plán podle délky sezení, krátký odpočet). Zbývá etapa 5 (pruh s aktivním hráčem v Při hře, odkaz z družiny,
+  souhrn časů do poznámky zápisu), etapa 6 (nápověda „?“, `FORMAT.md`, vydání) a zkouška na telefonu (uspání, zvuk odpočtu).
 - ✅ **Kořist (11e, 0.5.0).** Příprava u příhody, odhalení, upřesnění a rozdělení postavám.
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
   včetně ilustrací). Zbývá projít migrace při první skutečné změně tvaru dat a ověřit zálohu a obnovu na telefonu (soubor přes
   e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`.
 - **Přenosy (pořadí).** Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC. `file_handlers` se nedělají (jen počítač).
+  Plán WebRTC (sezení bez internetu, hotspot, rozeslání změn): `PLAN-WEBRTC.md`.
   Kód, soubor, QR (s odkazem do aplikace, zhuštění historie), zvuk a příjem sdíleného souboru jsou hotové.
 - **Sdílení vypravěč → družina.** Průvodce posílá po sezení opakovaně od zvoleného bodu žurnálu (hotovo), dnes souborem
   zprávou či e-mailem. Hromadné odeslání všem jednou akcí (multi-cast) až s WebRTC. Zbývá sdílení členů s postavami
