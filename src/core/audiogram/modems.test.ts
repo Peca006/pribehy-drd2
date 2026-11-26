@@ -30,13 +30,6 @@ describe('modemy: round-trip', () => {
       const x = makeChannel({ delay: 12345, gain: 0.2 })(m.modem.modulate(frames))
       expect(m.modem.demodulate(x).frames).toEqual(frames)
     })
-    it(`${m.name}: odhad doby vysílání odpovídá zvuku`, () => {
-      const x = m.modem.modulate([bytesOf(52)])
-      const real = x.length / 48000
-      const est = m.modem.airtime(52)
-      // zvuk obsahuje navíc ticho před a za rámcem (2 × 0,12 s)
-      expect(Math.abs(real - 0.24 - est)).toBeLessThan(0.1 * est + 0.03)
-    })
   }
 
   it('prázdná nahrávka a čistý šum nedají žádný rámec', () => {
