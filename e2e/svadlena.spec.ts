@@ -15,7 +15,7 @@ test('Švadlena: vytvoření kopie, úprava barvy, odmítnutí špatné hodnoty 
   // nový Háv z vestavěného Podzemí
   await page.getByLabel('Začít od:').selectOption({ label: 'Podzemí (vestavěný)' })
   await page.getByPlaceholder('Můj Háv').fill('Moje jeskyně')
-  await page.getByRole('button', { name: 'Vytvořit a upravit' }).click()
+  await page.getByRole('button', { name: 'Přešít' }).click()
   await expect(page).toHaveURL(/#\/satnik\/svadlena\/moje-jeskyne$/)
   await expect(page.getByRole('heading', { name: 'Moje jeskyně', level: 2 })).toBeVisible()
   await expect(page.getByRole('status').filter({ hasText: 'Uloženo' })).toBeVisible()
@@ -62,7 +62,7 @@ test('Švadlena: vytvoření kopie, úprava barvy, odmítnutí špatné hodnoty 
 
   // Háv je i v Šatníku s tlačítkem Upravit
   await page.goto('/#/satnik')
-  await expect(page.getByRole('link', { name: 'Upravit', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Přešít', exact: true })).toBeVisible()
 })
 
 // Etapa 2: obrázky, role, ikony záložek a ozdoby.
@@ -76,7 +76,7 @@ test('Švadlena: nahrání obrázku, role, ikona, ozdoba, odmítnutí zlého SVG
   await page.goto('/#/satnik/svadlena')
   await page.getByLabel('Začít od:').selectOption({ label: 'Tmavý základ (jen barvy)' })
   await page.getByPlaceholder('Můj Háv').fill('Obrázková zkouška')
-  await page.getByRole('button', { name: 'Vytvořit a upravit' }).click()
+  await page.getByRole('button', { name: 'Přešít' }).click()
   await expect(page).toHaveURL(/#\/satnik\/svadlena\/moje-obrazkova-zkouska$/)
 
   // dobrý PNG se přidá, SVG se skriptem a soubor, který není obrázek, se odmítnou
@@ -122,7 +122,7 @@ test('Švadlena: varianta pro široké okno přepíše token, podmínka se nedá
   await page.goto('/#/satnik/svadlena')
   await page.getByLabel('Začít od:').selectOption({ label: 'Podzemí (vestavěný)' })
   await page.getByPlaceholder('Můj Háv').fill('Varianty')
-  await page.getByRole('button', { name: 'Vytvořit a upravit' }).click()
+  await page.getByRole('button', { name: 'Přešít' }).click()
   await expect(page).toHaveURL(/#\/satnik\/svadlena\/moje-varianty$/)
 
   // Podzemí už má varianty; přidáme novou pro široké okno

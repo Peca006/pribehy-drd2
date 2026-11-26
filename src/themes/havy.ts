@@ -141,7 +141,7 @@ const definitions = [
       '--drd-shape-panel': 'notch',
       '--drd-shape-size': '6px',
       // panely částečně průhledné, aby prosvítala textura pozadí
-      '--drd-panel-opacity': '82%',
+      '--drd-panel-opacity': '60%',
     },
     variants: [
       { when: { width: 'compact' }, tokens: { '--drd-gap': '0.75rem' } },

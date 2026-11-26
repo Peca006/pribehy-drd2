@@ -138,7 +138,7 @@ describe('kontrast hlídá validace', () => {
 describe('meze a výčty', () => {
   it('fieldRange a enumValues vycházejí ze specifikace tokenů', () => {
     expect(fieldRange('--drd-radius')).toEqual({ min: 0, max: 48 })
-    expect(fieldRange('--drd-panel-opacity')).toEqual({ min: 60, max: 100 })
+    expect(fieldRange('--drd-panel-opacity')).toEqual({ min: 50, max: 100 })
     expect(fieldRange('--drd-bg')).toBeNull()
     expect(enumValues('--drd-nav-position')).toEqual(['bottom', 'top', 'left', 'right'])
     expect(enumValues('--drd-bg')).toEqual([])

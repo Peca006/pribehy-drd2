@@ -2,6 +2,10 @@
 
 ## Nevydáno
 
+- **Test WebRTC (Dílna, za zkouškou zvuku):** rozbalovací sekce pro průzkum přenosů bez serveru. Dvě zařízení se propojí nabídkou a odpovědí (QR nebo vložený text), ukáže se stav spojení, vybraná dvojice kandidátů, adresy `.local`, odezva a jde poslat zprávu. Pokyny a zápis zkoušek (otestováno, OK či KO, poznámka, zkopírování výsledků) jsou v sekci. Po průzkumu se odstraní.
+- **Tlačítko Zpět:** v Šatníku a Švadleně je univerzální „‹ Zpět“, které vrací na stránku, odkud uživatel přišel (nemá-li kam, vede na nadřazenou stránku). Nahradilo odkazy „← Dílna“, „← Šatník“ a „Švadlena“.
+- **Šatník a Švadlena:** tlačítko „Švadlena“ bez dlouhého popisu; „Vytvořit a upravit“ i „Upravit“ se jmenují „Přešít“.
+- **Průhlednost panelů:** nejnižší hodnota tokenu `--drd-panel-opacity` je 50 % (dříve 60 %), Podzemí má 60 % (dříve 82 %).
 - **Odeslání zprávy a bytostí:** v Přijmout obsah je část Odeslat: krátká zpráva (do 5000 znaků) a vybrané vlastní bytosti jako soubor, kód nebo Sdílet…; příjemce je přijme tamtéž (bytosti se přidají jako kopie). Háv jde v Šatníku poslat tlačítkem Sdílet… (kde prohlížeč umí sdílet soubory).
 - **Přijmout obsah (Dílna → 📥):** jedno místo pro soubor, vložený kód nebo QR. Aplikace pozná výpravu, dobrodružství, cizí postavy, bytosti, Háv (`.drdskin`) i balíček postavy či družiny (ten předá do Importu postav), ukáže souhrn a nic neuloží bez potvrzení. Nic se nepřepisuje, vždy vznikne nová kopie s novými ID.
 - **Sdílení výprav:** u výpravy, dobrodružství (s výpravami a cizími postavami) a vlastních cizích postav je „Sdílet“: soubor, kód nebo Sdílet… Posílá se i tajné pozadí a příhody (vypravěč jinému vypravěči); rozehraná vedení ne. Výprava je soběstačná: cizí postavy z dobrodružství se přiloží. Tím je hotový i export a import výprav souborem.

@@ -70,7 +70,7 @@ export const TOKEN_SPECS: Record<TokenName, TokenSpec> = {
   '--drd-shape-button': { kind: 'enum', values: SHAPES },
   '--drd-shape-dialog': { kind: 'enum', values: SHAPES },
   '--drd-shape-size': { kind: 'length', min: 2, max: 16 },
-  '--drd-panel-opacity': { kind: 'percent', min: 60, max: 100 },
+  '--drd-panel-opacity': { kind: 'percent', min: 50, max: 100 },
 }
 
 export const MAX_VALUE_LENGTH = 200
