@@ -118,6 +118,13 @@ export function startRouter() {
 export const go = (module: string, ...params: string[]) => {
   location.hash = toHash(module, ...params)
 }
+/** Je kam se vrátit v historii aplikace? (Jinak tlačítko Zpět vede na výchozí stránku.) */
+export const canGoBack = (): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const nav = (window as any).navigation
+  if (nav && typeof nav.canGoBack === 'boolean') return nav.canGoBack
+  return history.length > 1
+}
 export const back = () => {
   markRestore()
   history.back()

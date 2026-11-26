@@ -39,10 +39,10 @@ describe('tvary ploch (M3b)', () => {
 })
 
 describe('průhlednost panelů', () => {
-  it('povoluje celá procenta 60 až 100, jiný zápis odmítne', () => {
+  it('povoluje celá procenta 50 až 100, jiný zápis odmítne', () => {
     expect(tokenValueError('--drd-panel-opacity', '82%')).toBeNull()
     expect(tokenValueError('--drd-panel-opacity', '100%')).toBeNull()
-    expect(tokenValueError('--drd-panel-opacity', '59%')).not.toBeNull()
+    expect(tokenValueError('--drd-panel-opacity', '49%')).not.toBeNull()
     expect(tokenValueError('--drd-panel-opacity', '101%')).not.toBeNull()
     expect(tokenValueError('--drd-panel-opacity', '0.8')).not.toBeNull()
     expect(tokenValueError('--drd-panel-opacity', '80% ')).toBeNull() // okraje se ořezávají

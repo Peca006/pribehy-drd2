@@ -14,6 +14,11 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
   včetně ilustrací). Zbývá projít migrace při první skutečné změně tvaru dat a ověřit zálohu a obnovu na telefonu (soubor přes
   e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`.
+- **Systémové Zpět v Androidu (návrh).** Tlačítko Zpět telefonu vrací o krok v historii prohlížeče, uživatel čeká návrat o úroveň výš
+  jako v aplikaci. Řešení vyžaduje strom stránek (nadřazená stránka každé adresy, `parentOf`), zachycení návratu přes Navigation API
+  (`navigate` s `traverse` dozadu) a nahrazení cílem „o úroveň výš“ (v kořeni modulu nechat výchozí chování), aby se historie
+  nezacyklila. Univerzální tlačítko „Zpět“ (`ui/BackButton.svelte`) už vrací na stránku, odkud se přišlo. Dělat po ověření na
+  telefonu a až s pevným stromem stránek (a rozmyslet, co dělá Zpět na záložkách a v Při hře).
 - **Přenosy (pořadí).** Wi-Fi / WebRTC → QR na celou obrazovku a tisk → NFC. `file_handlers` se nedělají (jen počítač).
   Plán WebRTC (sezení bez internetu, hotspot, rozeslání změn): `PLAN-WEBRTC.md`.
   Kód, soubor, QR (s odkazem do aplikace, zhuštění historie), zvuk a příjem sdíleného souboru jsou hotové.
