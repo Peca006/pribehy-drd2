@@ -158,14 +158,28 @@ async function pipe(data: Uint8Array, stream: CompressionStream | DecompressionS
   return out
 }
 
-/** Text kódu pro balíček: `DRD2:` + stlačený JSON. */
-export async function encodeBundle(b: Bundle): Promise<string> {
+/** Text kódu pro libovolný JSON: `DRD2:` + stlačený JSON (společné pro všechny druhy zásilek). */
+export async function encodeJson(value: unknown): Promise<string> {
   const bytes = await pipe(
-    new TextEncoder().encode(JSON.stringify(b)),
+    new TextEncoder().encode(JSON.stringify(value)),
     new CompressionStream('deflate-raw'),
   )
   return PREFIX + b64(bytes)
 }
+
+/** Přečte kód `DRD2:…` nebo holý JSON do neočištěné hodnoty (očištění dělá volající). */
+export async function decodeJson(text: string): Promise<unknown> {
+  const t = text.trim()
+  if (!t.startsWith(PREFIX)) return JSON.parse(t)
+  const bytes = await pipe(
+    unb64(t.slice(PREFIX.length).replace(/\s+/g, '')),
+    new DecompressionStream('deflate-raw'),
+  )
+  return JSON.parse(new TextDecoder().decode(bytes))
+}
+
+/** Text kódu pro balíček: `DRD2:` + stlačený JSON. */
+export const encodeBundle = (b: Bundle): Promise<string> => encodeJson(b)
 
 // --- očištění ---
 
@@ -361,17 +375,8 @@ function imagesOf(raw: unknown): { images?: SharedImage[] } {
 
 /** Přečte kód `DRD2:…` nebo holý JSON a očistí ho. */
 export async function decodeBundle(text: string): Promise<{ bundle?: Bundle; errors: string[] }> {
-  const t = text.trim()
-  let json: string
   try {
-    if (t.startsWith(PREFIX)) {
-      const bytes = await pipe(
-        unb64(t.slice(PREFIX.length).replace(/\s+/g, '')),
-        new DecompressionStream('deflate-raw'),
-      )
-      json = new TextDecoder().decode(bytes)
-    } else json = t
-    return sanitizeBundle(JSON.parse(json))
+    return sanitizeBundle(await decodeJson(text))
   } catch (e) {
     return {
       errors: [

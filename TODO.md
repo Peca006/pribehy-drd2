@@ -6,7 +6,7 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 
 ### Další práce
 
-- ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); zbývá zkouška na telefonu a export a import výprav souborem.
+- ✅ **Výpravy (0.5.0).** Etapy 1 až 7 hotové (`PLAN-VYPRAVY.md`); export a import výprav souborem hotový (Zásilky, nevydáno); zbývá zkouška na telefonu.
 - 🚧 **Vedení hry (rozpracováno, plán `PLAN-VEDENI-HRY.md`, etapy 1 až 4 hotové a vydané v 0.5.10: časomíra, spravedlivý prostor, plán, odpočet; zbývá vazba na Při hře a zkouška na telefonu).** Časomíra (kolik času měl který hráč), spravedlivý herní prostor pro všechny, snadno porovnatelné
   stupnice, plánování podle délky sezení, rychlé přepínání mezi hráči (postavami) a krátký odpočet pro rychlé reakce. Zápis v `PLAN-VYPRAVY.md`.
 - ✅ **Kořist (11e, 0.5.0).** Příprava u příhody, odhalení, upřesnění a rozdělení postavám.

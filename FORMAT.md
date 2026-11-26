@@ -96,6 +96,16 @@ srozumitelnou hláškou. Ilustrace postavy nese jen soubor (`images`, base64, ne
 Typy: `revize` (revize postavy, volitelně zhuštěná historie `compact` a použité předpisy `recipes`), `odpoved` (odpověď vypravěče),
 `druzina`, `predpisy`.
 
+## Zásilky obsahu (výprava, dobrodružství, cizí postavy)
+
+Obálka `{ v: 1, type: 'obsah', kind, … }` ve stejné podobě jako přenos postavy (kód `DRD2:` nebo holý JSON, soubor `*.drd2.txt`).
+Druhy (`kind`): `vyprava` (`expedition`; cizí postavy z dobrodružství jsou přiložené v `cast`, `castIds` a `adventureId` odpadají),
+`dobrodruzstvi` (`adventure` a `expeditions` v pořadí dobrodružství) a `cizi-postava` (`npcs`). Příjemce vše očistí
+(`sanitizeContent`: typy, délky, počty, neznámá pole se zahodí), při uložení přidělí **nová ID** (výpravy, dobrodružství, postavy,
+příhody, kořist) a překládá odkazy mezi nimi; uzlové body si ID ponechají. Stav vedení (`Run`) se nikdy nepřenáší. Pozadí a příhody jsou
+součástí zásilky: posílá je vypravěč jinému vypravěči. Rozpoznání příchozí zásilky (včetně bestiáře, Hávu a balíčků postav) dělá
+`core/exchange/detect.ts`. Obálka bude nosičem i pro WebRTC (`PLAN-WEBRTC.md`).
+
 ## Záloha všech dat
 
 Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):

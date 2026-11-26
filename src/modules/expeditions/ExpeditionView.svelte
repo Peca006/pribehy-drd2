@@ -14,6 +14,8 @@
   import IncidentsEditor from './IncidentsEditor.svelte'
   import InspirationPanel from './InspirationPanel.svelte'
   import NodesEditor from './NodesEditor.svelte'
+  import SendContent from '../exchange/SendContent.svelte'
+  import { buildExpeditionContent, buildNpcContent } from '../../core/exchange/content'
 
   // Příprava výpravy: téma, pozadí, zápletka, cíl, styl, uzlové body, příhody v balíčcích a rozuzlení.
   let { id }: { id: string } = $props()
@@ -87,6 +89,12 @@
   {#if loaded}<p class="muted">Výprava nenalezena. <a href="#/vypravy">Zpět na přehled</a></p>{/if}
 {:else}
   <HelpHeading level={1} title="Příprava výpravy" topic="vypravy" />
+  <SendContent
+    label="Sdílet výpravu"
+    kind="vyprava"
+    name={exp.name}
+    build={() => buildExpeditionContent($state.snapshot(exp!) as Expedition, adventure)}
+  />
   <div onchange={save} role="group" aria-label="Údaje výpravy">
     <label>Název <input bind:value={exp.name} /></label>
     <label>
@@ -134,6 +142,14 @@
     <p class="muted">Vlastní cizí postavy výpravy{adventure ? '' : ' (výprava není v dobrodružství)'}.</p>
     {#if exp.cast}
       <NpcEditor bind:npcs={exp.cast} uses={ownUses} onsave={save} onremove={removeOwn} />
+      {#if exp.cast.length}
+        <SendContent
+          label="Sdílet vlastní cizí postavy"
+          kind="cizi-postavy"
+          name={exp.name}
+          build={() => buildNpcContent($state.snapshot(exp!.cast ?? []) as Npc[])}
+        />
+      {/if}
     {/if}
 
     <InspirationPanel />

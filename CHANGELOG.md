@@ -1,5 +1,10 @@
 # Změny
 
+## Nevydáno
+
+- **Přijmout obsah (Dílna → 📥):** jedno místo pro soubor, vložený kód nebo QR. Aplikace pozná výpravu, dobrodružství, cizí postavy, bytosti, Háv (`.drdskin`) i balíček postavy či družiny (ten předá do Importu postav), ukáže souhrn a nic neuloží bez potvrzení. Nic se nepřepisuje, vždy vznikne nová kopie s novými ID.
+- **Sdílení výprav:** u výpravy, dobrodružství (s výpravami a cizími postavami) a vlastních cizích postav je „Sdílet“: soubor, kód nebo Sdílet… Posílá se i tajné pozadí a příhody (vypravěč jinému vypravěči); rozehraná vedení ne. Výprava je soběstačná: cizí postavy z dobrodružství se přiloží. Tím je hotový i export a import výprav souborem.
+
 ## 0.6.0 (26. 11. 2026)
 
 - **Švadlena, editor Hávů:** Dílna → Švadlena (🪡). Vlastní Háv vznikne jako kopie vestavěného, nainstalovaného nebo prázdného základu; vestavěné Hávy se nikdy nemění. Úpravy se ukládají samy, vedle formuláře je živý náhled aplikace v rámečku zařízení (včetně širokého okna), Háv jde použít a exportovat do `.drdskin`. U vlastních Hávů v Šatníku je tlačítko Upravit.

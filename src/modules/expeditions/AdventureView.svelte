@@ -24,6 +24,8 @@
   import { usage } from '../../core/expedition/cast'
   import type { Npc } from '../../core/expedition/model'
   import NpcEditor from './NpcEditor.svelte'
+  import SendContent from '../exchange/SendContent.svelte'
+  import { buildAdventureContent, buildNpcContent } from '../../core/exchange/content'
 
   // Dobrodružství: lehký kontejner (téma, pozadí, poznámky) a výpravy v doporučeném pořadí.
   let { id }: { id: string } = $props()
@@ -115,6 +117,12 @@
   {#if loaded}<p class="muted">Dobrodružství nenalezeno. <a href="#/vypravy">Zpět na přehled</a></p>{/if}
 {:else}
   <HelpHeading level={1} title="Dobrodružství" topic="vypravy" />
+  <SendContent
+    label="Sdílet dobrodružství s výpravami"
+    kind="dobrodruzstvi"
+    name={adventure.name}
+    build={() => buildAdventureContent($state.snapshot(adventure!) as Adventure, all)}
+  />
   <div onchange={save} role="group" aria-label="Údaje dobrodružství">
     <label>Název <input bind:value={adventure.name} /></label>
     <label>Téma <input bind:value={adventure.theme} placeholder="např. cena bohatství, útisk jiných ras" /></label>
@@ -134,6 +142,14 @@
     </p>
     {#if adventure.cast}
       <NpcEditor bind:npcs={adventure.cast} uses={npcUses} onsave={save} onremove={removeNpc} />
+      {#if adventure.cast.length}
+        <SendContent
+          label="Sdílet cizí postavy"
+          kind="cizi-postavy"
+          name={adventure.name}
+          build={() => buildNpcContent($state.snapshot(adventure!.cast ?? []) as Npc[])}
+        />
+      {/if}
     {/if}
   </div>
 
