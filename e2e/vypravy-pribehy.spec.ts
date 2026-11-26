@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { readStore } from './helpers'
+import { readStore } from './helpers.js'
 
 // Výpravy, etapa 2: uzlové body a příhody v balíčcích, přesun mezi balíčky, cizí postavy, uložení.
 
