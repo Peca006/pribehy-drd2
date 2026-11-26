@@ -2,6 +2,7 @@
   import { onDestroy, onMount } from 'svelte'
   import { setSkin, settings } from '../../core/settings.svelte'
   import type { AssetFile } from '../../core/skin/file'
+  import { assetLimitError } from '../../core/skin/editor-assets'
   import {
     ENUM_LABELS,
     FONT_PRESETS,
@@ -24,12 +25,13 @@
   import { lengthPx } from '../../core/skin/tokens'
   import { BUILTIN_ASSETS, BUILTIN_SKINS } from '../../themes/havy'
   import DevicePreview from './DevicePreview.svelte'
+  import SvadlenaImages from './SvadlenaImages.svelte'
   import { downloadSkin } from './download'
 
   // Švadlena: editor Hávů. Upravuje se vždy vlastní kopie uložená v zařízení; každá změna projde stejnou validací jako
   // import souboru a po krátké prodlevě se uloží, takže náhled (aplikace v rámečku zařízení) ukazuje poslední platný stav.
-  // Etapa 1: tokeny (barvy, písmo, tvary, mezery, průhlednost panelů, poloha lišty). Obrázky a varianty zůstávají
-  // ze zdrojového Hávu. Pravidla formátu: WARDROBE.md.
+  // Etapa 1: tokeny (barvy, písmo, tvary, mezery, průhlednost panelů, poloha lišty). Etapa 2: obrázky, role,
+  // ikony záložek a ozdoby (`SvadlenaImages.svelte`). Varianty zůstávají ze zdrojového Hávu. Pravidla formátu: WARDROBE.md.
   let { id }: { id?: string } = $props()
 
   const APP = { appVersion: __APP_VERSION__ }
@@ -91,7 +93,7 @@
 
   // ---------- editor ----------
   let draft = $state.raw<Skin | null>(null)
-  let assets: readonly AssetFile[] = []
+  let assets = $state.raw<readonly AssetFile[]>([])
   let missing = $state(false)
   let problems = $state.raw<SkinIssue[]>([])
   let fieldError = $state<Record<string, string>>({})
@@ -120,14 +122,20 @@
     timer = setTimeout(flush, SAVE_DELAY)
   }
 
+  function editWithAssets(next: Skin, nextAssets: readonly AssetFile[]) {
+    assets = nextAssets
+    edit(next)
+  }
+
   /** Uloží rozpracovaný Háv, je-li platný; jinak ponechá poslední uloženou verzi a ukáže důvody. */
   async function flush() {
     clearTimeout(timer)
     const current = draft
     if (!current) return
     const v = validateSkin(current, APP)
-    problems = v.issues
-    if (!v.ok) return
+    const limit = assetLimitError(assets)
+    problems = limit ? [...v.issues, { level: 'error', path: 'assets', message: limit }] : v.issues
+    if (!v.ok || limit) return
     try {
       const r = await putSkin(current, Date.now(), APP, assets)
       if (!r.ok) {
@@ -349,6 +357,8 @@
           {/each}
         </section>
       {/each}
+
+      <SvadlenaImages skin={d} {assets} onchange={editWithAssets} />
     </div>
 
     <div class="preview">

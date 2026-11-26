@@ -246,5 +246,9 @@ nízkém) a čtyři rohové ozdoby.
   přepočítá se, je-li používaný, a náhled (iframe jako v Šatníku, `rev` v adrese) se načte znovu.
   - ✅ **Etapa 1: tokeny** (barvy, písmo a stíny, zaoblení, mezery, tvary, průhlednost panelů, poloha lišty, metadata,
     schéma, export `.drdskin`, použití). Obrázky, role, ikony, ozdoby a varianty zůstávají ze zdroje beze změny.
-  - **Etapa 2: obrázky** (nahrání pro pozadí, rámečky, záhlaví, ozdoby, ikony s kontrolou `image.ts`).
+  - ✅ **Etapa 2: obrázky** (`core/skin/editor-assets.ts`, `modules/wardrobe/SvadlenaImages.svelte`). Nahrání PNG, WebP, JPEG a SVG
+    z počítače prochází stejnou kontrolou jako obrázek v souboru (`inspectImage`: typ podle obsahu, rozměry, SVG bez skriptů
+    a cizích odkazů) a stejnými mezemi (32 obrázků, 2 MB, 16 Mpx dohromady). Role (pozadí, panel, tlačítko, lišta, dělicí čára,
+    okno, záhlaví), ikony záložek a ozdoby se nastavují a ověřují týmiž funkcemi jako při importu (`validateRoles`,
+    `validateOrnaments`); odebrání obrázku odebere i místa, která ho používají. Role ve variantách se zatím neupravují.
   - **Etapa 3: varianty** pro 12 kombinací viewportu.
