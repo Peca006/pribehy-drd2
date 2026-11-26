@@ -73,7 +73,7 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - ✅ **Formát dat a záloha:** `FORMAT.md` (přehled úložišť, `schema` + migrace, přenosy, pravidla změn), záloha všech dat do jednoho
   `.json` s ilustracemi a místním stavem, obnova „doplnit / přepsat“ s očištěním vstupu (Více → Záloha a obnova dat).
 - ✅ **PWA:** aktualizace s pruhem „Obnovit“, instalace (Android, iOS návod), ikony.
-- ✅ **Převod SRD v zařízení (bookmarklet):** UI odstraněno v 0.4.5, zbytky kódu a sestavení (`tools/srd/browser`, `vite.srd.config.ts`); balíčky se stahují hotové.
+- ✅ **Převod SRD v zařízení (bookmarklet):** UI odstraněno v 0.4.5, kód a sestavení (`tools/srd/browser`, `vite.srd.config.ts`) uklizeny; balíčky se stahují hotové.
 - ✅ **Tvorba postavy:** výbava bez balíčku, generátor jmen.
 - ✅ **Nápověda napříč aplikací (0.4.9):** tlačítko „?“ s panelem pod prvkem u pomůcek, postavy a družiny, Příručky, Bestiáře a Více;
   registr témat `src/core/help.ts` (kroky, návody, odkazy do příručky nebo SRD, kotvy hlídá test); stránka Nápověda ve Více
