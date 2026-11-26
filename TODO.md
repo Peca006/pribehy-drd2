@@ -36,6 +36,15 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - **Balíčky ze SRD, obnova.** Data udržujeme sami; nový balíček jen při změně SRD (kontrola jednou za měsíc až rok) nebo
   formátu balíčků. Postup: build, `tools/srd/publish.mjs`, commit, nasazení `main`; při změně formátu zvýšit `PACK_BUILD`
   a `EXPECTED_BUILD`. Svolení Altaru: `content-packs/srd/SVOLENI.md` (Her mocných a Hotfixu se netýká).
+- **Chybné odkazy v SRD balíčku (příležitostně).** Dva odkazy v Příručce vedou na kapitolu `36-kouzla-nastahy-leceni`
+  (`#trvani-kouzel`, `#nastrahy`), správné ID je `36-kouzla-nastrahy-leceni` (kotvy tam existují). Odkaz v aplikaci i v ePubu
+  nefunguje. Oprava ve zdroji (`tools/srd`, ověřit proti SRD), pak `PACK_BUILD`/`EXPECTED_BUILD` a `publish.mjs`; hlídat testem,
+  že každý odkaz `chapter:` v balíčcích vede na existující kapitolu a kotvu (`tools/epub/epub.test.ts` to dnes hlídá jen pro ePub).
+- **Sjednotit tvary slov (kmeny).** Dnes jsou dvě implementace: `stemOf` v `tools/srd/derive.mjs` (první 4 písmena, z toho aliasy
+  v `terms` balíčku pro odkazy, vyhledávání a rejstřík v aplikaci) a bohatší `tools/epub/forms.mjs` (kmen bez diakritiky a koncovky,
+  střídání samohlásek, volba základního tvaru, tabulky `LEMMA` a `IRREGULAR`; ePub aliasy z balíčku respektuje a doplňuje). Cíl:
+  jediný modul (např. `src/core/forms`), který použije `derive.mjs` i ePub. Změna aliasů mění balíček, takže zvýšit `PACK_BUILD`
+  a `EXPECTED_BUILD`, znovu `publish.mjs` a ověřit, že odkazy v textu nezmizely (porovnat počet aliasů a odkazů před a po).
 - **K ověření na telefonu.** Dialogy (léčení, výroba, lektvary, nástrahy, kouzla), Hotovost, Grimoár, ilustrace, značka
   „změnil Průvodce“, volba „moje / jejich“ při importu, příjem souboru přes Sdílet (`share_target`, jen nainstalovaná PWA), přenos postavy s novými
   poli mezi zařízeními.
