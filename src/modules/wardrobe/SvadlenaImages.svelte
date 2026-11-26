@@ -5,6 +5,7 @@
     addAsset,
     assetStats,
     defaultRole,
+    patchedRole,
     removeAsset,
     setIcon,
     setOrnaments,
@@ -12,17 +13,10 @@
     usesOf,
   } from '../../core/skin/editor-assets'
   import type { AssetFile } from '../../core/skin/file'
-  import {
-    MAX_HEADER_HEIGHT,
-    MIN_HEADER_HEIGHT,
-    ROLE_EDGES,
-    ROLE_MODES,
-    ROLE_POSITIONS,
-    type Role,
-    type RoleName,
-  } from '../../core/skin/roles'
+  import type { Role, RoleName } from '../../core/skin/roles'
   import { MAX_ORNAMENTS, MAX_ORNAMENT_WIDTH, MIN_ORNAMENT_WIDTH, ORNAMENT_ANCHORS, type Ornament } from '../../core/skin/ornaments'
   import { MAX_ASSETS, type Skin } from '../../core/skin/skin'
+  import RoleControls from './RoleControls.svelte'
 
   // Švadlena, etapa 2: obrázky Hávu a místa, kde se používají (role, ikony záložek, ozdoby). Ověřování dělá jádro
   // (`core/skin/editor-assets.ts`), tady je jen rozhraní.
@@ -40,21 +34,6 @@
     divider: { title: 'Dělicí čára', hint: 'čára mezi částmi stránky' },
     dialog: { title: 'Okna', hint: 'rámeček dialogů' },
     header: { title: 'Záhlaví', hint: 'pás s obrázkem nad obsahem, povinná výška' },
-  }
-  const MODE_LABELS: Record<string, string> = {
-    stretch: 'Roztáhnout',
-    contain: 'Celý obrázek',
-    cover: 'Vyplnit plochu',
-    repeat: 'Dlaždice',
-    'repeat-x': 'Dlaždice vodorovně',
-    'repeat-y': 'Dlaždice svisle',
-    slice: 'Rámeček (devítidílný)',
-  }
-  const EDGE_LABELS: Record<string, string> = {
-    stretch: 'Roztáhnout',
-    repeat: 'Opakovat',
-    round: 'Opakovat a přizpůsobit',
-    space: 'Opakovat s mezerami',
   }
   const ANCHOR_LABELS: Record<string, string> = {
     'top-left': 'Vlevo nahoře',
@@ -130,18 +109,7 @@
 
   function patchRole(name: RoleName, patch: Partial<Role>) {
     const cur = skin.roles[name]
-    if (!cur) return
-    const next: Role = { ...cur, ...patch }
-    if (next.mode === 'slice') {
-      next.slice ??= [12, 12, 12, 12]
-    } else {
-      delete next.slice
-      delete next.width
-      delete next.fill
-      delete next.edge
-    }
-    if (!next.mode.startsWith('repeat')) delete next.size
-    changeRole(name, next)
+    if (cur) changeRole(name, patchedRole(cur, patch))
   }
 
   function pickImage(name: RoleName, image: string) {
@@ -149,16 +117,6 @@
     const cur = skin.roles[name]
     changeRole(name, cur ? { ...cur, image } : defaultRole(name, image))
   }
-
-  function setSlice(name: RoleName, index: number, raw: string) {
-    const cur = skin.roles[name]
-    if (!cur?.slice) return
-    const slice = [...cur.slice] as Role['slice']
-    slice![index] = Number(raw)
-    patchRole(name, { slice })
-  }
-
-  const numberOr = (raw: string): number | undefined => (raw.trim() === '' ? undefined : Number(raw))
 
   // ---------- ikony a ozdoby ----------
   function pickIcon(moduleId: string, image: string) {
@@ -224,60 +182,7 @@
       </div>
       <p class="muted hint">{ROLE_LABELS[name].hint}</p>
       {#if role}
-        <div class="grid">
-          <label>
-            <span class="muted">Zobrazení</span>
-            <select value={role.mode} onchange={(e) => patchRole(name, { mode: e.currentTarget.value as Role['mode'] })}>
-              {#each ROLE_MODES.filter((m) => name !== 'header' || m !== 'slice') as m (m)}
-                <option value={m}>{MODE_LABELS[m]}</option>
-              {/each}
-            </select>
-          </label>
-          <label>
-            <span class="muted">Poloha</span>
-            <select value={role.position ?? 'center'} onchange={(e) => patchRole(name, { position: e.currentTarget.value as Role['position'] })}>
-              {#each ROLE_POSITIONS as p (p)}<option value={p}>{p}</option>{/each}
-            </select>
-          </label>
-          {#if role.mode.startsWith('repeat')}
-            <label>
-              <span class="muted">Šířka dlaždice (px)</span>
-              <input type="number" min="1" max="2048" value={role.size ?? ''} onchange={(e) => patchRole(name, { size: numberOr(e.currentTarget.value) })} />
-            </label>
-          {/if}
-          {#if name === 'header' || name === 'divider'}
-            <label>
-              <span class="muted">Výška (px){name === 'header' ? ` ${MIN_HEADER_HEIGHT} až ${MAX_HEADER_HEIGHT}` : ''}</span>
-              <input type="number" min="1" max={name === 'header' ? MAX_HEADER_HEIGHT : 512} value={role.height ?? ''} onchange={(e) => patchRole(name, { height: numberOr(e.currentTarget.value) })} />
-            </label>
-          {/if}
-          {#if name === 'background'}
-            <label class="check">
-              <input type="checkbox" checked={!!role.pixelated} onchange={(e) => patchRole(name, { pixelated: e.currentTarget.checked })} />
-              <span>Pixelart (ostré zvětšení)</span>
-            </label>
-          {/if}
-        </div>
-        {#if role.mode === 'slice' && role.slice}
-          <div class="grid">
-            {#each ['nahoře', 'vpravo', 'dole', 'vlevo'] as side, i (side)}
-              <label>
-                <span class="muted">Okraj {side} (px obrázku)</span>
-                <input type="number" min="0" max="2048" value={role.slice[i]} onchange={(e) => setSlice(name, i, e.currentTarget.value)} />
-              </label>
-            {/each}
-            <label>
-              <span class="muted">Strany rámečku</span>
-              <select value={role.edge ?? 'stretch'} onchange={(e) => patchRole(name, { edge: e.currentTarget.value as Role['edge'] })}>
-                {#each ROLE_EDGES as x (x)}<option value={x}>{EDGE_LABELS[x]}</option>{/each}
-              </select>
-            </label>
-            <label class="check">
-              <input type="checkbox" checked={role.fill !== false} onchange={(e) => patchRole(name, { fill: e.currentTarget.checked })} />
-              <span>Vyplnit střed obrázkem</span>
-            </label>
-          </div>
-        {/if}
+        <RoleControls {name} {role} onpatch={(patch) => patchRole(name, patch)} />
         {#if variantRoles(name)}
           <p class="muted hint">Pro některé rozměry okna roli přepisuje varianta (varianty se upravují v další etapě).</p>
         {/if}

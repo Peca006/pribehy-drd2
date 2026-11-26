@@ -11,6 +11,8 @@
     { id: 'tel-s', label: 'Telefon na šířku', w: 740, h: 360 },
     { id: 'tab-v', label: 'Tablet na výšku', w: 768, h: 1024 },
     { id: 'tab-s', label: 'Tablet na šířku', w: 1180, h: 820 },
+    { id: 'okno-s', label: 'Široké okno', w: 1400, h: 900 },
+    { id: 'okno-v', label: 'Široké okno na výšku', w: 1100, h: 1400 },
   ] as const
   const PAGES = [
     { hash: '#/postavy', label: 'Postavy' },

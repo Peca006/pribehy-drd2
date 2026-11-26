@@ -238,7 +238,7 @@ nízkém) a čtyři rohové ozdoby.
   E2E: `e2e/satnik.spec.ts`.
 - ✅ **Role `dialog`:** jednotný vzhled oken v `app.css`, role v Hávu, ozdobný zlatý rám s rubíny pro Podzemí.
 - ✅ **M3 (poloha lišty, tvary, záhlaví a ozdoby)** je hotový, viz výše.
-- 🚧 **Švadlena (editor Hávů).** Dílna → Švadlena, adresa `#/satnik/svadlena[/<id>]`. Jádro `core/skin/editor.ts` (čisté
+- ✅ **Švadlena (editor Hávů).** Dílna → Švadlena, adresa `#/satnik/svadlena[/<id>]`. Jádro `core/skin/editor.ts` (čisté
   funkce, test `editor.test.ts`), rozhraní `modules/wardrobe/Svadlena.svelte`. Upravuje se vždy vlastní kopie (`copyForEditing`
   z vestavěného, nainstalovaného nebo prázdného základu; `id` ve tvaru `moje-<název>`), která se ukládá do úložiště Hávů.
   Každá změna projde stejnou validací jako import (`setToken` → `tokenValueError`, před uložením `validateSkin` včetně
@@ -251,4 +251,8 @@ nízkém) a čtyři rohové ozdoby.
     a cizích odkazů) a stejnými mezemi (32 obrázků, 2 MB, 16 Mpx dohromady). Role (pozadí, panel, tlačítko, lišta, dělicí čára,
     okno, záhlaví), ikony záložek a ozdoby se nastavují a ověřují týmiž funkcemi jako při importu (`validateRoles`,
     `validateOrnaments`); odebrání obrázku odebere i místa, která ho používají. Role ve variantách se zatím neupravují.
-  - **Etapa 3: varianty** pro 12 kombinací viewportu.
+  - ✅ **Etapa 3: varianty** (`core/skin/editor-variants.ts`, `modules/wardrobe/SvadlenaVariants.svelte`). Přidání (z předvoleb),
+    podmínka (šířka, orientace, nízké okno; musí omezit aspoň jednu), pořadí (pozdější přepíše dřívější), odebrání, přepsání tokenů
+    a rolí (jako základní, vypnout, jiný obrázek) ověřené týmiž funkcemi jako při importu, souhrn pokrytí 12 kombinací okna.
+    Náhled má i široké okno na šířku a na výšku. Ovládání tokenu (`TokenControl`) a role (`RoleControls`) je sdílené se základním editorem.
+  - Švadlena je tím hotová; další nápady: úpravy ikon přímo v aplikaci (kreslení), sdílení Hávu odkazem.
