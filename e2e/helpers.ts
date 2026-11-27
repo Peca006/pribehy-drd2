@@ -22,3 +22,22 @@ export async function clearRecipes(page: Page) {
   )
   await page.reload()
 }
+
+/** Přečte všechny záznamy úložiště IndexedDB (zkoušky tak počkají, až se změna opravdu uloží, a ne jen vykreslí). */
+export async function readStore<T = unknown>(page: Page, store: string): Promise<T[]> {
+  return page.evaluate(
+    (name) =>
+      new Promise<unknown[]>((resolve, reject) => {
+        const open = indexedDB.open('drd2-data')
+        open.onerror = () => reject(open.error)
+        open.onsuccess = () => {
+          const db = open.result
+          if (!db.objectStoreNames.contains(name)) return db.close(), resolve([])
+          const req = db.transaction(name).objectStore(name).getAll()
+          req.onsuccess = () => (db.close(), resolve(req.result))
+          req.onerror = () => reject(req.error)
+        }
+      }),
+    store,
+  ) as Promise<T[]>
+}

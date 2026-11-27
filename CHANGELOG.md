@@ -1,5 +1,9 @@
 # Změny
 
+## Nevydáno
+
+- **Záloha jen vlastních dat:** do zálohy přibyly nainstalované a vlastní Hávy (i s obrázky) a vynechala se ukázková data (postavy, družina, výpravy a předpisy s ID `demo-…`, jejich obrázky a místní stav). Vestavěné Hávy a obsahové balíčky se nezálohují už dřív. Souhrn zálohy uvádí počet Hávů. Starší soubory zálohy se čtou dál.
+
 ## 0.6.1 (26. 11. 2026)
 
 - **Test WebRTC (Dílna, za zkouškou zvuku):** rozbalovací sekce pro průzkum přenosů bez serveru. Dvě zařízení se propojí nabídkou a odpovědí (QR nebo vložený text), ukáže se stav spojení, vybraná dvojice kandidátů, adresy `.local`, odezva a jde poslat zprávu. Pokyny a zápis zkoušek (otestováno, OK či KO, poznámka, zkopírování výsledků) jsou v sekci. Po průzkumu se odstraní.

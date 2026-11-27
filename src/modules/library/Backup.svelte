@@ -35,7 +35,7 @@
       a.click()
       URL.revokeObjectURL(a.href)
       const s = summarize(b)
-      msg = `Záloha uložena: ${s.characters} postav, ${s.parties} družin, ${s.creatures} bytostí, ${s.recipes} předpisů, ${s.adventures} dobrodružství, ${s.expeditions} výprav, ${s.runs} vedení, ${s.sittings} sezení, ${s.images} obrázků (${(blob.size / 1_000_000).toFixed(1)} MB).`
+      msg = `Záloha uložena: ${s.characters} postav, ${s.parties} družin, ${s.creatures} bytostí, ${s.recipes} předpisů, ${s.adventures} dobrodružství, ${s.expeditions} výprav, ${s.runs} vedení, ${s.sittings} sezení, ${s.images} obrázků, ${s.skins} Hávů (${(blob.size / 1_000_000).toFixed(1)} MB).`
     } catch (err) {
       msg = err instanceof Error ? err.message : String(err)
     } finally {
@@ -110,7 +110,7 @@
       {@const s = summarize(parsed.backup)}
       <div role="status">
         <strong>{fileName}</strong>: {s.characters} postav, {s.parties} družin, {s.creatures} bytostí, {s.recipes} předpisů,
-        {s.adventures} dobrodružství, {s.expeditions} výprav, {s.runs} vedení, {s.sittings} sezení, {s.images} obrázků{parsed.backup.created ? `, vytvořeno ${new Date(parsed.backup.created).toLocaleString('cs-CZ')}` : ''}.
+        {s.adventures} dobrodružství, {s.expeditions} výprav, {s.runs} vedení, {s.sittings} sezení, {s.images} obrázků, {s.skins} Hávů{parsed.backup.created ? `, vytvořeno ${new Date(parsed.backup.created).toLocaleString('cs-CZ')}` : ''}.
         {#if dropNote(parsed)}<p class="muted">{dropNote(parsed)}</p>{/if}
       </div>
       <label class="check">
@@ -131,7 +131,7 @@
     <p role="status">
       Obnoveno: přidáno {result.added.characters} postav, {result.added.parties} družin, {result.added.creatures} bytostí,
       {result.added.recipes} předpisů, {result.added.adventures} dobrodružství, {result.added.expeditions} výprav,
-      {result.added.runs} vedení, {result.added.sittings} sezení, {result.added.images} obrázků{result.replaced ? `, přepsáno ${result.replaced}` : ''}{result.kept
+      {result.added.runs} vedení, {result.added.sittings} sezení, {result.added.images} obrázků, {result.added.skins} Hávů{result.replaced ? `, přepsáno ${result.replaced}` : ''}{result.kept
         ? `, ponecháno ${result.kept} stávajících`
         : ''}.
       <button onclick={() => location.reload()}>Načíst aplikaci znovu</button>

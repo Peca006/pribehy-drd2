@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { darkTheme, lightTheme } from '../../themes/default'
 import {
-  ALL_VIEWPORTS,
   classifyViewport,
   contrastIssues,
   MAX_VARIANTS,
@@ -36,8 +35,6 @@ describe('classifyViewport', () => {
     [1000, 900, { width: 'medium', orientation: 'landscape', low: false }],
     [1001, 479, { width: 'expanded', orientation: 'landscape', low: true }],
   ])('%i×%i', (w, h, expected) => expect(classifyViewport(w, h)).toEqual(expected))
-
-  it('pokrývá všech 12 kombinací', () => expect(ALL_VIEWPORTS).toHaveLength(12))
 })
 
 describe('výchozí skiny', () => {

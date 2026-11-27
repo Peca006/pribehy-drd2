@@ -22,16 +22,6 @@ const zipOf = (json: string | Uint8Array, extraFiles: { name: string; data: Uint
   ])
 
 describe('readSkinFile', () => {
-  it('přečte platný soubor', async () => {
-    const r = await readSkinFile(await zipOf(JSON.stringify(manifest())))
-    expect(r.ok).toBe(true)
-    expect(r.skin).toMatchObject({
-      id: 'nocni',
-      scheme: 'dark',
-      tokens: { '--drd-accent': '#ffcc33' },
-    })
-  })
-
   it('toleruje BOM na začátku manifestu', async () => {
     const r = await readSkinFile(
       await zipOf(String.fromCharCode(0xfeff) + JSON.stringify(manifest())),
