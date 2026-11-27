@@ -26,6 +26,18 @@ export type StoreName = (typeof STORES)[number]
 /** Úložiště se záznamy s číslem schématu (obrázky bytostí a postav jsou jen binární data). */
 export type DataStore = Exclude<StoreName, 'creatureImages' | 'characterImages'>
 
+/** Úložiště se záznamy s číslem schématu: při upgradu databáze se v nich migrují všechny záznamy. */
+export const DATA_STORES = [
+  'characters',
+  'creatures',
+  'parties',
+  'recipes',
+  'adventures',
+  'expeditions',
+  'runs',
+  'sittings',
+] as const satisfies readonly DataStore[]
+
 export type Migration = (record: Record<string, unknown>) => Record<string, unknown>
 
 /** Převody mezi schématy: `MIGRATIONS[store][i]` převádí schéma i+1 na i+2. */
@@ -76,7 +88,7 @@ const conn = connection(DB, VERSION, (req, oldVersion) => {
   if (!portraits.indexNames.contains('characterId')) portraits.createIndex('characterId', 'characterId')
   // migrace existujících záznamů (v jedné transakci s upgradem: buď se povede celá, nebo žádná)
   if (oldVersion > 0)
-    for (const s of ['characters', 'creatures', 'parties', 'recipes', 'adventures', 'expeditions', 'runs', 'sittings'] as const) {
+    for (const s of DATA_STORES) {
       const cursor = req.transaction!.objectStore(s).openCursor()
       cursor.onsuccess = () => {
         const c = cursor.result
