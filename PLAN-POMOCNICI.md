@@ -21,6 +21,12 @@ Zdroj pravidel: SRD, kapitola „Pomocníci a sítě“ (část o sítích zatí
   Jizva na Poutu se léčí za **pětinásobek Platby** (viz `PLAN-POMUCKY.md`).
 - **Získání pomocníka**: vyhledání, připoutání (střet či konflikt, vzniká Pouto a Platba), určení Platby. Rozhoduje Průvodce; aplikace to jen zapisuje.
 
+## Souvislosti s postavou
+
+- **Zdatnost hrdiny** (Tělo, Duše, Vliv) nemá v pravidlech **horní limit** (potvrzeno 27. 11. 2026). Na začátku se rozděluje 15 bodů, každá zdatnost aspoň 1.
+- **Hranice** (Tělo, Duše, Vliv) patří bytostem, tedy i pomocníkům: neurčují počet Zdrojů, jen kolik Sudby bytost vyčerpá najednou.
+- **Pouto** pomocníka má zdatnost 1 až 5 (to je jediný strop).
+
 ## Rozhodnutí (27. 11. 2026, zadání uživatele)
 
 - **Pomocník je samostatný záznam** (jako cizí postava), ne součást jedné postavy. Může to být člověk, zvíře, netvor, oživený či nemrtvý tvor, běs, golem…
