@@ -135,6 +135,7 @@ export const TOPICS: Card[] = [
     text: 'Zdroje jsou Tělo, Duše a Vliv. Čerpají se při vyčerpání, platbách a manévrech.',
     steps: [
       'Zdroje vlastnosti odpovídají její hodnotě; Jizva část z nich zablokuje.',
+      'Zdatnost hrdiny nemá horní limit (na začátku 15 bodů, každá aspoň 1). Hranice Těla, Duše a Vlivu patří bytostem.',
       'Čerpání škrtá Zdroje, „Obnovit“ je vrátí. Stav čerpání je jen v zařízení, ne v deníku revizí.',
       'Zdroje ze sebezasazené Jizvy jsou dočasné a čerpají se jako první.',
       'Výhoda funguje jako „žolíkový“ Zdroj a platí se první.',
