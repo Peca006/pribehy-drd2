@@ -32,7 +32,7 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - **Audiogram.** Na sezení 22. 11. 2026 prošlo několik přenosů blízko u sebe i za hovoru a ruchu (`AUDIOGRAM.md`, výsledky). DSP
   (zúžení pásma, LDPC) a další zkoušky (vzdálenost, jiná zařízení, naměřený odstup a zvolený režim) čekají na testery; zkouška zvuku
   mezi dvěma zařízeními (0.4.6) je neověřená.
-- **Postava.** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba).
+- **Postava.** Povolání z Her mocných a mistrovská povolání (čeká na Altar), pomocníci (Pouto, Platba): plán `PLAN-POMOCNICI.md`.
 - **Hry mocných.** Jen pro vlastní interní účely (lokální balíček, větev `hry-mocnych`), do veřejných balíčků až po zařazení
   do SRD. Nechat až po všech milnících.
 - **Balíčky ze SRD, obnova.** Data udržujeme sami; nový balíček jen při změně SRD (kontrola jednou za měsíc až rok) nebo
@@ -63,7 +63,7 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 3. **Zkrácení testů zvuku** (modems, probe, protocol, po ~20 s): méně režimů v round-trip, ale slabší hlídání DSP.
 4. **Vedení hry, etapy 5 a 6** (jiná session, nesahat bez domluvy).
 5. **Etapa 2 WebRTC (spojení 1:1)** až po zkouškách Test WebRTC na telefonech.
-6. **Pomocníci postavy (Pouto, Platba)**: větší funkce, nejdřív upřesnit zadání.
+6. **Pomocníci postavy (Pouto, Platba)**: návrh milníku v `PLAN-POMOCNICI.md`, čeká na odsouhlasení.
 7. **Systémové Zpět v Androidu**: až se stromem stránek a po ověření na telefonu.
 
 ### Rozpracováno jinde (jiné větve a worktrees, nesahat)
