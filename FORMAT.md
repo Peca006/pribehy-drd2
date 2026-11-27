@@ -119,6 +119,7 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
   "adventures": [ … ], "expeditions": [ … ], "runs": [ … ], "sittings": [ … ],
   "images": { "characters": [ { "id": "…", "owner": "<id postavy>", "added": 0, "mime": "image/webp", "data": "<base64>" } ],
               "creatures": [ … ] },
+  "skins": [ { "id": "muj-hav", "added": 0, "data": "<base64 souboru .drdskin>" } ],
   "local": { "drd2-settings": "{…}", "drd2-char-play:<id>": "{…}" }
 }
 ```
@@ -128,7 +129,11 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 - Při čtení se vše očistí jako u přenosu: změny postavy přes `sanitizeEvent`, obrázky jen `webp`/`png`/`jpeg` s platným base64,
   klíče `local` jen ze seznamu výše. Záznamy s vyšším `schema` a soubory s vyšším `v` se nepřevezmou.
 - **Doplnit** přidá jen záznamy s neznámým ID (nic nepřepíše, ani místní klíče); **Přepsat** nahradí záznamy se stejným ID.
-- Nezálohuje se: obsahové balíčky (stáhnou se znovu), nastavení specifická pro zařízení.
+- Záloha nese jen **vlastní data**. Nezálohuje se: obsahové balíčky a vestavěné Hávy (jsou v aplikaci, resp. se stáhnou znovu), ukázková data
+  (ID začínající `demo-`, jejich místní stav a obrázky; vedení a sezení ukázkové družiny; vlastní vedení na ukázkové výpravě zůstává) a nastavení
+  specifická pro zařízení. Úpravy ukázkových postav se tedy nezálohují (po obnově jsou ukázková data výchozí).
+- **Hávy** (nainstalované i vlastní ze Švadleny) jdou v záloze jako soubory `.drdskin` v base64 (`skins`, volitelný seznam). Obnova je nainstaluje stejnou
+  cestou jako soubor (znovu přečte a zkontroluje); vadný Háv se přeskočí. „Doplnit“ nepřepíše Háv se stejným ID, „Přepsat“ ano.
 - Soubor je čitelný text; ilustrace tvoří většinu velikosti, proto jdou při záloze vypnout.
 
 ## Pravidla změn formátu
@@ -153,3 +158,4 @@ Soubor `drd2-zaloha-RRRR-MM-DD.json` (Více → Záloha a obnova dat):
 | 0.5.0 | Úložiště `adventures`, `expeditions`, `runs` (DB v8, schéma 1); záloha je nese jako volitelné seznamy (`BACKUP_VERSION` zůstává 1, starší soubory je nemají) |
 | 0.5.x (rozpracováno) | Úložiště `sittings` (DB v9, schéma 1); záloha je nese jako volitelný seznam (`BACKUP_VERSION` zůstává 1) |
 | 0.6.1 | Obálka přenosu `obsah` (výprava, dobrodružství, cizí postavy, zpráva), bez změny databáze a zálohy |
+| 0.6.2 | Záloha nese Hávy (`skins`, volitelný seznam, `BACKUP_VERSION` zůstává 1) a vynechává ukázková data (`demo-…`) |

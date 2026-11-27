@@ -1,5 +1,11 @@
 # Změny
 
+## 0.6.2 (27. 11. 2026)
+
+- **Záloha jen vlastních dat:** do zálohy přibyly nainstalované a vlastní Hávy (i s obrázky) a vynechala se ukázková data (postavy, družina, výpravy a předpisy s ID `demo-…`, jejich obrázky a místní stav). Vestavěné Hávy a obsahové balíčky se nezálohují už dřív. Souhrn zálohy uvádí počet Hávů. Starší soubory zálohy se čtou dál.
+- **Plán pomocníků:** `PLAN-POMOCNICI.md` (Pouto, Sudba, Platba), zatím jen návrh milníku, v aplikaci nic nepřibylo.
+- **Pod kapotou:** testy migrací dat se skutečnou migrací schématu a hlídání, že úložiště, upgrade a záloha drží pohromadě (`DATA_STORES`); odstraněno pět redundantních testů; zpevněn nestabilní E2E test výprav. Nástroj pro sestavení ePub ze SRD (`tools/epub`) je jen vývojový a v aplikaci se neprojeví.
+
 ## 0.6.1 (26. 11. 2026)
 
 - **Test WebRTC (Dílna, za zkouškou zvuku):** rozbalovací sekce pro průzkum přenosů bez serveru. Dvě zařízení se propojí nabídkou a odpovědí (QR nebo vložený text), ukáže se stav spojení, vybraná dvojice kandidátů, adresy `.local`, odezva a jde poslat zprávu. Pokyny a zápis zkoušek (otestováno, OK či KO, poznámka, zkopírování výsledků) jsou v sekci. Po průzkumu se odstraní.

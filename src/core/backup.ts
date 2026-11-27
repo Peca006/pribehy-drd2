@@ -2,10 +2,14 @@
 //
 // Záloha nese záznamy tak, jak jsou uložené (i s číslem `schema`), takže import je převede na aktuální schéma
 // stejným řetězcem migrací jako čtení z úložiště. Soubor je čitelný a nezávislý na prohlížeči. Obsahové balíčky
-// (pravidla, bestiář) se nezálohují: stáhnou se znovu. Import soubor vždy očistí (je to vstup z vnějšku).
+// (pravidla, bestiář), ukázková data (ID `demo-…`) a vestavěné Hávy se nezálohují: v nové instalaci jsou, resp. se stáhnou
+// znovu. Záloha nese jen vlastní data včetně nainstalovaných a vlastních Hávů (každý jako soubor `.drdskin`). Import soubor vždy očistí (je to vstup z vnějšku).
 import { migrateRecord, rawRecords, repo, run, schemaOf, type DataStore } from './db'
 import { fromBase64, toBase64 } from './character/imageFile'
 import { sanitizeEvent } from './character/share'
+import { DEMO_PREFIX } from './demo'
+import { MAX_SKIN_FILE_BYTES, writeSkinFile } from './skin/file'
+import { getSkin, getSkinAssets, installSkinFile, listSkins, MAX_SKINS } from './skin/store'
 
 export const BACKUP_FORMAT = 'drd2-zaloha'
 /** Číslo formátu souboru zálohy; zvyšuje se jen při změně jeho struktury (ne při změně schématu záznamů). */
@@ -41,6 +45,19 @@ export const LOCAL_PREFIXES = [
   'drd2-conflict:',
 ]
 const isLocalKey = (k: string) => LOCAL_KEYS.includes(k) || LOCAL_PREFIXES.some((p) => k.startsWith(p))
+/** Místní stav ukázkových dat (`drd2-char-play:demo-…`) se nezálohuje. */
+const isDemoKey = (k: string) => LOCAL_PREFIXES.some((p) => k.startsWith(p + DEMO_PREFIX))
+const isDemoId = (id: string) => id.startsWith(DEMO_PREFIX)
+/** Vlastní záznam: ne ukázkový, a vedení či sezení nepatří ukázkové družině (ta v záloze není). */
+const isOwn = (r: Rec) => !isDemoId(r.id) && !(typeof r.partyId === 'string' && isDemoId(r.partyId))
+
+export interface BackupSkin {
+  id: string
+  /** kdy byl Háv nainstalován (ms od epochy) */
+  added: number
+  /** soubor `.drdskin` (manifest i obrázky) v base64 */
+  data: string
+}
 
 export interface BackupImage {
   id: string
@@ -71,6 +88,8 @@ export interface Backup {
   runs: Rec[]
   sittings: Rec[]
   images: { characters: BackupImage[]; creatures: BackupImage[] }
+  /** nainstalované a vlastní Hávy (volitelné; starší zálohy je nemají) */
+  skins: BackupSkin[]
   local: Record<string, string>
 }
 
@@ -82,7 +101,7 @@ function localKeys(storage: KeyValueStorage): string[] {
   const out: string[] = []
   for (let i = 0; i < storage.length; i++) {
     const k = storage.key(i)
-    if (k && isLocalKey(k)) out.push(k)
+    if (k && isLocalKey(k) && !isDemoKey(k)) out.push(k)
   }
   return out.sort()
 }
@@ -93,6 +112,7 @@ async function imagesOf(store: 'characterImages' | 'creatureImages', ownerField:
   for (const i of all) {
     const blob = i.blob
     if (!(blob instanceof Blob) || typeof i.id !== 'string' || typeof i[ownerField] !== 'string') continue
+    if (isDemoId(i[ownerField] as string)) continue
     out.push({
       id: i.id,
       owner: i[ownerField] as string,
@@ -104,6 +124,19 @@ async function imagesOf(store: 'characterImages' | 'creatureImages', ownerField:
   return out.sort((a, b) => a.added - b.added)
 }
 
+async function skinsOf(): Promise<BackupSkin[]> {
+  const out: BackupSkin[] = []
+  for (const { skin, addedAt } of await listSkins()) {
+    try {
+      const bytes = await writeSkinFile(skin, await getSkinAssets(skin.id))
+      out.push({ id: skin.id, added: addedAt, data: toBase64(bytes) })
+    } catch {
+      /* Háv s poškozenými obrázky se přeskočí, záloha ostatních dat se kvůli němu nesmí zhatit */
+    }
+  }
+  return out
+}
+
 export interface BuildOptions {
   /** přiložit ilustrace postav a bytostí (soubor bývá o to větší) */
   withImages?: boolean
@@ -111,7 +144,7 @@ export interface BuildOptions {
 }
 
 export async function buildBackup({ withImages = true, storage = defaultStorage() }: BuildOptions = {}): Promise<Backup> {
-  const recs = async (s: RecordStore) => (await rawRecords(s)).filter((r): r is Rec => typeof r.id === 'string')
+  const recs = async (s: RecordStore) => (await rawRecords(s)).filter((r): r is Rec => typeof r.id === 'string' && isOwn(r as Rec))
   const local: Record<string, string> = {}
   if (storage) for (const k of localKeys(storage)) local[k] = storage.getItem(k) ?? ''
   return {
@@ -131,6 +164,7 @@ export async function buildBackup({ withImages = true, storage = defaultStorage(
     images: withImages
       ? { characters: await imagesOf('characterImages', 'characterId'), creatures: await imagesOf('creatureImages', 'creatureId') }
       : { characters: [], creatures: [] },
+    skins: await skinsOf(),
     local,
   }
 }
@@ -224,6 +258,22 @@ function sanitizeImages(raw: unknown, dropped: Dropped): BackupImage[] {
   return out
 }
 
+function sanitizeSkins(raw: unknown, dropped: Dropped): BackupSkin[] {
+  if (!Array.isArray(raw)) return []
+  const out: BackupSkin[] = []
+  for (const x of raw) {
+    const o = obj(x)
+    const id = str(o?.id, 100)
+    const data = str(o?.data, Math.ceil((MAX_SKIN_FILE_BYTES * 4) / 3) + 8)
+    if (!o || !id || !data || !/^[A-Za-z0-9+/]+={0,2}$/.test(data) || out.length >= MAX_SKINS) {
+      dropped.records++
+      continue
+    }
+    out.push({ id, data, added: typeof o.added === 'number' && Number.isFinite(o.added) ? o.added : 0 })
+  }
+  return out
+}
+
 export interface ParsedBackup {
   backup?: Backup
   errors: string[]
@@ -274,6 +324,7 @@ export function parseBackup(text: string): ParsedBackup {
       characters: sanitizeImages(images?.characters, dropped),
       creatures: sanitizeImages(images?.creatures, dropped),
     },
+    skins: sanitizeSkins(o.skins, dropped),
     local,
   }
   return { backup, errors: [], dropped }
@@ -289,6 +340,7 @@ export interface BackupSummary {
   runs: number
   sittings: number
   images: number
+  skins: number
 }
 
 export const summarize = (b: Backup): BackupSummary => ({
@@ -301,6 +353,7 @@ export const summarize = (b: Backup): BackupSummary => ({
   runs: b.runs.length,
   sittings: b.sittings.length,
   images: b.images.characters.length + b.images.creatures.length,
+  skins: b.skins.length,
 })
 
 // --- obnova ---
@@ -323,7 +376,7 @@ export async function restoreBackup(
   storage: KeyValueStorage | undefined = defaultStorage(),
 ): Promise<RestoreResult> {
   const result: RestoreResult = {
-    added: { characters: 0, parties: 0, creatures: 0, recipes: 0, adventures: 0, expeditions: 0, runs: 0, sittings: 0, images: 0 },
+    added: { characters: 0, parties: 0, creatures: 0, recipes: 0, adventures: 0, expeditions: 0, runs: 0, sittings: 0, images: 0, skins: 0 },
     kept: 0,
     replaced: 0,
   }
@@ -369,6 +422,24 @@ export async function restoreBackup(
   // obrázky bytostí patří i k bytostem z knih (ty v úložišti uživatele nejsou), proto se u nich vlastník nekontroluje
   await putImages('characterImages', 'characterId', ids.characters, b.images.characters)
   await putImages('creatureImages', 'creatureId', new Set(b.images.creatures.map((i) => i.owner)), b.images.creatures)
+  for (const s of b.skins) {
+    const exists = !!(await getSkin(s.id))
+    if (exists && mode === 'doplnit') {
+      result.kept++
+      continue
+    }
+    let bytes: Uint8Array
+    try {
+      bytes = fromBase64(s.data)
+    } catch {
+      continue
+    }
+    // soubor se znovu přečte a zvaliduje jako při instalaci; vadný Háv se přeskočí a nic neuloží
+    const r = await installSkinFile(bytes, {}, s.added || Date.now())
+    if (!r.ok) continue
+    if (exists) result.replaced++
+    else result.added.skins++
+  }
   if (storage)
     for (const [k, v] of Object.entries(b.local)) if (mode === 'prepsat' || storage.getItem(k) === null) storage.setItem(k, v)
   return result

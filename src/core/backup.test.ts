@@ -3,6 +3,8 @@ import { IDBFactory } from 'fake-indexeddb'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { BACKUP_FORMAT, BACKUP_VERSION, backupFileName, buildBackup, parseBackup, restoreBackup, summarize } from './backup'
 import { closeDb, repo, run } from './db'
+import { closeSkinDb, getSkin, listSkins, putSkin } from './skin/store'
+import { validateSkin } from './skin/skin'
 import { listCharacterImages } from './character/images'
 import { emptyAdventure, emptyExpedition, emptyRun } from './expedition/model'
 import { getAdventure, getExpedition, getRun, saveAdventure, saveExpedition, saveRun } from './expedition/store'
@@ -22,6 +24,7 @@ function memory(init: Record<string, string> = {}) {
 }
 
 beforeEach(async () => {
+  await closeSkinDb()
   await closeDb()
   globalThis.indexedDB = new IDBFactory()
 })
@@ -60,6 +63,7 @@ describe('záloha dat', () => {
       runs: 0,
       sittings: 0,
       images: 1,
+      skins: 0,
     })
     expect(Object.keys(parsed.backup!.local).sort()).toEqual(['drd2-char-play:c1', 'drd2-settings'])
 
@@ -75,6 +79,7 @@ describe('záloha dat', () => {
       runs: 0,
       sittings: 0,
       images: 1,
+      skins: 0,
     })
     expect(await repo('characters').get('c1')).toEqual(log('c1', 'name', 'concept'))
     expect((await repo<{ id: string; name: string }>('parties').get('p1'))?.name).toBe('Vlci')
@@ -185,5 +190,82 @@ describe('čtení souboru zálohy', () => {
 
   it('název souboru nese datum', () => {
     expect(backupFileName(new Date('2026-11-22T10:00:00Z'))).toBe('drd2-zaloha-2026-11-22.json')
+  })
+})
+
+const skinOf = (id: string) =>
+  validateSkin({ schema: 1, id, name: `Háv ${id}`, version: '1.0.0', author: 'T', license: 'CC0-1.0', scheme: 'dark', tokens: { '--drd-accent': '#ffcc33' } }).skin!
+
+describe('záloha: vlastní data bez ukázkových', () => {
+  it('ukázková data (ID demo-…), jejich vedení, sezení, obrázky a místní stav se nezálohují', async () => {
+    await repo('characters').put(log('c1', 'name') as never)
+    await repo('characters').put(log('demo-c1', 'name') as never)
+    await repo('parties').put({ id: 'demo-p', name: 'Ukázka', notes: '', members: [], journal: [], updated: '' } as never)
+    await repo('runs').put({ id: 'r-demo', partyId: 'demo-p', expeditionId: 'x', status: 'bezi', incidents: {} } as never)
+    await repo('sittings').put({ id: 's-demo', partyId: 'demo-p', status: 'hotovo', started: 1, spans: [] } as never)
+    await repo('runs').put({ id: 'r-moje', partyId: 'p1', expeditionId: 'demo-x', status: 'bezi', incidents: {} } as never)
+    await repo('recipes').put({ id: 'demo-r', kind: 'kouzlo', name: 'Jiskra', description: '', params: {}, contentHash: 'x', updatedAt: '' } as never)
+    await run('characterImages', 'readwrite', (s) => s.put({ id: 'i-demo', characterId: 'demo-c1', blob: png(), added: 1 }))
+    await run('characterImages', 'readwrite', (s) => s.put({ id: 'i1', characterId: 'c1', blob: png(), added: 2 }))
+    const store = memory({ 'drd2-char-play:c1': '{}', 'drd2-char-play:demo-c1': '{}', 'drd2-conflict:demo-p': '{}' })
+    const b = await buildBackup({ storage: store })
+    expect(b.characters.map((r) => r.id)).toEqual(['c1'])
+    expect(b.parties).toEqual([])
+    expect(b.recipes).toEqual([])
+    expect(b.sittings).toEqual([])
+    expect(b.runs.map((r) => r.id)).toEqual(['r-moje']) // vlastní vedení na ukázkové výpravě zůstává
+    expect(b.images.characters.map((i) => i.id)).toEqual(['i1'])
+    expect(Object.keys(b.local)).toEqual(['drd2-char-play:c1'])
+  })
+})
+
+describe('záloha: Hávy', () => {
+  it('vlastní Háv se zálohuje i obnoví s obrázky a datem instalace; vestavěné Hávy v záloze nejsou', async () => {
+    await putSkin(skinOf('muj'), 1234)
+    const b = await buildBackup({ storage: memory() })
+    expect(b.skins.map((s) => s.id)).toEqual(['muj'])
+    const text = JSON.stringify(b)
+    await closeSkinDb()
+    await closeDb()
+    globalThis.indexedDB = new IDBFactory()
+
+    const parsed = parseBackup(text)
+    expect(parsed.errors).toEqual([])
+    expect(summarize(parsed.backup!).skins).toBe(1)
+    const res = await restoreBackup(parsed.backup!, 'doplnit', memory())
+    expect(res.added.skins).toBe(1)
+    const got = await getSkin('muj')
+    expect(got?.skin.name).toBe('Háv muj')
+    expect(got?.addedAt).toBe(1234)
+    expect(await listSkins()).toHaveLength(1)
+  })
+
+  it('doplnit Háv nepřepíše, přepsat ano', async () => {
+    await putSkin(skinOf('muj'), 1)
+    const text = JSON.stringify(await buildBackup({ storage: memory() }))
+    await putSkin({ ...skinOf('muj'), name: 'Změněný' }, 2)
+    const parsed = parseBackup(text)
+    let res = await restoreBackup(parsed.backup!, 'doplnit', memory())
+    expect(res.kept).toBe(1)
+    expect((await getSkin('muj'))?.skin.name).toBe('Změněný')
+    res = await restoreBackup(parsed.backup!, 'prepsat', memory())
+    expect(res.replaced).toBe(1)
+    expect((await getSkin('muj'))?.skin.name).toBe('Háv muj')
+  })
+
+  it('vadný nebo podvržený Háv v záloze se vyřadí a zbytek se obnoví; starší záloha Hávy nemá', async () => {
+    await putSkin(skinOf('muj'), 1)
+    const b = JSON.parse(JSON.stringify(await buildBackup({ storage: memory() })))
+    b.skins.push({ id: 'zly', added: 1, data: '!!!' }, { id: 'nesmysl', added: 1, data: 'AAAA' })
+    await closeSkinDb()
+    await closeDb()
+    globalThis.indexedDB = new IDBFactory()
+    const parsed = parseBackup(JSON.stringify(b))
+    expect(parsed.backup!.skins.map((s) => s.id)).toEqual(['muj', 'nesmysl'])
+    const res = await restoreBackup(parsed.backup!, 'doplnit', memory())
+    expect(res.added.skins).toBe(1)
+    expect((await listSkins()).map((s) => s.skin.id)).toEqual(['muj'])
+    delete b.skins
+    expect(parseBackup(JSON.stringify(b)).backup!.skins).toEqual([])
   })
 })
