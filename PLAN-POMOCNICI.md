@@ -25,10 +25,14 @@ Zdroj pravidel: SRD, kapitola „Pomocníci a sítě“ (část o sítích zatí
 
 - **Pomocník je samostatný záznam** (jako cizí postava), ne součást jedné postavy. Může to být člověk, zvíře, netvor, oživený či nemrtvý tvor, běs, golem…
 - **Knihovna pomocníků** (sada); u postavy se vybírá ze sady. Pomocník je v praxi „vybavení“ postavy, ale žije vlastním životem (lze ho přenést jinam).
-- **Deník pomocníka** podle tištěné karty (Deník pomocníka): Tělo, Duše, Vliv (hranice), Sudba, Pouto (eviduje se jako Tělo u postavy), Platba (stručný text),
+- **Deník pomocníka** podle tištěné karty (Deník pomocníka): Tělo, Duše, Vliv (hranice), Sudba, Pouto (eviduje se jako Tělo u postavy), Platba (druh a hodnota),
   „Bonusy / Postihy / Jizvy“ (zatím společný text), Charakteristika (text), Přirozené zbraně a zbroje (text, později odkazy na kartičky), Zvláštní schopnosti
   (text, po zavedení kartiček z kartotéky odkazy na konkrétní kartičky).
-- Pole jsou nejdřív textová; strukturované kartičky a odkazy až s kartotékami (větev `kartoteky`).
+- **Platba je strukturovaná** (druh a hodnota): peníze (groše), suroviny, Jizva (na Těle, Duši či Vliv se závažností), případně jiné s poznámkou. Aplikace jí tak umí platit
+  z Hotovosti a surovin postavy nebo zasadit Jizvu (rozhodnuto 27. 11. 2026). Výchozí hodnotu navrhne podle charakteristiky a druhu pomocníka.
+- **Jizvy na Poutu** se evidují strukturovaně až ve 3. etapě (s léčením). V 2. etapě stačí zdatnost a aktuální Pouto; do té doby jsou Jizvy jen v textovém poli.
+- **Pomocník se sdílí v balíčku s postavou** (přenos postavy nese i její pomocníky; změna obálky `SHARE_VERSION`). Samostatné posílání pomocníka zásilkou je doplněk.
+- Ostatní pole jsou nejdřív textová; strukturované kartičky a odkazy až s kartotékami (větev `kartoteky`).
 
 ## Model (návrh)
 
@@ -37,7 +41,9 @@ Helper { id, name, kind: 'clovek' | 'zvire' | 'netvor' | 'ozivly' | 'nemrtvy' | 
          creatureId?,                                   // původ v Bestiáři (kopie dat, ne živý odkaz)
          limits: { body, soul, influence },             // hranice (Tělo, Duše, Vliv)
          fate,                                          // Sudba bytosti (základ pro společnou Sudbu)
-         characteristic: number, payment: string,       // charakteristika a Platba (text, později strukturovaně)
+         characteristic: number,
+         payment: { kind: 'groše' | 'suroviny' | 'jizva' | 'jiné', amount: number, note?: string },
+                                                        // Platba: druh a hodnota (suroviny: druh surovin; jizva: vlastnost a závažnost)
          notes: string,                                 // Bonusy / Postihy / Jizvy (společný text)
          weapons: string, abilities: string,            // přirozené zbraně a zbroje, zvláštní schopnosti (text)
          image?, created, updated }                     // ilustrace jen v souboru, viz „Sdílení obrázků“
@@ -54,18 +60,15 @@ Poutání (u postavy, v deníku změn):  helpers.<helperId> = { bond: 1..5, ... 
 | etapa | obsah | ověření |
 | --- | --- | --- |
 | 1 | Model a úložiště `helpers` (DB v10), záloha, `FORMAT.md` a testy migrací; stránka **Pomocníci** v knihovně: seznam, deník pomocníka podle karty (úprava, smazání), vytvoření z bytosti v Bestiáři (kopie hranic, Sudby, charakteristiky a schopností) | unit testy, E2E |
-| 2 | Vazba na postavu: výběr z knihovny („Přidat pomocníka“), Pouto (zdatnost 1 až 5, aktuální, zasazení Jizvy, trvalá změna), přetržení při 0 (předání Průvodci, upozornění), jeden pán na pomocníka | unit testy, E2E |
-| 3 | Zdroje: společná Sudba (výpočet maxima, blízko / daleko), čerpání v Při hře z Pouta nebo Sudby, Jizva na Pouto dá Zdroje o 2 víc, obnova Pouta Platbou, léčení Jizev na Poutu (5× Platba) v dialogu Léčit z kroku 11c | unit testy, E2E |
-| 4 | Sdílení: zásilka `pomocnik` v obálce `obsah` (soubor, kód, Sdílet…), přenos s postavou (rozhodnout), cizí postava ↔ pomocník (převod) | unit testy, E2E |
+| 2 | Vazba na postavu: výběr z knihovny („Přidat pomocníka“), Pouto (zdatnost 1 až 5, aktuální počet, trvalá změna zdatnosti), strukturovaná Platba (druh a hodnota), přetržení při 0 (předání Průvodci, upozornění), jeden pán na pomocníka | unit testy, E2E |
+| 3 | Zdroje: společná Sudba (výpočet maxima, blízko / daleko), čerpání v Při hře z Pouta nebo Sudby, **Jizvy na Poutu** (strukturovaně: zasazení, Zdroje o 2 víc než závažnost, hojení), obnova Pouta Platbou (peníze z Hotovosti, suroviny, Jizva), léčení Jizev na Poutu (5× Platba) v dialogu Léčit z kroku 11c | unit testy, E2E |
+| 4 | Sdílení: pomocníci jdou **v balíčku s postavou** (`SHARE_VERSION` +1, očištění, starší aplikace odmítne srozumitelně), volitelně samostatná zásilka `pomocnik` v obálce `obsah`; cizí postava ↔ pomocník (převod) | unit testy, E2E |
 | 5 | Nápověda „?“, `CHANGELOG.md`, `FORMAT.md`, ověření na telefonu, vydání | |
 | později | Kartičky z kartotéky místo textu (schopnosti, zbraně, zbroje), pomocníci v konfliktu a v Při hře (akce z obrany), sítě | |
 
 ## Otevřené otázky
 
 1. **Sítě.** Kapitola se jmenuje „Pomocníci a sítě“; část o sítích (kontakty, vazby) je mimo tento plán a čeká na přečtení.
-2. **Strukturovaná Platba.** Zůstane text, nebo se vyjádří druhem a částkou (groše, suroviny, Jizva na vlastnosti a závažnost), aby šla platit z Hotovosti a surovin?
-3. **Jizvy pomocníka.** Společné pole „Bonusy / Postihy / Jizvy“ jako text; mají se Jizvy na Poutu evidovat strukturovaně už v etapě 2 (nutné pro léčení)? Navrhuji ano.
-4. **Sdílení s postavou.** Posílají se pomocníci spolu s postavou (nutná změna `SHARE_VERSION`, očištění), nebo zvlášť zásilkou?
-5. **Nastavení Pouta u Průvodce.** Má Průvodce vidět pomocníky svých hráčů a převzít je při přetržení Pouta (cizí postavy u výpravy)?
-6. **Bestiář a licence.** Kopie z Bestiáře jen z veřejného SRD; Hry mocných a mistrovská povolání čekají na Altar.
-7. **Ilustrace.** Řídí se rozhodnutím o sdílení obrázků: jen v souboru a v celkovém exportu.
+2. **Nastavení Pouta u Průvodce.** Má Průvodce vidět pomocníky svých hráčů a převzít je při přetržení Pouta (cizí postavy u výpravy)?
+3. **Bestiář a licence.** Kopie z Bestiáře jen z veřejného SRD; Hry mocných a mistrovská povolání čekají na Altar.
+4. **Ilustrace.** Řídí se rozhodnutím o sdílení obrázků: jen v souboru a v celkovém exportu.
