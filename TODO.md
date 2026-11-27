@@ -13,7 +13,9 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
 - ✅ **Kořist (11e, 0.5.0).** Příprava u příhody, odhalení, upřesnění a rozdělení postavám.
 - **Před první beta verzí.** Formát dat je připravený (`FORMAT.md`: `schema` a migrace u záznamů, záloha a obnova do `.json`
   včetně ilustrací). Zbývá projít migrace při první skutečné změně tvaru dat a ověřit zálohu a obnovu na telefonu (soubor přes
-  e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`.
+  e-mail na druhé zařízení). Každou změnu formátu zapisovat do `FORMAT.md` a `CHANGELOG.md`. Záloha nese jen vlastní data
+  (včetně vlastních Hávů), ukázková data (`demo-…`) a vestavěné Hávy vynechává (nevydáno). Test migrací se skutečnou migrací:
+  `src/core/migrace.test.ts` (PR 72, pokud je sloučený).
 - **Systémové Zpět v Androidu (návrh).** Tlačítko Zpět telefonu vrací o krok v historii prohlížeče, uživatel čeká návrat o úroveň výš
   jako v aplikaci. Řešení vyžaduje strom stránek (nadřazená stránka každé adresy, `parentOf`), zachycení návratu přes Navigation API
   (`navigate` s `traverse` dozadu) a nahrazení cílem „o úroveň výš“ (v kořeni modulu nechat výchozí chování), aby se historie
@@ -53,6 +55,16 @@ Značky: ✅ hotovo (jen stručná připomínka), 🚧 rozpracované, bez značk
   (iPhone bez aplikace, čtení v aplikaci jen Chrome na Androidu). Podrobnosti v `PLAN-WEBRTC.md` (NFC).
 - **Nápad: skiny s obrázkovou mapou ovládacích prvků (později).** Prvky (tlačítko, popis, výstup) definované souřadnicemi
   na obrázku; pixelartová varianta (inspirace Truhlice) nebo klasická. Předpoklad: uklidit stránky a navigaci.
+
+### Možné další kroky (návrh, 27. 11. 2026)
+
+1. **Zkouška zálohy na telefonu** (jen vy): stáhnout zálohu s vlastním Hávem, přenést e-mailem na druhé zařízení, obnovit.
+2. **Měsíční kontrola balíčků SRD** (rychlá, bez rizika).
+3. **Zkrácení testů zvuku** (modems, probe, protocol, po ~20 s): méně režimů v round-trip, ale slabší hlídání DSP.
+4. **Vedení hry, etapy 5 a 6** (jiná session, nesahat bez domluvy).
+5. **Etapa 2 WebRTC (spojení 1:1)** až po zkouškách Test WebRTC na telefonech.
+6. **Pomocníci postavy (Pouto, Platba)**: větší funkce, nejdřív upřesnit zadání.
+7. **Systémové Zpět v Androidu**: až se stromem stránek a po ověření na telefonu.
 
 ### Rozpracováno jinde (jiné větve a worktrees, nesahat)
 
